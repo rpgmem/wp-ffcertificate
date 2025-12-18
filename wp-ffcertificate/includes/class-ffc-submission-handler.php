@@ -11,37 +11,39 @@ class FFC_Submission_Handler {
         global $wpdb;
         $this->submission_table_name = $wpdb->prefix . 'ffc_submissions';
 
-        // Hook para injetar SMTP personalizado (se configurado nas opções)
+        // Hook to inject custom SMTP (if configured in settings)
         add_action( 'phpmailer_init', array( $this, 'configure_custom_smtp' ) );
     }
 
     /**
-     * Configura o PHPMailer com as definições do plugin, se o modo SMTP estiver ativo.
+     * Configures PHPMailer with plugin settings, if SMTP mode is active.
      */
     public function configure_custom_smtp( $phpmailer ) {
         $settings = get_option( 'ffc_settings', array() );
         
-        // Verifica se o modo Custom está ativo
+        // Check if Custom mode is active
         if ( isset($settings['smtp_mode']) && $settings['smtp_mode'] === 'custom' ) {
             $phpmailer->isSMTP();
             $phpmailer->Host       = isset($settings['smtp_host']) ? $settings['smtp_host'] : '';
             $phpmailer->SMTPAuth   = true;
-            $phpmailer->Port       = isset($settings['smtp_port']) ? $settings['smtp_port'] : 587;
+            $phpmailer->Port       = isset($settings['smtp_port']) ? (int) $settings['smtp_port'] : 587;
             $phpmailer->Username   = isset($settings['smtp_user']) ? $settings['smtp_user'] : '';
             $phpmailer->Password   = isset($settings['smtp_pass']) ? $settings['smtp_pass'] : '';
             $phpmailer->SMTPSecure = isset($settings['smtp_secure']) ? $settings['smtp_secure'] : 'tls';
             
-            // Configura remetente
-            $phpmailer->From       = isset($settings['smtp_from_email']) ? $settings['smtp_from_email'] : $settings['smtp_user'];
-            $phpmailer->FromName   = isset($settings['smtp_from_name']) ? $settings['smtp_from_name'] : get_bloginfo( 'name' );
+            // Configure sender
+            if ( ! empty( $settings['smtp_from_email'] ) ) {
+                $phpmailer->From     = $settings['smtp_from_email'];
+                $phpmailer->FromName = isset($settings['smtp_from_name']) ? $settings['smtp_from_name'] : get_bloginfo( 'name' );
+            }
         }
     }
 
     /**
-     * Processa a submissão: Sanitiza, Salva no DB e Agenda tarefas.
-     * * @param int    $form_id
+     * Processes submission: Sanitizes, Saves to DB and Schedules tasks.
+     * @param int    $form_id
      * @param string $form_title
-     * @param array  $submission_data  PASSADO POR REFERÊNCIA (&) para atualizar o auth_code no frontend
+     * @param array  $submission_data  PASSED BY REFERENCE (&)
      * @param string $user_email
      * @param array  $fields_config
      * @param array  $form_config
@@ -49,31 +51,30 @@ class FFC_Submission_Handler {
     public function process_submission( $form_id, $form_title, &$submission_data, $user_email, $fields_config, $form_config ) {
         global $wpdb;
 
-        // 1. GERAÇÃO DO AUTH_CODE (Se não vier do formulário)
-        // Gera um código único de 12 caracteres (ex: A1B2C3D4E5F6) e adiciona ao array
+        // 1. AUTH_CODE GENERATION (If not from form)
+        // Uses wp_generate_password for higher entropy/security
         if ( empty( $submission_data['auth_code'] ) ) {
-            $submission_data['auth_code'] = strtoupper( substr( md5( uniqid( rand(), true ) ), 0, 12 ) );
+            $submission_data['auth_code'] = strtoupper( wp_generate_password( 12, false ) );
         }
 
-        // 2. LIMPEZA DE DADOS (Sanitização de Máscaras)
-        // Garante que CPF, RG e Códigos sejam salvos apenas com letras e números
+        // 2. DATA CLEANUP (Mask Sanitization)
         if ( is_array( $submission_data ) ) {
             foreach ( $submission_data as $key => $value ) {
-                // Lista de campos que devem ser limpos
+                // List of fields that should contain only alphanumeric
                 if ( in_array( $key, array( 'auth_code', 'codigo', 'verification_code', 'cpf', 'cpf_rf', 'rg' ) ) ) {
                     $submission_data[$key] = preg_replace( '/[^a-zA-Z0-9]/', '', $value );
                 }
             }
         }
         
-        // 3. SALVAR NO BANCO DE DADOS
+        // 3. SAVE TO DATABASE
         $inserted = $wpdb->insert(
             $this->submission_table_name,
             array(
                 'form_id'         => $form_id,
                 'submission_date' => current_time( 'mysql' ),
-                'data'            => wp_json_encode( $submission_data ), // Salva o JSON já sanitizado e com auth_code
-                'user_ip'         => $_SERVER['REMOTE_ADDR'],
+                'data'            => wp_json_encode( $submission_data ), 
+                'user_ip'         => $this->get_user_ip(), // Improved function for real IP
                 'email'           => $user_email
             ),
             array( '%d', '%s', '%s', '%s', '%s' )
@@ -85,8 +86,7 @@ class FFC_Submission_Handler {
         
         $submission_id = $wpdb->insert_id;
 
-        // 4. Agendar processamento assíncrono (envio de emails)
-        // Pequeno delay para evitar travar a requisição do usuário
+        // 4. Schedule asynchronous processing (email sending)
         wp_schedule_single_event( 
             time() + 2, 
             'ffc_process_submission_hook', 
@@ -97,34 +97,35 @@ class FFC_Submission_Handler {
     }
 
     /**
-     * Tarefa Assíncrona: Gera PDF e envia e-mails
+     * Asynchronous Task: Generates PDF and sends emails
      */
     public function async_process_submission( $submission_id, $form_id, $form_title, $submission_data, $user_email, $fields_config, $form_config ) {
         $pdf_content = $this->generate_pdf_html( $submission_data, $form_title, $form_config );
         
-        // Verifica se a opção de enviar e-mail para o usuário está ativa
+        // Check if option to send email to user is active
         if ( isset( $form_config['send_user_email'] ) && $form_config['send_user_email'] == 1 ) {
             $this->send_user_email( $user_email, $form_title, $pdf_content, $form_config );
         }
 
-        // Envia notificação para o administrador (sempre)
+        // Send notification to admin (always)
         $this->send_admin_notification( $form_title, $submission_data, $form_config );
     }
 
     /**
-     * Gera o HTML do Certificado substituindo os placeholders
+     * Generates Certificate HTML by replacing placeholders
      */
     public function generate_pdf_html( $submission_data, $form_title, $form_config ) {
         $layout = isset( $form_config['pdf_layout'] ) ? $form_config['pdf_layout'] : '';
         if ( empty( $layout ) ) {
-            $layout = '<h1>Certificate: ' . esc_html( $form_title ) . '</h1><p>{{submission_date}}</p>';
+            $layout = '<h1>' . esc_html__( 'Certificate:', 'ffc' ) . ' ' . esc_html( $form_title ) . '</h1><p>{{submission_date}}</p>';
         }
 
-        // Substitui data
+        // Replace date
         $layout = str_replace( '{{submission_date}}', date_i18n( get_option( 'date_format' ), current_time( 'timestamp' ) ), $layout );
 
-        // Substitui campos do formulário (incluindo auth_code gerado)
+        // Replace form fields (including generated auth_code)
         foreach ( $submission_data as $key => $value ) {
+            // esc_html here is crucial to prevent XSS in generated PDF
             $layout = str_replace( '{{' . $key . '}}', esc_html( $value ), $layout );
         }
 
@@ -132,7 +133,7 @@ class FFC_Submission_Handler {
     }
 
     private function send_user_email( $to, $form_title, $html_content, $form_config ) {
-        $subject = isset( $form_config['email_subject'] ) && ! empty( $form_config['email_subject'] ) ? $form_config['email_subject'] : "Certificate: $form_title";
+        $subject = isset( $form_config['email_subject'] ) && ! empty( $form_config['email_subject'] ) ? $form_config['email_subject'] : sprintf( __( 'Certificate: %s', 'ffc' ), $form_title );
         $body    = isset( $form_config['email_body'] ) ? wpautop( $form_config['email_body'] ) : '';
         
         $body .= '<hr>';
@@ -145,17 +146,17 @@ class FFC_Submission_Handler {
     private function send_admin_notification( $form_title, $data, $form_config ) {
         $admins = isset( $form_config['email_admin'] ) ? explode( ',', $form_config['email_admin'] ) : array();
         
-        // Se não houver e-mail configurado, usa o do admin do WP
+        // If no email configured, use WP admin email
         if ( empty( array_filter($admins) ) ) {
              $admins[] = get_option( 'admin_email' );
         }
         
-        $subject = "New Submission: $form_title";
-        $body    = "New submission received:<br><ul>";
+        $subject = sprintf( __( 'New Submission: %s', 'ffc' ), $form_title );
+        $body    = __( 'New submission received:', 'ffc' ) . '<br><ul>';
         foreach ( $data as $k => $v ) {
-            $body .= "<li><strong>" . esc_html( $k ) . ":</strong> " . esc_html( $v ) . "</li>";
+            $body .= '<li><strong>' . esc_html( $k ) . ':</strong> ' . esc_html( $v ) . '</li>';
         }
-        $body .= "</ul>";
+        $body .= '</ul>';
 
         $headers = array( 'Content-Type: text/html; charset=UTF-8' );
         foreach ( $admins as $email ) {
@@ -176,7 +177,7 @@ class FFC_Submission_Handler {
     }
 
     /**
-     * Exporta dados para CSV
+     * Exports data to CSV with Injection Protection
      */
     public function export_csv() {
         global $wpdb;
@@ -188,7 +189,6 @@ class FFC_Submission_Handler {
 
         $filename = 'submissions-' . date( 'Y-m-d' ) . '.csv';
         
-        // Headers corretos para forçar download
         header( 'Content-Type: text/csv; charset=utf-8' );
         header( "Content-Disposition: attachment; filename={$filename}" );
         header( 'Pragma: no-cache' );
@@ -196,7 +196,7 @@ class FFC_Submission_Handler {
 
         $output = fopen( 'php://output', 'w' );
         
-        // Coleta todos os campos dinâmicos (JSON) de todas as linhas para criar o cabeçalho
+        // Collect all dynamic fields (JSON)
         $dynamic_headers = array();
         foreach ( $rows as $row ) {
             $data = json_decode( $row['data'], true );
@@ -208,16 +208,26 @@ class FFC_Submission_Handler {
         
         $headers = array_merge( array( 'ID', 'Form ID', 'Date', 'IP', 'Email' ), $dynamic_headers );
         
-        // Adiciona BOM para compatibilidade com Excel (UTF-8)
-        fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+        // Add BOM for Excel compatibility (UTF-8)
+        fprintf( $output, chr(0xEF).chr(0xBB).chr(0xBF) );
         fputcsv( $output, $headers );
 
         foreach ( $rows as $row ) {
-            $data       = json_decode( $row['data'], true );
-            $csv_row    = array( $row['id'], $row['form_id'], $row['submission_date'], $row['user_ip'], $row['email'] );
+            $data = json_decode( $row['data'], true );
+            if ( ! is_array( $data ) ) $data = array();
+
+            $csv_row = array( 
+                $row['id'], 
+                $row['form_id'], 
+                $row['submission_date'], 
+                $row['user_ip'], 
+                $row['email'] 
+            );
             
             foreach ( $dynamic_headers as $header ) {
-                $csv_row[] = isset( $data[ $header ] ) ? $data[ $header ] : '';
+                $val = isset( $data[ $header ] ) ? $data[ $header ] : '';
+                // APPLY PROTECTION AGAINST CSV INJECTION
+                $csv_row[] = $this->prevent_csv_injection( $val );
             }
             fputcsv( $output, $csv_row );
         }
@@ -227,7 +237,31 @@ class FFC_Submission_Handler {
     }
 
     /**
-     * Limpeza automática de dados antigos
+     * Prevents formula execution in Excel (CSV Injection)
+     * Adds a single quote if value starts with formula characters
+     */
+    private function prevent_csv_injection( $value ) {
+        if ( is_string( $value ) && preg_match( '/^[\=\+\-\@]/', $value ) ) {
+            return "'" . $value; 
+        }
+        return $value;
+    }
+
+    /**
+     * Gets real user IP (compatible with Proxy/Cloudflare)
+     */
+    private function get_user_ip() {
+        if ( ! empty( $_SERVER['HTTP_CLIENT_IP'] ) ) {
+            return sanitize_text_field( $_SERVER['HTTP_CLIENT_IP'] );
+        } elseif ( ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
+            return sanitize_text_field( $_SERVER['HTTP_X_FORWARDED_FOR'] );
+        } else {
+            return sanitize_text_field( $_SERVER['REMOTE_ADDR'] );
+        }
+    }
+
+    /**
+     * Automatic cleanup of old data
      */
     public function run_data_cleanup() {
         $settings = get_option( 'ffc_settings', array() );

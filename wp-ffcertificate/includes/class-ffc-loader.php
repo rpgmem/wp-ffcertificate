@@ -19,7 +19,7 @@ class Free_Form_Certificate_Loader {
     }
 
     public function run() {
-        // Ponto de entrada para execução futura, se necessário.
+        // Entry point for future execution, if needed.
     }
 
     private function load_dependencies() {

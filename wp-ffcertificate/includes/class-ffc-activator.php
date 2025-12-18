@@ -20,7 +20,9 @@ class FFC_Activator {
             user_ip varchar(100) NOT NULL,
             email varchar(255) NOT NULL, 
             UNIQUE KEY id (id),
-            KEY form_id (form_id)
+            KEY form_id (form_id),
+            KEY email (email),  // Add index for email
+            KEY submission_date (submission_date)  // Add index for date
         ) {$wpdb->get_charset_collate()};";
 
         dbDelta( $sql_submissions );

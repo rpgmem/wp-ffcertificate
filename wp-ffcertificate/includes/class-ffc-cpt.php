@@ -36,7 +36,7 @@ class FFC_CPT {
     }
 
     public function add_form_tabs_metabox() {
-        // Metabox Principal (Construtor)
+        // Main Metabox (Builder)
         add_meta_box(
             'ffc_form_builder',
             __( 'Form Builder and Configuration', 'ffc' ),
@@ -46,7 +46,7 @@ class FFC_CPT {
             'high'
         );
 
-        // Metabox Lateral para Shortcode e Instruções
+        // Side Metabox for Shortcode and Instructions
         add_meta_box(
             'ffc_form_shortcode',
             __( 'How to Use / Shortcode', 'ffc' ),
@@ -57,7 +57,7 @@ class FFC_CPT {
         );
     }
 
-    // --- CONTEÚDO DO METABOX LATERAL (Shortcode) ---
+    // --- CONTENT OF THE SHORTCODE METABOX ---
     public function display_shortcode_metabox( $post ) {
         ?>
         <div style="background: #f0f0f1; padding: 10px; border-radius: 4px; border: 1px solid #c3c4c7;">
@@ -78,7 +78,7 @@ class FFC_CPT {
         <?php
     }
 
-    // --- CONTEÚDO DO METABOX PRINCIPAL ---
+    // --- CONTENT OF THE MAIN METABOX ---
     public function display_metabox_tabs_content( $post ) {
         wp_nonce_field( 'ffc_form_meta_box', 'ffc_form_meta_box_nonce' );
 
@@ -121,7 +121,6 @@ class FFC_CPT {
         echo '<button type="button" class="button button-secondary ffc-add-field" data-max-index="' . esc_attr( $max_index ) . '">' . esc_html__( 'Add New Field', 'ffc' ) . '</button>';
         echo '</div>';
 
-        // Template oculto para JS
         $this->render_field_row( '{{index}}', array(), true );
     }
 
@@ -200,20 +199,20 @@ class FFC_CPT {
         </p>
 
         <hr>
-        <h3><?php esc_html_e( 'Controle de Acesso (Lista Prévia)', 'ffc' ); ?></h3>
+        <h3><?php esc_html_e( 'Access Control (Pre-Approval List)', 'ffc' ); ?></h3>
         <p>
             <label>
                 <input type="checkbox" name="ffc_config[enable_restriction]" value="1" <?php checked( $config['enable_restriction'], 1 ); ?>>
-                <strong><?php esc_html_e( 'Restringir envio por Lista Prévia?', 'ffc' ); ?></strong>
+                <strong><?php esc_html_e( 'Restrict submission by Pre-Approval List?', 'ffc' ); ?></strong>
             </label>
         </p>
         <p class="description">
-            <?php esc_html_e( 'Se marcado, apenas os usuários listados abaixo poderão gerar o certificado. O formulário DEVE ter um campo com o "Name Attribute" definido como "cpf_rf".', 'ffc' ); ?>
+            <?php esc_html_e( 'If checked, only users listed below can generate the certificate. The form MUST have a field with the "Name Attribute" set to "cpf_rf".', 'ffc' ); ?>
         </p>
 
         <p>
-            <label for="ffc_allowed_users_list"><strong><?php esc_html_e( 'Lista de Usuários Permitidos (CPF/RF)', 'ffc' ); ?>:</strong></label><br>
-            <span class="description"><?php esc_html_e( 'Insira um número por linha.', 'ffc' ); ?></span>
+            <label for="ffc_allowed_users_list"><strong><?php esc_html_e( 'List of Allowed Users (CPF/RF)', 'ffc' ); ?>:</strong></label><br>
+            <span class="description"><?php esc_html_e( 'Enter one number per line.', 'ffc' ); ?></span>
             <textarea name="ffc_config[allowed_users_list]" id="ffc_allowed_users_list" rows="10" class="widefat code"><?php echo esc_textarea( $config['allowed_users_list'] ); ?></textarea>
         </p>
 
@@ -248,7 +247,7 @@ class FFC_CPT {
     }
 
     public function save_form_meta_boxes( $post_id ) {
-        if ( ! isset( $_POST['ffc_form_meta_box_nonce'] ) || ! wp_verify_nonce( $_POST['ffc_form_meta_box_nonce'], 'ffc_form_meta_box' ) ) {
+        if ( ! current_user_can( 'edit_post', $post_id ) ) {
             return;
         }
 
@@ -260,7 +259,7 @@ class FFC_CPT {
             return;
         }
 
-        // Salvar Campos
+        // Save Fields
         if ( isset( $_POST['ffc_fields'] ) && is_array( $_POST['ffc_fields'] ) ) {
             $clean_fields = array();
             foreach ( $_POST['ffc_fields'] as $field ) {
@@ -279,18 +278,18 @@ class FFC_CPT {
              update_post_meta( $post_id, '_ffc_form_fields', array() );
         }
 
-        // Salvar Configurações
+        // Save Configurations
         if ( isset( $_POST['ffc_config'] ) && is_array( $_POST['ffc_config'] ) ) {
             $config = array(
                 'success_message' => sanitize_text_field( $_POST['ffc_config']['success_message'] ),
                 'email_admin'     => sanitize_text_field( $_POST['ffc_config']['email_admin'] ),
                 'email_subject'   => sanitize_text_field( $_POST['ffc_config']['email_subject'] ),
                 'email_body'      => wp_kses_post( $_POST['ffc_config']['email_body'] ),
-                // Preserva HTML se for Admin
+                // Preserves HTML if you are an admin
                 'pdf_layout'      => current_user_can( 'unfiltered_html' ) ? $_POST['ffc_config']['pdf_layout'] : wp_kses_post( $_POST['ffc_config']['pdf_layout'] ),
                 'send_user_email' => isset( $_POST['ffc_config']['send_user_email'] ) ? 1 : 0,
                 
-                // RESTRIÇÃO
+                // RESTRICTION
                 'enable_restriction' => isset( $_POST['ffc_config']['enable_restriction'] ) ? 1 : 0,
                 'allowed_users_list' => sanitize_textarea_field( $_POST['ffc_config']['allowed_users_list'] ),
             );

@@ -2,8 +2,8 @@
 /*
 Plugin Name: Free Form Certificate
 Description: Allows creation of dynamic forms, saves submissions, generates a PDF certificate, and enables CSV export.
-Version: 1.0.7
-Author: [Seu Nome]
+Version: 2.5.0
+Author: Alex Meusburger
 Text Domain: ffc
 Domain Path: /languages
 */

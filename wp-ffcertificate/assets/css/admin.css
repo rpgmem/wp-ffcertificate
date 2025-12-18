@@ -1,5 +1,5 @@
 /* ==========================================================================
-   1. ABAS DO METABOX (Estilo nativo do WP)
+   1. METABOX TABS (Native WP Style)
    ========================================================================== */
 .ffc-metabox-tabs {
     margin-top: 10px;
@@ -19,7 +19,7 @@
     border: 1px solid #c3c4c7;
     border-bottom: none;
     padding: 8px 14px;
-    margin-bottom: -1px; /* Sobrepõe a borda inferior */
+    margin-bottom: -1px;
     color: #2271b1;
     cursor: pointer;
     font-weight: 600;
@@ -37,31 +37,33 @@
     background: #ffffff;
     border-bottom: 1px solid #ffffff;
     color: #1d2327;
-    pointer-events: none; /* Desativa clique na aba ativa */
+    pointer-events: none;
 }
 
-/* Conteúdo das abas */
+/* Tab content */
 .ffc-metabox-tab-content {
     padding: 10px;
-    background: #fff;
 }
 
 /* ==========================================================================
-   2. FORM BUILDER (Construtor de Campos)
+   2. FORM BUILDER (Field Builder)
    ========================================================================== */
 #ffc-fields-container {
     margin-bottom: 15px;
     border: 1px solid #c3c4c7;
-    background: #fff;
 }
 
-/* Linha do campo (Flexbox para alinhamento perfeito) */
+/* Hidden template */
+.ffc-field-template {
+    display: none;
+}
+
+/* Field row (Flexbox for perfect alignment) */
 .ffc-field-row {
     display: flex;
     align-items: center;
     padding: 10px;
     border-bottom: 1px solid #f0f0f1;
-    background: #fff;
     gap: 10px;
 }
 
@@ -73,7 +75,7 @@
     background: #fcfcfc;
 }
 
-/* Área de arraste (Handle) */
+/* Drag area (Handle) */
 .ffc-sort-handle {
     cursor: move;
     color: #a7aaad;
@@ -86,55 +88,77 @@
     color: #2271b1;
 }
 
-/* Grupos de inputs dentro da linha */
+/* Input groups within the row */
 .ffc-field-group {
-    flex: 1; /* Distribui espaço */
+    flex: 1;
 }
 
-/* Ajustes específicos de largura para inputs */
+/* Specific width adjustments for inputs */
 .ffc-field-group input[type="text"],
 .ffc-field-group select {
     width: 100%;
     max-width: 100%;
 }
 
-/* Checkbox (Req?) centralizado e menor */
+/* Options field (initially hidden) */
+.ffc-options-field {
+    display: none;
+}
+
+/* Checkbox (Req?) centered and smaller */
 .ffc-field-group:nth-last-child(2) {
     flex: 0 0 60px;
     text-align: center;
     font-size: 12px;
 }
 
-/* Botão de remover (Lixeira) */
+/* Remove button (Trash) */
 .ffc-field-group:last-child {
     flex: 0 0 40px;
     text-align: right;
 }
 
 .ffc-remove-field {
-    color: #d63638 !important;
-    border-color: #d63638 !important;
+    color: #d63638;
+    border-color: #d63638;
 }
 
 .ffc-remove-field:hover {
-    background: #d63638 !important;
-    color: #fff !important;
+    background: #d63638;
+    color: #fff;
 }
 
-/* Ações Gerais (Botão Adicionar) */
+/* General Actions (Add Button) */
 .ffc-add-field-actions {
     padding: 10px 0;
     text-align: right;
 }
 
-/* Editor de Código para PDF Layout */
+/* Code Editor for PDF Layout */
 textarea.code {
     font-family: Consolas, Monaco, monospace;
     font-size: 13px;
     background: #f0f0f1;
 }
 
-/* Correção para a Tabela de Submissões */
+/* Admin PDF Button */
+.ffc-admin-pdf-btn {
+    background: #2271b1;
+    color: #fff;
+    border: 1px solid #2271b1;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.ffc-admin-pdf-btn:hover {
+    background: #135e96;
+}
+
+/* ==========================================================================
+   3. FIX FOR SUBMISSIONS TABLE
+   ========================================================================== */
 .wp-list-table.submissions {
     table-layout: auto !important;
 }
@@ -142,18 +166,18 @@ textarea.code {
 .wp-list-table.submissions td, 
 .wp-list-table.submissions th {
     vertical-align: top !important;
-    white-space: normal !important; /* Permite quebra de linha */
+    white-space: normal !important;
     padding: 8px 10px !important;
     height: auto !important;
     overflow: visible !important;
 }
 
-/* Garante largura mínima para colunas de dados */
+/* Ensures minimum width for data columns */
 .wp-list-table.submissions td {
     min-width: 100px;
 }
 
-/* Estilo para dados brutos (se houver) */
+/* Style for raw data (if any) */
 .ffc-data-raw {
     background: #f9f9f9;
     padding: 5px;
@@ -163,4 +187,12 @@ textarea.code {
     max-height: 100px;
     overflow-y: auto;
     display: block;
+}
+
+/* Basic responsiveness */
+@media (max-width: 768px) {
+    .ffc-field-row {
+        flex-direction: column;
+        gap: 5px;
+    }
 }

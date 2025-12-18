@@ -12,24 +12,24 @@ class FFC_Admin {
     public function __construct( FFC_Submission_Handler $handler ) {
         $this->submission_handler = $handler;
 
-        // Carrega e Inicializa as subclasses modularizadas
+        // Add index for email. Loads and initializes the modularized subclasses
         require_once plugin_dir_path( __FILE__ ) . 'class-ffc-form-editor.php';
         require_once plugin_dir_path( __FILE__ ) . 'class-ffc-settings.php';
 
         $this->form_editor   = new FFC_Form_Editor();
         $this->settings_page = new FFC_Settings( $handler );
 
-        // Hooks Gerais de Admin
+        // General Admin Hooks
         add_action( 'admin_menu', array( $this, 'register_admin_menu' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'admin_assets' ) );
         
-        // Exportação CSV
+        // CSV Export
         add_action( 'admin_init', array( $this, 'handle_csv_export_on_admin_init' ) );
         
-        // Edição de Submissão
+        // Submission Editing
         add_action( 'admin_init', array( $this, 'handle_submission_edit_save' ) );
         
-        // AJAX da Listagem
+        // AJAX Listing
         add_action( 'wp_ajax_ffc_admin_get_pdf_data', array( $this, 'ajax_admin_get_pdf_data' ) );
     }
 
@@ -50,13 +50,34 @@ class FFC_Admin {
             
             wp_localize_script( 'ffc-admin-js', 'ffc_admin_ajax', array(
                 'ajax_url' => admin_url( 'admin-ajax.php' ),
-                'nonce'    => wp_create_nonce( 'ffc_admin_pdf_nonce' )
+                'nonce'    => wp_create_nonce( 'ffc_admin_pdf_nonce' ),
+                'strings' => array(
+                    'fileImported' => __( 'File Imported Successfully!', 'ffc' ),
+                    'errorReadingFile' => __( 'Error reading file locally.', 'ffc' ),
+                    'selectTemplate' => __( 'Please select a template.', 'ffc' ),
+                    'confirmReplaceContent' => __( 'Are you sure? This will replace the current HTML content.', 'ffc' ),
+                    'errorJsVarsNotLoaded' => __( 'Error: Admin JS variables not loaded.', 'ffc' ),
+                    'loading' => __( 'Loading...', 'ffc' ),
+                    'templateLoaded' => __( 'Template loaded successfully!', 'ffc' ),
+                    'error' => __( 'Error: ', 'ffc' ),
+                    'connectionError' => __( 'Connection error.', 'ffc' ),
+                    'loadTemplate' => __( 'Load Template', 'ffc' ),
+                    'selectBackgroundImage' => __( 'Select Background Image', 'ffc' ),
+                    'useImage' => __( 'Use Image', 'ffc' ),
+                    'generating' => __( 'Generating...', 'ffc' ),
+                    'codesGenerated' => __( 'codes generated! Remember to save.', 'ffc' ),
+                    'errorGeneratingCodes' => __( 'Error generating codes.', 'ffc' ),
+                    'errorPdfLibraryNotLoaded' => __( 'Error: frontend.js PDF library not loaded in admin.', 'ffc' ),
+                    'errorFetchingData' => __( 'Error fetching data: ', 'ffc' ),
+                    'unknown' => __( 'Unknown', 'ffc' ),
+                    'confirmDeleteField' => __( 'Delete this field?', 'ffc' ),
+                )
             ) );
         }
     }
 
     // =========================================================================
-    // LISTAGEM E EDIÇÃO DE SUBMISSÕES
+    // LISTING AND EDITING SUBMISSIONS
     // =========================================================================
     
     public function display_submissions_page() {
@@ -79,32 +100,32 @@ class FFC_Admin {
             $id = absint( $_GET['submission_id'] );
             if ( isset( $_GET['action'] ) ) {
                 $act = $_GET['action'];
-                if ( $act === 'trash' ) { check_admin_referer( 'ffc_trash_submission' ); $this->submission_handler->trash_submission( $id ); echo '<div class="updated notice is-dismissible"><p>Item movido para a lixeira.</p></div>'; }
-                if ( $act === 'restore' ) { check_admin_referer( 'ffc_restore_submission' ); $this->submission_handler->restore_submission( $id ); echo '<div class="updated notice is-dismissible"><p>Item restaurado.</p></div>'; }
-                if ( $act === 'delete' ) { check_admin_referer( 'ffc_delete_submission' ); $this->submission_handler->delete_submission( $id ); echo '<div class="updated notice is-dismissible"><p>Item excluído permanentemente.</p></div>'; }
+                if ( $act === 'trash' ) { check_admin_referer( 'ffc_trash_submission' ); $this->submission_handler->trash_submission( $id ); echo '<div class="updated notice is-dismissible"><p>' . __( 'Item moved to trash.', 'ffc' ) . '</p></div>'; }
+                if ( $act === 'restore' ) { check_admin_referer( 'ffc_restore_submission' ); $this->submission_handler->restore_submission( $id ); echo '<div class="updated notice is-dismissible"><p>' . __( 'Item restored.', 'ffc' ) . '</p></div>'; }
+                if ( $act === 'delete' ) { check_admin_referer( 'ffc_delete_submission' ); $this->submission_handler->delete_submission( $id ); echo '<div class="updated notice is-dismissible"><p>' . __( 'Item permanently deleted.', 'ffc' ) . '</p></div>'; }
             }
         }
 
         if ( isset( $_GET['submission'] ) && is_array( $_GET['submission'] ) ) {
             $ids = $_GET['submission']; 
             $act = isset($_GET['action']) && $_GET['action']!=-1 ? $_GET['action'] : (isset($_GET['action2']) ? $_GET['action2'] : '');
-            if($act=='bulk_trash'){ foreach($ids as $i) $this->submission_handler->trash_submission(absint($i)); echo '<div class="updated notice is-dismissible"><p>Itens movidos para a lixeira.</p></div>'; }
-            if($act=='bulk_restore'){ foreach($ids as $i) $this->submission_handler->restore_submission(absint($i)); echo '<div class="updated notice is-dismissible"><p>Itens restaurados.</p></div>'; }
-            if($act=='bulk_delete'){ foreach($ids as $i) $this->submission_handler->delete_submission(absint($i)); echo '<div class="updated notice is-dismissible"><p>Itens excluídos.</p></div>'; }
+            if($act=='bulk_trash'){ foreach($ids as $i) $this->submission_handler->trash_submission(absint($i)); echo '<div class="updated notice is-dismissible"><p>' . __( 'Items moved to trash.', 'ffc' ) . '</p></div>'; }
+            if($act=='bulk_restore'){ foreach($ids as $i) $this->submission_handler->restore_submission(absint($i)); echo '<div class="updated notice is-dismissible"><p>' . __( 'Items restored.', 'ffc' ) . '</p></div>'; }
+            if($act=='bulk_delete'){ foreach($ids as $i) $this->submission_handler->delete_submission(absint($i)); echo '<div class="updated notice is-dismissible"><p>' . __( 'Items permanently deleted.', 'ffc' ) . '</p></div>'; }
         }
         
         $table->prepare_items();
         ?> 
         <div class="wrap">
-            <h1>Submissions</h1>
+            <h1><?php _e( 'Submissions', 'ffc' ); ?></h1>
             <div style="float:right;margin-top:10px;">
                 <form method="POST">
                     <input type="hidden" name="ffc_action" value="export_csv_smart">
                     <?php if(isset($_GET['filter_form_id']) && $_GET['filter_form_id'] > 0): ?>
                         <input type="hidden" name="form_id" value="<?php echo intval($_GET['filter_form_id']); ?>">
-                        <button type="submit" class="button button-primary">CSV Filtrado</button>
+                        <button type="submit" class="button button-primary"><?php _e( 'Filtered CSV', 'ffc' ); ?></button>
                     <?php else: ?>
-                        <button type="submit" class="button">CSV Tudo</button>
+                        <button type="submit" class="button"><?php _e( 'All CSV', 'ffc' ); ?></button>
                     <?php endif; ?>
                     <?php wp_nonce_field('ffc_export_csv_nonce','ffc_export_csv_action'); ?>
                 </form>
@@ -115,41 +136,40 @@ class FFC_Admin {
                 <input type="hidden" name="page" value="ffc-submissions">
                 <?php 
                 $table->views(); 
-                $table->search_box('Buscar','s'); 
+                $table->search_box( __( 'Search', 'ffc' ), 's' ); 
                 $table->display(); 
                 ?>
             </form>
         </div> 
         <?php
     }
-
-    // --- CORREÇÃO 1: REMOVIDO cpf_rf DA PROTEÇÃO E ADICIONADO ALERTA VISUAL ---
+    
     private function render_edit_page() {
         $submission_id = isset( $_GET['submission_id'] ) ? absint( $_GET['submission_id'] ) : 0;
         global $wpdb; 
         $table = $wpdb->prefix . 'ffc_submissions'; 
         $sub = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table} WHERE id = %d", $submission_id ) );
         
-        if ( ! $sub ) { echo '<div class="wrap"><p>Não encontrado.</p></div>'; return; }
+        if ( ! $sub ) { echo '<div class="wrap"><p>' . __( 'Not found.', 'ffc' ) . '</p></div>'; return; }
 
         $data = json_decode( $sub->data, true ); 
         if ( ! is_array( $data ) ) $data = json_decode( stripslashes($sub->data), true );
         
         $fields = get_post_meta( $sub->form_id, '_ffc_form_fields', true );
         
-        // --- APENAS TICKET E DADOS TÉCNICOS SÃO PROTEGIDOS AGORA ---
-        // CPF_RF foi removido desta lista para permitir edição
+        // --- ONLY TICKET AND TECHNICAL DATA ARE PROTECTED NOW ---
+        // CPF_RF was removed from this list to allow editing
         $protected_fields = array( 'auth_code', 'fill_date', 'ticket' );
 
         ?> 
         <div class="wrap">
-            <h1>Editar Submissão #<?php echo $sub->id; ?></h1>
+            <h1><?php printf( __( 'Edit Submission #%s', 'ffc' ), $sub->id ); ?></h1>
             
             <?php 
-            // ALERTA VISUAL: Se foi editado, mostra aviso
+            // VISUAL ALERT: If edited, show warning
             if ( isset( $data['is_edited'] ) && $data['is_edited'] == true ) {
-                $edit_date = isset($data['edited_at']) ? date_i18n( get_option('date_format') . ' ' . get_option('time_format'), strtotime($data['edited_at']) ) : 'Data desconhecida';
-                echo '<div class="notice notice-warning inline" style="margin: 10px 0 20px 0; border-left-color: #f0ad4e;"><p><strong>⚠️ Atenção:</strong> Este registro foi editado manualmente por um administrador em <u>' . esc_html($edit_date) . '</u>.</p></div>';
+                $edit_date = isset($data['edited_at']) ? date_i18n( get_option('date_format') . ' ' . get_option('time_format'), strtotime($data['edited_at']) ) : __( 'Unknown date', 'ffc' );
+                echo '<div class="notice notice-warning inline" style="margin: 10px 0 20px 0; border-left-color: #f0ad4e;"><p><strong>⚠️ ' . __( 'Warning:', 'ffc' ) . '</strong> ' . __( 'This record was manually edited by an administrator on', 'ffc' ) . ' <u>' . esc_html($edit_date) . '</u>.</p></div>';
             }
             ?>
 
@@ -158,18 +178,18 @@ class FFC_Admin {
                 <input type="hidden" name="submission_id" value="<?php echo $sub->id; ?>">
                 
                 <table class="form-table">
-                    <tr><th>Email</th><td><input type="email" name="user_email" value="<?php echo esc_attr($sub->email); ?>" class="regular-text"></td></tr>
+                    <tr><th><?php _e( 'Email', 'ffc' ); ?></th><td><input type="email" name="user_email" value="<?php echo esc_attr($sub->email); ?>" class="regular-text"></td></tr>
                     <?php if(is_array($data)): foreach($data as $k => $v): 
-                        // Pula campos de controle interno na exibição se desejar, ou exibe
+                        // Skip internal control fields in display if desired, or display
                         if ($k === 'is_edited' || $k === 'edited_at') continue;
 
                         $lbl = $k; 
                         if(is_array($fields)) { foreach($fields as $f) { if(isset($f['name']) && $f['name'] === $k) $lbl = $f['label']; } }
                         
-                        // Verifica se o campo atual está na lista de protegidos
+                        // Check if the current field is in the protected list
                         $is_protected = in_array( $k, $protected_fields );
                         $ro = $is_protected ? 'readonly style="background:#f0f0f1; color:#666; cursor:not-allowed;"' : ''; 
-                        $desc = $is_protected ? '<p class="description" style="font-size:11px;">Este campo é gerado automaticamente (Ticket/Código) e não pode ser editado.</p>' : '';
+                        $desc = $is_protected ? '<p class="description" style="font-size:11px;">' . __( 'This field is auto-generated (Ticket/Code) and cannot be edited.', 'ffc' ) . '</p>' : '';
                         ?>
                         <tr>
                             <th><?php echo esc_html($lbl); ?></th>
@@ -181,15 +201,14 @@ class FFC_Admin {
                     <?php endforeach; endif; ?>
                 </table>
                 <p class="submit">
-                    <button type="submit" name="ffc_save_edit" class="button button-primary">Salvar Alterações</button> 
-                    <a href="<?php echo admin_url('edit.php?post_type=ffc_form&page=ffc-submissions'); ?>" class="button">Cancelar</a>
+                    <button type="submit" name="ffc_save_edit" class="button button-primary"><?php _e( 'Save Changes', 'ffc' ); ?></button> 
+                    <a href="<?php echo admin_url('edit.php?post_type=ffc_form&page=ffc-submissions'); ?>" class="button"><?php _e( 'Cancel', 'ffc' ); ?></a>
                 </p>
             </form>
         </div> 
         <?php
     }
 
-    // --- CORREÇÃO 2: PERMITIR SALVAR CPF_RF E MARCAR COMO EDITADO ---
     public function handle_submission_edit_save() {
         if ( isset( $_POST['ffc_save_edit'] ) && check_admin_referer( 'ffc_edit_submission_nonce', 'ffc_edit_submission_action' ) ) {
             global $wpdb; 
@@ -198,17 +217,17 @@ class FFC_Admin {
             $email = sanitize_email( $_POST['user_email'] ); 
             $raw = isset($_POST['data']) ? $_POST['data'] : array();
             
-            // Dados antigos para restaurar os campos protegidos
+            // Old data to restore protected fields
             $old = $wpdb->get_row($wpdb->prepare("SELECT data FROM $table WHERE id=%d", $id)); 
             $old_data = json_decode($old->data, true); 
             if(!is_array($old_data)) $old_data = json_decode(stripslashes($old->data), true);
             
-            // Lista de campos protegidos (Sem CPF/RF)
+            // List of protected fields (Without CPF/RF)
             $protected_fields = array( 'auth_code', 'fill_date', 'ticket' );
 
             $clean = array(); 
             foreach($raw as $k => $v) { 
-                // Se for protegido e existir valor antigo, mantém o antigo
+                // If protected and old value exists, keep old
                 if( in_array($k, $protected_fields) && isset($old_data[$k]) ) { 
                     $clean[$k] = $old_data[$k]; 
                 } else { 
@@ -216,7 +235,7 @@ class FFC_Admin {
                 }
             }
 
-            // --- ADICIONA FLAGS DE EDIÇÃO ---
+            // --- ADD EDITION FLAGS ---
             $clean['is_edited'] = true;
             $clean['edited_at'] = current_time('mysql');
             
@@ -240,7 +259,10 @@ class FFC_Admin {
                 $rows = $wpdb->get_results( "SELECT * FROM {$table} ORDER BY submission_date DESC", ARRAY_A );
                 $filename = 'all-submissions.csv';
             }
-            if(empty($rows)) wp_die('No Data');
+            if(empty($rows)) {
+                wp_die( __( 'No data found for export.', 'ffc' ) );
+                return;
+            }
             header('Content-Type: text/csv'); header("Content-Disposition: attachment; filename=$filename");
             $out = fopen('php://output', 'w'); fputcsv($out, array('ID', 'Date', 'Email', 'Status', 'Data (JSON)'));
             foreach($rows as $r) { 
@@ -253,12 +275,16 @@ class FFC_Admin {
     public function ajax_admin_get_pdf_data() {
         check_ajax_referer( 'ffc_admin_pdf_nonce', 'nonce' );
         $id = isset($_POST['submission_id']) ? absint($_POST['submission_id']) : 0;
-        if ( ! $id ) wp_send_json_error( 'ID inválido' );
+        if ( ! $id ) wp_send_json_error( __( 'Invalid ID.', 'ffc' ) );
         global $wpdb; $table = $wpdb->prefix . 'ffc_submissions';
         $sub = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table} WHERE id = %d", $id ) );
-        if ( ! $sub ) wp_send_json_error( 'Registro não encontrado' );
+        if ( ! $sub ) wp_send_json_error( __( 'Record not found.', 'ffc' ) );
         
-        $data = json_decode( $sub->data, true ); if ( ! is_array( $data ) ) $data = json_decode( stripslashes( $sub->data ), true );
+        $data = json_decode( $sub->data, true ); 
+        if ( ! is_array( $data ) ) $data = json_decode( stripslashes( $sub->data ), true );
+        if ( json_last_error() !== JSON_ERROR_NONE ) {
+            wp_send_json_error( __( 'Error decoding data.', 'ffc' ) );
+        }
         $fmt = get_option('date_format') . ' ' . get_option('time_format');
         $dval = isset($data['fill_date']) ? $data['fill_date'] : date_i18n($fmt, strtotime($sub->submission_date));
         $data['fill_date'] = $dval; $data['date'] = $dval; $data['submission_date'] = $dval;

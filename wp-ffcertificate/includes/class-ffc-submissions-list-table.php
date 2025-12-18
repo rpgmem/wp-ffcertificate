@@ -18,33 +18,40 @@ class FFC_Submission_List extends WP_List_Table {
     }
 
     public function no_items() {
-        _e( 'Nenhum registro encontrado.', 'ffc' );
+        _e( 'No records found.', 'ffc' );
     }
 
-    // --- ABAS DE VIEW (Ativos / Lixeira) ---
+    // --- VIEW TABS (Assets / Trash) ---
     protected function get_views() {
         global $wpdb;
         $table_name = $wpdb->prefix . 'ffc_submissions';
-        $status = isset($_REQUEST['status']) ? $_REQUEST['status'] : 'publish';
         
+        // Basic sanitation
+        $status = isset($_REQUEST['status']) ? sanitize_key($_REQUEST['status']) : 'publish';
+        if ( ! in_array( $status, array( 'publish', 'trash' ) ) ) {
+            $status = 'publish';
+        }
+
+        // Safe counting (Assuming the 'status' column exists in DB)
         $count_publish = $wpdb->get_var("SELECT COUNT(id) FROM $table_name WHERE status = 'publish'");
         $count_trash   = $wpdb->get_var("SELECT COUNT(id) FROM $table_name WHERE status = 'trash'");
         
-        // Garante que não seja null
-        $count_publish = $count_publish ? $count_publish : 0;
-        $count_trash   = $count_trash ? $count_trash : 0;
+        $count_publish = $count_publish ? intval($count_publish) : 0;
+        $count_trash   = $count_trash ? intval($count_trash) : 0;
 
         $views = array(
             'publish' => sprintf(
-                '<a href="%s" class="%s">Ativos <span class="count">(%s)</span></a>',
-                admin_url('edit.php?post_type=ffc_form&page=ffc-submissions&status=publish'),
+                '<a href="%s" class="%s">%s <span class="count">(%d)</span></a>',
+                esc_url( admin_url('edit.php?post_type=ffc_form&page=ffc-submissions&status=publish') ),
                 $status === 'publish' ? 'current' : '',
+                __( 'Active', 'ffc' ),
                 $count_publish
             ),
             'trash' => sprintf(
-                '<a href="%s" class="%s">Lixeira <span class="count">(%s)</span></a>',
-                admin_url('edit.php?post_type=ffc_form&page=ffc-submissions&status=trash'),
+                '<a href="%s" class="%s">%s <span class="count">(%d)</span></a>',
+                esc_url( admin_url('edit.php?post_type=ffc_form&page=ffc-submissions&status=trash') ),
                 $status === 'trash' ? 'current' : '',
+                __( 'Trash', 'ffc' ),
                 $count_trash
             )
         );
@@ -55,9 +62,9 @@ class FFC_Submission_List extends WP_List_Table {
         $columns = array(
             'cb'              => '<input type="checkbox" />',
             'id'              => __( 'ID', 'ffc' ),
-            'submission_date' => __( 'Data', 'ffc' ),
+            'submission_date' => __( 'Date', 'ffc' ),
             'email'           => __( 'Email', 'ffc' ),
-            'form_name'       => __( 'Formulário', 'ffc' ),
+            'form_name'       => __( 'Form', 'ffc' ),
         );
 
         if ( ! empty( $_GET['filter_form_id'] ) ) {
@@ -67,20 +74,21 @@ class FFC_Submission_List extends WP_List_Table {
             if ( is_array( $fields ) ) {
                 foreach ( $fields as $field ) {
                     if ( ! empty( $field['name'] ) ) {
-                        $col_key = esc_attr( $field['name'] );
+                        $col_key = sanitize_text_field( $field['name'] );
                         $col_label = ! empty( $field['label'] ) ? $field['label'] : $field['name'];
-                        // Não sobrescreve colunas padrão
-                        if(!isset($columns[$col_key])) {
-                            $columns[ $col_key ] = $col_label;
+                        
+                        // It does not overwrite default columns
+                        if( ! isset( $columns[ $col_key ] ) ) {
+                            $columns[ $col_key ] = esc_html( $col_label );
                         }
                     }
                 }
             }
         } else {
-            $columns['data_summary'] = __( 'Resumo dos Dados', 'ffc' );
+            $columns['data_summary'] = __( 'Data Summary', 'ffc' );
         }
 
-        $columns['actions'] = __( 'Ações', 'ffc' );
+        $columns['actions'] = __( 'Actions', 'ffc' );
         return $columns;
     }
 
@@ -93,29 +101,29 @@ class FFC_Submission_List extends WP_List_Table {
     }
 
     public function get_bulk_actions() {
-        $status = isset($_REQUEST['status']) ? $_REQUEST['status'] : 'publish';
+        $status = isset($_REQUEST['status']) ? sanitize_key($_REQUEST['status']) : 'publish';
         
         if ( $status === 'trash' ) {
             return array(
-                'bulk_restore' => __( 'Restaurar', 'ffc' ),
-                'bulk_delete'  => __( 'Excluir Permanentemente', 'ffc' )
+                'bulk_restore' => __( 'Restore', 'ffc' ),
+                'bulk_delete'  => __( 'Delete Permanently', 'ffc' )
             );
         } else {
             return array(
-                'bulk_print' => __( 'Imprimir/Gerar PDF', 'ffc' ),
-                'bulk_trash' => __( 'Mover para Lixeira', 'ffc' )
+                'bulk_print' => __( 'Print/Generate PDF', 'ffc' ),
+                'bulk_trash' => __( 'Move to Trash', 'ffc' )
             );
         }
     }
 
-    // --- RENDERIZAÇÃO DAS LINHAS (USANDO ARRAYS) ---
+    // --- LINE RENDERING (USING ARRAYS) ---
 
     public function column_cb( $item ) {
-        return sprintf( '<input type="checkbox" name="submission[]" value="%s" />', $item['id'] );
+        return sprintf( '<input type="checkbox" name="submission[]" value="%s" />', esc_attr( $item['id'] ) );
     }
 
     public function column_id( $item ) {
-        return '<strong>#' . $item['id'] . '</strong>';
+        return '<strong>#' . esc_html( $item['id'] ) . '</strong>';
     }
 
     public function column_submission_date( $item ) {
@@ -128,7 +136,7 @@ class FFC_Submission_List extends WP_List_Table {
 
     public function column_form_name( $item ) {
         $form = get_post( $item['form_id'] );
-        $title = $form ? $form->post_title : '(Excluído)';
+        $title = $form ? $form->post_title : __( '(Deleted)', 'ffc' );
         $url = add_query_arg( 'filter_form_id', $item['form_id'] );
         return '<a href="' . esc_url( $url ) . '">' . esc_html( $title ) . '</a>';
     }
@@ -142,10 +150,13 @@ class FFC_Submission_List extends WP_List_Table {
         $count = 0;
         foreach ( $data as $k => $v ) {
             if ( $count >= 3 ) break;
-            if ( $k === 'auth_code' || $k === 'cpf_rf' || $k === 'fill_date' ) continue;
+            if ( in_array( $k, array( 'auth_code', 'cpf_rf', 'fill_date' ) ) ) continue;
             
-            $output[] = '<strong>' . esc_html( $k ) . ':</strong> ' . esc_html( $v );
-            $count++;
+            // Checks if it's a string or a number to avoid an Array to String error
+            if ( is_string( $v ) || is_numeric( $v ) ) {
+                $output[] = '<strong>' . esc_html( ucfirst($k) ) . ':</strong> ' . esc_html( $v );
+                $count++;
+            }
         }
         return implode( '<br>', $output );
     }
@@ -155,38 +166,43 @@ class FFC_Submission_List extends WP_List_Table {
         if ( ! is_array( $data ) ) $data = json_decode( stripslashes( $item['data'] ), true );
         
         if ( is_array( $data ) && isset( $data[ $column_name ] ) ) {
+            // If it's an array (e.g., multiple checkboxes), convert it to a string
+            if ( is_array( $data[ $column_name ] ) ) {
+                return esc_html( implode( ', ', $data[ $column_name ] ) );
+            }
             return esc_html( $data[ $column_name ] );
         }
         return '-';
     }
 
-    // --- COLUNA AÇÕES (Lógica de Lixeira + PDF Direto) ---
+    // --- ACTIONS COLUMN ---
     public function column_actions( $item ) {
         $base_url = admin_url( 'edit.php?post_type=ffc_form&page=ffc-submissions' );
-        $status = isset($_REQUEST['status']) ? $_REQUEST['status'] : 'publish';
+        $status = isset($_REQUEST['status']) ? sanitize_key($_REQUEST['status']) : 'publish';
         
         $actions = array();
-        $id = $item['id']; // Usando array access
+        $id = absint( $item['id'] );
 
         if ( $status === 'trash' ) {
             $restore_url = wp_nonce_url( add_query_arg( array( 'action' => 'restore', 'submission_id' => $id ), $base_url ), 'ffc_restore_submission' );
             $delete_url  = wp_nonce_url( add_query_arg( array( 'action' => 'delete', 'submission_id' => $id ), $base_url ), 'ffc_delete_submission' );
             
-            $actions[] = sprintf( '<a href="%s" class="button button-small">%s</a>', esc_url( $restore_url ), __( 'Restaurar', 'ffc' ) );
-            $actions[] = sprintf( '<a href="%s" class="button button-small button-link-delete" onclick="return confirm(\'Excluir permanentemente?\')">%s</a>', esc_url( $delete_url ), __( 'Excluir', 'ffc' ) );
+            $actions[] = sprintf( '<a href="%s" class="button button-small">%s</a>', esc_url( $restore_url ), __( 'Restore', 'ffc' ) );
+            $actions[] = sprintf( '<a href="%s" class="button button-small button-link-delete" onclick="return confirm(\'%s\')">%s</a>', esc_url( $delete_url ), esc_js( __( 'Delete permanently?', 'ffc' ) ), __( 'Delete', 'ffc' ) );
         } else {
             $edit_url  = add_query_arg( array( 'action' => 'edit', 'submission_id' => $id ), $base_url );
             $trash_url = wp_nonce_url( add_query_arg( array( 'action' => 'trash', 'submission_id' => $id ), $base_url ), 'ffc_trash_submission' );
 
-            $actions[] = sprintf( '<a href="%s" class="button button-small">Editar</a>', esc_url( $edit_url ) );
+            $actions[] = sprintf( '<a href="%s" class="button button-small">%s</a>', esc_url( $edit_url ), __( 'Edit', 'ffc' ) );
             
-            // BOTÃO PDF PARA JS (Classe .ffc-admin-pdf-btn)
+            // PDF BUTTON FOR JS (Keeping classes and data-id)
             $actions[] = sprintf( 
-                '<button type="button" class="button button-small button-primary ffc-admin-pdf-btn" data-id="%d">PDF</button>', 
-                $id 
+                '<button type="button" class="button button-small button-primary ffc-admin-pdf-btn" data-id="%d">%s</button>', 
+                $id,
+                __( 'PDF', 'ffc' )
             );
 
-            $actions[] = sprintf( '<a href="%s" class="button button-small button-link-delete" onclick="return confirm(\'Mover para Lixeira?\')">Lixeira</a>', esc_url( $trash_url ) );
+            $actions[] = sprintf( '<a href="%s" class="button button-small button-link-delete" onclick="return confirm(\'%s\')">%s</a>', esc_url( $trash_url ), esc_js( __( 'Move to Trash?', 'ffc' ) ), __( 'Trash', 'ffc' ) );
         }
 
         return implode( ' ', $actions );
@@ -194,25 +210,26 @@ class FFC_Submission_List extends WP_List_Table {
 
     public function extra_tablenav( $which ) {
         if ( $which == 'top' ) {
+            // `get_posts` can be heavy with many forms, but it's the WP standard
             $forms = get_posts( array( 'post_type' => 'ffc_form', 'posts_per_page' => -1, 'post_status' => 'any' ) );
             $current = isset( $_GET['filter_form_id'] ) ? absint( $_GET['filter_form_id'] ) : 0;
             ?>
             <div class="alignleft actions">
                 <select name="filter_form_id">
-                    <option value="">Todos os Formulários</option>
+                    <option value=""><?php _e( 'All Forms', 'ffc' ); ?></option>
                     <?php foreach ( $forms as $f ) : ?>
-                        <option value="<?php echo $f->ID; ?>" <?php selected( $current, $f->ID ); ?>>
+                        <option value="<?php echo esc_attr( $f->ID ); ?>" <?php selected( $current, $f->ID ); ?>>
                             <?php echo esc_html( $f->post_title ); ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
-                <?php submit_button( 'Filtrar', 'secondary', 'filter_action', false ); ?>
+                <?php submit_button( __( 'Filter', 'ffc' ), 'secondary', 'filter_action', false ); ?>
             </div>
             <?php
         }
     }
 
-    // --- PREPARAÇÃO DOS DADOS ---
+    // --- DATA PREPARATION ---
     public function prepare_items() {
         global $wpdb;
         $table_name = $wpdb->prefix . 'ffc_submissions';
@@ -224,8 +241,10 @@ class FFC_Submission_List extends WP_List_Table {
         
         $this->_column_headers = array( $columns, $hidden, $sortable );
 
-        // Filtro de Status (Padrão: publish)
-        $status = isset( $_REQUEST['status'] ) ? $_REQUEST['status'] : 'publish';
+        // Status Filter
+        $status = isset( $_REQUEST['status'] ) ? sanitize_key( $_REQUEST['status'] ) : 'publish';
+        if( !in_array( $status, array('publish', 'trash') ) ) $status = 'publish';
+
         $where = $wpdb->prepare( "WHERE status = %s", $status );
         
         if ( ! empty( $_GET['filter_form_id'] ) ) {
@@ -237,13 +256,16 @@ class FFC_Submission_List extends WP_List_Table {
             $where .= $wpdb->prepare( " AND ( email LIKE %s OR data LIKE %s )", $s, $s );
         }
 
-        $orderby = ( ! empty( $_GET['orderby'] ) ) ? sanitize_sql_orderby( $_GET['orderby'] ) : 'submission_date';
-        $order   = ( ! empty( $_GET['order'] ) ) ? sanitize_text_field( $_GET['order'] ) : 'DESC';
+        // Safe Ordering (Allowlist)
+        $orderby_list = array( 'id', 'submission_date', 'email' );
+        $orderby = ( ! empty( $_GET['orderby'] ) && in_array( $_GET['orderby'], $orderby_list ) ) ? $_GET['orderby'] : 'submission_date';
+        
+        $order = ( ! empty( $_GET['order'] ) && strtoupper( $_GET['order'] ) === 'ASC' ) ? 'ASC' : 'DESC';
 
-        // Contagem
+        // Counting
         $total_items = (int) $wpdb->get_var( "SELECT COUNT(id) FROM {$table_name} {$where}" );
 
-        // Paginação
+        // Pagination
         $current_page = $this->get_pagenum();
         $total_pages = ceil( $total_items / $per_page );
 
@@ -254,7 +276,8 @@ class FFC_Submission_List extends WP_List_Table {
         $offset = ( $current_page - 1 ) * $per_page;
         if ( $offset < 0 ) $offset = 0;
 
-        // QUERY FINAL (Retornando ARRAY_A)
+        // FINAL QUERY (Returning ARRAY_A)
+        // Added direct sanitization in SQL string only where WPDB prepare doesn't cover (ordering)
         $this->items = $wpdb->get_results( 
             "SELECT * FROM {$table_name} {$where} ORDER BY {$orderby} {$order} LIMIT {$per_page} OFFSET {$offset}",
             ARRAY_A 

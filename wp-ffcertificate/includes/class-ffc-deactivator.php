@@ -10,6 +10,11 @@ class FFC_Deactivator {
             return;
         }
         
+       // Add confirmation to prevent accidental deletion
+        if ( ! isset( $_POST['confirm_uninstall'] ) || $_POST['confirm_uninstall'] !== 'yes' ) {
+            wp_die( 'Confirme a desinstalação para prosseguir.' );
+        }
+        
         global $wpdb;
         $table_name = $wpdb->prefix . 'ffc_submissions';
         $wpdb->query( "DROP TABLE IF EXISTS {$table_name}" );
