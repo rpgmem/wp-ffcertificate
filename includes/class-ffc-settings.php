@@ -82,28 +82,85 @@ class FFC_Settings {
             <div class="ffc-tab-content">
                 <?php if($active_tab=='help'): ?>
                     <div class="card ffc-settings-card">
-                        <h3><?php esc_html_e( 'Shortcodes', 'ffc' ); ?></h3>
-                        <table class="widefat striped ffc-help-table">
-                            <thead>
-                                <tr><th>Shortcode</th><th><?php esc_html_e( 'Description', 'ffc' ); ?></th></tr>
-                            </thead>
-                            <tbody>
-                                <tr><td><code>[ffc_form id="123"]</code></td><td><?php esc_html_e( 'Displays the issuance form.', 'ffc' ); ?></td></tr>
-                                <tr><td><code>[ffc_verification]</code></td><td><?php esc_html_e( 'Displays the verification page.', 'ffc' ); ?></td></tr>
-                            </tbody>
-                        </table>
+                        <h3><?php esc_html_e( 'How to use this plugin', 'ffc' ); ?></h3>
+                    <p><?php esc_html_e( 'This plugin allows you to create certificate issuance forms, generate PDFs automatically, and verify authenticity.', 'ffc' ); ?></p>
+                    
+                    <hr>
 
-                        <h3><?php esc_html_e( 'Template Variables', 'ffc' ); ?></h3>
-                        <table class="widefat striped ffc-help-table">
-                            <thead>
-                                <tr><th><?php esc_html_e( 'Variable', 'ffc' ); ?></th><th><?php esc_html_e( 'Description', 'ffc' ); ?></th></tr>
-                            </thead>
-                            <tbody>
-                                <tr><td><code>{{name}}</code> / <code>{{nome}}</code></td><td><?php esc_html_e( 'Participant full name.', 'ffc' ); ?></td></tr>
-                                <tr><td><code>{{auth_code}}</code></td><td><?php esc_html_e( 'Unique validation code.', 'ffc' ); ?></td></tr>
-                                <tr><td><code>{{cpf_rf}}</code></td><td><?php esc_html_e( 'Identification ID.', 'ffc' ); ?></td></tr>
-                            </tbody>
-                        </table>
+                    <h4><?php esc_html_e( '1. Shortcodes', 'ffc' ); ?></h4>
+                    <table class="widefat striped">
+                        <thead>
+                            <tr>
+                                <th style="width: 200px;">Shortcode</th>
+                                <th><?php esc_html_e( 'Description', 'ffc' ); ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>[ffc_form id="123"]</code></td>
+                                <td><?php esc_html_e( 'Displays the issuance form. Replace "123" with the specific Form ID found in the "All Forms" list.', 'ffc' ); ?></td>
+                            </tr>
+                            <tr>
+                                <td><code>[ffc_verification]</code></td>
+                                <td><?php esc_html_e( 'Displays the public Authenticity Verification page where users can validate a certificate code.', 'ffc' ); ?></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <br>
+                    <hr>
+
+                    <h4><?php esc_html_e( '2. PDF Template Variables', 'ffc' ); ?></h4>
+                    <p><?php esc_html_e( 'When creating your form layout (HTML) in the editor, use these variables. They will be replaced by user data:', 'ffc' ); ?></p>
+                    <table class="widefat striped">
+                        <thead>
+                            <tr>
+                                <th style="width: 200px;"><?php esc_html_e( 'Variable', 'ffc' ); ?></th>
+                                <th><?php esc_html_e( 'Description', 'ffc' ); ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>{{name}}</code> <?php esc_html_e( 'or', 'ffc' ); ?> <code>{{nome}}</code></td>
+                                <td><?php esc_html_e( 'The full name of the participant.', 'ffc' ); ?></td>
+                            </tr>
+                            <tr>
+                                <td><code>{{cpf_rf}}</code></td>
+                                <td><?php esc_html_e( 'The Identification ID (CPF/RF) entered by the user.', 'ffc' ); ?></td>
+                            </tr>
+                            <tr>
+                                <td><code>{{email}}</code></td>
+                                <td><?php esc_html_e( 'The user email address.', 'ffc' ); ?></td>
+                            </tr>
+                            <tr>
+                                <td><code>{{auth_code}}</code></td>
+                                <td><?php esc_html_e( 'The unique authentication code (e.g., A1B2-C3D4-E5F6). Required for validation.', 'ffc' ); ?></td>
+                            </tr>
+                            <tr>
+                                <td><code>{{form_title}}</code></td>
+                                <td><?php esc_html_e( 'The title of this form/event.', 'ffc' ); ?></td>
+                            </tr>
+                            <tr>
+                                <td><code>{{current_date}}</code></td>
+                                <td><?php esc_html_e( 'The date the certificate was issued (DD/MM/YYYY).', 'ffc' ); ?></td>
+                            </tr>
+                            <tr>
+                                <td><code>{{custom_field_name}}</code></td>
+                                <td><?php esc_html_e( 'Any other custom field you added to the form (use the field name).', 'ffc' ); ?></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <br>
+                    <hr>
+
+                    <h4><?php esc_html_e( '3. Security Features', 'ffc' ); ?></h4>
+                    <ul>
+                        <li><strong><?php esc_html_e( 'Allowlist:', 'ffc' ); ?></strong> <?php esc_html_e( 'Restrict issuance to a specific list of CPFs/IDs.', 'ffc' ); ?></li>
+                        <li><strong><?php esc_html_e( 'Ticket Mode:', 'ffc' ); ?></strong> <?php esc_html_e( 'Require a unique ticket code to issue the certificate. Tickets are "burned" (deleted) after use.', 'ffc' ); ?></li>
+                        <li><strong><?php esc_html_e( 'Denylist:', 'ffc' ); ?></strong> <?php esc_html_e( 'Block specific IDs or Tickets from generating certificates.', 'ffc' ); ?></li>
+                        <li><strong><?php esc_html_e( 'Math Captcha:', 'ffc' ); ?></strong> <?php esc_html_e( 'Built-in protection against bots on all forms.', 'ffc' ); ?></li>
+                    </ul>
                     </div>
                     
                 <?php elseif($active_tab=='general'): ?>

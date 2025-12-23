@@ -23,7 +23,7 @@ O plugin foi reestruturado para escalabilidade, segurança e performance.
  2. Organização Interna
 ==========================
 
-O plugin principal é o `wp-ffcertificate.php`.
+O arquivo principal do plugin é o `wp-ffcertificate.php`.
 
 ✔ classes/ (dentro de wp-ffcertificate.php)
    - `Free_Form_Certificate`: Classe principal, hooks, CPT e admin menus.
@@ -33,7 +33,27 @@ O plugin principal é o `wp-ffcertificate.php`.
 ✔ assets/
    - js/admin.js: Lógica do form builder e geração manual/preview no admin.
    - js/frontend.js: Lógica AJAX de submissão e geração de PNG no frontend.
+   - js/html2canvas.min.js: Biblioteca que transforma o HTML gerado pelo formulário em uma imagem
+   - jspdf.umd.min.js: Biblioteca que embute a imgem gerada em um PDF
    - css/admin.css: Estilos para o CPT e telas de admin.
+   - css/ffc-pdf-core.css:
+   - css/frontend.css:
+
+✔ includes/
+   - class-ffc-activator.php
+   - class-ffc-admin.php
+   - class-ffc-cpt.php
+   - class-ffc-deactivator.php
+   - class-ffc-form-editor.php
+   - class-ffc-frontend.php
+   - class-ffc-loader.php
+   - class-ffc-settings.php
+   - class-ffc-submission-handler.php
+   - class-ffc-submissions-list-table.php
+   - class-ffc-utils.php
+
+✔ languages/
+   - ffc.pot
 
 ==========================
  3. Fluxo de Submissão
@@ -76,14 +96,28 @@ Placeholders disponíveis:
 - `{{auth_code}}`: Código de autenticação único (ex: A1B2-C3D4-E5F6).
 - `{{cpf_rf}}`: Identificador único do usuário (obrigatório para restrição).
 - `{{date}}`: Data de emissão.
-- `{{form_title}}` Título do formulário
-- `{{submission_date}}` Data atual formatada
-- `{{submission_id}}` ID do registro no banco de dados
-- `{{ticket}}` Campo do ticket
-- Campos definidos pelo usuário: `{{nome_variavel}}` (deve ser o "Name (Variable)" definido no builder)
+- `{{fill_date}}`: Data de emissão.
+- `{{fill_time}}`: Hora de emissão.
+- `{{form_title}}`: Título do formulário
+- `{{submission_date}}`: Data atual formatada
+- `{{submission_id}}`: ID do registro no banco de dados
+- `{{ticket}}`: Campo do ticket
+- `{{name}}` ou `{{nome}}`:
+- `{{email}}`:
+- `{{current_date}}`:
+- `{{nome_variavel}}`: Campos definidos pelo usuário: (deve ser o "Name (Variable)" definido no builder)
+- `{{validation_url}}`:
+- `{{index}}`:
 
 ==========================
- 5. Notificação ao Administrador
+ 5. Shortcodes disponiveis
+==========================
+
+- [ffc_form id="123"]
+- [ffc_verification]
+
+==========================
+ 6. Notificação ao Administrador
 ==========================
 Notificação é 100% assíncrona via WP-Cron (`ffc_send_admin_notification_hook`).
 
@@ -91,18 +125,27 @@ Notificação é 100% assíncrona via WP-Cron (`ffc_send_admin_notification_hook
 → Seguro contra timeouts do servidor.
 
 ==========================
- 6. Exportação CSV
+ 7. Exportação CSV
 ==========================
 Disponível na tela "Submissions" com filtro opcional por formulário.
 Gera um arquivo CSV completo com todos os metadados de submissão (ID, IP, Data) e todos os campos de dados únicos encontrados.
 
 ==========================
- 7. Limpeza Automática
+ 8. Limpeza Automática
 ==========================
 O evento `ffc_daily_cleanup_hook` roda diariamente via WP-Cron para deletar submissões mais antigas que o número de dias configurado em "Settings" > "General Settings".
 
 ==========================
- 8. Autenticação e Verificação
+ 9. Segurança
+==========================
+Lista de permissões: Restrinja a emissão a uma lista específica de CPFs/IDs.
+Modo de ticket: Exija um código de ticket exclusivo para emitir o certificado. Os tickets são "descartados" (excluídos) após o uso.
+Lista de bloqueios: Bloqueie IDs ou tickets específicos de gerar certificados.
+
+Captcha matemático: Proteção integrada contra bots em todos os formulários.
+
+==========================
+ 10. Autenticação e Verificação
 ==========================
 O plugin agora garante a autenticidade dos documentos gerados.
 

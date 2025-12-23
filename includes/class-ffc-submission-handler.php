@@ -141,7 +141,7 @@ class FFC_Submission_Handler {
         }
 
         // Tags de Sistema (Datas e Títulos)
-        $layout = str_replace( '{{validation_url}}', esc_url( site_url( '/validar' ) ), $layout );
+        $layout = str_replace( '{{validation_url}}', esc_url( site_url( '/valid' ) ), $layout );
         $layout = str_replace( '{{submission_date}}', date_i18n( get_option( 'date_format' ), current_time( 'timestamp' ) ), $layout );
         $layout = str_replace( '{{form_title}}', $form_title, $layout );
 

@@ -117,7 +117,7 @@ class FFC_Activator {
                 <div style="border:10px solid #2c3e50; padding:40px; text-align:center; font-family: Arial, sans-serif;">
                     <h1 style="color:#2c3e50; font-size:42px;">CERTIFICADO</h1>
                     <p style="font-size:20px;">Este certificado confirma que</p>
-                    <h2 style="font-size:32px; color:#e67e22;">{{nome}}</h2>
+                    <h2 style="font-size:32px; color:#e67e22;">{{name}}</h2>
                     <p style="font-size:18px;">concluiu o processo com sucesso em {{submission_date}}.</p>
                     <div style="margin-top:60px; padding-top:20px; border-top:1px solid #eee;">
                         <p style="margin:0;">Código de Autenticidade: <strong>{{auth_code}}</strong></p>
