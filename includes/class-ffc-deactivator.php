@@ -40,6 +40,7 @@ class FFC_Deactivator {
             return;
         }
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         
        // Add confirmation to prevent accidental deletion
         if ( ! isset( $_POST['confirm_uninstall'] ) || $_POST['confirm_uninstall'] !== 'yes' ) {
@@ -60,12 +61,23 @@ class FFC_Deactivator {
 
         // 2. Delete global options
 >>>>>>> Stashed changes
+=======
+
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'ffc_submissions';
+
+        // 1. Drop the custom database table
+        $wpdb->query( "DROP TABLE IF EXISTS {$table_name}" );
+
+        // 2. Delete global options
+>>>>>>> Stashed changes
         delete_option( 'ffc_db_version' );
         delete_option( 'ffc_settings' );
 
         // 3. Delete all Custom Post Types (Forms and Email Queue)
         $post_types = array( 'ffc_form', 'ffc_email_queue' );
         
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
         wp_clear_scheduled_hook( 'ffc_daily_cleanup_hook' );
         wp_clear_scheduled_hook( 'ffc_process_submission_hook' );
@@ -83,6 +95,8 @@ class FFC_Deactivator {
             wp_delete_post( $form_id, true );
         }
 =======
+=======
+>>>>>>> Stashed changes
         foreach ( $post_types as $post_type ) {
             $posts = get_posts( array(
                 'post_type'      => $post_type,

@@ -2,12 +2,18 @@
 /**
  * FFC_Submission_Handler
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
  * Gerencia o processamento, salvamento, edição e exportação das submissões.
 =======
+=======
+>>>>>>> Stashed changes
  * Manages processing, database storage, and background tasks for certificate submissions.
  *
  * @package FastFormCertificates
  * @version 1.2.1
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
  */
 
@@ -27,10 +33,19 @@ class FFC_Submission_Handler {
         $this->table_name = $wpdb->prefix . 'ffc_submissions';
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         // Hook para processamento em background (E-mail/Log)
         add_action( 'ffc_process_submission_hook', array( $this, 'async_process_submission' ), 10, 7 );
         
         // Configuração de SMTP Customizado
+=======
+        $this->load_dependencies();
+
+        // Hooks para processamento em segundo plano (Melhoria de UX - Critério 1)
+        add_action( 'ffc_process_submission_hook', array( $this, 'async_process_submission' ), 10, 7 );
+        
+        // Integração SMTP Customizada
+>>>>>>> Stashed changes
 =======
         $this->load_dependencies();
 
@@ -50,7 +65,11 @@ class FFC_Submission_Handler {
 
     /**
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
      * Configura o PHPMailer para usar SMTP se definido nas configurações
+=======
+     * Configura o SMTP se ativado nas configurações globais.
+>>>>>>> Stashed changes
 =======
      * Configura o SMTP se ativado nas configurações globais.
 >>>>>>> Stashed changes
@@ -76,7 +95,12 @@ class FFC_Submission_Handler {
 
     /**
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
      * Busca uma submissão pelo ID
+=======
+     * Resolve qual template usar baseado em lógica condicional.
+     * Critério 4: Permite múltiplos designs para o mesmo formulário.
+>>>>>>> Stashed changes
 =======
      * Resolve qual template usar baseado em lógica condicional.
      * Critério 4: Permite múltiplos designs para o mesmo formulário.
@@ -119,7 +143,11 @@ class FFC_Submission_Handler {
 
     /**
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
      * Processa a submissão inicial e salva no banco de dados
+=======
+     * Ponto de entrada principal. Salva no banco e agenda o e-mail.
+>>>>>>> Stashed changes
 =======
      * Ponto de entrada principal. Salva no banco e agenda o e-mail.
 >>>>>>> Stashed changes
@@ -127,6 +155,7 @@ class FFC_Submission_Handler {
     public function process_submission( $form_id, $form_title, &$submission_data, $user_email, $fields_config, $form_config ) {
         global $wpdb;
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
         // 1. Gera código de autenticação se não existir
         if ( empty( $submission_data['auth_code'] ) ) {
@@ -160,6 +189,19 @@ class FFC_Submission_Handler {
             $submission_data['auth_code'] = FFC_Utils::generate_random_code( 12 );
 >>>>>>> Stashed changes
         }
+=======
+        // 1. Verificação de Bloqueio (Critério 2)
+        foreach ( $submission_data as $val ) {
+            if ( FFC_Utils::is_identifier_blocked( $val, $form_id ) ) {
+                return new WP_Error( 'blocked_user', __( 'Registration restricted for this identifier.', 'ffc' ) );
+            }
+        }
+
+        // 2. Geração de Código de Autenticação Único
+        if ( empty( $submission_data['auth_code'] ) ) {
+            $submission_data['auth_code'] = FFC_Utils::generate_random_code( 12 );
+        }
+>>>>>>> Stashed changes
         $auth_hash = FFC_Utils::generate_auth_hash( $submission_data['auth_code'] );
 
         // 3. QR Code (Base64 para embutir direto no PDF/E-mail)
@@ -188,7 +230,11 @@ class FFC_Submission_Handler {
         
         if ( ! $inserted ) {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             return new WP_Error( 'db_error', __( 'Erro ao salvar submissão no banco de dados.', 'ffc' ) );
+=======
+            return new WP_Error( 'db_error', __( 'Database storage failed.', 'ffc' ) );
+>>>>>>> Stashed changes
 =======
             return new WP_Error( 'db_error', __( 'Database storage failed.', 'ffc' ) );
 >>>>>>> Stashed changes
@@ -197,9 +243,12 @@ class FFC_Submission_Handler {
         $submission_id = $wpdb->insert_id;
         
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         // 4. Agenda o envio de e-mail assíncrono
         wp_schedule_single_event( time() + 2, 'ffc_process_submission_hook', array( $submission_id, $form_id, $form_title, $submission_data, $user_email, $fields_config, $form_config ) );
 =======
+=======
+>>>>>>> Stashed changes
         // 6. Offloading Assíncrono via WP-Cron (Critério 1)
         // Isso evita que o usuário espere o envio de e-mails pesados.
         wp_schedule_single_event( 
@@ -207,12 +256,16 @@ class FFC_Submission_Handler {
             'ffc_process_submission_hook', 
             array( $submission_id, $form_id, $form_title, $sanitized_data, $user_email, $fields_config, $form_config ) 
         );
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
         return $submission_id;
     }
 
     /**
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
      * Processamento Assíncrono (E-mails)
      */
@@ -283,10 +336,58 @@ class FFC_Submission_Handler {
      * Execução em background: Gera o certificado e envia os e-mails.
 >>>>>>> Stashed changes
      */
+=======
+     * Processa a substituição de Merge Tags para gerar o HTML final do certificado.
+     */
+    public function generate_pdf_html( $submission_data, $form_title, $layout = '', $bg_image = '' ) {
+        if ( empty( $layout ) ) {
+            $layout = '<div style="text-align:center; padding:50px;"><h1>{{form_title}}</h1><h2>{{name}}</h2><p>{{qrcode}}</p></div>';
+        }
+
+        $merge_tags = array(
+            '{{form_title}}'      => esc_html( $form_title ),
+            '{{submission_date}}' => date_i18n( get_option( 'date_format' ) ),
+            '{{validation_url}}'  => esc_url( site_url( '/verificar' ) ),
+            '{{qrcode}}'          => ! empty( $submission_data['qr_code_base64'] ) ? '<img src="' . $submission_data['qr_code_base64'] . '" width="120">' : ''
+        );
+
+        // Mapeia todos os campos do formulário para tags dinâmicas
+        foreach ( $submission_data as $key => $value ) {
+            $display_val = is_array( $value ) ? implode( ', ', $value ) : $value;
+            
+            // Formatadores automáticos por nome de campo
+            if ( stripos( $key, 'cpf' ) !== false || stripos( $key, 'document' ) !== false ) {
+                $display_val = FFC_Utils::format_document( $display_val );
+            }
+            if ( 'auth_code' === $key ) {
+                $display_val = FFC_Utils::format_auth_code( $display_val );
+            }
+            
+            $merge_tags[ '{{' . $key . '}}' ] = wp_kses( (string) $display_val, FFC_Utils::get_allowed_html_tags() );
+        }
+
+        $final_html = str_replace( array_keys( $merge_tags ), array_values( $merge_tags ), $layout );
+
+        if ( ! empty( $bg_image ) ) {
+            $final_html = sprintf(
+                '<div class="ffc-cert-wrapper" style="background-image:url(\'%s\'); background-repeat:no-repeat; background-size:100%% 100%%; min-height:600px;">%s</div>',
+                esc_url( $bg_image ),
+                $final_html
+            );
+        }
+
+        return $final_html;
+    }
+
+    /**
+     * Execução em background: Gera o certificado e envia os e-mails.
+     */
+>>>>>>> Stashed changes
     public function async_process_submission( $submission_id, $form_id, $form_title, $submission_data, $user_email, $fields_config, $form_config ) {
         $template = $this->get_resolved_template( $form_id, $submission_data );
         $html     = $this->generate_pdf_html( $submission_data, $form_title, $template['html'], $template['bg_image'] );
         
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
         if ( empty( $layout ) ) {
             $layout = '<div style="text-align:center; padding: 50px;">
@@ -360,6 +461,25 @@ class FFC_Submission_Handler {
         // Gera URL amigável de verificação
         $url = add_query_arg( array( 'ffc_verify' => $code ), site_url( '/verificar' ) );
         
+=======
+        // 1. E-mail para o Aluno
+        if ( ! empty( $form_config['send_user_email'] ) ) {
+            $this->send_user_email( $user_email, $form_title, $html, $form_config );
+        }
+
+        // 2. Notificação para o Admin
+        if ( ! empty( $form_config['email_admin'] ) ) {
+            $this->send_admin_notification( $form_title, $submission_data, $form_config );
+        }
+    }
+
+    /* --- Helpers Privados --- */
+
+    private function generate_qr_base64( $code ) {
+        // Gera URL amigável de verificação
+        $url = add_query_arg( array( 'ffc_verify' => $code ), site_url( '/verificar' ) );
+        
+>>>>>>> Stashed changes
         ob_start();
         QRcode::png( $url, null, QR_ECLEVEL_L, 4, 2 );
         $image_data = ob_get_clean();
@@ -370,11 +490,15 @@ class FFC_Submission_Handler {
     private function send_user_email( $to, $title, $cert_html, $config ) {
         $subject = ! empty( $config['email_subject'] ) ? $config['email_subject'] : $title;
         $body    = '<div style="font-family:sans-serif; color:#333;">' . wpautop( $config['email_body'] ) . '<div style="margin-top:30px;">' . $cert_html . '</div></div>';
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
         
         wp_mail( $to, $subject, $body, array( 'Content-Type: text/html; charset=UTF-8' ) );
     }
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
     private function send_admin_notification( $form_title, $data, $form_config ) {
         $admins = isset( $form_config['email_admin'] ) ? array_filter(array_map('trim', explode( ',', $form_config['email_admin'] ))) : array( get_option( 'admin_email' ) );
@@ -403,6 +527,17 @@ class FFC_Submission_Handler {
             $val = is_array( $v ) ? implode( ', ', $v ) : $v;
             $body .= sprintf( '<li><strong>%s:</strong> %s</li>', esc_html( ucfirst( $k ) ), esc_html( $val ) );
 >>>>>>> Stashed changes
+=======
+    private function send_admin_notification( $title, $data, $config ) {
+        $admins  = explode( ',', $config['email_admin'] );
+        $subject = sprintf( __( '[FFC] Nova Emissão: %s', 'ffc' ), $title );
+        
+        $body = '<h2>' . __( 'Detalhes da Emissão', 'ffc' ) . '</h2><ul>';
+        foreach ( $data as $k => $v ) {
+            if ( strpos( $k, 'base64' ) !== false ) continue;
+            $val = is_array( $v ) ? implode( ', ', $v ) : $v;
+            $body .= sprintf( '<li><strong>%s:</strong> %s</li>', esc_html( ucfirst( $k ) ), esc_html( $val ) );
+>>>>>>> Stashed changes
         }
         $body .= '</ul>';
 
@@ -410,6 +545,7 @@ class FFC_Submission_Handler {
             wp_mail( trim( $email ), $subject, $body, array( 'Content-Type: text/html; charset=UTF-8' ) );
         }
     }
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 
     /* Helpers de Formatação */
@@ -482,6 +618,8 @@ class FFC_Submission_Handler {
         if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) return sanitize_text_field(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0]);
         return sanitize_text_field($_SERVER['REMOTE_ADDR']);
     }
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 }

@@ -1,9 +1,17 @@
 /**
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
  * FFC PDF CORE - Versão Estável e Otimizada
  */
 
 /* Container invisível para renderização */
+=======
+ * FFC PDF CORE - Versão Estável e Isolada
+ * Responsável por criar o ambiente de renderização do certificado e o feedback de progresso.
+ */
+
+/* 1. CONTAINER INVISÍVEL (O "Palco" de Captura) */
+>>>>>>> Stashed changes
 =======
  * FFC PDF CORE - Versão Estável e Isolada
  * Responsável por criar o ambiente de renderização do certificado e o feedback de progresso.
@@ -23,7 +31,12 @@
 }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 /* Reset Universal para o Captura */
+=======
+/* 2. RESET UNIVERSAL PARA A CAPTURA 
+   Garante que estilos do tema (como margens de parágrafo) não vazem para o PDF */
+>>>>>>> Stashed changes
 =======
 /* 2. RESET UNIVERSAL PARA A CAPTURA 
    Garante que estilos do tema (como margens de parágrafo) não vazem para o PDF */
@@ -39,7 +52,11 @@
 
 .ffc-pdf-stage {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     all: initial; /* Limpa estilos herdados do WP/Temas */
+=======
+    all: initial; /* Reseta todas as propriedades herdadas do WordPress */
+>>>>>>> Stashed changes
 =======
     all: initial; /* Reseta todas as propriedades herdadas do WordPress */
 >>>>>>> Stashed changes
@@ -55,7 +72,11 @@
 }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 /* Imagem de Fundo (Template) */
+=======
+/* Imagem de Fundo (O Template do Admin) */
+>>>>>>> Stashed changes
 =======
 /* Imagem de Fundo (O Template do Admin) */
 >>>>>>> Stashed changes
@@ -66,7 +87,11 @@
     width: 1123px;
     height: 794px;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     object-fit: fill; /* Garante que preencha todo o A4 paisagem */
+=======
+    object-fit: fill; /* Garante preenchimento total do A4 */
+>>>>>>> Stashed changes
 =======
     object-fit: fill; /* Garante preenchimento total do A4 */
 >>>>>>> Stashed changes
@@ -75,7 +100,11 @@
 }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 /* Camada de Conteúdo Dinâmico */
+=======
+/* Camada de Conteúdo Dinâmico (Textos e QR Code) */
+>>>>>>> Stashed changes
 =======
 /* Camada de Conteúdo Dinâmico (Textos e QR Code) */
 >>>>>>> Stashed changes
@@ -88,6 +117,7 @@
     z-index: 2;
     display: block !important;
     color: #000000 !important;
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
     pointer-events: none; /* Evita interferências no clique */
 }
@@ -102,11 +132,19 @@
 .ffc-pdf-user-content * {
     all: revert; /* Reverte para o comportamento padrão do navegador */
 >>>>>>> Stashed changes
+=======
+}
+
+/* Reativa estilos básicos dentro do certificado para permitir personalização via Editor */
+.ffc-pdf-user-content * {
+    all: revert; /* Reverte para o comportamento padrão do navegador */
+>>>>>>> Stashed changes
     box-sizing: border-box;
     color: inherit;
     line-height: 1.4;
 }
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 /* Ajuste específico para garantir que imagens dentro do conteúdo não quebrem */
 .ffc-pdf-user-content img {
@@ -154,26 +192,37 @@ body.wp-admin .ffc-pdf-temp-wrapper {
 /* 3. OVERLAY DE PROGRESSO (UI de Bloqueio) 
    Exibido enquanto o html2canvas processa a imagem pesada */
 >>>>>>> Stashed changes
+=======
+/* 3. OVERLAY DE PROGRESSO (UI de Bloqueio) 
+   Exibido enquanto o html2canvas processa a imagem pesada */
+>>>>>>> Stashed changes
 .ffc-pdf-progress-overlay {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
     width: 100vw !important; /* Viewport Width */
     height: 100vh !important; /* Viewport Height */
     background: rgba(0, 0, 0, 0.92) !important;
     z-index: 2147483647 !important; /* Máximo valor possível de z-index */
 =======
+=======
+>>>>>>> Stashed changes
     width: 100vw !important;
     height: 100vh !important;
     background: rgba(0, 0, 0, 0.85) !important;
     z-index: 99999999 !important; /* Acima de qualquer menu de tema */
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
     align-items: center !important;
     color: #ffffff !important;
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
     font-family: sans-serif !important;
     pointer-events: all !important; /* Bloqueia cliques no fundo */
@@ -185,11 +234,20 @@ body.wp-admin .ffc-pdf-temp-wrapper {
     pointer-events: all !important;
 }
 
+=======
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+    pointer-events: all !important;
+}
+
+>>>>>>> Stashed changes
 .ffc-pdf-progress-content {
     text-align: center;
 }
 
 /* Spinner de carregamento */
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 .ffc-progress-spinner {
     width: 50px;

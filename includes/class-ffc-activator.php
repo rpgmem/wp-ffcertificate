@@ -2,7 +2,13 @@
 /**
  * FFC_Activator
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
  * Gerencia a instalação do plugin: Tabelas, Páginas, Formulários Iniciais e Configurações.
+=======
+ * Handles plugin installation: Tables, Pages, Initial Forms, and Settings.
+ *
+ * @package FastFormCertificates
+>>>>>>> Stashed changes
 =======
  * Handles plugin installation: Tables, Pages, Initial Forms, and Settings.
  *
@@ -16,6 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class FFC_Activator {
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
     public static function activate() {
         // 1. Criação das Tabelas
@@ -39,25 +46,50 @@ class FFC_Activator {
 
         // 3. Create Default Form Example
 >>>>>>> Stashed changes
+=======
+    /**
+     * POINT 1 & 2: Run activation logic.
+     * Orchestrates the setup of the environment.
+     */
+    public static function activate() {
+        // 1. Create/Update Tables
+        self::create_tables();
+
+        // 2. Create Validation Page (Shortcode: [ffc_verification])
+        self::create_validation_page();
+
+        // 3. Create Default Form Example
+>>>>>>> Stashed changes
         self::create_default_form();
 
         // 4. Configurações Iniciais
         self::set_default_options();
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         // 5. Atualização de Permalinks (Garante que o /valid funcione na hora)
 =======
+=======
+>>>>>>> Stashed changes
         // 5. Run Retroactive Migration for legacy data
         self::run_retroactive_migration();
 
         // 6. Refresh Permalinks
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
         flush_rewrite_rules();
     }
 
     /**
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
      * Gerencia a criação da tabela de submissões
+=======
+     * POINT 3: Manages the submissions table.
+     * Uses dbDelta for safe schema updates.
+>>>>>>> Stashed changes
 =======
      * POINT 3: Manages the submissions table.
      * Uses dbDelta for safe schema updates.
@@ -94,11 +126,16 @@ class FFC_Activator {
         dbDelta( $sql_submissions );
         
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         // Verificação manual da coluna status (segurança extra)
         $column = $wpdb->get_results($wpdb->prepare(
             "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = 'status'", 
             DB_NAME, $table_name
         ));
+=======
+        // POINT 3: Fallback for column updates that dbDelta might miss
+        self::ensure_columns_exist( $table_name );
+>>>>>>> Stashed changes
 =======
         // POINT 3: Fallback for column updates that dbDelta might miss
         self::ensure_columns_exist( $table_name );
@@ -109,7 +146,11 @@ class FFC_Activator {
 
     /**
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
      * Cria a página /valid com o shortcode necessário
+=======
+     * Secondary check to ensure specific columns exist in older installations.
+>>>>>>> Stashed changes
 =======
      * Secondary check to ensure specific columns exist in older installations.
 >>>>>>> Stashed changes
@@ -122,6 +163,7 @@ class FFC_Activator {
             'status'    => "varchar(20) DEFAULT 'publish' NOT NULL"
         );
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
         if ( ! isset( $page_check->ID ) ) {
             // Se a página não existe, cria do zero
@@ -138,10 +180,15 @@ class FFC_Activator {
                 $page_check->post_content .= "\n" . $shortcode;
                 wp_update_post( $page_check );
 =======
+=======
+>>>>>>> Stashed changes
         foreach ( $columns_to_check as $column => $definition ) {
             $check = $wpdb->get_results( $wpdb->prepare( "SHOW COLUMNS FROM `$table_name` LIKE %s", $column ) );
             if ( empty( $check ) ) {
                 $wpdb->query( "ALTER TABLE `$table_name` ADD `$column` $definition" );
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
             }
         }
@@ -149,8 +196,11 @@ class FFC_Activator {
 
     /**
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
      * Cria um formulário inicial para o usuário não começar do zero
 =======
+=======
+>>>>>>> Stashed changes
      * POINT 3: Retroactive Migration.
      * Recovers auth codes from JSON 'data' if the physical column is empty.
      */
@@ -219,6 +269,9 @@ class FFC_Activator {
     /**
      * POINT 4 & 5: Creates an initial form example.
      * Uses minimal inline styles as this is a user-editable template.
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
      */
     private static function create_default_form() {
@@ -230,6 +283,7 @@ class FFC_Activator {
 
         if ( ! $forms_query->have_posts() ) {
             $form_id = wp_insert_post( array(
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
                 'post_title'   => 'Certificado de Exemplo',
                 'post_status'  => 'publish',
@@ -256,6 +310,15 @@ class FFC_Activator {
             ) );
 
             if ( $form_id ) {
+=======
+                'post_title'   => __( 'Default Certificate Form', 'ffc' ),
+                'post_status'  => 'publish',
+                'post_type'    => 'ffc_form',
+                'post_content' => __( 'This is a sample form created automatically upon activation.', 'ffc' )
+            ) );
+
+            if ( $form_id ) {
+>>>>>>> Stashed changes
                 $layout = '<div style="border: 10px solid #333; padding: 50px; text-align: center; font-family: Arial, sans-serif;">
                     <h1>' . __( 'CERTIFICATE OF ACHIEVEMENT', 'ffc' ) . '</h1>
                     <p style="font-size: 20px;">' . __( 'This certifies that', 'ffc' ) . '</p>
@@ -264,6 +327,9 @@ class FFC_Activator {
                     <div style="margin-top: 50px; font-size: 12px; color: #666;">
                         ' . __( 'Verification Code', 'ffc' ) . ': {{auth_code}}<br>
                         ' . __( 'Date', 'ffc' ) . ': {{submission_date}}
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
                     </div>
                 </div>';
@@ -271,9 +337,12 @@ class FFC_Activator {
                 update_post_meta( $form_id, 'ffc_form_config', array(
                     'pdf_layout'      => $layout,
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                     'email_subject'   => 'Seu Certificado de Conclusão',
                     'send_user_email' => 1
 =======
+=======
+>>>>>>> Stashed changes
                     'email_subject'   => __( 'Your Certificate is Ready', 'ffc' ),
                     'send_user_email' => 1,
                     'success_message' => __( 'Congratulations! Your certificate has been generated.', 'ffc' )
@@ -282,11 +351,15 @@ class FFC_Activator {
                 // Add sample field
                 update_post_meta( $form_id, '_ffc_form_fields', array(
                     array( 'label' => 'Full Name', 'name' => 'name', 'type' => 'text', 'required' => 1 )
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
                 ) );
             }
         }
     }
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 
     /**
@@ -302,6 +375,8 @@ class FFC_Activator {
             ) );
         }
     }
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 }

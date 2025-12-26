@@ -5,7 +5,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
  * Classe responsável pelo Frontend e Shortcodes do Plugin
+=======
+ * Handles all frontend displays, shortcodes, and AJAX interactions.
+>>>>>>> Stashed changes
 =======
  * Handles all frontend displays, shortcodes, and AJAX interactions.
 >>>>>>> Stashed changes
@@ -17,6 +21,7 @@ class FFC_Frontend {
     public function __construct( FFC_Submission_Handler $handler ) {
         $this->submission_handler = $handler;
         
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
         // Ativos do Frontend
         add_action( 'wp_enqueue_scripts', array( $this, 'frontend_assets' ) );
@@ -53,6 +58,23 @@ class FFC_Frontend {
     /**
      * 1 & 4 - Assets management with centralized CSS
 >>>>>>> Stashed changes
+=======
+        // Assets & Shortcodes
+        add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_assets' ) );
+        add_shortcode( 'ffc_form', array( $this, 'render_form_shortcode' ) );
+        add_shortcode( 'ffc_verification', array( $this, 'render_verification_shortcode' ) );
+        
+        // AJAX Actions
+        $ajax_actions = array( 'ffc_submit_form', 'ffc_verify_certificate' );
+        foreach ( $ajax_actions as $action ) {
+            add_action( "wp_ajax_$action", array( $this, "handle_{$action}_ajax" ) );
+            add_action( "wp_ajax_nopriv_$action", array( $this, "handle_{$action}_ajax" ) );
+        }
+    }
+
+    /**
+     * 1 & 4 - Assets management with centralized CSS
+>>>>>>> Stashed changes
      */
     public function enqueue_frontend_assets() {
         global $post;
@@ -62,6 +84,7 @@ class FFC_Frontend {
             wp_enqueue_style( 'ffc-pdf-core', FFC_PLUGIN_URL . 'assets/css/ffc-pdf-core.css', array(), '1.0.0' );
             wp_enqueue_style( 'ffc-frontend', FFC_PLUGIN_URL . 'assets/css/frontend.css', array('ffc-pdf-core'), '1.0.0' );
             
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
             // Bibliotecas de geração de PDF (Frontend)
             wp_enqueue_script( 'html2canvas', FFC_PLUGIN_URL . 'assets/js/html2canvas.min.js', array(), '1.4.1', true );
@@ -74,6 +97,12 @@ class FFC_Frontend {
                 time(), // Cache busting para desenvolvimento
                 true 
             );
+=======
+            wp_enqueue_script( 'html2canvas', FFC_PLUGIN_URL . 'assets/js/html2canvas.min.js', array(), '1.4.1', true );
+            wp_enqueue_script( 'jspdf', FFC_PLUGIN_URL . 'assets/js/jspdf.umd.min.js', array(), '2.5.1', true );
+            wp_enqueue_script( 'ffc-pdf-engine', FFC_PLUGIN_URL . 'assets/js/ffc-pdf-engine.js', array( 'jquery', 'html2canvas', 'jspdf' ), '1.0.0', true );
+            wp_enqueue_script( 'ffc-frontend', FFC_PLUGIN_URL . 'assets/js/frontend.js', array( 'jquery', 'ffc-pdf-engine' ), '1.0.0', true );
+>>>>>>> Stashed changes
 =======
             wp_enqueue_script( 'html2canvas', FFC_PLUGIN_URL . 'assets/js/html2canvas.min.js', array(), '1.4.1', true );
             wp_enqueue_script( 'jspdf', FFC_PLUGIN_URL . 'assets/js/jspdf.umd.min.js', array(), '2.5.1', true );
@@ -97,6 +126,7 @@ class FFC_Frontend {
         }
     }
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
     // =========================================================================
     // HELPER FUNCTIONS
@@ -236,11 +266,16 @@ class FFC_Frontend {
     public function shortcode_form( $atts ) {
         $atts = shortcode_atts( array( 'id' => 0 ), $atts, 'ffc_form' );
 =======
+=======
+>>>>>>> Stashed changes
     /**
      * 5 - Render Form Shortcode (i18n applied)
      */
     public function render_form_shortcode( $atts ) {
         $atts = shortcode_atts( array( 'id' => 0 ), $atts );
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
         $form_id = absint( $atts['id'] );
 
@@ -269,6 +304,7 @@ class FFC_Frontend {
                     $required = ! empty( $field['required'] ) ? 'required' : '';
                     
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                     // Tratamento especial para CPF/RF
                     if ( $name === 'cpf_rf' ) $type = 'tel'; 
 
@@ -283,6 +319,8 @@ class FFC_Frontend {
                             <?php echo esc_html( $label ); ?> 
                             <?php if ( $is_req ) echo '<span class="required">*</span>'; ?>
 =======
+=======
+>>>>>>> Stashed changes
                     $logic_attrs = '';
                     $logic_class = '';
                     if ( ! empty( $field['logic_enabled'] ) && ! empty( $field['logic_target'] ) ) {
@@ -298,6 +336,9 @@ class FFC_Frontend {
                         <label for="ffc_field_<?php echo $name; ?>">
                             <?php echo $label; ?>
                             <?php if ( $required ) echo '<span class="ffc-required">*</span>'; ?>
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
                         </label>
 
@@ -464,12 +505,15 @@ class FFC_Frontend {
         }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         if ( $result ) {
             $data = json_decode( $result->data, true );
             if ( !is_array($data) ) $data = json_decode( stripslashes( $result->data ), true );
             $form_title = get_the_title( $result->form_id );
             $student_name = isset($data['name']) ? $data['name'] : (isset($data['nome']) ? $data['nome'] : 'N/A');
 =======
+=======
+>>>>>>> Stashed changes
         ob_start(); ?>
         <div class="ffc-verification-container">
             <?php if ( $submission ) : 
@@ -504,6 +548,9 @@ class FFC_Frontend {
             $form_id = $res->form_id;
             $form_config = get_post_meta( $form_id, '_ffc_form_config', true );
             $name = $data['name'] ?? $data['nome'] ?? __( 'Participant', 'ffc' );
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
             
             $pdf_html = $this->submission_handler->generate_pdf_html( $data, get_the_title($form_id), $form_config );

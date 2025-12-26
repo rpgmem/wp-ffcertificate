@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 class Free_Form_Certificate_Loader {
 
     protected $submission_handler;
@@ -20,11 +21,15 @@ class Free_Form_Certificate_Loader {
 =======
 class FFC_Loader {
 >>>>>>> Stashed changes
+=======
+class FFC_Loader {
+>>>>>>> Stashed changes
 
     public function __construct() {
         // 1 & 2 - Load dependencies in correct order
         $this->load_dependencies();
         
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
         add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
     }
@@ -38,6 +43,12 @@ class FFC_Loader {
         add_filter( 'cron_schedules', array( $this, 'register_cron_schedules' ) );
     }
 
+=======
+        // Register Cron Intervals
+        add_filter( 'cron_schedules', array( $this, 'register_cron_schedules' ) );
+    }
+
+>>>>>>> Stashed changes
     /**
      * 1, 2 & 3 - Load required files.
      * Centralized loading to ensure FFC_Utils is available for everyone.
@@ -64,6 +75,7 @@ class FFC_Loader {
         require_once FFC_PLUGIN_DIR . 'includes/class-ffc-frontend.php';
     }
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
     private function define_activation_hooks() {
         register_activation_hook( FFC_PLUGIN_DIR . 'wp-ffcertificate.php', array( 'FFC_Activator', 'activate' ) );
@@ -102,6 +114,32 @@ class FFC_Loader {
             $cpt->register();
         }
 
+=======
+    /**
+     * 3 & 5 - Custom intervals for WP-Cron (i18n applied).
+     */
+    public function register_cron_schedules( $schedules ) {
+        if ( ! isset( $schedules['every_five_minutes'] ) ) {
+            $schedules['every_five_minutes'] = array(
+                'interval' => 300,
+                'display'  => esc_html__( 'Every 5 Minutes', 'ffc' )
+            );
+        }
+        return $schedules;
+    }
+
+    /**
+     * 1, 2 & 3 - Execution flow.
+     * Instantiates components and registers their hooks.
+     */
+    public function run() {
+        // 1. Register Custom Post Types
+        if ( class_exists( 'FFC_CPT' ) ) {
+            $cpt = new FFC_CPT();
+            $cpt->register();
+        }
+
+>>>>>>> Stashed changes
         // 2. Initialize Email Manager (Static/Singleton-like)
         if ( class_exists( 'FFC_Email_Manager' ) ) {
             new FFC_Email_Manager();
@@ -126,6 +164,9 @@ class FFC_Loader {
             $handler = new FFC_Submission_Handler();
             new FFC_Frontend( $handler );
         }
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     }
 }

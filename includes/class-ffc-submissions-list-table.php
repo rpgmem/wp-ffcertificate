@@ -48,7 +48,12 @@ class FFC_Submission_List extends WP_List_Table {
 
     /**
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
      * Define as abas de visualização (Tudo / Lixeira)
+=======
+     * Navigation filters (All/Trash).
+     * Criteria 3: Efficient count queries.
+>>>>>>> Stashed changes
 =======
      * Navigation filters (All/Trash).
      * Criteria 3: Efficient count queries.
@@ -86,8 +91,13 @@ class FFC_Submission_List extends WP_List_Table {
 
     /**
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
      * Define as colunas da tabela
      * Se houver um filtro por formulário, ele exibe os campos desse formulário como colunas
+=======
+     * Define the columns for the table.
+     * Criteria 1: Dynamic columns based on form filter for better UX.
+>>>>>>> Stashed changes
 =======
      * Define the columns for the table.
      * Criteria 1: Dynamic columns based on form filter for better UX.
@@ -103,6 +113,7 @@ class FFC_Submission_List extends WP_List_Table {
             'email'           => __( 'Recipient Email', 'ffc' ),
         );
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
         // Lógica de colunas dinâmicas quando um formulário específico é filtrado
         if ( ! empty( $_GET['filter_form_id'] ) ) {
@@ -123,6 +134,25 @@ class FFC_Submission_List extends WP_List_Table {
             }
         } else {
             // Se estiver vendo todos os formulários, mostra um resumo
+=======
+        // If filtering by a specific form, inject its fields as columns
+        $filter_form_id = isset( $_GET['filter_form_id'] ) ? absint( $_GET['filter_form_id'] ) : 0;
+        if ( $filter_form_id > 0 ) {
+            $fields = get_post_meta( $filter_form_id, '_ffc_form_fields', true );
+            
+            if ( is_array( $fields ) ) {
+                foreach ( $fields as $field ) {
+                    if ( empty( $field['name'] ) ) continue;
+                    
+                    $col_key = sanitize_key( $field['name'] );
+                    // Avoid duplicating fixed columns
+                    if ( in_array( $col_key, array( 'id', 'auth_code', 'email', 'submission_date' ) ) ) continue;
+                    
+                    $columns[ $col_key ] = esc_html( ! empty( $field['label'] ) ? $field['label'] : $field['name'] );
+                }
+            }
+        } else {
+>>>>>>> Stashed changes
 =======
         // If filtering by a specific form, inject its fields as columns
         $filter_form_id = isset( $_GET['filter_form_id'] ) ? absint( $_GET['filter_form_id'] ) : 0;
@@ -172,10 +202,17 @@ class FFC_Submission_List extends WP_List_Table {
     }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     // --- RENDERIZAÇÃO DAS COLUNAS ---
 
     public function column_cb( $item ) {
         return sprintf( '<input type="checkbox" name="submission[]" value="%s" />', esc_attr( $item['id'] ) );
+=======
+    /* --- Column Renderers --- */
+
+    public function column_cb( $item ) {
+        return sprintf( '<input type="checkbox" name="submission[]" value="%d" />', absint( $item['id'] ) );
+>>>>>>> Stashed changes
 =======
     /* --- Column Renderers --- */
 
@@ -212,6 +249,7 @@ class FFC_Submission_List extends WP_List_Table {
 
     public function column_form_name( $item ) {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         $form = get_post( $item['form_id'] );
         $title = $form ? $form->post_title : __( '(Deleted)', 'ffc' );
         $url = add_query_arg( 'filter_form_id', $item['form_id'], admin_url( 'edit.php?post_type=ffc_form&page=ffc-submissions' ) );
@@ -244,6 +282,11 @@ class FFC_Submission_List extends WP_List_Table {
         if ( ! $title ) {
             return '<span class="description">' . __( '(Form Deleted)', 'ffc' ) . '</span>';
 >>>>>>> Stashed changes
+=======
+        $title = get_the_title( $item['form_id'] );
+        if ( ! $title ) {
+            return '<span class="description">' . __( '(Form Deleted)', 'ffc' ) . '</span>';
+>>>>>>> Stashed changes
         }
         $url = add_query_arg( 'filter_form_id', $item['form_id'], admin_url( 'edit.php?post_type=ffc_form&page=ffc-submissions' ) );
         return sprintf( '<a href="%s"><strong>%s</strong></a>', esc_url( $url ), esc_html( $title ) );
@@ -251,8 +294,11 @@ class FFC_Submission_List extends WP_List_Table {
 
     /**
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
      * Renderiza colunas dinâmicas (Campos do formulário)
 =======
+=======
+>>>>>>> Stashed changes
      * Renders a snippet of the data if no specific form is filtered.
      */
     public function column_data_summary( $item ) {
@@ -283,6 +329,9 @@ class FFC_Submission_List extends WP_List_Table {
 
     /**
      * Generic renderer for dynamic field columns.
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
      */
     public function column_default( $item, $column_name ) {
@@ -295,9 +344,12 @@ class FFC_Submission_List extends WP_List_Table {
     }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     /**
      * Renderiza os botões de ação (Edit, Trash, PDF, Delete, Restore)
      */
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
     public function column_actions( $item ) {
@@ -307,10 +359,13 @@ class FFC_Submission_List extends WP_List_Table {
         $base   = admin_url( 'edit.php?post_type=ffc_form&page=ffc-submissions&submission_id=' . $id . '&_wpnonce=' . $nonce );
         
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         // Nonce vital para bater com o check do FFC_Admin
         $nonce = wp_create_nonce( 'ffc_action_' . $id );
         
         $base_url = admin_url( 'edit.php?post_type=ffc_form&page=ffc-submissions&submission_id=' . $id . '&_wpnonce=' . $nonce );
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
         $actions = array();
@@ -329,7 +384,11 @@ class FFC_Submission_List extends WP_List_Table {
 
     /**
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
      * Barra de filtro por formulário no topo da tabela
+=======
+     * Add filter dropdown at the top of the table.
+>>>>>>> Stashed changes
 =======
      * Add filter dropdown at the top of the table.
 >>>>>>> Stashed changes
@@ -369,6 +428,7 @@ class FFC_Submission_List extends WP_List_Table {
         $this->_column_headers = array( $this->get_columns(), array(), $this->get_sortable_columns() );
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         // 1. Filtro de Status (Ativos ou Lixeira)
         $status = ( isset( $_REQUEST['status'] ) && $_REQUEST['status'] === 'trash' ) ? 'trash' : 'publish';
         $where_parts = array( $wpdb->prepare( "status = %s", $status ) );
@@ -380,12 +440,21 @@ class FFC_Submission_List extends WP_List_Table {
         $where_parts = array( $wpdb->prepare( "status = %s", $status ) );
 
 >>>>>>> Stashed changes
+=======
+        // Building the WHERE clause
+        $status      = ( isset( $_REQUEST['status'] ) && 'trash' === $_REQUEST['status'] ) ? 'trash' : 'publish';
+        $where_parts = array( $wpdb->prepare( "status = %s", $status ) );
+
+>>>>>>> Stashed changes
         if ( ! empty( $_GET['filter_form_id'] ) ) {
             $where_parts[] = $wpdb->prepare( "form_id = %d", absint( $_GET['filter_form_id'] ) );
         }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         // 3. Busca (Pesquisa no email ou no JSON de dados)
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
         if ( ! empty( $_REQUEST['s'] ) ) {
@@ -395,6 +464,7 @@ class FFC_Submission_List extends WP_List_Table {
 
         $where_clause = "WHERE " . implode( " AND ", $where_parts );
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
         // 4. Ordenação
         $orderby_whitelist = array( 'id', 'submission_date', 'email' );
@@ -407,6 +477,22 @@ class FFC_Submission_List extends WP_List_Table {
         $offset = ( $current_page - 1 ) * $per_page;
 
         // 6. Execução da Query Final
+=======
+        // Sorting (Security: check against sortable columns)
+        $orderby = 'submission_date';
+        if ( ! empty( $_GET['orderby'] ) ) {
+            $allowed_sort = array( 'id', 'auth_code', 'submission_date', 'email', 'form_id' );
+            if ( in_array( $_GET['orderby'], $allowed_sort ) ) {
+                $orderby = sanitize_key( $_GET['orderby'] );
+            }
+        }
+        $order = ( ! empty( $_GET['order'] ) && 'asc' === strtolower( $_GET['order'] ) ) ? 'ASC' : 'DESC';
+
+        // Get total count
+        $total_items = (int) $wpdb->get_var( "SELECT COUNT(id) FROM {$this->table_name} $where_clause" );
+
+        // Fetch results
+>>>>>>> Stashed changes
 =======
         // Sorting (Security: check against sortable columns)
         $orderby = 'submission_date';

@@ -2,13 +2,19 @@
 /**
  * FFC_Utils
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
  * Classe de utilitários compartilhada entre Frontend e Admin.
 =======
+=======
+>>>>>>> Stashed changes
  * Shared utility class for the Fast Form Certificates plugin.
  * Handles string cleaning, document formatting, and security hashing.
  *
  * @package FastFormCertificates
  * @version 1.2.0
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
  */
 
@@ -20,9 +26,12 @@ class FFC_Utils {
 
     /**
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
      * Retorna a lista de tags HTML e atributos permitidos.
      * Centralizamos aqui para que o Frontend, E-mail e Gerador de PDF falem a mesma língua.
 =======
+=======
+>>>>>>> Stashed changes
      * Generate a secure HMAC hash for certificate validation.
      * Criteria 2: Uses WP Salts for high-entropy encryption.
      * * @param string $auth_code The certificate's unique code.
@@ -139,6 +148,9 @@ class FFC_Utils {
     /**
      * Centralized allowed HTML tags for PDF and Email context.
      * Criteria 4: Maintains consistency between PDF and Email view.
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
      */
     public static function get_allowed_html_tags() {
@@ -161,6 +173,7 @@ class FFC_Utils {
                 'height' => array(),
             ),
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             // Tags de tabela (essenciais para alinhamento de assinaturas)
             'table'  => array(
                 'style'  => array(),
@@ -178,12 +191,18 @@ class FFC_Utils {
                 'style' => array(), 'class' => array(), 'width' => array(),
                 'border' => array(), 'cellpadding' => array(), 'cellspacing' => array(),
 >>>>>>> Stashed changes
+=======
+            'table'  => array(
+                'style' => array(), 'class' => array(), 'width' => array(),
+                'border' => array(), 'cellpadding' => array(), 'cellspacing' => array(),
+>>>>>>> Stashed changes
             ),
             'tr'     => array( 'style' => array(), 'class' => array() ),
             'td'     => array(
                 'style' => array(), 'width' => array(), 'colspan' => array(),
                 'rowspan' => array(), 'align' => array(), 'valign' => array(),
             ),
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
             // Cabeçalhos
             'h1' => array('style' => array(), 'class' => array()),
@@ -201,6 +220,14 @@ class FFC_Utils {
          * Permite que outros desenvolvedores ou você mesmo adicione tags 
          * sem precisar mexer no core do plugin.
          */
+=======
+            'h1' => array( 'style' => array() ),
+            'h2' => array( 'style' => array() ),
+            'h3' => array( 'style' => array() ),
+            'ul' => array( 'style' => array() ),
+            'li' => array( 'style' => array() ),
+        );
+>>>>>>> Stashed changes
 =======
             'h1' => array( 'style' => array() ),
             'h2' => array( 'style' => array() ),

@@ -32,7 +32,11 @@
 
 /* ==========================================================================
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
    2. FORM BUILDER (Field Rows) - CORREÇÃO DE OVERFLOW
+=======
+   2. FORM BUILDER (Field Rows)
+>>>>>>> Stashed changes
 =======
    2. FORM BUILDER (Field Rows)
 >>>>>>> Stashed changes
@@ -62,7 +66,11 @@
 }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 /* O GRID RESPONSIVO (AQUI ESTÁ A MÁGICA) */
+=======
+/* Responsive Grid for Form Builder */
+>>>>>>> Stashed changes
 =======
 /* Responsive Grid for Form Builder */
 >>>>>>> Stashed changes
@@ -92,8 +100,11 @@
 
 /* ==========================================================================
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
    3. EDITOR HTML & PREVIEW
 =======
+=======
+>>>>>>> Stashed changes
    3. CONDITIONAL LAYOUT RULES (Critério 4: Centralized from JS)
    ========================================================================== */
 .ffc-rule-row {
@@ -120,6 +131,9 @@
 
 /* ==========================================================================
    4. HTML EDITOR & PREVIEW
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
    ========================================================================== */
 #ffc_pdf_layout {
@@ -208,6 +222,7 @@
 
 /* ==========================================================================
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
    4. TICKET GENERATOR & SUBMISSIONS
    ========================================================================== */
 #ffc_generated_list {
@@ -278,6 +293,11 @@
    6. UTILITIES
    ========================================================================== */
 .ffc-hidden { display: none !important; }
+=======
+   6. UTILITIES
+   ========================================================================== */
+.ffc-hidden { display: none !important; }
+>>>>>>> Stashed changes
 .ffc-sort-handle, .ffc-drag-handle { cursor: move; color: #c3c4c7; padding: 5px; font-size: 18px; }
 .ffc-sortable-placeholder {
     height: 100px;
@@ -285,5 +305,9 @@
     border: 2px dashed #c3c4c7;
     margin-bottom: 12px;
     border-radius: 4px;
+<<<<<<< Updated upstream
+}
+>>>>>>> Stashed changes
+=======
 }
 >>>>>>> Stashed changes

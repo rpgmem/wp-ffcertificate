@@ -26,6 +26,9 @@ class FFC_Settings {
      */
     public function __construct( $handler = null ) {
         // Se o handler não for passado, tentamos instanciar (ponto de segurança)
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
         $this->submission_handler = $handler;
         
@@ -78,6 +81,9 @@ class FFC_Settings {
         }
 
         // 1. Handle General/SMTP Settings
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
         if ( isset( $_POST['ffc_settings_nonce'] ) && wp_verify_nonce( $_POST['ffc_settings_nonce'], 'ffc_settings_action' ) ) {
             $current = get_option( 'ffc_settings', array() );
@@ -100,6 +106,10 @@ class FFC_Settings {
         }
         
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+        // 2. Handle Global Data Deletion (Danger Zone)
+>>>>>>> Stashed changes
 =======
         // 2. Handle Global Data Deletion (Danger Zone)
 >>>>>>> Stashed changes
@@ -136,7 +146,11 @@ class FFC_Settings {
             
             <div class="ffc-tab-content">
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                 <?php if($active_tab=='help'): ?>
+=======
+                <?php if ( 'help' === $active_tab ) : ?>
+>>>>>>> Stashed changes
 =======
                 <?php if ( 'help' === $active_tab ) : ?>
 >>>>>>> Stashed changes
@@ -183,13 +197,20 @@ class FFC_Settings {
                                 <tr><td><code>{{cpf_rf}}</code></td><td><?php esc_html_e( 'Identification ID', 'ffc' ); ?></td></tr>
                                 <tr><td><code>{{auth_code}}</code></td><td><?php esc_html_e( 'Unique Certificate Code', 'ffc' ); ?></td></tr>
                                 <tr><td><code>{{current_date}}</code></td><td><?php esc_html_e( 'Issuance Date (DD/MM/YYYY)', 'ffc' ); ?></td></tr>
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
                             </tbody>
                         </table>
                     </div>
                     
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                 <?php elseif($active_tab=='general'): ?>
+=======
+                <?php elseif ( 'general' === $active_tab ) : ?>
+>>>>>>> Stashed changes
 =======
                 <?php elseif ( 'general' === $active_tab ) : ?>
 >>>>>>> Stashed changes
@@ -200,9 +221,12 @@ class FFC_Settings {
                                 <th><?php esc_html_e( 'Auto-delete (days)', 'ffc' ); ?></th>
                                 <td>
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                                     <input type="number" name="ffc_settings[cleanup_days]" value="<?php echo esc_attr($this->get_option('cleanup_days')); ?>">
                                     <p class="description"><?php esc_html_e( 'Files removed after X days. 0 to disable.', 'ffc' ); ?></p>
 =======
+=======
+>>>>>>> Stashed changes
                                     <input type="number" name="ffc_settings[cleanup_days]" value="<?php echo esc_attr( $this->get_option( 'cleanup_days' ) ); ?>" min="0">
                                     <p class="description"><?php esc_html_e( 'Files removed after X days. Set to 0 to disable.', 'ffc' ); ?></p>
 >>>>>>> Stashed changes
@@ -218,6 +242,7 @@ class FFC_Settings {
                         <form method="post" id="ffc-danger-zone-form">
                             <?php wp_nonce_field('ffc_delete_all_data','ffc_critical_nonce'); ?>
                             <input type="hidden" name="ffc_delete_all_data" value="1">
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
                             <div class="ffc-admin-flex-row">
                                 <select name="delete_target" id="ffc_delete_target">
@@ -247,6 +272,21 @@ class FFC_Settings {
                     
                 <?php elseif ( 'smtp' === $active_tab ) : ?>
 >>>>>>> Stashed changes
+=======
+                            <select name="delete_target" id="ffc_delete_target">
+                                <option value="all"><?php esc_html_e( 'Delete All Submissions', 'ffc' ); ?></option>
+                                <?php foreach ( $forms as $f ) : ?>
+                                    <option value="<?php echo esc_attr( $f->ID ); ?>"><?php echo esc_html( $f->post_title ); ?></option>
+                                <?php endforeach; ?>
+                            </select> 
+                            <button type="submit" class="button button-link-delete" onclick="return confirm('<?php echo esc_js( __( 'Are you sure? This action cannot be undone.', 'ffc' ) ); ?>');">
+                                <?php esc_html_e( 'Clear Data', 'ffc' ); ?>
+                            </button>
+                        </form>
+                    </div>
+                    
+                <?php elseif ( 'smtp' === $active_tab ) : ?>
+>>>>>>> Stashed changes
                     <form method="post">
                         <?php wp_nonce_field('ffc_settings_action','ffc_settings_nonce'); ?>
                         <table class="form-table">
@@ -257,6 +297,7 @@ class FFC_Settings {
                                     <label><input type="radio" name="ffc_settings[smtp_mode]" value="custom" <?php checked('custom',$this->get_option('smtp_mode')); ?>> <?php esc_html_e( 'Custom SMTP', 'ffc' ); ?></label>
                                 </td>
                             </tr>
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
                             <tbody id="smtp-options" class="<?php echo ($this->get_option('smtp_mode')==='custom') ? '' : 'ffc-hidden'; ?>">
                                 <tr><th><?php esc_html_e( 'Host', 'ffc' ); ?></th><td><input type="text" name="ffc_settings[smtp_host]" value="<?php echo esc_attr($this->get_option('smtp_host')); ?>" class="regular-text"></td></tr>
@@ -270,6 +311,8 @@ class FFC_Settings {
                                     </select>
                                 </td></tr>
 =======
+=======
+>>>>>>> Stashed changes
                             <tbody id="smtp-options" class="<?php echo ( 'custom' === $this->get_option( 'smtp_mode' ) ) ? '' : 'ffc-hidden'; ?>">
                                 <tr>
                                     <th><?php esc_html_e( 'Host', 'ffc' ); ?></th>

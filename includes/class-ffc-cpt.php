@@ -24,6 +24,7 @@ class FFC_CPT {
         add_action( 'admin_action_ffc_duplicate_form', array( $this, 'handle_form_duplication' ) );
     }
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     
     public function register_form_cpt() {
         $labels = array(
@@ -43,6 +44,8 @@ class FFC_CPT {
             'supports'     => array( 'title' ),
             'rewrite'      => array( 'slug' => 'ffc-form' ),
 =======
+=======
+>>>>>>> Stashed changes
 
     /**
      * POINT 5: Register the 'ffc_form' Custom Post Type.
@@ -74,12 +77,16 @@ class FFC_CPT {
             'supports'           => array( 'title' ),
             'rewrite'            => array( 'slug' => 'ffc-form' ),
             'show_in_rest'       => false, // Disabled to keep focus on custom builder
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
         );
 
         register_post_type( 'ffc_form', $args );
     }
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
     public function add_form_tabs_metabox() {
         // Main Metabox (Builder)
@@ -347,6 +354,31 @@ class FFC_CPT {
     /**
      * POINT 2: Register Email Queue CPT.
      * Moved from Loader to CPT class to centralize definitions.
+=======
+    /**
+     * POINT 2: Register Email Queue CPT.
+     * Moved from Loader to CPT class to centralize definitions.
+     */
+    public function register_email_queue_cpt() {
+        register_post_type( 'ffc_email_queue', array(
+            'labels' => array( 
+                'name'          => __( 'Email Queue', 'ffc' ),
+                'singular_name' => __( 'Queued Email', 'ffc' )
+            ),
+            'public'          => false,
+            'show_ui'         => true,
+            'show_in_menu'    => 'edit.php?post_type=ffc_form', // Submenu of Forms
+            'menu_icon'       => 'dashicons-email-alt',
+            'supports'        => array( 'title', 'editor' ),
+            'capability_type' => 'post',
+            'capabilities'    => array( 'create_posts' => false ),
+            'map_meta_cap'    => true,
+        ));
+    }
+
+    /**
+     * POINT 3: Adds a "Duplicate" link to the post row actions.
+>>>>>>> Stashed changes
      */
     public function register_email_queue_cpt() {
         register_post_type( 'ffc_email_queue', array(
@@ -402,8 +434,12 @@ class FFC_CPT {
         }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         $post_id = ( isset( $_GET['post'] ) ? absint( $_GET['post'] ) : absint( $_POST['post'] ) );
         
+=======
+        $post_id = ( isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0 );
+>>>>>>> Stashed changes
 =======
         $post_id = ( isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0 );
 >>>>>>> Stashed changes
@@ -435,6 +471,7 @@ class FFC_CPT {
             exit;
         }
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
         $fields = get_post_meta( $post_id, '_ffc_form_fields', true );
         $config = get_post_meta( $post_id, '_ffc_form_config', true );
@@ -444,6 +481,8 @@ class FFC_CPT {
 
         wp_redirect( admin_url( 'edit.php?post_type=ffc_form' ) );
         exit;
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
     }

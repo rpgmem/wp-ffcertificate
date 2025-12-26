@@ -11,9 +11,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 /**
  * Classe responsável pela administração do plugin
  */
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 class FFC_Admin {
@@ -91,6 +94,7 @@ class FFC_Admin {
         $is_ffc_page = ( isset( $_GET['page'] ) && strpos( $_GET['page'], 'ffc-' ) !== false );
         
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         // Carrega assets apenas na edição do formulário ou nas páginas do plugin
         $is_ffc_page = ( isset($_GET['page']) && strpos($_GET['page'], 'ffc-') !== false );
         
@@ -116,6 +120,15 @@ class FFC_Admin {
             wp_enqueue_style( 'ffc-pdf-core', FFC_PLUGIN_URL . 'assets/css/ffc-pdf-core.css', array(), FFC_VERSION );
             wp_enqueue_style( 'ffc-admin-css', FFC_PLUGIN_URL . 'assets/css/admin.css', array( 'ffc-pdf-core' ), FFC_VERSION );
             
+=======
+        if ( 'ffc_form' === $post_type || $is_ffc_page ) {
+            wp_enqueue_media();
+            
+            // CSS
+            wp_enqueue_style( 'ffc-pdf-core', FFC_PLUGIN_URL . 'assets/css/ffc-pdf-core.css', array(), FFC_VERSION );
+            wp_enqueue_style( 'ffc-admin-css', FFC_PLUGIN_URL . 'assets/css/admin.css', array( 'ffc-pdf-core' ), FFC_VERSION );
+            
+>>>>>>> Stashed changes
             // JS Engines
             wp_enqueue_script( 'ffc-html2canvas', FFC_PLUGIN_URL . 'assets/js/html2canvas.min.js', array(), '1.4.1', true );
             wp_enqueue_script( 'ffc-jspdf', FFC_PLUGIN_URL . 'assets/js/jspdf.umd.min.js', array(), '2.5.1', true );
@@ -124,6 +137,9 @@ class FFC_Admin {
             wp_enqueue_script( 'ffc-pdf-engine', FFC_PLUGIN_URL . 'assets/js/ffc-pdf-engine.js', array( 'jquery', 'ffc-html2canvas', 'ffc-jspdf' ), FFC_VERSION, true );
             wp_enqueue_script( 'ffc-admin-js', FFC_PLUGIN_URL . 'assets/js/admin.js', array( 'jquery', 'ffc-pdf-engine' ), FFC_VERSION, true );
             
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
             wp_localize_script( 'ffc-admin-js', 'ffc_admin_ajax', array(
                 'ajax_url' => admin_url( 'admin-ajax.php' ),
@@ -149,12 +165,16 @@ class FFC_Admin {
                     'error'           => __( 'Error: ', 'ffc' ),
                     'confirmReplace'  => __( 'This will replace the current content. Continue?', 'ffc' ),
                     'confirmDelete'   => __( 'Are you sure you want to remove this field?', 'ffc' )
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
                 )
             ) );
         }
     }
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
     // ... Restante do código (handle_submission_actions, render_list_page, etc) permanecem iguais ...
     // Note: Mantive o restante do seu código original abaixo desta linha para brevidade, 
@@ -245,6 +265,79 @@ class FFC_Admin {
         if ( isset( $_GET['submission_id'], $_GET['action'] ) ) {
             $id     = absint( $_GET['submission_id'] );
             $action = sanitize_key( $_GET['action'] );
+=======
+    /**
+     * POINT 1: Security.
+     * AJAX endpoint with capability and nonce checks.
+     */
+    public function ajax_get_pdf_data() {
+        check_ajax_referer( 'ffc_admin_pdf_nonce', 'nonce' );
+
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'ffc' ) ) );
+        }
+        
+        $id  = isset( $_POST['submission_id'] ) ? absint( $_POST['submission_id'] ) : 0;
+        $sub = $this->submission_handler->get_submission( $id );
+        
+        if ( ! $sub ) {
+            wp_send_json_error( array( 'message' => __( 'Submission not found.', 'ffc' ) ) );
+        }
+        
+        $data = json_decode( $sub->data, true ) ?: array();
+        $data['email']     = $sub->email;
+        $data['auth_code'] = $sub->auth_code;
+        
+        $form_id    = $sub->form_id;
+        $form_title = get_the_title( $form_id );
+
+        // Delegate template resolution to handler (supports conditional logic)
+        $template_package = $this->submission_handler->get_resolved_template( $form_id, $data );
+        $processed_html   = $this->submission_handler->generate_pdf_html( $data, $form_title, $template_package['html'] );
+        
+        wp_send_json_success( array(
+            'template'   => $processed_html,
+            'submission' => $data,
+            'bg_image'   => $template_package['bg_image'],
+            'form_title' => $form_title
+        ) );
+    }
+
+    /**
+     * POINT 4: Inject Modal with minimal inline styles.
+     */
+    public function inject_preview_modal() {
+        global $post_type;
+        if ( 'ffc_form' !== $post_type ) return;
+        ?>
+        <div id="ffc-preview-modal" class="ffc-modal" style="display:none;">
+            <div class="ffc-modal-overlay"></div>
+            <div class="ffc-modal-content">
+                <div class="ffc-modal-header">
+                    <h3><?php _e( 'Certificate Preview (Sample Data)', 'ffc' ); ?></h3>
+                    <button type="button" class="ffc-modal-close">&times;</button>
+                </div>
+                <div id="ffc-preview-render-container">
+                    <div class="ffc-preview-loader">
+                        <span class="spinner is-active"></span> <?php _e( 'Rendering...', 'ffc' ); ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+
+    /**
+     * POINT 1 & 3: Handle single and bulk actions (Trash/Restore/Delete).
+     */
+    public function handle_submission_actions() {
+        if ( ! isset( $_GET['page'] ) || 'ffc-submissions' !== $_GET['page'] ) return;
+        
+        // Single Action
+        if ( isset( $_GET['submission_id'], $_GET['action'] ) ) {
+            $id     = absint( $_GET['submission_id'] );
+            $action = sanitize_key( $_GET['action'] );
+>>>>>>> Stashed changes
             $nonce  = isset( $_GET['_wpnonce'] ) ? $_GET['_wpnonce'] : '';
             
             if ( wp_verify_nonce( $nonce, 'ffc_action_' . $id ) ) {
@@ -256,11 +349,15 @@ class FFC_Admin {
                         $this->manual_resend( $id ); 
                         $action = 'email_sent';
                         break;
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
                 }
                 $this->redirect_with_msg( $action );
             }
         }
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
         if ( isset($_GET['action']) && isset($_GET['submission']) && is_array($_GET['submission']) ) {
             $bulk_action = $_GET['action'];
@@ -270,6 +367,8 @@ class FFC_Admin {
                 check_admin_referer('bulk-submissions'); 
                 $ids = array_map('absint', $_GET['submission']);
 =======
+=======
+>>>>>>> Stashed changes
 
         // Bulk Actions
         if ( isset( $_GET['submission'] ) && is_array( $_GET['submission'] ) ) {
@@ -279,6 +378,9 @@ class FFC_Admin {
                 check_admin_referer( 'bulk-submissions' );
                 $ids = array_map( 'absint', $_GET['submission'] );
                 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
                 foreach ( $ids as $id ) {
                     if ( 'bulk_trash' === $bulk_action ) $this->submission_handler->trash_submission( $id );
@@ -294,6 +396,7 @@ class FFC_Admin {
 =======
     /**
      * Triggers a manual email resend via the Queue.
+<<<<<<< Updated upstream
      */
     private function manual_resend( $submission_id ) {
         $sub = $this->submission_handler->get_submission( $submission_id );
@@ -315,6 +418,80 @@ class FFC_Admin {
 
     /**
      * POINT 3: CSV Export logic.
+=======
+     */
+    private function manual_resend( $submission_id ) {
+        $sub = $this->submission_handler->get_submission( $submission_id );
+        if ( ! $sub || empty( $sub->email ) ) return;
+
+        $form_config = get_post_meta( $sub->form_id, '_ffc_form_config', true );
+        $data = json_decode( $sub->data, true ) ?: array();
+        
+        $data['form_title'] = get_the_title( $sub->form_id );
+        $data['auth_code']  = $sub->auth_code;
+
+        $subject = FFC_Utils::parse_placeholders( $form_config['email_subject'] ?? '', $data );
+        $body    = FFC_Utils::parse_placeholders( $form_config['email_body'] ?? '', $data );
+
+        if ( class_exists( 'FFC_Email_Manager' ) ) {
+            FFC_Email_Manager::queue_email( $sub->email, $subject, $body, $sub->form_id, $submission_id );
+        }
+    }
+
+    /**
+     * POINT 3: CSV Export logic.
+     */
+    public function handle_csv_export() {
+        if ( isset( $_POST['ffc_action'] ) && 'export_csv_smart' === $_POST['ffc_action'] ) {
+            check_admin_referer( 'ffc_export_csv_nonce', 'ffc_export_csv_action' );
+            $this->submission_handler->export_csv();
+        }
+    }
+
+    /**
+     * POINT 1 & 3: Save manual edits to a submission.
+     */
+    public function handle_submission_save() {
+        if ( isset( $_POST['ffc_save_edit'] ) ) {
+            check_admin_referer( 'ffc_edit_submission_nonce', 'ffc_edit_submission_action' );
+            
+            global $wpdb;
+            $id         = absint( $_POST['submission_id'] ); 
+            $new_email  = sanitize_email( $_POST['user_email'] ); 
+            $raw_data   = isset( $_POST['data'] ) ? $_POST['data'] : array();
+            $clean_data = array(); 
+            
+            foreach ( $raw_data as $k => $v ) { 
+                $clean_data[sanitize_key($k)] = wp_kses_post( $v ); 
+            }
+            
+            $clean_data['is_edited'] = true;
+            $clean_data['edited_at'] = current_time( 'mysql' );
+            
+            $wpdb->update(
+                $wpdb->prefix . 'ffc_submissions',
+                array(
+                    'email' => $new_email,
+                    'data'  => wp_json_encode( $clean_data )
+                ),
+                array( 'id' => $id )
+            );
+            
+            $this->redirect_with_msg( 'updated' );
+        }
+    }
+
+    /**
+     * View Router: Decides between list or edit view.
+     */
+    public function display_submissions_page() {
+        $action = isset( $_GET['action'] ) ? $_GET['action'] : 'list';
+        ( 'edit' === $action ) ? $this->render_edit_page() : $this->render_list_page();
+    }
+
+    /**
+     * Displays the submissions table.
+>>>>>>> Stashed changes
      */
     public function handle_csv_export() {
         if ( isset( $_POST['ffc_action'] ) && 'export_csv_smart' === $_POST['ffc_action'] ) {
@@ -403,6 +580,7 @@ class FFC_Admin {
     }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     private function redirect_with_msg($msg) {
         $url = remove_query_arg(array('action', 'action2', 'submission_id', 'submission', '_wpnonce'), $_SERVER['REQUEST_URI']);
         wp_redirect( add_query_arg('msg', $msg, $url) );
@@ -434,6 +612,12 @@ class FFC_Admin {
      * Renders the submission edit form.
      */
     private function render_edit_page() {
+=======
+    /**
+     * Renders the submission edit form.
+     */
+    private function render_edit_page() {
+>>>>>>> Stashed changes
         $id  = absint( $_GET['submission_id'] );
         $sub = $this->submission_handler->get_submission( $id );
         
@@ -442,6 +626,7 @@ class FFC_Admin {
             echo '<div class="wrap"><p>' . __( 'Submission not found.', 'ffc' ) . '</p></div>'; 
             return; 
         }
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
         $sub_array = (array) $sub;
         $data = json_decode( $sub_array['data'], true ) ?: array(); 
@@ -469,6 +654,18 @@ class FFC_Admin {
             
             <form method="POST" class="ffc-edit-card" style="background:#fff; padding:20px; border:1px solid #ccd0d4; max-width:800px;">
                 <?php wp_nonce_field( 'ffc_edit_submission_nonce', 'ffc_edit_submission_action' ); ?>
+=======
+
+        $data   = json_decode( $sub->data, true ) ?: array(); 
+        $fields = get_post_meta( $sub->form_id, '_ffc_form_fields', true );
+        $protected = array( 'auth_code', 'auth_hash', 'fill_date' );
+        ?> 
+        <div class="wrap">
+            <h1><?php printf( __( 'Edit Submission #%s', 'ffc' ), $id ); ?></h1>
+            
+            <form method="POST" class="ffc-edit-card" style="background:#fff; padding:20px; border:1px solid #ccd0d4; max-width:800px;">
+                <?php wp_nonce_field( 'ffc_edit_submission_nonce', 'ffc_edit_submission_action' ); ?>
+>>>>>>> Stashed changes
                 <input type="hidden" name="submission_id" value="<?php echo $id; ?>">
                 
 >>>>>>> Stashed changes
@@ -477,6 +674,7 @@ class FFC_Admin {
                         <th><label><?php _e( 'User Email', 'ffc' ); ?></label></th>
                         <td><input type="email" name="user_email" value="<?php echo esc_attr($sub->email); ?>" class="regular-text"></td>
                     </tr>
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
                     <?php if(is_array($data)): foreach($data as $k => $v): 
                         if ($k === 'is_edited' || $k === 'edited_at') continue;
@@ -508,6 +706,15 @@ class FFC_Admin {
                             <th><?php echo esc_html( ucfirst($k) ); ?></th>
                             <td><input type="text" name="data[<?php echo esc_attr($k); ?>]" value="<?php echo esc_attr($v); ?>" class="regular-text" <?php echo $readonly; ?>></td>
 >>>>>>> Stashed changes
+=======
+                    <?php foreach( $data as $k => $v ): 
+                        if ( in_array( $k, array( 'is_edited', 'edited_at' ) ) ) continue;
+                        $readonly = in_array( $k, $protected ) ? 'readonly style="background:#f0f0f1;"' : '';
+                    ?>
+                        <tr>
+                            <th><?php echo esc_html( ucfirst($k) ); ?></th>
+                            <td><input type="text" name="data[<?php echo esc_attr($k); ?>]" value="<?php echo esc_attr($v); ?>" class="regular-text" <?php echo $readonly; ?>></td>
+>>>>>>> Stashed changes
                         </tr>
                     <?php endforeach; ?>
                 </table>
@@ -520,6 +727,7 @@ class FFC_Admin {
         <?php
     }
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
     public function handle_submission_edit_save() {
         if ( isset( $_POST['ffc_save_edit'] ) && check_admin_referer( 'ffc_edit_submission_nonce', 'ffc_edit_submission_action' ) ) {
@@ -572,6 +780,14 @@ class FFC_Admin {
         exit;
     }
 
+=======
+    private function redirect_with_msg( $msg ) {
+        $url = remove_query_arg( array( 'action', 'submission_id', 'submission', '_wpnonce' ), $_SERVER['REQUEST_URI'] );
+        wp_safe_redirect( add_query_arg( 'msg', $msg, $url ) );
+        exit;
+    }
+
+>>>>>>> Stashed changes
     private function display_admin_notices() {
         if ( ! isset( $_GET['msg'] ) ) return;
         $messages = array(
@@ -584,6 +800,9 @@ class FFC_Admin {
         );
         $text = $messages[ $_GET['msg'] ] ?? '';
         if ( $text ) echo "<div class='updated notice is-dismissible'><p>$text</p></div>";
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     }
 }

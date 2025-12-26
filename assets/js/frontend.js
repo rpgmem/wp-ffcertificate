@@ -1,10 +1,13 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 // =========================================================================
 // 1. FUNÇÃO GLOBAL DE GERAÇÃO DE PDF
 // =========================================================================
 window.generateCertificate = function(data) {
     const { template, bg_image, form_title } = data;
 =======
+=======
+>>>>>>> Stashed changes
 /**
  * Free Form Certificates - Public Frontend Script
  * Handles conditional logic, input masking, and AJAX submissions.
@@ -13,11 +16,15 @@ window.generateCertificate = function(data) {
  */
 (function($) {
     'use strict';
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
     const FFC_Public = {
         lastVerifiedPdfData: null,
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
     // 1. Criar Overlay (Adicionamos pointer-events para bloquear cliques acidentais)
     const overlay = document.createElement('div');
@@ -29,11 +36,16 @@ window.generateCertificate = function(data) {
     `;
     document.body.appendChild(overlay);
 =======
+=======
+>>>>>>> Stashed changes
         init: function() {
             this.cacheDOM();
             this.bindEvents();
             this.applyConditionalLogic(); // Initial check
         },
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
         cacheDOM: function() {
@@ -42,6 +54,7 @@ window.generateCertificate = function(data) {
             this.$verifyForm = $('.ffc-verification-form');
         },
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
     // 2. Preparar o palco (Adicionado atributo crossorigin para evitar erro de 'Tainted Canvas')
     const wrapper = document.createElement('div');
@@ -87,11 +100,20 @@ window.generateCertificate = function(data) {
             $(document).on('change input', '.ffc-frontend-form input, .ffc-frontend-form select', () => {
                 this.applyConditionalLogic();
 >>>>>>> Stashed changes
+=======
+        bindEvents: function() {
+            const self = this;
+
+            // 1. Conditional Logic Trigger
+            $(document).on('change input', '.ffc-frontend-form input, .ffc-frontend-form select', () => {
+                this.applyConditionalLogic();
+>>>>>>> Stashed changes
             });
 
             // 2. Input Masking (Document/Tax ID & Auth Code)
             $(document).on('input', 'input[name="ffc_auth_code"], .ffc-verify-input', (e) => this.maskAuthCode(e));
             $(document).on('input', 'input[name="cpf_rf"]', (e) => this.maskTaxID(e));
+<<<<<<< Updated upstream
 
             // 3. AJAX Verification
             $(document).on('submit', '.ffc-verification-form', (e) => this.handleVerification(e));
@@ -219,6 +241,81 @@ jQuery(function($) {
 
             $.post(ffc_ajax.ajax_url, {
 >>>>>>> Stashed changes
+=======
+
+            // 3. AJAX Verification
+            $(document).on('submit', '.ffc-verification-form', (e) => this.handleVerification(e));
+            $(document).on('click', '.ffc-btn-download-verify', (e) => this.downloadVerifiedPDF(e));
+
+            // 4. AJAX Submission
+            $(document).on('submit', '.ffc-frontend-form', (e) => this.handleFormSubmit(e));
+        },
+
+        // --- Core Functions ---
+
+        applyConditionalLogic: function() {
+            $('.ffc-conditional-field').each(function() {
+                const $group = $(this);
+                const targetName = $group.data('logic-target');
+                const requiredVal = String($group.data('logic-val')).trim().toLowerCase();
+                const $target = $(`[name="${targetName}"]`);
+
+                if ($target.length > 0) {
+                    let currentVal = '';
+                    if ($target.is(':radio')) {
+                        currentVal = $(`[name="${targetName}"]:checked`).val() || '';
+                    } else {
+                        currentVal = $target.val() || '';
+                    }
+
+                    currentVal = String(currentVal).trim().toLowerCase();
+
+                    if (currentVal === requiredVal && currentVal !== '') {
+                        $group.stop().slideDown(300);
+                        $group.find('input, select, textarea').prop('disabled', false);
+                    } else {
+                        $group.stop().slideUp(200);
+                        // Disable fields to avoid HTML5 validation on hidden elements
+                        $group.find('input, select, textarea').prop('disabled', true);
+                    }
+                }
+            });
+        },
+
+        maskAuthCode: function(e) {
+            let v = $(e.target).val().toUpperCase().replace(/[^A-Z0-9]/g, '');
+            if (v.length > 12) v = v.substring(0, 12);
+            let parts = v.match(/.{1,4}/g);
+            $(e.target).val(parts ? parts.join('-') : v);
+        },
+
+        maskTaxID: function(e) {
+            let v = $(e.target).val().replace(/\D/g, '');
+            if (v.length > 11) v = v.slice(0, 11);
+            
+            if (v.length <= 7) {
+                v = v.replace(/(\d{3})(\d{3})(\d{1})/, '$1.$2-$3');
+            } else {
+                v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+            }
+            $(e.target).val(v);
+        },
+
+        handleVerification: function(e) {
+            e.preventDefault();
+            const $form = $(e.target);
+            const $btn = $form.find('button[type="submit"]');
+            const $result = $form.closest('.ffc-verification-container').find('.ffc-verify-result');
+            const rawCode = $form.find('input[name="ffc_auth_code"]').val();
+
+            if (!rawCode) return;
+            const cleanCode = rawCode.replace(/[^a-zA-Z0-9]/g, '');
+
+            $btn.prop('disabled', true).text(ffc_ajax.strings.verifying);
+            $result.fadeOut();
+
+            $.post(ffc_ajax.ajax_url, {
+>>>>>>> Stashed changes
                 action: 'ffc_verify_certificate',
                 ffc_auth_code: cleanCode,
                 nonce: ffc_ajax.nonce
@@ -229,6 +326,7 @@ jQuery(function($) {
                 } else {
                     // Criteria 4: Use ffc-error class instead of inline red color
                     $result.html(`<div class="ffc-error">${response.data.message}</div>`).fadeIn();
+<<<<<<< Updated upstream
                 }
             }).fail(() => alert(ffc_ajax.strings.connectionError))
               .always(() => $btn.prop('disabled', false).text(ffc_ajax.strings.verify));
@@ -268,6 +366,31 @@ jQuery(function($) {
             $btn.prop('disabled', true).addClass('ffc-loading');
             $msg.removeClass('ffc-success ffc-error').hide().text(ffc_ajax.strings.processing);
 >>>>>>> Stashed changes
+=======
+                }
+            }).fail(() => alert(ffc_ajax.strings.connectionError))
+              .always(() => $btn.prop('disabled', false).text(ffc_ajax.strings.verify));
+        },
+
+        handleFormSubmit: function(e) {
+            e.preventDefault();
+            const $form = $(e.target);
+            const $btn = $form.find('.ffc-submit-btn');
+            const $msg = $form.find('.ffc-form-response');
+            
+            // Validations
+            const $taxInput = $form.find('input[name="cpf_rf"]');
+            if ($taxInput.length) {
+                const rawVal = $taxInput.val().replace(/\D/g, '');
+                if (rawVal && rawVal.length !== 7 && rawVal.length !== 11) {
+                    alert(ffc_ajax.strings.idMustHaveDigits);
+                    return false;
+                }
+            }
+
+            $btn.prop('disabled', true).addClass('ffc-loading');
+            $msg.removeClass('ffc-success ffc-error').hide().text(ffc_ajax.strings.processing);
+>>>>>>> Stashed changes
 
             $.ajax({
                 url: ffc_ajax.ajax_url,
@@ -301,6 +424,7 @@ jQuery(function($) {
                 alert(ffc_ajax.strings.pdfDataNotFound);
             }
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         });
     });
 
@@ -320,6 +444,8 @@ jQuery(function($) {
 
 });
 =======
+=======
+>>>>>>> Stashed changes
         },
 
         refreshCaptcha: function($form, data) {
@@ -333,5 +459,9 @@ jQuery(function($) {
 
     $(document).ready(() => FFC_Public.init());
 
+<<<<<<< Updated upstream
+})(jQuery);
+>>>>>>> Stashed changes
+=======
 })(jQuery);
 >>>>>>> Stashed changes

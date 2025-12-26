@@ -66,6 +66,7 @@
                 $('#ffc_import_html_file').val('');
                 alert(ffc_admin_ajax.strings.fileImported);
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             }
         };
         reader.onerror = function() { 
@@ -73,6 +74,11 @@
         };
         reader.readAsText(file);
     });
+=======
+            };
+            reader.readAsText(file);
+        },
+>>>>>>> Stashed changes
 =======
             };
             reader.readAsText(file);
@@ -86,6 +92,7 @@
             if (!filename) return alert(ffc_admin_ajax.strings.selectTemplate);
             if (!confirm(ffc_admin_ajax.strings.confirmReplaceContent)) return;
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
         if (!filename) {
             alert(ffc_admin_ajax.strings.selectTemplate || 'Selecione um template');
@@ -106,11 +113,16 @@
             $btn.prop('disabled', true).text(ffc_admin_ajax.strings.loading);
             $.post(ffc_admin_ajax.ajax_url, {
 >>>>>>> Stashed changes
+=======
+            $btn.prop('disabled', true).text(ffc_admin_ajax.strings.loading);
+            $.post(ffc_admin_ajax.ajax_url, {
+>>>>>>> Stashed changes
                 action: 'ffc_load_template',
                 filename: filename,
                 nonce: ffc_admin_ajax.nonce
             }, (response) => {
                 if (response.success) {
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
                     $('#ffc_pdf_layout').val(response.data);
                     alert(ffc_admin_ajax.strings.templateLoaded || 'Template carregado!');
@@ -413,4 +425,149 @@
     $(document).ready(() => FFC_Admin.init());
 >>>>>>> Stashed changes
 
+=======
+                    this.$layoutEditor.val(response.data);
+                    alert(ffc_admin_ajax.strings.templateLoaded);
+                }
+            }).always(() => $btn.prop('disabled', false).text(ffc_admin_ajax.strings.loadTemplate));
+        },
+
+        addField: function(e) {
+            e.preventDefault();
+            const $template = $('.ffc-field-template');
+            const $newRow = $($template.html());
+            $newRow.removeClass('ffc-field-template ffc-hidden').hide();
+            this.$fieldsContainer.append($newRow);
+            $newRow.slideDown(200);
+            this.reindexFields();
+        },
+
+        addLayoutRule: function(e) {
+            e.preventDefault();
+            const index = Date.now();
+            // Criteria 4: All styles moved to classes in admin.css (ffc-rule-row)
+            const ruleHtml = `
+                <div class="ffc-rule-row">
+                    <div class="ffc-rule-header">
+                        <strong>${ffc_admin_ajax.strings.if_field}</strong> 
+                        <select name="ffc_extra_templates[${index}][target]" class="ffc-rule-target-select">
+                            <option value="">${ffc_admin_ajax.strings.select_field}</option>
+                        </select>
+                        <strong>${ffc_admin_ajax.strings.equals_to}</strong>
+                        <input type="text" name="ffc_extra_templates[${index}][value]" placeholder="${ffc_admin_ajax.strings.value}">
+                        <button type="button" class="button-link-delete ffc-remove-rule">${ffc_admin_ajax.strings.remove_rule}</button>
+                    </div>
+                    <textarea name="ffc_extra_templates[${index}][layout]" rows="5" placeholder="${ffc_admin_ajax.strings.html_placeholder}"></textarea>
+                    <input type="text" name="ffc_extra_templates[${index}][bg]" placeholder="${ffc_admin_ajax.strings.bg_url_placeholder}">
+                </div>`;
+            this.$rulesContainer.append(ruleHtml);
+            this.reindexRules();
+        },
+
+        removeElement: function(e, selector, confirmMsg) {
+            e.preventDefault();
+            if (confirm(confirmMsg)) {
+                $(e.currentTarget).closest(selector).remove();
+                this.reindexFields();
+                this.reindexRules();
+            }
+        },
+
+        // --- Helpers & Utilities ---
+
+        reindexFields: function() {
+            this.$fieldsContainer.children('.ffc-field-row').each(function(index) {
+                $(this).find('input, select, textarea').each(function() {
+                    const name = $(this).attr('name');
+                    if (name) $(this).attr('name', name.replace(/ffc_fields\[[^\]]*\]/, `ffc_fields[${index}]`));
+                });
+                $(this).attr('data-index', index);
+            });
+            this.refreshLogicDropdowns();
+        },
+
+        reindexRules: function() {
+            this.$rulesContainer.children('.ffc-rule-row').each(function(index) {
+                $(this).find('input, select, textarea').each(function() {
+                    const name = $(this).attr('name');
+                    if (name) $(this).attr('name', name.replace(/ffc_extra_templates\[[^\]]*\]/, `ffc_extra_templates[${index}]`));
+                });
+            });
+            this.refreshLogicDropdowns();
+        },
+
+        refreshLogicDropdowns: function() {
+            const fields = [];
+            this.$fieldsContainer.children('.ffc-field-row:not(.ffc-field-template)').each(function() {
+                const name = $(this).find('input[name*="[name]"]').val();
+                const label = $(this).find('input[name*="[label]"]').val() || name;
+                if (name) fields.push({ name: name, label: label });
+            });
+
+            $('.ffc-logic-target-select, .ffc-rule-target-select').each(function() {
+                const $select = $(this);
+                const current = $select.val();
+                $select.find('option:not([value=""])').remove();
+                fields.forEach(f => $select.append(new Option(f.label, f.name, false, f.name === current)));
+            });
+        },
+
+        toggleFieldOptions: function($el) {
+            const $options = $el.closest('.ffc-field-row').find('.ffc-options-field');
+            (['select', 'radio'].includes($el.val())) ? $options.fadeIn(200) : $options.hide();
+        },
+
+        toggleLogicConfig: function($el) {
+            const $config = $el.closest('.ffc-logic-settings').find('.ffc-logic-config-container');
+            $el.is(':checked') ? ($config.slideDown(200), this.refreshLogicDropdowns()) : $config.slideUp(200);
+        },
+
+        insertTag: function(e) {
+            e.preventDefault();
+            const tag = $(e.currentTarget).data('tag');
+            const editor = this.$layoutEditor[0];
+            const start = editor.selectionStart;
+            const text = this.$layoutEditor.val();
+            this.$layoutEditor.val(text.substring(0, start) + tag + text.substring(editor.selectionEnd));
+            editor.focus();
+            editor.setSelectionRange(start + tag.length, start + tag.length);
+        },
+
+        showLivePreview: function(e) {
+            e.preventDefault();
+            if (!window.FFCPDFEngine) return alert(ffc_admin_ajax.strings.engine_not_loaded);
+            
+            const dummyData = {
+                template: this.$layoutEditor.val()
+                    .replace(/{{name}}|{{nome}}/g, 'John Doe')
+                    .replace(/{{auth_code}}/g, 'ABCD-1234-EFGH-5678'),
+                bg_image: $('#ffc_bg_image_input').val(),
+                form_title: ($('#title').val() || 'Preview') + ' Preview'
+            };
+
+            this.$previewModal.fadeIn(200);
+            $('#ffc-preview-render-container').html(`<div class="ffc-preview-loader"><span class="spinner is-active"></span> ${ffc_admin_ajax.strings.rendering}</div>`);
+            window.FFCPDFEngine.generate(dummyData, true);
+        },
+
+        initSortable: function() {
+            if ($.fn.sortable) {
+                this.$fieldsContainer.sortable({
+                    handle: '.ffc-sort-handle',
+                    placeholder: 'ffc-sortable-placeholder',
+                    update: () => this.reindexFields()
+                });
+            }
+        },
+
+        initialSetup: function() {
+            $('.ffc-field-type-selector').trigger('change');
+            this.reindexFields();
+            this.reindexRules();
+        }
+    };
+
+    $(document).ready(() => FFC_Admin.init());
+
+>>>>>>> Stashed changes
 })(jQuery);

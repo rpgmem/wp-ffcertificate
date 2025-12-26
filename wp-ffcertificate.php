@@ -1,5 +1,6 @@
 <?php
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 /*
 Plugin Name: Free Form Certificate
 Description: Allows creation of dynamic forms, saves submissions, generates a PDF certificate, and enables CSV export.
@@ -9,6 +10,8 @@ Text Domain: ffc
 Domain Path: /languages
 */
 =======
+=======
+>>>>>>> Stashed changes
 /**
  * Plugin Name:       Free Form Certificate
  * Description:       Allows creation of dynamic forms, saves submissions, generates PDF certificates, and enables verification and CSV export.
@@ -19,6 +22,9 @@ Domain Path: /languages
  *
  * @package           FastFormCertificates
  */
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 // Segurança: Impede o acesso direto ao arquivo
@@ -27,11 +33,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 /**
  * Definição de Constantes do Plugin
  */
 define( 'FFC_VERSION', '2.7.0' );
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 define( 'FFC_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FFC_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -66,6 +78,7 @@ require_once FFC_PLUGIN_DIR . 'includes/class-ffc-utils.php';
 /**
  * Registro de Hooks de Ativação e Desativação
  */
+<<<<<<< Updated upstream
 >>>>>>> Stashed changes
 register_activation_hook( __FILE__, array( 'FFC_Activator', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'FFC_Deactivator', 'deactivate' ) );
@@ -84,6 +97,17 @@ function run_free_form_certificate() {
  */
 require_once FFC_PLUGIN_DIR . 'includes/class-ffc-loader.php';
 
+=======
+register_activation_hook( __FILE__, array( 'FFC_Activator', 'activate' ) );
+register_deactivation_hook( __FILE__, array( 'FFC_Deactivator', 'deactivate' ) );
+
+/**
+ * Inicialização do Core do Plugin
+ * O Loader é o "maestro" que incluirá o Submission Handler, Admin, Front-end, etc.
+ */
+require_once FFC_PLUGIN_DIR . 'includes/class-ffc-loader.php';
+
+>>>>>>> Stashed changes
 /**
  * Função de inicialização segura
  */
@@ -100,6 +124,9 @@ function run_ffc_plugin() {
         $plugin = new FFC_Loader();
         $plugin->run();
     }
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 }
 
