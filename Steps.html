@@ -1,0 +1,62 @@
+/** Passo 1: Geração do Token de Segurança (Hash HMAC) */
+
+Antes de criar o QR Code, precisamos garantir que a URL que ele aponta é autêntica.
+
+Ação: No arquivo class-ffc-submission-handler.php, ao salvar uma nova submissão, devemos gerar um hash único.
+
+Lógica: O hash será uma combinação do auth_code + uma chave secreta (SALT) do seu WordPress.
+
+Objetivo: Impedir que robôs tentem "adivinhar" URLs de certificados válidos.
+
+/** Passo 2: Evolução da Página de Verificação (Leitura de Parâmetros) */
+A página do shortcode [ffc_verification] precisa deixar de ser passiva e passar a ser reativa.
+
+Ação: Modificar o shortcode no PHP para verificar se existem os parâmetros ffc_code e ffc_hash na URL (via $_GET).
+
+Objetivo: Se os dados estiverem na URL, a página deve "entender" que o usuário veio de um QR Code ou Link Mágico.
+
+/** Passo 3: Refatoração do Handler de Validação (O "Pulo do Captcha") *
+Ajustar a lógica que valida o código para aceitar duas formas de entrada.
+
+Ação: Na função AJAX de verificação, adicionar uma condicional:
+
+Caminho A: Se houver um ffc_hash válido, ignorar a validação do captcha matemático.
+
+Caminho B: Se for entrada manual, exigir o captcha como é hoje.
+
+Objetivo: Garantir fluidez total para quem usa o QR Code, sem abrir mão da segurança contra bots.
+
+/** Passo 4: Implementação da Função de Recuperação (Download na Verificação) */
+O retorno da verificação precisa ser mais completo.
+
+Ação: Quando o código for validado com sucesso, o servidor deve retornar não apenas "Válido" e todos os dados necessários para gerar o certificado (pdf_data).
+
+Interface: O JavaScript (frontend.js) deve renderizar um botão "Baixar 2ª Via do Certificado" na área de resultado.
+
+Objetivo: Transformar a página de verificação em um portal de autoatendimento.
+
+
+/** Passo 5: Preparar a migração de dados prévios */
+Garante que exista, na ativação do plugin, rotina que garanta que dados já existentes tenham hash gerado.
+Garanta que as colunas da tabela existam.
+
+/** Passo 6: Integração da Biblioteca de QR Code (Server-Side) */
+Agora sim, preparamos o motor que gera a imagem.
+
+Ação: Integrar uma biblioteca PHP leve (como a PHP QR Code) ao plugin.
+
+Lógica: Criar uma função que recebe a URL (com código e hash) e gera uma imagem em Base64.
+
+Objetivo: Ter uma imagem pronta para ser injetada no PDF sem precisar de requisições externas.
+
+/** Passo 7: Criação do Placeholder Dinâmico {{qr_code}} */
+O passo final é dar o controle ao administrador.
+
+Ação: Registrar o placeholder {{qr_code}} no motor de substituição do plugin.
+
+Interface: No editor de layout do certificado, o admin agora pode posicionar onde o QR Code aparecerá.
+
+Objetivo: Permitir que cada certificado tenha seu QR Code único impresso no layout.
+
+
+Logs de Bloqueio e Segunda via

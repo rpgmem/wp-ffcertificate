@@ -1,14 +1,24 @@
+<<<<<<< Updated upstream
 // =========================================================================
 // 1. FUNÇÃO GLOBAL DE GERAÇÃO DE PDF
 // =========================================================================
 window.generateCertificate = function(data) {
     const { template, bg_image, form_title } = data;
+=======
+/**
+ * Free Form Certificates - Public Frontend Script
+ * Handles conditional logic, input masking, and AJAX submissions.
+ * * Criteria 4: Removed inline styles, using CSS classes instead.
+ * Criteria 5: All strings and comments in English (localized via ffc_ajax).
+ */
+(function($) {
+    'use strict';
+>>>>>>> Stashed changes
 
-    if (typeof html2canvas === 'undefined' || typeof window.jspdf === 'undefined') {
-        alert("Error: PDF libraries not loaded.");
-        return;
-    }
+    const FFC_Public = {
+        lastVerifiedPdfData: null,
 
+<<<<<<< Updated upstream
     // 1. Criar Overlay (Adicionamos pointer-events para bloquear cliques acidentais)
     const overlay = document.createElement('div');
     overlay.className = 'ffc-pdf-progress-overlay';
@@ -18,9 +28,21 @@ window.generateCertificate = function(data) {
         <div id="ffc-prog-status" style="font-weight:bold;">Starting...</div>
     `;
     document.body.appendChild(overlay);
+=======
+        init: function() {
+            this.cacheDOM();
+            this.bindEvents();
+            this.applyConditionalLogic(); // Initial check
+        },
+>>>>>>> Stashed changes
 
-    const statusTxt = document.getElementById('ffc-prog-status');
+        cacheDOM: function() {
+            this.$body = $('body');
+            this.$form = $('.ffc-frontend-form');
+            this.$verifyForm = $('.ffc-verification-form');
+        },
 
+<<<<<<< Updated upstream
     // 2. Preparar o palco (Adicionado atributo crossorigin para evitar erro de 'Tainted Canvas')
     const wrapper = document.createElement('div');
     wrapper.className = 'ffc-pdf-temp-wrapper';
@@ -57,29 +79,86 @@ window.generateCertificate = function(data) {
                 orientation: 'landscape',
                 unit: 'px',
                 format: [1123, 794]
+=======
+        bindEvents: function() {
+            const self = this;
+
+            // 1. Conditional Logic Trigger
+            $(document).on('change input', '.ffc-frontend-form input, .ffc-frontend-form select', () => {
+                this.applyConditionalLogic();
+>>>>>>> Stashed changes
             });
 
-            pdf.addImage(imgData, 'PNG', 0, 0, 1123, 794);
-            
-            if(statusTxt) statusTxt.innerText = "Download started!";
-            pdf.save(`${form_title || 'certificate'}.pdf`);
-            
-            setTimeout(() => {
-                if(document.body.contains(wrapper)) document.body.removeChild(wrapper);
-                if(document.body.contains(overlay)) document.body.removeChild(overlay);
-                jQuery(document).trigger('ffc_pdf_done');
-            }, 1000);
+            // 2. Input Masking (Document/Tax ID & Auth Code)
+            $(document).on('input', 'input[name="ffc_auth_code"], .ffc-verify-input', (e) => this.maskAuthCode(e));
+            $(document).on('input', 'input[name="cpf_rf"]', (e) => this.maskTaxID(e));
 
-        }).catch(err => {
-            console.error("FFC Error:", err);
-            if(document.body.contains(overlay)) document.body.removeChild(overlay);
-            if(document.body.contains(wrapper)) document.body.removeChild(wrapper);
-            alert("Error generating PDF.");
-            jQuery(document).trigger('ffc_pdf_done');
-        });
-    }, 500); 
-};
+            // 3. AJAX Verification
+            $(document).on('submit', '.ffc-verification-form', (e) => this.handleVerification(e));
+            $(document).on('click', '.ffc-btn-download-verify', (e) => this.downloadVerifiedPDF(e));
 
+            // 4. AJAX Submission
+            $(document).on('submit', '.ffc-frontend-form', (e) => this.handleFormSubmit(e));
+        },
+
+        // --- Core Functions ---
+
+        applyConditionalLogic: function() {
+            $('.ffc-conditional-field').each(function() {
+                const $group = $(this);
+                const targetName = $group.data('logic-target');
+                const requiredVal = String($group.data('logic-val')).trim().toLowerCase();
+                const $target = $(`[name="${targetName}"]`);
+
+                if ($target.length > 0) {
+                    let currentVal = '';
+                    if ($target.is(':radio')) {
+                        currentVal = $(`[name="${targetName}"]:checked`).val() || '';
+                    } else {
+                        currentVal = $target.val() || '';
+                    }
+
+                    currentVal = String(currentVal).trim().toLowerCase();
+
+                    if (currentVal === requiredVal && currentVal !== '') {
+                        $group.stop().slideDown(300);
+                        $group.find('input, select, textarea').prop('disabled', false);
+                    } else {
+                        $group.stop().slideUp(200);
+                        // Disable fields to avoid HTML5 validation on hidden elements
+                        $group.find('input, select, textarea').prop('disabled', true);
+                    }
+                }
+            });
+        },
+
+        maskAuthCode: function(e) {
+            let v = $(e.target).val().toUpperCase().replace(/[^A-Z0-9]/g, '');
+            if (v.length > 12) v = v.substring(0, 12);
+            let parts = v.match(/.{1,4}/g);
+            $(e.target).val(parts ? parts.join('-') : v);
+        },
+
+        maskTaxID: function(e) {
+            let v = $(e.target).val().replace(/\D/g, '');
+            if (v.length > 11) v = v.slice(0, 11);
+            
+            if (v.length <= 7) {
+                v = v.replace(/(\d{3})(\d{3})(\d{1})/, '$1.$2-$3');
+            } else {
+                v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+            }
+            $(e.target).val(v);
+        },
+
+        handleVerification: function(e) {
+            e.preventDefault();
+            const $form = $(e.target);
+            const $btn = $form.find('button[type="submit"]');
+            const $result = $form.closest('.ffc-verification-container').find('.ffc-verify-result');
+            const rawCode = $form.find('input[name="ffc_auth_code"]').val();
+
+<<<<<<< Updated upstream
 // =========================================================================
 // 2. LÓGICA DO FORMULÁRIO (JQUERY)
 // =========================================================================
@@ -131,28 +210,47 @@ jQuery(function($) {
             url: ffc_ajax.ajax_url,
             type: 'POST',
             data: {
+=======
+            if (!rawCode) return;
+            const cleanCode = rawCode.replace(/[^a-zA-Z0-9]/g, '');
+
+            $btn.prop('disabled', true).text(ffc_ajax.strings.verifying);
+            $result.fadeOut();
+
+            $.post(ffc_ajax.ajax_url, {
+>>>>>>> Stashed changes
                 action: 'ffc_verify_certificate',
                 ffc_auth_code: cleanCode,
-                ffc_captcha_ans: $form.find('input[name="ffc_captcha_ans"]').val(),
-                ffc_captcha_hash: $form.find('input[name="ffc_captcha_hash"]').val(),
                 nonce: ffc_ajax.nonce
-            },
-            success: function(response) {
-                $btn.prop('disabled', false).text(ffc_ajax.strings.verify);
+            }, (response) => {
                 if (response.success) {
-                    $resultContainer.html(response.data.html).fadeIn();
+                    $result.html(response.data.html).fadeIn();
+                    if (response.data.pdf_data) this.lastVerifiedPdfData = response.data.pdf_data;
                 } else {
-                    $resultContainer.html(`<div class="ffc-verify-error">${response.data.message}</div>`).fadeIn();
-                    refreshCaptcha($form, response.data);
+                    // Criteria 4: Use ffc-error class instead of inline red color
+                    $result.html(`<div class="ffc-error">${response.data.message}</div>`).fadeIn();
                 }
-            },
-            error: function() {
-                $btn.prop('disabled', false).text(ffc_ajax.strings.verify);
-                alert(ffc_ajax.strings.connectionError);
-            }
-        });
-    });
+            }).fail(() => alert(ffc_ajax.strings.connectionError))
+              .always(() => $btn.prop('disabled', false).text(ffc_ajax.strings.verify));
+        },
 
+        handleFormSubmit: function(e) {
+            e.preventDefault();
+            const $form = $(e.target);
+            const $btn = $form.find('.ffc-submit-btn');
+            const $msg = $form.find('.ffc-form-response');
+            
+            // Validations
+            const $taxInput = $form.find('input[name="cpf_rf"]');
+            if ($taxInput.length) {
+                const rawVal = $taxInput.val().replace(/\D/g, '');
+                if (rawVal && rawVal.length !== 7 && rawVal.length !== 11) {
+                    alert(ffc_ajax.strings.idMustHaveDigits);
+                    return false;
+                }
+            }
+
+<<<<<<< Updated upstream
     // --- C. SUBMISSÃO E GERAÇÃO (AJAX) ---
     $(document).on('submit', '.ffc-submission-form', function(e) {
         e.preventDefault();
@@ -166,38 +264,43 @@ jQuery(function($) {
             alert(ffc_ajax.strings.idMustHaveDigits);
             return false;
         }
+=======
+            $btn.prop('disabled', true).addClass('ffc-loading');
+            $msg.removeClass('ffc-success ffc-error').hide().text(ffc_ajax.strings.processing);
+>>>>>>> Stashed changes
 
-        $btn.prop('disabled', true).text(ffc_ajax.strings.processing);
-        $msg.removeClass('ffc-success ffc-error').hide();
-
-        let formData = $form.serializeArray();
-        formData.push({ name: 'action', value: 'ffc_submit_form' });
-        formData.push({ name: 'nonce', value: ffc_ajax.nonce });
-
-        $.ajax({
-            url: ffc_ajax.ajax_url,
-            type: 'POST',
-            data: formData,
-            success: function(response) {
-                $btn.prop('disabled', false).text(ffc_ajax.strings.submit);
-                
-                if (response.success) {
-                    $msg.addClass('ffc-success').html(response.data.message).fadeIn();
-                    if (response.data.pdf_data) {
-                        $msg.append(`<p><small>${ffc_ajax.strings.generatingCertificate}</small></p>`);
-                        window.generateCertificate(response.data.pdf_data);
+            $.ajax({
+                url: ffc_ajax.ajax_url,
+                type: 'POST',
+                data: $form.serialize() + '&action=ffc_submit_form&nonce=' + ffc_ajax.nonce + '&form_id=' + $form.data('form-id'),
+                success: (response) => {
+                    if (response.success) {
+                        $msg.addClass('ffc-success').html(response.data.message).fadeIn();
+                        
+                        if (response.data.pdf_data && window.FFCPDFEngine) {
+                            // Criteria 4: Avoided inline font-size, handled by container or common classes
+                            $msg.append(`<div class="ffc-generating-notice">${ffc_ajax.strings.generatingCertificate}</div>`);
+                            window.FFCPDFEngine.generate(response.data.pdf_data);
+                        }
+                    } else {
+                        $msg.addClass('ffc-error').html(response.data.message).fadeIn();
                     }
-                    $form[0].reset();
-                    if(response.data.refresh_captcha) refreshCaptcha($form, response.data);
-                } else {
-                    $msg.addClass('ffc-error').html(response.data.message).fadeIn();
-                    refreshCaptcha($form, response.data);
-                }
-            },
-            error: function() {
-                $btn.prop('disabled', false).text(ffc_ajax.strings.submit);
-                alert(ffc_ajax.strings.connectionError);
+
+                    if (response.data && response.data.new_hash) this.refreshCaptcha($form, response.data);
+                },
+                error: () => $msg.addClass('ffc-error').text(ffc_ajax.strings.connectionError).fadeIn()
+            }).always(() => $btn.prop('disabled', false).removeClass('ffc-loading'));
+        },
+
+        downloadVerifiedPDF: function(e) {
+            e.preventDefault();
+            const pdfData = this.lastVerifiedPdfData || (window.lastVerifiedPdfData || null);
+            if (pdfData && window.FFCPDFEngine) {
+                window.FFCPDFEngine.generate(pdfData);
+            } else {
+                alert(ffc_ajax.strings.pdfDataNotFound);
             }
+<<<<<<< Updated upstream
         });
     });
 
@@ -216,3 +319,19 @@ jQuery(function($) {
     });
 
 });
+=======
+        },
+
+        refreshCaptcha: function($form, data) {
+            if (data.refresh_captcha) {
+                $form.find('.ffc-math-captcha label').html(data.new_label);
+                $form.find('input[name="ffc_captcha_hash"]').val(data.new_hash);
+                $form.find('input[name="ffc_captcha_ans"]').val('');
+            }
+        }
+    };
+
+    $(document).ready(() => FFC_Public.init());
+
+})(jQuery);
+>>>>>>> Stashed changes

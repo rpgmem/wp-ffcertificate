@@ -32,8 +32,37 @@ O plugin principal é o `wp-ffcertificate.php`.
 
 ✔ assets/
    - js/admin.js: Lógica do form builder e geração manual/preview no admin.
+   - js/ffc-pdf-engine.js
    - js/frontend.js: Lógica AJAX de submissão e geração de PNG no frontend.
    - css/admin.css: Estilos para o CPT e telas de admin.
+<<<<<<< Updated upstream
+=======
+   - css/ffc-pdf-core.css:
+   - css/frontend.css:
+
+✔ includes/
+   - class-ffc-activator.php
+   - class-ffc-admin.php
+   - class-ffc-cpt.php
+   - class-ffc-deactivator.php
+   - class-ffc-email-manager.php
+   - class-ffc-form-editor.php
+   - class-ffc-frontend.php
+   - class-ffc-loader.php
+   - class-ffc-settings.php
+   - class-ffc-submission-handler.php
+   - class-ffc-submissions-list-table.php
+   - class-ffc-utils.php
+
+✔ libs/phpqrcode
+   - qrlib.php e demias arquivos da bliblioteca de geraçãode qrcode
+
+✔ html/
+   - contendo arquivos HTML de layout
+
+✔ languages/
+   - ffc.pot
+>>>>>>> Stashed changes
 
 ==========================
  3. Fluxo de Submissão

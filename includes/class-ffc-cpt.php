@@ -1,17 +1,29 @@
 <?php
+/**
+ * FFC_CPT
+ * Handles the registration of Custom Post Types and related row actions (Duplication).
+ * * @package FastFormCertificates
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
 class FFC_CPT {
 
+    /**
+     * POINT 2: Component Registration.
+     * Note: Metabox UI rendering has been delegated to FFC_Form_Editor.
+     */
     public function __construct() {
         add_action( 'init', array( $this, 'register_form_cpt' ) );
-        add_action( 'add_meta_boxes', array( $this, 'add_form_tabs_metabox' ) );
-        add_action( 'save_post', array( $this, 'save_form_meta_boxes' ), 10, 2 );
+        add_action( 'init', array( $this, 'register_email_queue_cpt' ) );
+        
+        // Row actions and duplication logic (CPT specific)
         add_filter( 'post_row_actions', array( $this, 'add_duplicate_link' ), 10, 2 );
         add_action( 'admin_action_ffc_duplicate_form', array( $this, 'handle_form_duplication' ) );
     }
+<<<<<<< Updated upstream
     
     public function register_form_cpt() {
         $labels = array(
@@ -30,11 +42,45 @@ class FFC_CPT {
             'menu_icon'    => 'dashicons-feedback',
             'supports'     => array( 'title' ),
             'rewrite'      => array( 'slug' => 'ffc-form' ),
+=======
+
+    /**
+     * POINT 5: Register the 'ffc_form' Custom Post Type.
+     * All labels and strings in English.
+     */
+    public function register_form_cpt() {
+        $labels = array(
+            'name'               => _x( 'Forms', 'Post Type General Name', 'ffc' ),
+            'singular_name'      => _x( 'Form', 'Post Type Singular Name', 'ffc' ),
+            'menu_name'          => __( 'Free Form Certificate', 'ffc' ),
+            'name_admin_bar'     => __( 'FFC Form', 'ffc' ),
+            'add_new'            => __( 'Add New Form', 'ffc' ),
+            'add_new_item'       => __( 'Add New Form', 'ffc' ),
+            'edit_item'          => __( 'Edit Form', 'ffc' ),
+            'all_items'          => __( 'All Forms', 'ffc' ),
+            'search_items'       => __( 'Search Forms', 'ffc' ),
+            'not_found'          => __( 'No forms found.', 'ffc' ),
+        );
+
+        $args = array(
+            'labels'             => $labels,
+            'public'             => false, 
+            'show_ui'            => true,
+            'show_in_menu'       => true,
+            'capability_type'    => 'post',
+            'has_archive'        => false,
+            'hierarchical'       => false,
+            'menu_icon'          => 'dashicons-feedback',
+            'supports'           => array( 'title' ),
+            'rewrite'            => array( 'slug' => 'ffc-form' ),
+            'show_in_rest'       => false, // Disabled to keep focus on custom builder
+>>>>>>> Stashed changes
         );
 
         register_post_type( 'ffc_form', $args );
     }
 
+<<<<<<< Updated upstream
     public function add_form_tabs_metabox() {
         // Main Metabox (Builder)
         add_meta_box(
@@ -297,6 +343,32 @@ class FFC_CPT {
         }
     }
 
+=======
+    /**
+     * POINT 2: Register Email Queue CPT.
+     * Moved from Loader to CPT class to centralize definitions.
+     */
+    public function register_email_queue_cpt() {
+        register_post_type( 'ffc_email_queue', array(
+            'labels' => array( 
+                'name'          => __( 'Email Queue', 'ffc' ),
+                'singular_name' => __( 'Queued Email', 'ffc' )
+            ),
+            'public'          => false,
+            'show_ui'         => true,
+            'show_in_menu'    => 'edit.php?post_type=ffc_form', // Submenu of Forms
+            'menu_icon'       => 'dashicons-email-alt',
+            'supports'        => array( 'title', 'editor' ),
+            'capability_type' => 'post',
+            'capabilities'    => array( 'create_posts' => false ),
+            'map_meta_cap'    => true,
+        ));
+    }
+
+    /**
+     * POINT 3: Adds a "Duplicate" link to the post row actions.
+     */
+>>>>>>> Stashed changes
     public function add_duplicate_link( $actions, $post ) {
         if ( $post->post_type !== 'ffc_form' ) {
             return $actions;
@@ -307,22 +379,37 @@ class FFC_CPT {
             'ffc_duplicate_form_nonce'
         );
         
-        $actions['duplicate'] = '<a href="' . esc_url( $url ) . '" title="' . esc_attr__( 'Duplicate this form', 'ffc' ) . '">' . __( 'Duplicate', 'ffc' ) . '</a>';
+        $actions['duplicate'] = sprintf(
+            '<a href="%s" title="%s">%s</a>',
+            esc_url( $url ),
+            esc_attr__( 'Duplicate this form', 'ffc' ),
+            __( 'Duplicate', 'ffc' )
+        );
         
         return $actions;
     }
 
+<<<<<<< Updated upstream
+=======
+    /**
+     * POINT 1 & 3: Handles the duplication process.
+     * Ensures all metadata (fields and config) are carried over correctly.
+     */
+>>>>>>> Stashed changes
     public function handle_form_duplication() {
         if ( ! current_user_can( 'edit_posts' ) ) {
             wp_die( esc_html__( 'You do not have permission to duplicate this post.', 'ffc' ) );
         }
 
+<<<<<<< Updated upstream
         $post_id = ( isset( $_GET['post'] ) ? absint( $_GET['post'] ) : absint( $_POST['post'] ) );
         
+=======
+        $post_id = ( isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0 );
+>>>>>>> Stashed changes
         check_admin_referer( 'ffc_duplicate_form_nonce' );
 
         $post = get_post( $post_id );
-        
         if ( ! $post || $post->post_type !== 'ffc_form' ) {
             wp_die( esc_html__( 'Invalid post.', 'ffc' ) );
         }
@@ -336,9 +423,18 @@ class FFC_CPT {
 
         $new_post_id = wp_insert_post( $new_post_args );
 
-        if ( is_wp_error( $new_post_id ) ) {
-            wp_die( $new_post_id->get_error_message() );
+        if ( ! is_wp_error( $new_post_id ) ) {
+            // Copy relevant metadata
+            $fields = get_post_meta( $post_id, '_ffc_form_fields', true );
+            $config = get_post_meta( $post_id, '_ffc_form_config', true );
+
+            update_post_meta( $new_post_id, '_ffc_form_fields', $fields );
+            update_post_meta( $new_post_id, '_ffc_form_config', $config );
+
+            wp_redirect( admin_url( 'edit.php?post_type=ffc_form' ) );
+            exit;
         }
+<<<<<<< Updated upstream
 
         $fields = get_post_meta( $post_id, '_ffc_form_fields', true );
         $config = get_post_meta( $post_id, '_ffc_form_config', true );
@@ -348,5 +444,7 @@ class FFC_CPT {
 
         wp_redirect( admin_url( 'edit.php?post_type=ffc_form' ) );
         exit;
+=======
+>>>>>>> Stashed changes
     }
 }

@@ -1,8 +1,16 @@
 /**
+<<<<<<< Updated upstream
  * FFC PDF CORE - Versão Estável e Otimizada
  */
 
 /* Container invisível para renderização */
+=======
+ * FFC PDF CORE - Versão Estável e Isolada
+ * Responsável por criar o ambiente de renderização do certificado e o feedback de progresso.
+ */
+
+/* 1. CONTAINER INVISÍVEL (O "Palco" de Captura) */
+>>>>>>> Stashed changes
 .ffc-pdf-temp-wrapper {
     position: absolute;
     left: -9999px;
@@ -11,9 +19,15 @@
     height: 794px;
     z-index: -1;
     overflow: hidden;
+    pointer-events: none;
 }
 
+<<<<<<< Updated upstream
 /* Reset Universal para o Captura */
+=======
+/* 2. RESET UNIVERSAL PARA A CAPTURA 
+   Garante que estilos do tema (como margens de parágrafo) não vazem para o PDF */
+>>>>>>> Stashed changes
 .ffc-pdf-stage, 
 .ffc-pdf-stage *, 
 .ffc-pdf-stage *:before, 
@@ -24,32 +38,47 @@
 }
 
 .ffc-pdf-stage {
+<<<<<<< Updated upstream
     all: initial; /* Limpa estilos herdados do WP/Temas */
+=======
+    all: initial; /* Reseta todas as propriedades herdadas do WordPress */
+>>>>>>> Stashed changes
     display: block !important;
     position: relative;
     width: 1123px;
     height: 794px;
     background-color: #ffffff;
     overflow: hidden;
-    box-sizing: border-box;
     font-family: Arial, Helvetica, sans-serif;
     visibility: visible !important;
     opacity: 1 !important;
 }
 
+<<<<<<< Updated upstream
 /* Imagem de Fundo (Template) */
+=======
+/* Imagem de Fundo (O Template do Admin) */
+>>>>>>> Stashed changes
 .ffc-pdf-bg-img {
     position: absolute;
     top: 0;
     left: 0;
     width: 1123px;
     height: 794px;
+<<<<<<< Updated upstream
     object-fit: fill; /* Garante que preencha todo o A4 paisagem */
+=======
+    object-fit: fill; /* Garante preenchimento total do A4 */
+>>>>>>> Stashed changes
     z-index: 1;
     display: block !important;
 }
 
+<<<<<<< Updated upstream
 /* Camada de Conteúdo Dinâmico */
+=======
+/* Camada de Conteúdo Dinâmico (Textos e QR Code) */
+>>>>>>> Stashed changes
 .ffc-pdf-user-content {
     position: absolute;
     top: 0;
@@ -59,17 +88,26 @@
     z-index: 2;
     display: block !important;
     color: #000000 !important;
+<<<<<<< Updated upstream
     pointer-events: none; /* Evita interferências no clique */
 }
 
 /* Reativa estilos básicos para HTML dentro do certificado */
 .ffc-pdf-user-content * {
     all: revert; /* Retorna ao comportamento padrão do navegador */
+=======
+}
+
+/* Reativa estilos básicos dentro do certificado para permitir personalização via Editor */
+.ffc-pdf-user-content * {
+    all: revert; /* Reverte para o comportamento padrão do navegador */
+>>>>>>> Stashed changes
     box-sizing: border-box;
     color: inherit;
     line-height: 1.4;
 }
 
+<<<<<<< Updated upstream
 /* Ajuste específico para garantir que imagens dentro do conteúdo não quebrem */
 .ffc-pdf-user-content img {
     max-width: 100%;
@@ -112,34 +150,79 @@ body.wp-admin .ffc-pdf-temp-wrapper {
 }
 
 /* Overlay de progresso ultra-prioritário */
+=======
+/* 3. OVERLAY DE PROGRESSO (UI de Bloqueio) 
+   Exibido enquanto o html2canvas processa a imagem pesada */
+>>>>>>> Stashed changes
 .ffc-pdf-progress-overlay {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
+<<<<<<< Updated upstream
     width: 100vw !important; /* Viewport Width */
     height: 100vh !important; /* Viewport Height */
     background: rgba(0, 0, 0, 0.92) !important;
     z-index: 2147483647 !important; /* Máximo valor possível de z-index */
+=======
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.85) !important;
+    z-index: 99999999 !important; /* Acima de qualquer menu de tema */
+>>>>>>> Stashed changes
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
     align-items: center !important;
     color: #ffffff !important;
+<<<<<<< Updated upstream
     font-family: sans-serif !important;
     pointer-events: all !important; /* Bloqueia cliques no fundo */
 }
 
 /* Spinner maior para mobile */
+=======
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+    pointer-events: all !important;
+}
+
+.ffc-pdf-progress-content {
+    text-align: center;
+}
+
+/* Spinner de carregamento */
+>>>>>>> Stashed changes
 .ffc-progress-spinner {
-    width: 60px;
-    height: 60px;
-    border: 6px solid rgba(255,255,255,0.1);
-    border-top: 6px solid #3498db;
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(255, 255, 255, 0.1);
+    border-top: 5px solid #3498db;
     border-radius: 50%;
     animation: ffc-spin 1s linear infinite;
-    margin-bottom: 20px;
+    margin: 0 auto 15px;
 }
 
 @keyframes ffc-spin {
     to { transform: rotate(360deg); }
+}
+
+/* 4. ELEMENTOS DO CERTIFICADO */
+
+/* Estilo para garantir que o QR Code saia nítido no PDF */
+.ffc-qr-code, 
+.ffc-pdf-user-content img[src^="data:image"] {
+    display: inline-block !important;
+    padding: 8px !important; 
+    background: #ffffff !important;
+    border: 1px solid #eee !important;
+}
+
+/* Classes utilitárias para o Editor de Template */
+.ffc-txt-center { text-align: center; }
+.ffc-full-width  { width: 100%; }
+
+/* Suporte para WordPress Admin (Visualização) */
+body.wp-admin .ffc-pdf-temp-wrapper {
+    position: fixed !important;
+    left: -9999px !important;
+    top: 0 !important;
 }

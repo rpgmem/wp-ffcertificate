@@ -31,7 +31,11 @@
 }
 
 /* ==========================================================================
+<<<<<<< Updated upstream
    2. FORM BUILDER (Field Rows) - CORREÇÃO DE OVERFLOW
+=======
+   2. FORM BUILDER (Field Rows)
+>>>>>>> Stashed changes
    ========================================================================== */
 #ffc-fields-container { margin-bottom: 15px; max-width: 100%; }
 
@@ -43,6 +47,7 @@
     border-left: 4px solid #2271b1;
     border-radius: 4px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    position: relative;
 }
 
 .ffc-field-row:hover { box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
@@ -56,7 +61,11 @@
     border-bottom: 1px solid #f0f0f1;
 }
 
+<<<<<<< Updated upstream
 /* O GRID RESPONSIVO (AQUI ESTÁ A MÁGICA) */
+=======
+/* Responsive Grid for Form Builder */
+>>>>>>> Stashed changes
 .ffc-field-row-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -73,13 +82,6 @@
     height: 30px;
 }
 
-.ffc-req-container {
-    flex-direction: row !important;
-    align-items: center;
-    padding-bottom: 8px;
-    min-width: 100px;
-}
-
 .ffc-options-field {
     margin-top: 15px;
     background: #f6f7f7;
@@ -89,7 +91,36 @@
 }
 
 /* ==========================================================================
+<<<<<<< Updated upstream
    3. EDITOR HTML & PREVIEW
+=======
+   3. CONDITIONAL LAYOUT RULES (Critério 4: Centralized from JS)
+   ========================================================================== */
+.ffc-rule-row {
+    background: #f0f6fb;
+    border: 1px solid #c3d9e8;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+}
+
+.ffc-rule-header {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #c3d9e8;
+    padding-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.ffc-rule-header button.ffc-remove-rule {
+    margin-left: auto;
+}
+
+/* ==========================================================================
+   4. HTML EDITOR & PREVIEW
+>>>>>>> Stashed changes
    ========================================================================== */
 #ffc_pdf_layout {
     width: 100%;
@@ -103,17 +134,80 @@
     line-height: 1.5;
 }
 
-.ffc-pdf-preview-container {
-    border: 1px solid #c3c4c7;
-    background: #f0f0f1;
-    padding: 20px;
-    margin-top: 10px;
+/* ==========================================================================
+   5. ADMIN MODAL & FEEDBACK
+   ========================================================================== */
+#ffc-preview-modal {
+    position: fixed;
+    z-index: 999999;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+}
+
+.ffc-modal-overlay {
+    background: rgba(0,0,0,0.8);
+    width: 100%; height: 100%;
+    position: absolute;
+}
+
+.ffc-modal-content {
+    background: #f1f1f1;
+    margin: 2% auto;
+    width: 90%;
+    max-width: 1100px;
+    height: 85vh;
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+}
+
+.ffc-modal-header {
+    padding: 15px 20px;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#ffc-preview-render-container {
+    flex: 1;
+    overflow-y: auto;
     display: flex;
     justify-content: center;
-    overflow: auto;
+    align-items: flex-start;
+    padding: 30px;
+    background: #d0d0d0;
+}
+
+/* Loading State Animation */
+.ffc-btn-loading {
+    position: relative;
+    color: transparent !important;
+    pointer-events: none;
+}
+
+.ffc-btn-loading::after {
+    content: "";
+    position: absolute;
+    width: 16px; height: 16px;
+    top: 50%; left: 50%;
+    margin: -8px 0 0 -8px;
+    border: 2px solid #fff;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: ffc-spin 0.8s linear infinite;
+}
+
+@keyframes ffc-spin {
+    to { transform: rotate(360deg); }
 }
 
 /* ==========================================================================
+<<<<<<< Updated upstream
    4. TICKET GENERATOR & SUBMISSIONS
    ========================================================================== */
 #ffc_generated_list {
@@ -180,3 +274,16 @@
 /* Destaques */
 .ffc-highlight-row { background: #f0f6fc; }
 .ffc-label-accent { color: #2271b1; font-weight: bold; }
+=======
+   6. UTILITIES
+   ========================================================================== */
+.ffc-hidden { display: none !important; }
+.ffc-sort-handle, .ffc-drag-handle { cursor: move; color: #c3c4c7; padding: 5px; font-size: 18px; }
+.ffc-sortable-placeholder {
+    height: 100px;
+    background: #f0f0f1;
+    border: 2px dashed #c3c4c7;
+    margin-bottom: 12px;
+    border-radius: 4px;
+}
+>>>>>>> Stashed changes
