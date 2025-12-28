@@ -52,7 +52,7 @@ class FFC_Frontend {
                 'ffc-frontend-js', 
                 FFC_PLUGIN_URL . 'assets/js/frontend.js', 
                 array( 'jquery', 'html2canvas', 'jspdf' ), 
-                time(), 
+                '1.0.0', 
                 true 
             );
 
@@ -79,6 +79,9 @@ class FFC_Frontend {
     // HELPER FUNCTIONS
     // =========================================================================
 
+    /**
+     * Recursively sanitize form data
+     */
     private function recursive_sanitize( $data ) {
         if ( is_array( $data ) ) {
             $sanitized = array();
@@ -90,6 +93,9 @@ class FFC_Frontend {
         return wp_kses( $data, FFC_Utils::get_allowed_html_tags() );
     }
 
+    /**
+     * Generate new captcha data (math question + hash)
+     */
     private function get_new_captcha_data() {
         $n1 = rand( 1, 9 );
         $n2 = rand( 1, 9 );
@@ -99,12 +105,15 @@ class FFC_Frontend {
         );
     }
 
+    /**
+     * Generate HTML for security fields (honeypot + captcha)
+     */
     private function generate_security_fields() {
         $captcha = $this->get_new_captcha_data();
         ob_start();
         ?>
         <div class="ffc-security-container">
-            <div style="position: absolute; left: -9999px; display: none;">
+            <div class="ffc-honeypot-field">
                 <label><?php esc_html_e('Do not fill this field if you are human:', 'ffc'); ?></label>
                 <input type="text" name="ffc_honeypot_trap" value="" tabindex="-1" autocomplete="off">
             </div>
@@ -121,13 +130,22 @@ class FFC_Frontend {
         return ob_get_clean();
     }
 
+    /**
+     * Validate security fields (honeypot + captcha)
+     * Returns true if valid, or error message string if invalid
+     */
     private function validate_security_fields( $data ) {
+        // Check honeypot
         if ( ! empty( $data['ffc_honeypot_trap'] ) ) {
             return __( 'Security Error: Request blocked (Honeypot).', 'ffc' );
         }
+        
+        // Check captcha presence
         if ( ! isset( $data['ffc_captcha_ans'] ) || ! isset( $data['ffc_captcha_hash'] ) ) {
             return __( 'Error: Please answer the security question.', 'ffc' );
         }
+        
+        // Validate captcha answer
         $user_ans = trim( $data['ffc_captcha_ans'] );
         $hash_sent = $data['ffc_captcha_hash'];
         $check_hash = wp_hash( $user_ans . 'ffc_math_salt' );
@@ -135,12 +153,18 @@ class FFC_Frontend {
         if ( $check_hash !== $hash_sent ) {
             return __( 'Error: The math answer is incorrect.', 'ffc' );
         }
+        
         return true; 
     }
 
     // =========================================================================
     // 1. VERIFICATION PAGE (SHORTCODE)
     // =========================================================================
+    
+    /**
+     * Shortcode: [ffc_verification]
+     * Displays certificate verification form
+     */
     public function shortcode_verification_page( $atts ) {
         ob_start();
         $input_raw = isset( $_POST['ffc_auth_code'] ) ? sanitize_text_field( $_POST['ffc_auth_code'] ) : '';
@@ -175,7 +199,7 @@ class FFC_Frontend {
                     $result_html .= '<p><strong>' . esc_html__( 'Event:', 'ffc' ) . '</strong> ' . esc_html( $form_title ) . '</p>';
                     $result_html .= '<p><strong>' . esc_html__( 'Issued on:', 'ffc' ) . '</strong> ' . esc_html( $date_generated ) . '</p>';
                     $result_html .= '<hr>';
-                    $result_html .= '<h4>' . esc_html__( 'Participant Data:', 'ffc' ) . '</h4><ul style="list-style:none; padding:0;">';
+                    $result_html .= '<h4>' . esc_html__( 'Participant Data:', 'ffc' ) . '</h4><ul class="ffc-verify-data-list">';
                     if ( is_array( $data ) ) {
                         foreach ( $data as $key => $value ) {
                             if ( in_array( $key, array('auth_code', 'cpf_rf', 'ticket', 'fill_date', 'date', 'submission_date', 'fill_time'), true ) ) continue;
@@ -188,6 +212,7 @@ class FFC_Frontend {
                     $error_msg = __( 'Certificate not found or invalid code.', 'ffc' );
                 }
             }
+            
             if ( ! empty( $error_msg ) ) {
                 $result_html .= '<div class="ffc-verify-error">❌ ' . esc_html( $error_msg ) . '</div>';
             }
@@ -195,7 +220,7 @@ class FFC_Frontend {
         ?>
         <div class="ffc-verification-container">
             <form method="POST" class="ffc-verification-form">
-                <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; align-items: flex-start;">
+                <div class="ffc-verify-input-group">
                     <input type="text" name="ffc_auth_code" class="ffc-input ffc-verify-input" value="<?php echo esc_attr( $input_raw ); ?>" placeholder="<?php esc_attr_e( 'Enter code...', 'ffc' ); ?>" required maxlength="14">
                     <button type="submit" class="ffc-submit-btn"><?php esc_html_e( 'Verify', 'ffc' ); ?></button>
                 </div>
@@ -210,15 +235,26 @@ class FFC_Frontend {
     // =========================================================================
     // 2. ISSUANCE FORM (SHORTCODE)
     // =========================================================================
+    
+    /**
+     * Shortcode: [ffc_form id="123"]
+     * Displays certificate issuance form
+     */
     public function shortcode_form( $atts ) {
         $atts = shortcode_atts( array( 'id' => 0 ), $atts, 'ffc_form' );
         $form_id = absint( $atts['id'] );
-        if ( ! $form_id || get_post_type( $form_id ) !== 'ffc_form' ) return '<p>' . esc_html__( 'Form not found.', 'ffc' ) . '</p>';
+        
+        if ( ! $form_id || get_post_type( $form_id ) !== 'ffc_form' ) {
+            return '<p>' . esc_html__( 'Form not found.', 'ffc' ) . '</p>';
+        }
 
         $form_post  = get_post( $form_id );
         $form_title = $form_post ? $form_post->post_title : '';
         $fields = get_post_meta( $form_id, '_ffc_form_fields', true );
-        if ( empty( $fields ) ) return '<p>' . esc_html__( 'Form has no fields.', 'ffc' ) . '</p>';
+        
+        if ( empty( $fields ) ) {
+            return '<p>' . esc_html__( 'Form has no fields.', 'ffc' ) . '</p>';
+        }
 
         ob_start();
         ?>
@@ -290,22 +326,36 @@ class FFC_Frontend {
     // =========================================================================
     // 3. AJAX PROCESSING (FORM SUBMISSION)
     // =========================================================================
+    
+    /**
+     * Handle form submission via AJAX
+     */
     public function handle_submission_ajax() {
         check_ajax_referer( 'ffc_frontend_nonce', 'nonce' );
         
         $security_check = $this->validate_security_fields( $_POST );
         if ( $security_check !== true ) {
             $new_captcha = $this->get_new_captcha_data();
-            wp_send_json_error( array( 'message' => $security_check, 'refresh_captcha' => true, 'new_label' => $new_captcha['label'], 'new_hash' => $new_captcha['hash'] ) );
+            wp_send_json_error( array( 
+                'message' => $security_check, 
+                'refresh_captcha' => true, 
+                'new_label' => $new_captcha['label'], 
+                'new_hash' => $new_captcha['hash'] 
+            ) );
         }
 
         $form_id = isset( $_POST['form_id'] ) ? absint( $_POST['form_id'] ) : 0;
-        if ( ! $form_id ) wp_send_json_error( array( 'message' => __( 'Invalid Form ID.', 'ffc' ) ) );
+        if ( ! $form_id ) {
+            wp_send_json_error( array( 'message' => __( 'Invalid Form ID.', 'ffc' ) ) );
+        }
 
         $form_config = get_post_meta( $form_id, '_ffc_form_config', true );
         if ( ! is_array( $form_config ) ) $form_config = array();
+        
         $fields_config = get_post_meta( $form_id, '_ffc_form_fields', true );
-        if ( ! $fields_config ) wp_send_json_error( array( 'message' => __( 'Form configuration not found.', 'ffc' ) ) );
+        if ( ! $fields_config ) {
+            wp_send_json_error( array( 'message' => __( 'Form configuration not found.', 'ffc' ) ) );
+        }
 
         $submission_data = array();
         $user_email = '';
@@ -314,18 +364,26 @@ class FFC_Frontend {
             $name = $field['name'];
             if ( isset( $_POST[ $name ] ) ) {
                 $value = $this->recursive_sanitize( $_POST[ $name ] );
+                
+                // Special validation for CPF/RF
                 if ( $name === 'cpf_rf' ) {
                     $value = preg_replace( '/\D/', '', $value );
                     if ( strlen($value) !== 7 && strlen($value) !== 11 ) {
                         wp_send_json_error( array( 'message' => __( 'Error: Identification ID must be exactly 7 or 11 digits.', 'ffc' ) ) );
                     }
                 }
+                
                 $submission_data[ $name ] = $value;
-                if ( isset($field['type']) && $field['type'] === 'email' ) $user_email = sanitize_email( $value );
+                
+                if ( isset($field['type']) && $field['type'] === 'email' ) {
+                    $user_email = sanitize_email( $value );
+                }
             }
         }
 
-        if ( empty( $user_email ) ) wp_send_json_error( array( 'message' => __( 'Email address is required.', 'ffc' ) ) );
+        if ( empty( $user_email ) ) {
+            wp_send_json_error( array( 'message' => __( 'Email address is required.', 'ffc' ) ) );
+        }
 
         $val_cpf = isset($submission_data['cpf_rf']) ? trim($submission_data['cpf_rf']) : '';
         $val_ticket = isset($submission_data['ticket']) ? trim($submission_data['ticket']) : '';
@@ -336,6 +394,7 @@ class FFC_Frontend {
         if ( ! empty( $val_cpf ) || ! empty( $val_ticket ) ) {
             $denied_raw = isset( $form_config['denied_users_list'] ) ? $form_config['denied_users_list'] : '';
             $denied_list = array_filter( array_map( 'trim', explode( "\n", $denied_raw ) ) );
+            
             if ( (!empty($val_cpf) && in_array( $val_cpf, $denied_list )) || (!empty($val_ticket) && in_array( $val_ticket, $denied_list )) ) {
                 wp_send_json_error( array( 'message' => __( 'Warning: Certificate issuance is blocked for this ID.', 'ffc' ) ) );
             }
@@ -343,20 +402,31 @@ class FFC_Frontend {
 
         if ( $restriction_enabled ) {
             $is_authorized = false;
+            
             if ( ! empty( $val_ticket ) ) {
                 $generated_raw = isset( $form_config['generated_codes_list'] ) ? $form_config['generated_codes_list'] : '';
                 $generated_list = array_filter( array_map( 'trim', explode( "\n", $generated_raw ) ) );
-                if ( in_array( $val_ticket, $generated_list ) ) { $is_authorized = true; $is_ticket_usage = true; }
-                else { wp_send_json_error( array( 'message' => __( 'Invalid or already used ticket.', 'ffc' ) ) ); }
-            } 
-            elseif ( ! empty( $val_cpf ) ) {
+                
+                if ( in_array( $val_ticket, $generated_list ) ) { 
+                    $is_authorized = true; 
+                    $is_ticket_usage = true; 
+                } else { 
+                    wp_send_json_error( array( 'message' => __( 'Invalid or already used ticket.', 'ffc' ) ) ); 
+                }
+            } elseif ( ! empty( $val_cpf ) ) {
                 $allowed_raw = isset( $form_config['allowed_users_list'] ) ? $form_config['allowed_users_list'] : '';
                 $allowed_list = array_filter( array_map( 'trim', explode( "\n", $allowed_raw ) ) );
-                if ( in_array( $val_cpf, $allowed_list ) ) $is_authorized = true;
+                
+                if ( in_array( $val_cpf, $allowed_list ) ) {
+                    $is_authorized = true;
+                }
             } else {
                 wp_send_json_error( array( 'message' => __( 'Error: A validation field (Ticket or CPF) is required.', 'ffc' ) ) );
             }
-            if ( ! $is_authorized ) wp_send_json_error( array( 'message' => __( 'Access Denied: Your data was not found in the authorization list.', 'ffc' ) ) );
+            
+            if ( ! $is_authorized ) {
+                wp_send_json_error( array( 'message' => __( 'Access Denied: Your data was not found in the authorization list.', 'ffc' ) ) );
+            }
         }
 
         global $wpdb;
@@ -366,6 +436,7 @@ class FFC_Frontend {
         $real_submission_date = current_time( 'mysql' ); 
         $existing_submission = null;
 
+        // Check for existing submission
         if ( ! empty( $val_ticket ) ) {
             $like_query = '%' . $wpdb->esc_like( '"ticket":"' . $val_ticket . '"' ) . '%';
             $existing_submission = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table_name} WHERE form_id = %d AND data LIKE %s ORDER BY id DESC LIMIT 1", $form_id, $like_query ) );
@@ -386,8 +457,12 @@ class FFC_Frontend {
 
         if ( ! $is_reprint ) {
             $result = $this->submission_handler->process_submission( $form_id, $form_post->post_title, $submission_data, $user_email, $fields_config, $form_config );
-            if ( is_wp_error( $result ) ) wp_send_json_error( array( 'message' => $result->get_error_message() ) );
             
+            if ( is_wp_error( $result ) ) {
+                wp_send_json_error( array( 'message' => $result->get_error_message() ) );
+            }
+            
+            // Remove used ticket
             if ( $is_ticket_usage && ! empty( $val_ticket ) ) {
                 $current_config = get_post_meta( $form_id, '_ffc_form_config', true );
                 $current_raw_codes = isset( $current_config['generated_codes_list'] ) ? $current_config['generated_codes_list'] : '';
@@ -397,6 +472,7 @@ class FFC_Frontend {
                 update_post_meta( $form_id, '_ffc_form_config', $current_config );
             }
             
+            // Retrieve saved data
             $saved_record = $wpdb->get_row( $wpdb->prepare( "SELECT data FROM {$table_name} WHERE id = %d", $result ) );
             if ( $saved_record ) {
                 $decoded_new = json_decode( $saved_record->data, true );
@@ -427,36 +503,49 @@ class FFC_Frontend {
         ) );
     }
 
+    /**
+     * Handle certificate verification via AJAX
+     */
     public function handle_verification_ajax() {
         check_ajax_referer( 'ffc_frontend_nonce', 'nonce' );
+        
         $security_check = $this->validate_security_fields( $_POST );
         if ( $security_check !== true ) {
             $new_captcha = $this->get_new_captcha_data();
-            wp_send_json_error( array( 'message' => $security_check, 'refresh_captcha' => true, 'new_label' => $new_captcha['label'], 'new_hash' => $new_captcha['hash'] ) );
+            wp_send_json_error( array( 
+                'message' => $security_check, 
+                'refresh_captcha' => true, 
+                'new_label' => $new_captcha['label'], 
+                'new_hash' => $new_captcha['hash'] 
+            ) );
         }
+        
         $raw_code = isset( $_POST['ffc_auth_code'] ) ? sanitize_text_field( $_POST['ffc_auth_code'] ) : '';
         $clean_code = strtoupper( preg_replace( '/[^a-zA-Z0-9]/', '', $raw_code ) );
-        if ( empty( $clean_code ) ) wp_send_json_error( array( 'message' => __( 'Please enter the code.', 'ffc' ) ) );
-
+        if ( empty( $clean_code ) ) {
+        wp_send_json_error( array( 'message' => __( 'Please enter the code.', 'ffc' ) ) );
+    }
         global $wpdb;
-        $table_name = $wpdb->prefix . 'ffc_submissions';
-        $like_query = '%' . $wpdb->esc_like( '"auth_code":"' . $clean_code . '"' ) . '%';
-        $result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table_name} WHERE data LIKE %s LIMIT 1", $like_query ) );
+    $table_name = $wpdb->prefix . 'ffc_submissions';
+    $like_query = '%' . $wpdb->esc_like( '"auth_code":"' . $clean_code . '"' ) . '%';
+    $result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table_name} WHERE data LIKE %s LIMIT 1", $like_query ) );
 
-        if ( $result ) {
-            $data = json_decode( $result->data, true );
-            if ( !is_array($data) ) $data = json_decode( stripslashes( $result->data ), true );
-            $form_title = get_the_title( $result->form_id );
-            $student_name = isset($data['name']) ? $data['name'] : (isset($data['nome']) ? $data['nome'] : __( 'N/A', 'ffc' ));
-            
-            $response_html = '<div class="ffc-verify-success">';
-            $response_html .= '<h4>✅ ' . esc_html__( 'Authentic Certificate', 'ffc' ) . '</h4>';
-            $response_html .= '<p><strong>' . esc_html__( 'Name:', 'ffc' ) . '</strong> ' . esc_html( $student_name ) . '</p>';
-            $response_html .= '<p><strong>' . esc_html__( 'Course/Event:', 'ffc' ) . '</strong> ' . esc_html( $form_title ) . '</p>';
-            $response_html .= '<p><strong>' . esc_html__( 'Issued Date:', 'ffc' ) . '</strong> ' . date_i18n( get_option('date_format'), strtotime($result->submission_date) ) . '</p></div>';
-            wp_send_json_success( array( 'html' => $response_html ) );
-        } else {
-            wp_send_json_error( array( 'message' => '❌ ' . __( 'Certificate not found.', 'ffc' ) ) );
-        }
+    if ( $result ) {
+        $data = json_decode( $result->data, true );
+        if ( !is_array($data) ) $data = json_decode( stripslashes( $result->data ), true );
+        
+        $form_title = get_the_title( $result->form_id );
+        $student_name = isset($data['name']) ? $data['name'] : (isset($data['nome']) ? $data['nome'] : __( 'N/A', 'ffc' ));
+        
+        $response_html = '<div class="ffc-verify-success">';
+        $response_html .= '<h4>✅ ' . esc_html__( 'Authentic Certificate', 'ffc' ) . '</h4>';
+        $response_html .= '<p><strong>' . esc_html__( 'Name:', 'ffc' ) . '</strong> ' . esc_html( $student_name ) . '</p>';
+        $response_html .= '<p><strong>' . esc_html__( 'Course/Event:', 'ffc' ) . '</strong> ' . esc_html( $form_title ) . '</p>';
+        $response_html .= '<p><strong>' . esc_html__( 'Issued Date:', 'ffc' ) . '</strong> ' . date_i18n( get_option('date_format'), strtotime($result->submission_date) ) . '</p></div>';
+        
+        wp_send_json_success( array( 'html' => $response_html ) );
+    } else {
+        wp_send_json_error( array( 'message' => '❌ ' . __( 'Certificate not found.', 'ffc' ) ) );
+    }
     }
 }

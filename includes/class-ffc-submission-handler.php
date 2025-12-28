@@ -105,6 +105,31 @@ class FFC_Submission_Handler {
     }
 
     /**
+     * Update an existing submission.
+     * Called from admin edit screen.
+     */
+    public function update_submission( $id, $new_email, $clean_data ) {
+        global $wpdb;
+        
+        $data_to_save = $clean_data;
+        $email_keys = array( 'email', 'user_email', 'your-email', 'ffc_email' );
+        foreach ( $email_keys as $key ) {
+            if ( isset( $data_to_save[$key] ) ) unset( $data_to_save[$key] );
+        }
+        
+        return $wpdb->update(
+            $this->submission_table_name,
+            array(
+                'email' => $new_email,
+                'data'  => wp_json_encode( $data_to_save )
+            ),
+            array( 'id' => absint( $id ) ),
+            array( '%s', '%s' ),
+            array( '%d' )
+        );
+    }
+
+    /**
      * Asynchronous Processing (Emails).
      */
     public function async_process_submission( $submission_id, $form_id, $form_title, $submission_data, $user_email, $fields_config, $form_config ) {
@@ -175,6 +200,9 @@ class FFC_Submission_Handler {
         return $layout;
     }
 
+    /**
+     * Send email to user with certificate.
+     */
     private function send_user_email( $to, $form_title, $html_content, $form_config ) {
         $subject = ! empty( $form_config['email_subject'] ) ? $form_config['email_subject'] : sprintf( __( 'Your Certificate: %s', 'ffc' ), $form_title );
         
@@ -189,6 +217,9 @@ class FFC_Submission_Handler {
         wp_mail( $to, $subject, $body, array( 'Content-Type: text/html; charset=UTF-8' ) );
     }
 
+    /**
+     * Send notification to administrators.
+     */
     private function send_admin_notification( $form_title, $data, $form_config ) {
         $admins = isset( $form_config['email_admin'] ) ? array_filter(array_map('trim', explode( ',', $form_config['email_admin'] ))) : array( get_option( 'admin_email' ) );
         
@@ -214,7 +245,9 @@ class FFC_Submission_Handler {
         }
     }
 
-    /* Formatting Helpers */
+    /**
+     * Format document numbers (CPF/RF/RG).
+     */
     private function format_document( $value ) {
         $value = preg_replace( '/[^0-9]/', '', $value );
         $len = strlen( $value );
@@ -227,6 +260,9 @@ class FFC_Submission_Handler {
         return $value;
     }
 
+    /**
+     * Format authentication code (XXXX-XXXX-XXXX).
+     */
     private function format_auth_code( $value ) {
         $value = strtoupper(preg_replace('/[^A-Z0-9]/i', '', $value));
         if ( strlen( $value ) === 12 ) {
@@ -235,10 +271,51 @@ class FFC_Submission_Handler {
         return $value;
     }
 
-    /* Status Management */
-    public function trash_submission( $id ) { global $wpdb; return $wpdb->update($this->submission_table_name, array('status'=>'trash'), array('id'=>absint($id))); }
-    public function restore_submission( $id ) { global $wpdb; return $wpdb->update($this->submission_table_name, array('status'=>'publish'), array('id'=>absint($id))); }
-    public function delete_submission( $id ) { global $wpdb; return $wpdb->delete($this->submission_table_name, array('id'=>absint($id))); }
+    /**
+     * Move submission to trash.
+     */
+    public function trash_submission( $id ) { 
+        global $wpdb; 
+        return $wpdb->update($this->submission_table_name, array('status'=>'trash'), array('id'=>absint($id))); 
+    }
+    
+    /**
+     * Restore submission from trash.
+     */
+    public function restore_submission( $id ) { 
+        global $wpdb; 
+        return $wpdb->update($this->submission_table_name, array('status'=>'publish'), array('id'=>absint($id))); 
+    }
+    
+    /**
+     * Permanently delete submission.
+     */
+    public function delete_submission( $id ) { 
+        global $wpdb; 
+        return $wpdb->delete($this->submission_table_name, array('id'=>absint($id))); 
+    }
+
+    /**
+     * Delete all submissions or submissions from a specific form.
+     * Used in settings danger zone.
+     * 
+     * @param int|null $form_id If null, deletes all. If set, deletes only from that form.
+     */
+    public function delete_all_submissions( $form_id = null ) {
+        global $wpdb;
+        
+        if ( $form_id === null ) {
+            // Delete all submissions
+            return $wpdb->query( "TRUNCATE TABLE {$this->submission_table_name}" );
+        } else {
+            // Delete submissions from specific form
+            return $wpdb->delete( 
+                $this->submission_table_name, 
+                array( 'form_id' => absint( $form_id ) ), 
+                array( '%d' ) 
+            );
+        }
+    }
 
     /**
      * CSV Export with translatable headers and semicolon delimiter.
@@ -310,6 +387,9 @@ class FFC_Submission_Handler {
         exit;
     }
 
+    /**
+     * Get user IP address (supports proxies).
+     */
     private function get_user_ip() {
         if (!empty($_SERVER['HTTP_CLIENT_IP'])) return sanitize_text_field($_SERVER['HTTP_CLIENT_IP']);
         if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) return sanitize_text_field(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0]);

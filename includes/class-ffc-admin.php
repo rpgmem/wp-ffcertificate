@@ -25,7 +25,7 @@ class FFC_Admin {
         add_action( 'admin_enqueue_scripts', array( $this, 'admin_assets' ) );
         
         add_action( 'admin_init', array( $this, 'handle_submission_actions' ) );
-        add_action( 'admin_init', array( $this, 'handle_csv_export_on_admin_init' ) );
+        add_action( 'admin_init', array( $this, 'handle_csv_export' ) );
         add_action( 'admin_init', array( $this, 'handle_submission_edit_save' ) );
         
         add_action( 'wp_ajax_ffc_admin_get_pdf_data', array( $this, 'ajax_admin_get_pdf_data' ) );
@@ -64,28 +64,39 @@ class FFC_Admin {
         if ( $post_type === 'ffc_form' || $is_ffc_page ) {
             wp_enqueue_media();
             
-            // CSS - Using time() to bypass cache during development
-            wp_enqueue_style( 'ffc-pdf-core', FFC_PLUGIN_URL . 'assets/css/ffc-pdf-core.css', array(), time() );
-            wp_enqueue_style( 'ffc-admin-css', FFC_PLUGIN_URL . 'assets/css/admin.css', array('ffc-pdf-core'), time() );
+            // CSS
+            wp_enqueue_style( 'ffc-pdf-core', FFC_PLUGIN_URL . 'assets/css/ffc-pdf-core.css', array(), '1.0.0' );
+            wp_enqueue_style( 'ffc-admin-css', FFC_PLUGIN_URL . 'assets/css/admin.css', array('ffc-pdf-core'), '1.0.0' );
             
             // External Libraries
             wp_enqueue_script( 'ffc-html2canvas', FFC_PLUGIN_URL . 'assets/js/html2canvas.min.js', array(), '1.4.1', true );
             wp_enqueue_script( 'ffc-jspdf', FFC_PLUGIN_URL . 'assets/js/jspdf.umd.min.js', array(), '2.5.1', true );
             
             // Plugin JS - Frontend engine first
-            wp_enqueue_script( 'ffc-frontend-js', FFC_PLUGIN_URL . 'assets/js/frontend.js', array( 'jquery' ), time(), true );
+            wp_enqueue_script( 'ffc-frontend-js', FFC_PLUGIN_URL . 'assets/js/frontend.js', array( 'jquery' ), '1.0.0', true );
             
             // Plugin JS - Admin triggers last
-            wp_enqueue_script( 'ffc-admin-js', FFC_PLUGIN_URL . 'assets/js/admin.js', array( 'jquery', 'ffc-frontend-js' ), time(), true );
+            wp_enqueue_script( 'ffc-admin-js', FFC_PLUGIN_URL . 'assets/js/admin.js', array( 'jquery', 'ffc-frontend-js' ), '1.0.0', true );
             
             // Data for AJAX
             wp_localize_script( 'ffc-admin-js', 'ffc_admin_ajax', array(
                 'ajax_url' => admin_url( 'admin-ajax.php' ),
                 'nonce'    => wp_create_nonce( 'ffc_admin_pdf_nonce' ),
                 'strings'  => array(
-                    'generating'      => __( 'Generating...', 'ffc' ),
-                    'error'           => __( 'Error: ', 'ffc' ),
-                    'connectionError' => __( 'Connection error.', 'ffc' ),
+                    'generating'              => __( 'Generating...', 'ffc' ),
+                    'error'                   => __( 'Error: ', 'ffc' ),
+                    'connectionError'         => __( 'Connection error.', 'ffc' ),
+                    'fileImported'            => __( 'File imported successfully!', 'ffc' ),
+                    'errorReadingFile'        => __( 'Error reading file.', 'ffc' ),
+                    'selectTemplate'          => __( 'Please select a template.', 'ffc' ),
+                    'confirmReplaceContent'   => __( 'This will replace current content. Continue?', 'ffc' ),
+                    'loading'                 => __( 'Loading...', 'ffc' ),
+                    'templateLoaded'          => __( 'Template loaded successfully!', 'ffc' ),
+                    'selectBackgroundImage'   => __( 'Select Background Image', 'ffc' ),
+                    'useImage'                => __( 'Use this image', 'ffc' ),
+                    'codesGenerated'          => __( 'codes generated', 'ffc' ),
+                    'errorGeneratingCodes'    => __( 'Error generating codes.', 'ffc' ),
+                    'confirmDeleteField'      => __( 'Remove this field?', 'ffc' ),
                 )
             ) );
         }
@@ -203,11 +214,11 @@ class FFC_Admin {
         $type = 'updated';
 
         switch ($msg) {
-            case 'trash':   $text = __('Item moved to trash.', 'ffc'); break;
-            case 'restore': $text = __('Item restored.', 'ffc'); break;
-            case 'delete':  $text = __('Item permanently deleted.', 'ffc'); break;
+            case 'trash':     $text = __('Item moved to trash.', 'ffc'); break;
+            case 'restore':   $text = __('Item restored.', 'ffc'); break;
+            case 'delete':    $text = __('Item permanently deleted.', 'ffc'); break;
             case 'bulk_done': $text = __('Bulk action completed.', 'ffc'); break;
-            case 'updated': $text = __('Submission updated successfully.', 'ffc'); break;
+            case 'updated':   $text = __('Submission updated successfully.', 'ffc'); break;
         }
 
         if ($text) {
@@ -236,8 +247,8 @@ class FFC_Admin {
             <h1><?php printf( __( 'Edit Submission #%s', 'ffc' ), $sub_array['id'] ); ?></h1>
             
             <?php if ( isset( $data['is_edited'] ) && $data['is_edited'] == true ): ?>
-                <div class="ffc-admin-notice ffc-admin-notice-warning">
-                    <p><strong>⚠️ <?php _e( 'Warning:', 'ffc' ); ?></strong> <?php _e( 'This record was manually edited on', 'ffc' ); ?> <u><?php echo esc_html($data['edited_at']); ?></u>.</p>
+                <div class="notice notice-warning">
+                    <p><strong><?php _e( 'Warning:', 'ffc' ); ?></strong> <?php _e( 'This record was manually edited on', 'ffc' ); ?> <u><?php echo esc_html($data['edited_at']); ?></u>.</p>
                 </div>
             <?php endif; ?>
 
@@ -303,7 +314,7 @@ class FFC_Admin {
             $clean_data['is_edited'] = true;
             $clean_data['edited_at'] = current_time('mysql');
             
-            // Assuming the handler has an update_submission method
+            // Now this method exists in the handler
             $this->submission_handler->update_submission($id, $new_email, $clean_data);
             
             wp_redirect(admin_url('edit.php?post_type=ffc_form&page=ffc-submissions&msg=updated')); 
@@ -314,7 +325,7 @@ class FFC_Admin {
     /**
      * Triggers the CSV export logic
      */
-    public function handle_csv_export_on_admin_init() {
+    public function handle_csv_export() {
         if ( isset( $_POST['ffc_action'] ) && $_POST['ffc_action'] === 'export_csv_smart' ) {
             check_admin_referer( 'ffc_export_csv_nonce', 'ffc_export_csv_action' );
             $this->submission_handler->export_csv();

@@ -21,18 +21,83 @@ class FFC_Form_Editor {
     }
 
     /**
-     * Registers the specific metaboxes for the Form CPT
+     * Registers all metaboxes for the Form CPT
      */
     public function add_custom_metaboxes() {
-        // Cleanup old/duplicate metaboxes if they exist
+        // Remove any potential duplicates
         remove_meta_box( 'ffc_form_builder', 'ffc_form', 'normal' );
         remove_meta_box( 'ffc_form_config', 'ffc_form', 'normal' );
         remove_meta_box( 'ffc_builder_box', 'ffc_form', 'normal' ); 
 
-        add_meta_box( 'ffc_box_layout', __( '1. Certificate Layout', 'ffc' ), array( $this, 'render_box_layout' ), 'ffc_form', 'normal', 'high' );
-        add_meta_box( 'ffc_box_builder', __( '2. Form Builder (Fields)', 'ffc' ), array( $this, 'render_box_builder' ), 'ffc_form', 'normal', 'high' );
-        add_meta_box( 'ffc_box_restriction', __( '3. Restriction & Security', 'ffc' ), array( $this, 'render_box_restriction' ), 'ffc_form', 'normal', 'high' );
-        add_meta_box( 'ffc_box_email', __( '4. Email Configuration', 'ffc' ), array( $this, 'render_box_email' ), 'ffc_form', 'normal', 'high' );
+        // Main metaboxes (content area)
+        add_meta_box( 
+            'ffc_box_layout', 
+            __( '1. Certificate Layout', 'ffc' ), 
+            array( $this, 'render_box_layout' ), 
+            'ffc_form', 
+            'normal', 
+            'high' 
+        );
+        
+        add_meta_box( 
+            'ffc_box_builder', 
+            __( '2. Form Builder (Fields)', 'ffc' ), 
+            array( $this, 'render_box_builder' ), 
+            'ffc_form', 
+            'normal', 
+            'high' 
+        );
+        
+        add_meta_box( 
+            'ffc_box_restriction', 
+            __( '3. Restriction & Security', 'ffc' ), 
+            array( $this, 'render_box_restriction' ), 
+            'ffc_form', 
+            'normal', 
+            'high' 
+        );
+        
+        add_meta_box( 
+            'ffc_box_email', 
+            __( '4. Email Configuration', 'ffc' ), 
+            array( $this, 'render_box_email' ), 
+            'ffc_form', 
+            'normal', 
+            'high' 
+        );
+
+        // Sidebar metabox (shortcode + instructions)
+        add_meta_box(
+            'ffc_form_shortcode',
+            __( 'How to Use / Shortcode', 'ffc' ),
+            array( $this, 'render_shortcode_metabox' ),
+            'ffc_form',
+            'side',
+            'high'
+        );
+    }
+
+    /**
+     * Render the shortcode sidebar metabox
+     */
+    public function render_shortcode_metabox( $post ) {
+        ?>
+        <div class="ffc-shortcode-box">
+            <p><strong><?php _e( 'Copy this Shortcode:', 'ffc' ); ?></strong></p>
+            <code class="ffc-shortcode-display">
+                [ffc_form id="<?php echo esc_attr( $post->ID ); ?>"]
+            </code>
+            <p class="description">
+                <?php _e( 'Paste this code into any Page or Post to display the form.', 'ffc' ); ?>
+            </p>
+        </div>
+        <hr>
+        <p><strong><?php _e( 'Tips:', 'ffc' ); ?></strong></p>
+        <ul class="ffc-tips-list">
+            <li><?php _e( 'Use <b>{{field_name}}</b> in the PDF Layout to insert user data.', 'ffc' ); ?></li>
+            <li><?php _e( 'Common variables include {{auth_code}}, {{submission_date}}, and {{ticket}}.', 'ffc' ); ?></li>
+        </ul>
+        <?php
     }
 
     /**
@@ -87,7 +152,7 @@ class FFC_Form_Editor {
                         <?php esc_html_e( 'Mandatory Tags:', 'ffc' ); ?> <code>{{auth_code}}</code>, <code>{{name}}</code>, <code>{{cpf_rf}}</code>.
                     </p>
                     
-                    <div class="ffc-input-group" style="margin-top: 15px;">
+                    <div class="ffc-input-group ffc-mt15">
                         <label class="ffc-block-label"><strong><?php esc_html_e( 'Background Image URL:', 'ffc' ); ?></strong></label>
                         <input type="text" name="ffc_config[bg_image]" id="ffc_bg_image_input" value="<?php echo esc_url( $bg_image ); ?>" class="ffc-w100">
                     </div>
@@ -122,14 +187,14 @@ class FFC_Form_Editor {
             ?>
         </div>
         
-        <div class="ffc-builder-actions" style="margin-top: 20px; padding: 10px; border-top: 1px solid #eee;">
+        <div class="ffc-builder-actions ffc-mt20">
             <button type="button" class="button button-primary ffc-add-field">
-                <span class="dashicons dashicons-plus-alt" style="margin-top: 4px;"></span> 
+                <span class="dashicons dashicons-plus-alt"></span> 
                 <?php esc_html_e( 'Add New Field', 'ffc' ); ?>
             </button>
         </div>
 
-        <div class="ffc-field-template ffc-hidden" style="display: none;">
+        <div class="ffc-field-template ffc-hidden">
             <?php $this->render_field_row( 'TEMPLATE', array() ); ?>
         </div>
         <?php
@@ -175,6 +240,7 @@ class FFC_Form_Editor {
                     <div class="ffc-admin-flex-row ffc-mb5">
                         <input type="number" id="ffc_qty_codes" value="10" min="1" max="500" class="ffc-input-small">
                         <button type="button" class="button button-secondary" id="ffc_btn_generate_codes"><?php esc_html_e( 'Generate Tickets', 'ffc' ); ?></button>
+                        <span id="ffc_gen_status" class="ffc-gen-status"></span>
                     </div>
                     <textarea name="ffc_config[generated_codes_list]" id="ffc_generated_list" class="ffc-textarea-mono ffc-h120 ffc-w100"><?php echo esc_textarea($gen_codes); ?></textarea>
                 </td>
@@ -242,7 +308,7 @@ class FFC_Form_Editor {
                 </div>
                 <div class="ffc-grid-item">
                     <label><?php esc_html_e('Variable Name (Tag)', 'ffc'); ?></label>
-                    <input type="text" name="ffc_fields[<?php echo $index; ?>][name]" value="<?php echo esc_attr( $name ); ?>" placeholder="ex: course_name" class="ffc-w100">
+                    <input type="text" name="ffc_fields[<?php echo $index; ?>][name]" value="<?php echo esc_attr( $name ); ?>" placeholder="<?php esc_attr_e('ex: course_name', 'ffc'); ?>" class="ffc-w100">
                 </div>
                 <div class="ffc-grid-item">
                     <label><?php esc_html_e('Type', 'ffc'); ?></label>
@@ -251,6 +317,7 @@ class FFC_Form_Editor {
                         <option value="email" <?php selected($type, 'email'); ?>><?php esc_html_e('Email', 'ffc'); ?></option>
                         <option value="number" <?php selected($type, 'number'); ?>><?php esc_html_e('Number', 'ffc'); ?></option>
                         <option value="date" <?php selected($type, 'date'); ?>><?php esc_html_e('Date', 'ffc'); ?></option>
+                        <option value="textarea" <?php selected($type, 'textarea'); ?>><?php esc_html_e('Textarea', 'ffc'); ?></option>
                         <option value="select" <?php selected($type, 'select'); ?>><?php esc_html_e('Select (Combobox)', 'ffc'); ?></option>
                         <option value="radio" <?php selected($type, 'radio'); ?>><?php esc_html_e('Radio Box', 'ffc'); ?></option>
                         <option value="hidden" <?php selected($type, 'hidden'); ?>><?php esc_html_e('Hidden Field', 'ffc'); ?></option>
@@ -264,8 +331,8 @@ class FFC_Form_Editor {
                 </div>
             </div>
             
-            <div class="ffc-options-field <?php echo $options_visible_class; ?>" style="<?php echo ($options_visible_class === 'ffc-hidden') ? 'display:none;' : ''; ?>">
-                <p class="description" style="margin: 10px 0 5px; font-weight: bold; color: #2271b1;">
+            <div class="ffc-options-field <?php echo $options_visible_class; ?>">
+                <p class="description ffc-options-desc">
                     <?php esc_html_e('Options (separate with commas):', 'ffc'); ?>
                 </p>
                 <input type="text" name="ffc_fields[<?php echo $index; ?>][options]" value="<?php echo esc_attr( $opts ); ?>" placeholder="<?php esc_attr_e('Ex: Option 1, Option 2, Option 3', 'ffc'); ?>" class="ffc-w100">
@@ -339,7 +406,6 @@ class FFC_Form_Editor {
         // 2. Save Configurations
         if ( isset( $_POST['ffc_config'] ) ) {
             $config = $_POST['ffc_config'];
-            // Assumes FFC_Utils provides a list of safe HTML tags for PDF layouts
             $allowed_html = method_exists('FFC_Utils', 'get_allowed_html_tags') ? FFC_Utils::get_allowed_html_tags() : wp_kses_allowed_html('post');
 
             $clean_config = array();

@@ -1,19 +1,26 @@
 /**
  * FFC PDF CORE - Stable and Optimized Version
+ * 
+ * CRITICAL: This file controls PDF rendering with html2canvas.
+ * Any changes to positioning, sizing, or visibility may break PDF generation.
  */
 
-/* Invisible container for rendering */
+/* ==========================================================================
+   1. INVISIBLE RENDERING CONTAINER
+   ========================================================================== */
 .ffc-pdf-temp-wrapper {
     position: absolute;
     left: -9999px;
     top: 0;
-    width: 1123px;
-    height: 794px;
+    width: 1123px;  /* A4 Landscape width in pixels */
+    height: 794px;  /* A4 Landscape height in pixels */
     z-index: -1;
     overflow: hidden;
 }
 
-/* Universal Reset for Capture */
+/* ==========================================================================
+   2. UNIVERSAL RESET FOR PDF CAPTURE
+   ========================================================================== */
 .ffc-pdf-stage, 
 .ffc-pdf-stage *, 
 .ffc-pdf-stage *:before, 
@@ -23,6 +30,9 @@
     -webkit-print-color-adjust: exact;
 }
 
+/* ==========================================================================
+   3. PDF STAGE (Main container for certificate)
+   ========================================================================== */
 .ffc-pdf-stage {
     all: initial; /* Clear inherited styles from WP/Themes */
     display: block !important;
@@ -37,7 +47,9 @@
     opacity: 1 !important;
 }
 
-/* Background Image (Template) */
+/* ==========================================================================
+   4. BACKGROUND IMAGE LAYER
+   ========================================================================== */
 .ffc-pdf-bg-img {
     position: absolute;
     top: 0;
@@ -49,7 +61,9 @@
     display: block !important;
 }
 
-/* Dynamic Content Layer */
+/* ==========================================================================
+   5. DYNAMIC CONTENT LAYER (User data overlay)
+   ========================================================================== */
 .ffc-pdf-user-content {
     position: absolute;
     top: 0;
@@ -62,7 +76,7 @@
     pointer-events: none; /* Prevents click interference */
 }
 
-/* Re-activates basic HTML styles within the certificate */
+/* Re-activate basic HTML styles within the certificate */
 .ffc-pdf-user-content * {
     all: revert; /* Reverts to default browser behavior */
     box-sizing: border-box;
@@ -70,13 +84,15 @@
     line-height: 1.4;
 }
 
-/* Specific adjustment to ensure images within content don't break */
+/* Ensure images within content don't break layout */
 .ffc-pdf-user-content img {
     max-width: 100%;
     height: auto;
 }
 
-/* Fix for WordPress Admin */
+/* ==========================================================================
+   6. WORDPRESS ADMIN FIX
+   ========================================================================== */
 body.wp-admin .ffc-pdf-temp-wrapper {
     position: fixed !important;
     left: -9999px !important;
@@ -84,11 +100,20 @@ body.wp-admin .ffc-pdf-temp-wrapper {
     display: block !important;
 }
 
-/* Utility classes for use in the certificate template */
-.ffc-txt-center { text-align: center; }
-.ffc-full-width { width: 100%; }
+/* ==========================================================================
+   7. UTILITY CLASSES FOR CERTIFICATE TEMPLATES
+   ========================================================================== */
+.ffc-txt-center { 
+    text-align: center; 
+}
 
-/* Loading spinner for buttons */
+.ffc-full-width { 
+    width: 100%; 
+}
+
+/* ==========================================================================
+   8. BUTTON LOADING STATE
+   ========================================================================== */
 .ffc-btn-loading {
     pointer-events: none;
     opacity: 0.8;
@@ -111,15 +136,17 @@ body.wp-admin .ffc-pdf-temp-wrapper {
     animation: ffc-spin 0.8s linear infinite;
 }
 
-/* High-priority progress overlay */
+/* ==========================================================================
+   9. PROGRESS OVERLAY (Mobile optimized)
+   ========================================================================== */
 .ffc-pdf-progress-overlay {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
-    width: 100vw !important; /* Viewport Width */
-    height: 100vh !important; /* Viewport Height */
+    width: 100vw !important;
+    height: 100vh !important;
     background: rgba(0, 0, 0, 0.92) !important;
-    z-index: 2147483647 !important; /* Maximum possible z-index value */
+    z-index: 2147483647 !important; /* Maximum z-index */
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
@@ -129,7 +156,7 @@ body.wp-admin .ffc-pdf-temp-wrapper {
     pointer-events: all !important; /* Blocks background clicks */
 }
 
-/* Larger spinner for mobile */
+/* Larger spinner for mobile visibility */
 .ffc-progress-spinner {
     width: 60px;
     height: 60px;
@@ -140,6 +167,11 @@ body.wp-admin .ffc-pdf-temp-wrapper {
     margin-bottom: 20px;
 }
 
+/* ==========================================================================
+   10. ANIMATIONS
+   ========================================================================== */
 @keyframes ffc-spin {
-    to { transform: rotate(360deg); }
+    to { 
+        transform: rotate(360deg); 
+    }
 }

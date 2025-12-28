@@ -4,12 +4,13 @@
 window.generateCertificate = function(data) {
     const { template, bg_image, form_title } = data;
 
+    // Check if libraries are loaded
     if (typeof html2canvas === 'undefined' || typeof window.jspdf === 'undefined') {
         alert("Error: PDF libraries not loaded.");
         return;
     }
 
-    // 1. Create Overlay (Added pointer-events to block accidental clicks)
+    // 1. Create Overlay (prevents user interaction during generation)
     const overlay = document.createElement('div');
     overlay.className = 'ffc-pdf-progress-overlay';
     overlay.style.pointerEvents = 'all'; 
@@ -21,7 +22,7 @@ window.generateCertificate = function(data) {
 
     const statusTxt = document.getElementById('ffc-prog-status');
 
-    // 2. Prepare the stage (Added crossorigin attribute to prevent 'Tainted Canvas' errors)
+    // 2. Prepare the rendering stage (with crossorigin for images)
     const wrapper = document.createElement('div');
     wrapper.className = 'ffc-pdf-temp-wrapper';
     wrapper.innerHTML = `
@@ -32,9 +33,7 @@ window.generateCertificate = function(data) {
     `;
     document.body.appendChild(wrapper);
 
-    // THE SECRET FOR MOBILE: 
-    // We use a small delay (500ms) for the overlay to appear, 
-    // ensuring the browser "breathes" before html2canvas starts processing.
+    // Mobile optimization: Small delay to ensure rendering completes
     setTimeout(() => {
         if(statusTxt) statusTxt.innerText = "Processing image...";
         
@@ -43,11 +42,11 @@ window.generateCertificate = function(data) {
         html2canvas(target, {
             scale: 2, 
             useCORS: true,
-            allowTaint: true, // Backup for cross-domain images
+            allowTaint: true,
             backgroundColor: "#ffffff",
             width: 1123,
             height: 794,
-            logging: false // Disable logs for better performance
+            logging: false
         }).then(canvas => {
             if(statusTxt) statusTxt.innerText = "Generating PDF...";
             
@@ -64,6 +63,7 @@ window.generateCertificate = function(data) {
             if(statusTxt) statusTxt.innerText = "Download started!";
             pdf.save(`${form_title || 'certificate'}.pdf`);
             
+            // Cleanup after successful generation
             setTimeout(() => {
                 if(document.body.contains(wrapper)) document.body.removeChild(wrapper);
                 if(document.body.contains(overlay)) document.body.removeChild(overlay);
@@ -71,13 +71,13 @@ window.generateCertificate = function(data) {
             }, 1000);
 
         }).catch(err => {
-            console.error("FFC Error:", err);
+            console.error("FFC PDF Error:", err);
             if(document.body.contains(overlay)) document.body.removeChild(overlay);
             if(document.body.contains(wrapper)) document.body.removeChild(wrapper);
             alert("Error generating PDF.");
             jQuery(document).trigger('ffc_pdf_done');
         });
-    }, 500); 
+    }, 500); // Critical delay for mobile rendering
 };
 
 // =========================================================================
@@ -85,7 +85,7 @@ window.generateCertificate = function(data) {
 // =========================================================================
 jQuery(function($) {
 
-    // Helper to refresh Captcha
+    // Helper to refresh Captcha after error
     function refreshCaptcha($form, data) {
         if (data.refresh_captcha) {
             $form.find('label[for="ffc_captcha_ans"]').html(data.new_label);
@@ -95,6 +95,8 @@ jQuery(function($) {
     }
 
     // --- A. INPUT MASKS ---
+    
+    // Authentication code mask (XXXX-XXXX-XXXX)
     $(document).on('input', 'input[name="ffc_auth_code"], .ffc-verify-input', function() {
         let v = $(this).val().toUpperCase().replace(/[^A-Z0-9]/g, ''); 
         if (v.length > 12) v = v.substring(0, 12);
@@ -102,12 +104,15 @@ jQuery(function($) {
         $(this).val(parts ? parts.join('-') : v);
     });
 
+    // CPF/RF mask (dynamic based on length)
     $(document).on('input', 'input[name="cpf_rf"]', function() {
         let v = $(this).val().replace(/\D/g, ''); 
         if (v.length > 11) v = v.slice(0, 11);
         if (v.length <= 7) {
+            // RF format: XXX.XXX-X
             v = v.replace(/(\d{3})(\d{3})(\d{1})/, '$1.$2-$3');
         } else {
+            // CPF format: XXX.XXX.XXX-XX
             v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
         }
         $(this).val(v);
@@ -153,13 +158,14 @@ jQuery(function($) {
         });
     });
 
-    // --- C. SUBMISSION AND GENERATION (AJAX) ---
+    // --- C. SUBMISSION AND CERTIFICATE GENERATION (AJAX) ---
     $(document).on('submit', '.ffc-submission-form', function(e) {
         e.preventDefault();
         const $form = $(this);
         const $btn = $form.find('button[type="submit"]');
         const $msg = $form.find('.ffc-message');
         
+        // Validate CPF/RF length
         const rawCPF = $form.find('input[name="cpf_rf"]').val() ? $form.find('input[name="cpf_rf"]').val().replace(/\D/g, '') : '';
         
         if (rawCPF && rawCPF.length !== 7 && rawCPF.length !== 11) {
@@ -183,12 +189,18 @@ jQuery(function($) {
                 
                 if (response.success) {
                     $msg.addClass('ffc-success').html(response.data.message).fadeIn();
+                    
+                    // Generate PDF if data is provided
                     if (response.data.pdf_data) {
                         $msg.append(`<p><small>${ffc_ajax.strings.generatingCertificate}</small></p>`);
                         window.generateCertificate(response.data.pdf_data);
                     }
+                    
                     $form[0].reset();
-                    if(response.data.refresh_captcha) refreshCaptcha($form, response.data);
+                    
+                    if(response.data.refresh_captcha) {
+                        refreshCaptcha($form, response.data);
+                    }
                 } else {
                     $msg.addClass('ffc-error').html(response.data.message).fadeIn();
                     refreshCaptcha($form, response.data);

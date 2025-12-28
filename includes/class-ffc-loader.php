@@ -54,9 +54,8 @@ class Free_Form_Certificate_Loader {
      * Register activation and deactivation hooks.
      */
     private function define_activation_hooks() {
-        // Adjust the main file path if necessary to point to the root plugin file
         register_activation_hook( FFC_PLUGIN_DIR . 'wp-ffcertificate.php', array( 'FFC_Activator', 'activate' ) );
-        register_uninstall_hook( FFC_PLUGIN_DIR . 'wp-ffcertificate.php', array( 'FFC_Deactivator', 'uninstall_cleanup' ) );
+        register_deactivation_hook( FFC_PLUGIN_DIR . 'wp-ffcertificate.php', array( 'FFC_Deactivator', 'deactivate' ) );
     }
 
     /**

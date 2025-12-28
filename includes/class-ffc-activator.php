@@ -56,7 +56,7 @@ class FFC_Activator {
 
         dbDelta( $sql_submissions );
         
-        // Manual check for 'status' column (extra safety)
+        // Manual check for 'status' column (extra safety for updates)
         $column = $wpdb->get_results($wpdb->prepare(
             "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = 'status'", 
             DB_NAME, $table_name

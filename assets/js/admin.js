@@ -65,7 +65,7 @@ jQuery(document).ready(function($) {
                 alert(ffc_admin_ajax.strings.connectionError || 'Connection error');
             },
             complete: function() {
-                $btn.prop('disabled', false).text(ffc_admin_ajax.strings.loadTemplate || 'Load Template');
+                $btn.prop('disabled', false).text(ffc_admin_ajax.strings.loadTemplate || 'Load');
             }
         });
     });
@@ -76,11 +76,16 @@ jQuery(document).ready(function($) {
     var mediaUploader;
     $('#ffc_btn_media_lib').on('click', function(e) {
         e.preventDefault();
-        if (mediaUploader) { mediaUploader.open(); return; }
+        if (mediaUploader) { 
+            mediaUploader.open(); 
+            return; 
+        }
         
         mediaUploader = wp.media({
             title: ffc_admin_ajax.strings.selectBackgroundImage || 'Select Background Image',
-            button: { text: ffc_admin_ajax.strings.useImage || 'Use this image' },
+            button: { 
+                text: ffc_admin_ajax.strings.useImage || 'Use this image' 
+            },
             multiple: false
         });
         
@@ -136,7 +141,7 @@ jQuery(document).ready(function($) {
     });
 
     // =========================================================================
-    // 5. ADMIN DOWNLOAD LOGIC (Fixed for ffc-admin-pdf-btn)
+    // 5. ADMIN PDF DOWNLOAD (From submissions table)
     // =========================================================================
     $(document).on('click', '.ffc-admin-pdf-btn', function(e) { 
         e.preventDefault();
@@ -145,8 +150,6 @@ jQuery(document).ready(function($) {
         const subId = $btn.data('id');
 
         if ($btn.hasClass('ffc-btn-loading')) return;
-
-        console.log("Click detected! Starting PDF for submission ID:", subId);
 
         $btn.addClass('ffc-btn-loading');
 
@@ -160,7 +163,6 @@ jQuery(document).ready(function($) {
             },
             success: function(response) {
                 if (response.success) {
-                    console.log("Data received, generating certificate...");
                     if (typeof window.generateCertificate === 'function') {
                         window.generateCertificate(response.data);
                     }
@@ -176,18 +178,13 @@ jQuery(document).ready(function($) {
         });
     });
 
-    // Remove loading state when finished
+    // Remove loading state when PDF generation completes
     $(document).on('ffc_pdf_done', function() {
         $('.ffc-admin-pdf-btn').removeClass('ffc-btn-loading');
     });
 
-    // Remove loading state when PDF generation ends
-    $(document).on('ffc_pdf_done', function() {
-        $('.ffc-admin-download-btn').removeClass('ffc-btn-loading');
-    });
-
     // =========================================================================
-    // 6. FORM BUILDER
+    // 6. FORM BUILDER - DRAG & DROP + ADD/REMOVE FIELDS
     // =========================================================================
     
     /**
@@ -211,7 +208,9 @@ jQuery(document).ready(function($) {
         $('#ffc-fields-container').sortable({
             handle: '.ffc-sort-handle',
             placeholder: 'ui-state-highlight',
-            update: function() { ffc_reindex_fields(); }
+            update: function() { 
+                ffc_reindex_fields(); 
+            }
         });
     }
 
@@ -240,7 +239,7 @@ jQuery(document).ready(function($) {
         ffc_reindex_fields();
     });
 
-    // REMOVE FIELD (Using delegation for new fields)
+    // REMOVE FIELD (Using delegation for dynamically added fields)
     $(document).on('click', '.ffc-remove-field', function(e) { 
         e.preventDefault();
         if (confirm(ffc_admin_ajax.strings.confirmDeleteField || 'Remove this field?')) {
@@ -249,7 +248,7 @@ jQuery(document).ready(function($) {
         }
     });
     
-    // SHOW/HIDE OPTIONS LOGIC (Delegation + Correct Selector)
+    // SHOW/HIDE OPTIONS FIELD (For select/radio types)
     $(document).on('change', '.ffc-field-type-selector', function() {
         const selectedType = $(this).val();
         const $row = $(this).closest('.ffc-field-row');
@@ -262,10 +261,11 @@ jQuery(document).ready(function($) {
         }
     });
 
-    // Initialization: Apply visibility to fields already loaded from DB
+    // Initialization: Apply visibility to fields already loaded from database
     $('.ffc-field-type-selector').each(function() {
         $(this).trigger('change');
     });
 
-    ffc_reindex_fields(); 
+    // Initial reindexing on page load
+    ffc_reindex_fields();
 });

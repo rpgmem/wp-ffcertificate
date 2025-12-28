@@ -1,231 +1,272 @@
-=== WP-FFCertificate ===
-Contributors: (seu-usuario)
-Tags: certificate, form builder, pdf generation, html2canvas, verification, validation
+=== Free Form Certificate ===
+Contributors: alexmeusburger
+Tags: certificate, form builder, pdf generation, verification, validation, html2canvas, jspdf
 Requires at least: 5.0
 Tested up to: 6.4
-Stable tag: 2.0.0
+Stable tag: 2.7.0
 License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Documentação completa e registro de alterações do plugin WP-FFCertificate.
+Complete solution for creating dynamic forms, generating PDF certificates, and validating authenticity.
 
 == Description ==
 
-WP-FFCertificate é uma solução robusta para WordPress voltada à criação de formulários dinâmicos e emissão automatizada de certificados. O plugin permite que administradores criem campos via Drag & Drop, validem submissões em tempo real e ofereçam aos usuários um certificado em PDF gerado diretamente no navegador, garantindo alta performance sem sobrecarregar o servidor.
+Free Form Certificate is a robust WordPress solution for creating dynamic forms and automated certificate issuance. The plugin allows administrators to create custom fields via drag & drop, validate submissions in real-time, and offer users a PDF certificate generated directly in the browser, ensuring high performance without overloading the server.
 
-== Features ==
+= Key Features =
 
-* **Drag & Drop Form Builder:** Interface intuitiva para criar campos personalizados (Text, Select, Radio, Date, CPF).
-* **Client-Side PDF Generation:** Utiliza html2canvas e jsPDF para gerar certificados A4 (Landscape) com suporte a imagens de fundo personalizadas.
-* **Sistema de Verificação:** Shortcode de validação `[ffc_verification]` para autenticidade de certificados via código único.
-* **Restrição por Identificador (CPF/ID):** Controle de emissão única ou modo "2ª Via" baseado em documento.
-* **Sistema de Tickets:** Importação de lista de códigos exclusivos para acesso ao formulário.
-* **Segurança Avançada:** Proteção contra bots com Captcha Matemático integrado e Honeypot.
-* **Exportação de Dados:** Ferramenta de exportação CSV com filtros por formulário e data.
-* **Notificações Assíncronas:** Envio de e-mails para o administrador via WP-Cron para não travar o fluxo do usuário.
-* **Limpeza Automática:** Rotina diária para exclusão de registros antigos conforme configuração.
+* **Drag & Drop Form Builder:** Intuitive interface to create custom fields (Text, Email, Number, Date, Select, Radio, Textarea, Hidden).
+* **Client-Side PDF Generation:** Uses html2canvas and jsPDF to generate A4 landscape certificates with support for custom background images.
+* **Verification System:** Validation shortcode `[ffc_verification]` for certificate authenticity via unique code.
+* **ID-Based Restriction (CPF/RF):** Control unique issuance or "reprint" mode based on document.
+* **Ticket System:** Import list of exclusive codes for form access.
+* **Advanced Security:** Bot protection with integrated Math Captcha and Honeypot.
+* **Data Export:** CSV export tool with filters by form and date.
+* **Asynchronous Notifications:** Email sending to administrator via WP-Cron to not block user flow.
+* **Automatic Cleanup:** Daily routine to delete old records according to configuration.
 
 == Installation ==
 
-1. Envie a pasta `wp-ffcertificate` para o diretório `/wp-content/plugins/`.
-2. Ative o plugin através do menu 'Plugins' no WordPress.
-3. Acesse o menu 'FFCertificates' para criar seu primeiro formulário.
-4. Utilize o shortcode `[ffc_form id="ID_DO_FORM"]` em qualquer página ou post.
+1. Upload the `wp-ffcertificate` folder to the `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Access the 'Free Form Certificate' menu to create your first form.
+4. Use the shortcode `[ffc_form id="FORM_ID"]` on any page or post.
+
+== Frequently Asked Questions ==
+
+= How do I create a form? =
+
+1. Navigate to "Free Form Certificate" > "Add New Form"
+2. Enter a title for your form
+3. Use the Form Builder to add fields
+4. Configure the certificate layout in the "Certificate Layout" section
+5. Save and copy the shortcode
+
+= How do I enable the verification page? =
+
+The plugin automatically creates a `/valid` page during activation. You can also manually create a page with the shortcode `[ffc_verification]`.
+
+= Can I restrict who can generate certificates? =
+
+Yes! In the "Restriction & Security" section of each form, you can:
+- Enable whitelist mode (only listed IDs can generate)
+- Use ticket system (unique codes)
+- Block specific IDs via denylist
+
+= How do I translate the plugin? =
+
+The plugin is fully translation-ready. Use tools like Poedit or Loco Translate to create translations from the `languages/ffc.pot` file.
+
+== Screenshots ==
+
+1. Form Builder with drag & drop interface
+2. Certificate layout editor with live preview
+3. Submissions management with PDF download
+4. Security settings (whitelist, tickets, denylist)
+5. Frontend certificate generation
 
 == Changelog ==
 
-= 2.0.0 (Versão Atual) =
-* **Internacionalização (i18n):** Implementação completa de suporte a tradução. Todas as strings do PHP foram envolvidas em funções `__()` e `_e()` e as strings de JavaScript foram localizadas via `wp_localize_script`.
-* **Refatoração de PDF:** Migração do sistema de geração de imagem simples para PDF de alta fidelidade (A4 Landscape) usando jsPDF.
-* **Otimização Mobile:** Adição de delays estratégicos e overlay de progresso (FFC Progress Overlay) para garantir a renderização correta em dispositivos móveis.
-* **Segurança:** Implementação de Captcha Matemático dinâmico com validação via hash no backend para evitar spam.
-* **Lógica de "2ª Via":** Nova lógica de detecção de duplicidade que permite recuperar certificados já emitidos ao digitar o mesmo CPF.
-* **Arquitetura OOP:** Reestruturação modular do plugin em classes separadas (`Admin`, `Frontend`, `CPT`, `Submission_Handler`) para melhor manutenção.
-* **Melhoria no Admin:** Inclusão de botões de download de PDF diretamente na lista de submissões do painel administrativo.
-* **Correção de CORS:** Adição do atributo `crossorigin="anonymous"` na renderização de imagens para evitar erros de "Tainted Canvas".
+= 2.7.0 (2024-12-28) - Major Reorganization =
+* **Code Architecture:** Complete plugin reorganization with modular OOP structure
+* **Classes Separation:** 
+  - Simplified `class-ffc-cpt.php` (only CPT registration and duplication)
+  - Consolidated all metaboxes in `class-ffc-form-editor.php`
+  - Added missing methods: `update_submission()` and `delete_all_submissions()`
+* **Internationalization (i18n):** Full implementation of translation support
+  - All PHP strings wrapped in `__()` and `_e()` functions
+  - JavaScript strings localized via `wp_localize_script`
+  - Created `.pot` file for translators
+* **CSS Consolidation:** Removed all inline styles
+  - Moved to `admin.css` and `frontend.css`
+  - Better organization and maintainability
+* **Code Quality:**
+  - Removed dead code
+  - Eliminated redundancies
+  - All comments in English
+  - Cross-file dependency validation
+* **Bug Fixes:**
+  - Fixed missing method calls
+  - Corrected duplicate metabox registration
+  - Fixed SMTP settings toggle visibility
 
-= 1.5.0 =
-* Implementação do sistema de Tickets (códigos de uso único).
-* Adição de funcionalidade de clonagem de formulários.
-* Criação da aba de configurações globais (Settings) com limpeza de logs automática.
+= 2.0.0 (2024-12-22) =
+* **PDF Refactoring:** Migration from simple image to high-fidelity PDF (A4 Landscape) using jsPDF
+* **Mobile Optimization:** Strategic delays and progress overlay for correct rendering on mobile devices
+* **Security:** Implementation of dynamic Math Captcha with hash validation on backend
+* **Reprint Logic:** New duplicate detection logic allowing certificate recovery
+* **Admin Improvements:** PDF download buttons directly in submissions list
+* **CORS Fix:** Added `crossorigin="anonymous"` attribute in image rendering
 
-= 1.0.0 =
-* Lançamento inicial com Form Builder básico e exportação CSV.
+= 1.5.0 (2024-12-20)=
+* Ticket system implementation (single-use codes)
+* Form cloning functionality
+* Global settings tab with automatic log cleanup
+
+= 1.0.0 (2024-12-13)=
+* Initial release with basic Form Builder and CSV export
 
 == Layout & Placeholders ==
 
-No editor de layout do certificado, você pode utilizar as seguintes tags dinâmicas:
+In the certificate layout editor, you can use the following dynamic tags:
 
-* `{{auth_code}}`: Código de autenticação de 12 dígitos.
-* `{{cpf_rf}}`: Documento informado (CPF ou ID).
-* `{{form_title}}`: Título do formulário atual.
-* `{{submission_date}}`: Data da emissão (DD/MM/AAAA).
-* `{{submission_id}}`: ID numérico da submissão no banco.
-* `{{validation_url}}`: URL da página de verificação (se configurada).
-* `{{nome_da_variavel}}`: Qualquer nome de campo definido no Form Builder.
+= System Tags =
+* `{{auth_code}}`: 12-digit authentication code
+* `{{form_title}}`: Current form title
+* `{{submission_date}}`: Issuance date (formatted according to WP settings)
+* `{{submission_id}}`: Numeric ID of the submission in database
+* `{{validation_url}}`: URL of the verification page
+
+= Form Field Tags =
+* `{{field_name}}`: Any field name defined in Form Builder
+* Common examples: `{{name}}`, `{{email}}`, `{{cpf_rf}}`, `{{ticket}}`
+
+= Formatting Notes =
+* CPF/RF fields are automatically formatted with dots and dashes
+* Auth codes are formatted as XXXX-XXXX-XXXX
+* Date fields respect WordPress date format settings
 
 == Shortcodes ==
 
-* `[ffc_form id="123"]`: Exibe o formulário de emissão.
-* `[ffc_verification]`: Exibe a interface de busca para validar códigos de certificados.
+= [ffc_form] =
+Displays the certificate issuance form.
+
+Parameters:
+* `id` (required): Form ID
+
+Example: `[ffc_form id="123"]`
+
+= [ffc_verification] =
+Displays the certificate verification interface.
+
+No parameters required.
+
+Example: `[ffc_verification]`
+
+== File Structure ==
+
+wp-ffcertificate/
+├── wp-ffcertificate.php (Main plugin file)
+├── readme.txt
+├── includes/
+│   ├── class-ffc-activator.php (Installation logic)
+│   ├── class-ffc-admin.php (Admin interface)
+│   ├── class-ffc-cpt.php (Custom Post Type - SIMPLIFIED)
+│   ├── class-ffc-deactivator.php (Cleanup logic)
+│   ├── class-ffc-form-editor.php (Metaboxes - CONSOLIDATED)
+│   ├── class-ffc-frontend.php (Public interface)
+│   ├── class-ffc-loader.php (Main orchestrator)
+│   ├── class-ffc-settings.php (Plugin settings)
+│   ├── class-ffc-submission-handler.php (Data processing - COMPLETE)
+│   ├── class-ffc-submissions-list-table.php (Admin table)
+│   └── class-ffc-utils.php (Shared utilities)
+├── assets/
+│   ├── css/
+│   │   ├── ffc-pdf-core.css (PDF rendering - critical)
+│   │   ├── admin.css (Admin styles - consolidated)
+│   │   └── frontend.css (Public styles - consolidated)
+│   └── js/
+│       ├── html2canvas.min.js (v1.4.1)
+│       ├── jspdf.umd.min.js (v2.5.1)
+│       ├── admin.js (Admin logic - optimized)
+│       └── frontend.js (Public logic - optimized)
+├── html/ (Optional certificate templates)
+└── languages/
+    └── ffc.pot (Translation template)
 
 
-===========================================
-   README / Documentação Final
-===========================================
+== Submission Flow ==
 
-==========================
- 1. Objetivo do Plugin
-==========================
-WP-FFCertificate é um plugin completo para:
+1. **Frontend** sends AJAX (`ffc_submit_form`)
+   - Nonce validation
+   - Honeypot validation
+   - Fields sanitized and validated
 
-- Criar formulários dinâmicos (drag & drop no backend)
-- Receber submissões com validação server-side
-- Salvar dados no banco (tabela personalizada: wp_ffc_submissions)
-- Enviar notificação assíncrona ao administrador (via WP-Cron)
-- Gerar certificado em **PNG no front-end** via html2canvas (rápido e sem travar o servidor)
-- Permitir exportação CSV (com seleção/filtragem)
-- Clonar formulários (metacampos incluídos)
-- Limpar submissões antigas automaticamente (configurável em "Settings")
-- Oferecer UI amigável com abas no CPT para construção e configuração
+2. **Handler** processes submission
+   - Saves to `wp_ffc_submissions` table
+   - Schedules admin notification (WP-Cron)
+   - Returns submission ID + template HTML
 
-O plugin foi reestruturado para escalabilidade, segurança e performance.
+3. **Frontend** generates certificate
+   - Receives JSON success
+   - Replaces {{placeholders}} in template
+   - Uses html2canvas to render HTML/CSS
+   - Embeds in PDF via jsPDF
+   - Triggers automatic download
 
-==========================
- 2. Organização Interna
-==========================
+4. **Reprint Detection**
+   - Checks if CPF/RF already exists for this form
+   - If YES: Retrieves original data (reprint mode)
+   - If NO: Saves new data and generates auth code
 
-O arquivo principal do plugin é o `wp-ffcertificate.php`.
+== Security Features ==
 
-✔ classes/ (dentro de wp-ffcertificate.php)
-   - `Free_Form_Certificate`: Classe principal, hooks, CPT e admin menus.
-   - `FFC_Submission_Handler`: Lógica de DB, CRON, exportação CSV e template.
-   - `FFC_Submission_List`: Implementação de `WP_List_Table` para submissões.
+= Whitelist Mode =
+Restrict certificate issuance to a specific list of IDs/CPFs.
+Configure in: Form Editor > Restriction & Security > Allowlist
 
-✔ assets/
-   - js/admin.js: Lógica do form builder e geração manual/preview no admin.
-   - js/frontend.js: Lógica AJAX de submissão e geração de PNG no frontend.
-   - js/html2canvas.min.js: Biblioteca que transforma o HTML gerado pelo formulário em uma imagem
-   - jspdf.umd.min.js: Biblioteca que embute a imgem gerada em um PDF
-   - css/admin.css: Estilos para o CPT e telas de admin.
-   - css/ffc-pdf-core.css:
-   - css/frontend.css:
+= Ticket System =
+Require a unique ticket code to generate certificate.
+Tickets are automatically removed after use.
+Configure in: Form Editor > Restriction & Security > Ticket Generator
 
-✔ includes/
-   - class-ffc-activator.php
-   - class-ffc-admin.php
-   - class-ffc-cpt.php
-   - class-ffc-deactivator.php
-   - class-ffc-form-editor.php
-   - class-ffc-frontend.php
-   - class-ffc-loader.php
-   - class-ffc-settings.php
-   - class-ffc-submission-handler.php
-   - class-ffc-submissions-list-table.php
-   - class-ffc-utils.php
+= Denylist =
+Block specific IDs or tickets from generating certificates.
+Configure in: Form Editor > Restriction & Security > Denylist
 
-✔ languages/
-   - ffc.pot
+= Math Captcha =
+Built-in protection against bots on all forms.
+Dynamically generated math questions with hash validation.
 
-==========================
- 3. Fluxo de Submissão
-==========================
+= Honeypot =
+Hidden field to trap spam bots.
+Automatically included in all forms.
 
-(1) Frontend envia AJAX (action: `ffc_submit_form`)
-→ nonce validado
-→ honeypot validado
-→ campos sanitizados e validados (incluindo campos obrigatórios)
-→ dados enviados ao handler
+== Data Management ==
 
-(2) Handler
-→ Salva submissão (`wp_ffc_submissions`)
-→ Agenda notificação admin (wp_schedule_single_event)
-→ Retorna ID da submissão + template HTML + dados sanitizados
+= CSV Export =
+- Available in "Submissions" screen
+- Optional filtering by form
+- Includes all submission metadata
+- Translatable headers
+- Semicolon delimiter (Excel compatible)
 
-(3) Frontend
-→ Recebe JSON de sucesso
-→ Substitui {{placeholders}} no template
-→ Usa html2canvas para renderizar HTML/CSS e gerar PNG
-→ Dispara download automático do PNG para o usuário
+= Automatic Cleanup =
+- Daily WP-Cron event (`ffc_daily_cleanup_hook`)
+- Deletes submissions older than configured days
+- Configure in: Settings > General > Auto-delete (days)
+- Set to 0 to disable
 
-(4) Frontend envia AJAX
-→ Validações de segurança (Nonce/Honeypot)
-→ Verifica se "Restrição por Lista" está ativa (checa campo 'cpf_rf')
-→ Verifica se já existe submissão para este CPF neste Formulário:
-    A. SE EXISTIR: Recupera os dados originais do banco (Modo 2ª Via).
-    B. SE NÃO EXISTIR: Salva novos dados, gera Código de Autenticação e agenda notificação.
+= Danger Zone =
+- Delete all submissions (with confirmation)
+- Delete submissions from specific form
+- Available in: Settings > General > Danger Zone
 
-(5) Retorno
-→ O sistema devolve o JSON com os dados (novos ou recuperados).
-→ O PDF é gerado no navegador com os dados corretos.
+== Technical Notes ==
 
-==========================
- 4. Geração do Certificado (PDF)
-==========================
-O conteúdo HTML suporta CSS avançado e imagens de fundo (para admins).
+= Database Table =
+The plugin creates a custom table: `wp_ffc_submissions`
 
-Placeholders disponíveis:
-- `{{auth_code}}`: Código de autenticação único (ex: A1B2-C3D4-E5F6).
-- `{{cpf_rf}}`: Identificador único do usuário (obrigatório para restrição).
-- `{{date}}`: Data de emissão.
-- `{{fill_date}}`: Data de emissão.
-- `{{fill_time}}`: Hora de emissão.
-- `{{form_title}}`: Título do formulário
-- `{{submission_date}}`: Data atual formatada
-- `{{submission_id}}`: ID do registro no banco de dados
-- `{{ticket}}`: Campo do ticket
-- `{{name}}` ou `{{nome}}`:
-- `{{email}}`:
-- `{{current_date}}`:
-- `{{nome_variavel}}`: Campos definidos pelo usuário: (deve ser o "Name (Variable)" definido no builder)
-- `{{validation_url}}`:
-- `{{index}}`:
+Columns:
+- `id`: Primary key
+- `form_id`: Reference to form CPT
+- `submission_date`: Timestamp
+- `data`: JSON encoded submission data
+- `user_ip`: User IP address
+- `email`: User email (extracted for indexing)
+- `status`: 'publish' or 'trash'
 
-==========================
- 5. Shortcodes disponiveis
-==========================
+= WP-Cron Events =
+- `ffc_process_submission_hook`: Asynchronous email sending
+- `ffc_daily_cleanup_hook`: Old submissions cleanup
 
-- [ffc_form id="123"]
-- [ffc_verification]
+= PDF Generation =
+- Client-side rendering (no server load)
+- A4 Landscape (1123x794px)
+- Background image support
+- Custom HTML/CSS layouts
+- Mobile optimized with strategic delays
 
-==========================
- 6. Notificação ao Administrador
-==========================
-Notificação é 100% assíncrona via WP-Cron (`ffc_send_admin_notification_hook`).
+== Support ==
 
-→ Garante que a submissão do formulário seja rápida.
-→ Seguro contra timeouts do servidor.
-
-==========================
- 7. Exportação CSV
-==========================
-Disponível na tela "Submissions" com filtro opcional por formulário.
-Gera um arquivo CSV completo com todos os metadados de submissão (ID, IP, Data) e todos os campos de dados únicos encontrados.
-
-==========================
- 8. Limpeza Automática
-==========================
-O evento `ffc_daily_cleanup_hook` roda diariamente via WP-Cron para deletar submissões mais antigas que o número de dias configurado em "Settings" > "General Settings".
-
-==========================
- 9. Segurança
-==========================
-Lista de permissões: Restrinja a emissão a uma lista específica de CPFs/IDs.
-Modo de ticket: Exija um código de ticket exclusivo para emitir o certificado. Os tickets são "descartados" (excluídos) após o uso.
-Lista de bloqueios: Bloqueie IDs ou tickets específicos de gerar certificados.
-
-Captcha matemático: Proteção integrada contra bots em todos os formulários.
-
-==========================
- 10. Autenticação e Verificação
-==========================
-O plugin agora garante a autenticidade dos documentos gerados.
-
-1. Código Único:
-   Cada submissão gera um hash de 12 caracteres salvo no banco.
-   Adicione `{{auth_code}}` no layout do seu PDF para exibi-lo.
-
-2. Página de Validação:
-   Crie uma página no WordPress e use o shortcode: `[ffc_verification]`.
-   Isso exibirá um campo de busca onde terceiros podem validar o código.
-   - Retorno: Status (Válido/Inválido), dados do evento e dados do aluno.
-   - UX: O campo possui máscara automática para formatar XXXX-YYYY-ZZZZ.
+For bug reports and feature requests, please contact the plugin author.

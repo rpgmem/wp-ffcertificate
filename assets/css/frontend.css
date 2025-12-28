@@ -28,6 +28,7 @@
 textarea.ffc-input {
     height: auto !important;
     min-height: 120px !important;
+    resize: vertical;
 }
 
 /* ==========================================================================
@@ -46,8 +47,15 @@ textarea.ffc-input {
     display: inline-block;
 }
 
-.ffc-submit-btn:hover { background-color: #135e96; }
-.ffc-submit-btn:disabled { background-color: #a7aaad; cursor: not-allowed; opacity: 0.7; }
+.ffc-submit-btn:hover { 
+    background-color: #135e96; 
+}
+
+.ffc-submit-btn:disabled { 
+    background-color: #a7aaad; 
+    cursor: not-allowed; 
+    opacity: 0.7; 
+}
 
 .ffc-btn-download {
     display: inline-block;
@@ -64,6 +72,10 @@ textarea.ffc-input {
     cursor: pointer;
 }
 
+.ffc-btn-download:hover {
+    background-color: #218838;
+}
+
 /* ==========================================================================
    3. FEEDBACK MESSAGES
    ========================================================================== */
@@ -76,8 +88,17 @@ textarea.ffc-input {
     line-height: 1.4;
 }
 
-.ffc-message.ffc-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-.ffc-message.ffc-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+.ffc-message.ffc-success { 
+    background-color: #d4edda; 
+    color: #155724; 
+    border: 1px solid #c3e6cb; 
+}
+
+.ffc-message.ffc-error { 
+    background-color: #f8d7da; 
+    color: #721c24; 
+    border: 1px solid #f5c6cb; 
+}
 
 /* ==========================================================================
    4. VERIFICATION PAGE
@@ -86,6 +107,18 @@ textarea.ffc-input {
     max-width: 600px;
     margin: 20px auto;
     text-align: center;
+}
+
+.ffc-verification-form {
+    margin-bottom: 20px;
+}
+
+.ffc-verify-input-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
 }
 
 .ffc-verify-input.ffc-input {
@@ -100,19 +133,157 @@ textarea.ffc-input {
     border: 2px solid #2271b1 !important;
 }
 
-/* ==========================================================================
-   5. RESPONSIVENESS
-   ========================================================================== */
-@media (max-width: 480px) {
-    .ffc-input { max-width: 100% !important; }
-    .ffc-submit-btn { width: 100%; }
-    .ffc-verify-input.ffc-input { font-size: 18px; letter-spacing: 2px; }
+.ffc-verify-result {
+    margin-top: 20px;
+}
+
+.ffc-verify-success {
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+    padding: 20px;
+    border-radius: 4px;
+    text-align: left;
+}
+
+.ffc-verify-success h3,
+.ffc-verify-success h4 {
+    margin-top: 0;
+    color: #155724;
+}
+
+.ffc-verify-success hr {
+    border: none;
+    border-top: 1px solid #c3e6cb;
+    margin: 15px 0;
+}
+
+.ffc-verify-error {
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+    padding: 15px;
+    border-radius: 4px;
 }
 
 /* ==========================================================================
-   6. FORM UTILITIES
+   5. SECURITY FIELDS (Captcha & Honeypot)
    ========================================================================== */
-.ffc-form-title { text-align: center; margin-bottom: 20px; color: #333; }
-.ffc-form-field label .required { color: #d63638; margin-left: 3px; }
-.ffc-radio-group { display: flex; gap: 15px; margin: 10px 0; }
-.ffc-radio-group label { font-weight: normal !important; display: flex; align-items: center; gap: 5px; }
+.ffc-security-container {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.ffc-honeypot-field {
+    position: absolute;
+    left: -9999px;
+    display: none;
+}
+
+.ffc-captcha-row {
+    margin-top: 10px;
+}
+
+.ffc-captcha-row label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.ffc-captcha-row .required {
+    color: #d63638;
+}
+
+/* When JS is disabled, show security in a fallback way */
+.ffc-no-js-security {
+    display: block;
+}
+
+/* ==========================================================================
+   6. FORM STRUCTURE & FIELDS
+   ========================================================================== */
+.ffc-form-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.ffc-form-title { 
+    text-align: center; 
+    margin-bottom: 20px; 
+    color: #333; 
+}
+
+.ffc-form-field {
+    margin-bottom: 20px;
+}
+
+.ffc-form-field label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #333;
+}
+
+.ffc-form-field label .required { 
+    color: #d63638; 
+    margin-left: 3px; 
+}
+
+.ffc-radio-group { 
+    display: flex; 
+    flex-direction: column;
+    gap: 10px; 
+    margin: 10px 0; 
+}
+
+.ffc-radio-group label { 
+    font-weight: normal !important; 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+}
+
+/* ==========================================================================
+   7. RESPONSIVE DESIGN
+   ========================================================================== */
+@media (max-width: 600px) {
+    .ffc-form-wrapper {
+        padding: 15px;
+    }
+    
+    .ffc-input { 
+        max-width: 100% !important; 
+    }
+    
+    .ffc-submit-btn { 
+        width: 100%; 
+    }
+    
+    .ffc-verify-input.ffc-input { 
+        font-size: 18px; 
+        letter-spacing: 2px; 
+    }
+    
+    .ffc-verify-input-group {
+        flex-direction: column;
+    }
+    
+    .ffc-verify-input-group .ffc-submit-btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .ffc-verify-input.ffc-input {
+        font-size: 16px;
+        letter-spacing: 1px;
+        height: 50px !important;
+    }
+}
