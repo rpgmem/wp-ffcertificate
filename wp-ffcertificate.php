@@ -27,22 +27,15 @@ define( 'FFC_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FFC_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 /**
- * Load plugin textdomain
- */
-function ffc_load_textdomain() {
-    load_plugin_textdomain( 'ffc', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-}
-add_action( 'plugins_loaded', 'ffc_load_textdomain' );
-
-/**
  * ✅ Load critical classes for activation hook
  * 
  * IMPORTANT: These must be loaded BEFORE register_activation_hook
  * because FFC_Activator::activate() needs them
  */
-require_once FFC_PLUGIN_DIR . 'includes/class-ffc-utils.php';              // 1. Utils (used by Migration Manager)
-require_once FFC_PLUGIN_DIR . 'includes/class-ffc-migration-manager.php';  // 2. Migration Manager (used by Activator)
-require_once FFC_PLUGIN_DIR . 'includes/class-ffc-activator.php';          // 3. Activator (uses Migration Manager)
+require_once FFC_PLUGIN_DIR . 'includes/class-ffc-utils.php';                   // 1. Utils (used by Migration Manager)
+require_once FFC_PLUGIN_DIR . 'includes/class-ffc-migration-manager.php';       // 2. Migration Manager (used by Activator)
+require_once FFC_PLUGIN_DIR . 'includes/class-ffc-rate-limit-activator.php';    // 3. Rate Limit Activator (used by Activator)
+require_once FFC_PLUGIN_DIR . 'includes/class-ffc-activator.php';               // 4. Activator (uses Migration Manager)
 
 /**
  * Register activation hook

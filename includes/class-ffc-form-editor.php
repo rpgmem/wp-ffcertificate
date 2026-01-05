@@ -186,7 +186,11 @@ class FFC_Form_Editor {
             } 
             ?>
         </div>
-        
+        <div>
+        <p class="description">
+        <?php esc_html_e( 'Minimal fields (Tag):', 'ffc' ); ?> <code>name</code>, <code>email</code>, <code>cpf_rf</code>.
+        </p>
+        </div>
         <div class="ffc-builder-actions ffc-mt20">
             <button type="button" class="button button-primary ffc-add-field">
                 <span class="dashicons dashicons-plus-alt"></span> 
@@ -206,35 +210,106 @@ class FFC_Form_Editor {
     public function render_box_restriction( $post ) {
         $config = get_post_meta( $post->ID, '_ffc_form_config', true );
         
-        $enable     = isset($config['enable_restriction']) ? $config['enable_restriction'] : '0';
+        // Get restrictions (new structure)
+        $restrictions = isset($config['restrictions']) ? $config['restrictions'] : array();
+        $password_active  = !empty($restrictions['password']) && $restrictions['password'] == '1';
+        $allowlist_active = !empty($restrictions['allowlist']) && $restrictions['allowlist'] == '1';
+        $denylist_active  = !empty($restrictions['denylist']) && $restrictions['denylist'] == '1';
+        $ticket_active    = !empty($restrictions['ticket']) && $restrictions['ticket'] == '1';
+        
+        // Legacy fields
+        $vcode      = isset($config['validation_code']) ? $config['validation_code'] : ''; 
         $allow      = isset($config['allowed_users_list']) ? $config['allowed_users_list'] : '';
         $deny       = isset($config['denied_users_list']) ? $config['denied_users_list'] : ''; 
-        $vcode      = isset($config['validation_code']) ? $config['validation_code'] : ''; 
         $gen_codes  = isset($config['generated_codes_list']) ? $config['generated_codes_list'] : ''; 
         ?>
         <table class="form-table">
             <tr>
-                <th><label><?php esc_html_e( 'Single Password (Optional)', 'ffc' ); ?></label></th>
-                <td><input type="text" name="ffc_config[validation_code]" value="<?php echo esc_attr($vcode); ?>" class="regular-text" placeholder="<?php esc_attr_e('Ex: PASS2025', 'ffc'); ?>"></td>
-            </tr>
-            <tr>
-                <th><label><?php esc_html_e( 'Restriction Mode', 'ffc' ); ?></label></th>
+                <th><label><?php esc_html_e( 'Form Restrictions', 'ffc' ); ?></label></th>
                 <td>
-                    <select name="ffc_config[enable_restriction]" class="ffc-select-full">
-                        <option value="0" <?php selected($enable, '0'); ?>><?php esc_html_e( 'Disabled (Open)', 'ffc' ); ?></option>
-                        <option value="1" <?php selected($enable, '1'); ?>><?php esc_html_e( 'Enabled (Whitelist/Ticket)', 'ffc' ); ?></option>
-                    </select>
+                    <p class="description" style="margin-bottom: 15px;">
+                        <?php esc_html_e( 'Select which restrictions to apply (can combine multiple):', 'ffc' ); ?>
+                    </p>
+                    
+                    <label style="display: block; margin: 10px 0;">
+                        <input type="checkbox" 
+                               name="ffc_config[restrictions][password]" 
+                               value="1" 
+                               id="ffc_restriction_password"
+                               <?php checked($password_active, true); ?>>
+                        <strong><?php esc_html_e('Single Password', 'ffc'); ?></strong>
+                        <span class="description"> — <?php esc_html_e('Shared password for all users', 'ffc'); ?></span>
+                    </label>
+                    
+                    <label style="display: block; margin: 10px 0;">
+                        <input type="checkbox" 
+                               name="ffc_config[restrictions][allowlist]" 
+                               value="1" 
+                               id="ffc_restriction_allowlist"
+                               <?php checked($allowlist_active, true); ?>>
+                        <strong><?php esc_html_e('Allowlist (CPF/RF)', 'ffc'); ?></strong>
+                        <span class="description"> — <?php esc_html_e('Only approved CPF/RF can submit', 'ffc'); ?></span>
+                    </label>
+                    
+                    <label style="display: block; margin: 10px 0;">
+                        <input type="checkbox" 
+                               name="ffc_config[restrictions][denylist]" 
+                               value="1" 
+                               id="ffc_restriction_denylist"
+                               <?php checked($denylist_active, true); ?>>
+                        <strong><?php esc_html_e('Denylist (CPF/RF)', 'ffc'); ?></strong>
+                        <span class="description"> — <?php esc_html_e('Blocked CPF/RF cannot submit', 'ffc'); ?></span>
+                    </label>
+                    
+                    <label style="display: block; margin: 10px 0;">
+                        <input type="checkbox" 
+                               name="ffc_config[restrictions][ticket]" 
+                               value="1" 
+                               id="ffc_restriction_ticket"
+                               <?php checked($ticket_active, true); ?>>
+                        <strong><?php esc_html_e('Ticket (Unique Codes)', 'ffc'); ?></strong>
+                        <span class="description"> — <?php esc_html_e('Requires valid ticket (consumed after use)', 'ffc'); ?></span>
+                    </label>
+                    
+                    <p class="description" style="margin-top: 15px;">
+                        <em><?php esc_html_e('Note: If no restriction is selected, form is Open (no restrictions).', 'ffc'); ?></em>
+                    </p>
                 </td>
             </tr>
-            <tr>
+            
+            <tr id="ffc_password_field" style="<?php echo $password_active ? '' : 'display:none;'; ?>">
+                <th><label><?php esc_html_e( 'Password Value', 'ffc' ); ?></label></th>
+                <td>
+                    <input type="text" 
+                           name="ffc_config[validation_code]" 
+                           value="<?php echo esc_attr($vcode); ?>" 
+                           class="regular-text" 
+                           placeholder="<?php esc_attr_e('Ex: PASS2025', 'ffc'); ?>">
+                    <p class="description"><?php esc_html_e('This password will be required from all users.', 'ffc'); ?></p>
+                </td>
+            </tr>
+            
+            <tr id="ffc_allowlist_field" style="<?php echo $allowlist_active ? '' : 'display:none;'; ?>">
                 <th><label><?php esc_html_e( 'Allowlist (CPFs / IDs)', 'ffc' ); ?></label></th>
-                <td><textarea name="ffc_config[allowed_users_list]" class="ffc-textarea-mono ffc-h120 ffc-w100" placeholder="<?php esc_attr_e('One per line...', 'ffc'); ?>"><?php echo esc_textarea($allow); ?></textarea></td>
+                <td>
+                    <textarea name="ffc_config[allowed_users_list]" 
+                              class="ffc-textarea-mono ffc-h120 ffc-w100" 
+                              placeholder="<?php esc_attr_e('One per line...', 'ffc'); ?>"><?php echo esc_textarea($allow); ?></textarea>
+                    <p class="description"><?php esc_html_e('Accepts formats: 12345678900 or 123.456.789-00', 'ffc'); ?></p>
+                </td>
             </tr>
-            <tr>
+            
+            <tr id="ffc_denylist_field" style="<?php echo $denylist_active ? '' : 'display:none;'; ?>">
                 <th><label><?php esc_html_e( 'Denylist (Blocked)', 'ffc' ); ?></label></th>
-                <td><textarea name="ffc_config[denied_users_list]" class="ffc-textarea-mono ffc-h80 ffc-w100" placeholder="<?php esc_attr_e('Banned users...', 'ffc'); ?>"><?php echo esc_textarea($deny); ?></textarea></td>
+                <td>
+                    <textarea name="ffc_config[denied_users_list]" 
+                              class="ffc-textarea-mono ffc-h80 ffc-w100" 
+                              placeholder="<?php esc_attr_e('Banned users...', 'ffc'); ?>"><?php echo esc_textarea($deny); ?></textarea>
+                    <p class="description"><?php esc_html_e('Has priority over Allowlist. Accepts same formats.', 'ffc'); ?></p>
+                </td>
             </tr>
-            <tr class="ffc-highlight-row">
+            
+            <tr id="ffc_ticket_field" class="ffc-highlight-row" style="<?php echo $ticket_active ? '' : 'display:none;'; ?>">
                 <th><label class="ffc-label-accent"><?php esc_html_e( 'Ticket Generator', 'ffc' ); ?></label></th>
                 <td>
                     <div class="ffc-admin-flex-row ffc-mb5">
@@ -242,7 +317,10 @@ class FFC_Form_Editor {
                         <button type="button" class="button button-secondary" id="ffc_btn_generate_codes"><?php esc_html_e( 'Generate Tickets', 'ffc' ); ?></button>
                         <span id="ffc_gen_status" class="ffc-gen-status"></span>
                     </div>
-                    <textarea name="ffc_config[generated_codes_list]" id="ffc_generated_list" class="ffc-textarea-mono ffc-h120 ffc-w100"><?php echo esc_textarea($gen_codes); ?></textarea>
+                    <textarea name="ffc_config[generated_codes_list]" 
+                              id="ffc_generated_list" 
+                              class="ffc-textarea-mono ffc-h120 ffc-w100"><?php echo esc_textarea($gen_codes); ?></textarea>
+                    <p class="description"><?php esc_html_e('Tickets are consumed (removed) after successful use.', 'ffc'); ?></p>
                 </td>
             </tr>
         </table>
@@ -275,6 +353,14 @@ class FFC_Form_Editor {
             <tr>
                 <th><label><?php esc_html_e( 'Email Body (HTML)', 'ffc' ); ?></label></th>
                 <td><textarea name="ffc_config[email_body]" class="ffc-h120 ffc-w100"><?php echo esc_textarea($body); ?></textarea></td>
+            </tr>
+            <tr>
+                <th></th>
+                <td>
+                <p class="description" style="margin-top: 15px;">
+                <em><?php esc_html_e('Note: When this option is enabled, the email will only be sent when the user submits the form. This will add them to a waiting list and emails will be sent progressively.', 'ffc'); ?></em>
+                </p>
+                </td>
             </tr>
         </table>
         <?php
@@ -416,6 +502,14 @@ class FFC_Form_Editor {
             $clean_config['enable_restriction'] = sanitize_key( $config['enable_restriction'] );
             $clean_config['send_user_email']    = sanitize_key( $config['send_user_email'] );
             $clean_config['email_subject']      = sanitize_text_field( $config['email_subject'] );
+            
+            // ✅ v2.10.0: Restrictions (checkboxes)
+            $clean_config['restrictions'] = array(
+                'password'  => isset($config['restrictions']['password']) ? '1' : '0',
+                'allowlist' => isset($config['restrictions']['allowlist']) ? '1' : '0',
+                'denylist'  => isset($config['restrictions']['denylist']) ? '1' : '0',
+                'ticket'    => isset($config['restrictions']['ticket']) ? '1' : '0'
+            );
             
             $clean_config['allowed_users_list']   = sanitize_textarea_field( $config['allowed_users_list'] );
             $clean_config['denied_users_list']    = sanitize_textarea_field( $config['denied_users_list'] );

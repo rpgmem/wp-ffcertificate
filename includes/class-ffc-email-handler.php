@@ -6,6 +6,7 @@
  * v2.8.0: Added magic link support in emails
  * v2.9.0: Added QR Code placeholder support with hash-based URLs
  * v2.9.11: Using FFC_Utils for document formatting
+ * v2.10.0: ENCRYPTION - Compatible (receives pre-encryption data via parameters)
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

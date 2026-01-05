@@ -87,7 +87,7 @@
                         <td><em>Workshop 2025</em></td>
                     </tr>
                     <tr>
-                        <td><code>{{submission_date}}</code><br><code>{{current_date}}</code></td>
+                        <td><code>{{submission_date}}</code></td>
                         <td><?php esc_html_e( 'Date certificate was issued', 'ffc' ); ?></td>
                         <td><em>29/12/2025</em></td>
                     </tr>

@@ -553,14 +553,16 @@
 
 /* Organizar os botões lado a lado */
 #ffc_load_template_btn,
-#ffc_btn_import_html {
+#ffc_btn_import_html,
+#ffc_btn_media_lib {
     display: inline-block;
     margin-right: 10px;
 }
 
 /* Opcional: Melhorar estilo dos botões */
 #ffc_load_template_btn,
-#ffc_btn_import_html {
+#ffc_btn_import_html,
+#ffc_btn_media_lib {
     padding: 8px 16px;
     font-size: 14px;
 }
@@ -573,6 +575,11 @@
 #ffc_btn_import_html:before {
     content: "📁 ";
 }
+
+#ffc_btn_media_lib:before {
+    content: "🖼️ ";
+}
+
 
 /* ========================================
    17. DATA MIGRATIONS TAB STYLES
@@ -598,7 +605,12 @@
 
 /* Migration Cards */
 .ffc-migration-card {
-    margin-bottom: 20px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.ffc-migration-card p {
+    padding-right: 15px;
 }
 
 .ffc-migration-card.ffc-migration-complete {
@@ -623,6 +635,7 @@
 /* Description */
 .ffc-migration-card .description {
     margin-top: 0;
+    margin-left: 15px;
 }
 
 /* Statistics Grid */

@@ -46,8 +46,9 @@
     </div>
 
     <p style="position: absolute;bottom: 20px;right: 0;width: 100%;text-align: center;padding-right: 80px;margin: 0;font-size: 9pt;z-index: 2;box-sizing: border-box">
+        {{qr_code:size=50:margin=0}}
         Gerado em: {{submission_date}}. Para verificar a autenticidade acesse 
-        <span style="color: blue">https://dresaomiguel.com.br/valid/</span> 
+        <span style="color: blue">{{validation_url}}</span> 
         e use o código <strong>{{auth_code}}</strong>
     </p>
 

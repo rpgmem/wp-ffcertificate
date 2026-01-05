@@ -19,11 +19,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class FFC_PDF_Generator {
     
+    private $submission_handler;
+    
     /**
      * Constructor
+     * 
+     * @param FFC_Submission_Handler $submission_handler Submission handler instance
      */
-    public function __construct() {
-        // Reserved for future hooks
+    public function __construct( $submission_handler = null ) {
+        // Store submission handler for unified method
+        $this->submission_handler = $submission_handler;
+        
+        // If not provided, create instance (backward compatibility)
+        if ( $this->submission_handler === null ) {
+            $this->submission_handler = new FFC_Submission_Handler();
+        }
     }
     
     /**
@@ -44,37 +54,11 @@ class FFC_PDF_Generator {
         // Convert to array
         $sub_array = (array) $submission;
         
-        // ✅ v2.9.15: RECONSTRUIR dados completos (colunas + JSON)
+        // ✅ v2.10.0: get_submission() already returns decrypted data with JSON fields merged
+        // No need to manually reconstruct - just use the data directly
+        $data = $sub_array;
         
-        // Passo 1: Campos obrigatórios das colunas
-        $data = array(
-            'email' => $sub_array['email'],  // ✅ Da coluna
-        );
-        
-        // Adicionar auth_code se existir na coluna
-        if ( ! empty( $sub_array['auth_code'] ) ) {
-            $data['auth_code'] = $sub_array['auth_code'];  // ✅ Da coluna
-        }
-        
-        // Adicionar cpf_rf se existir na coluna
-        if ( ! empty( $sub_array['cpf_rf'] ) ) {
-            $data['cpf_rf'] = $sub_array['cpf_rf'];  // ✅ Da coluna
-        }
-        
-        // Passo 2: Campos extras do JSON
-        $extra_data = json_decode( $sub_array['data'], true );
-        if ( ! is_array( $extra_data ) ) {
-            $extra_data = json_decode( stripslashes( $sub_array['data'] ), true );
-        }
-        
-        // Passo 3: Merge (extras NÃO sobrescrevem obrigatórios)
-        if ( is_array( $extra_data ) && ! empty( $extra_data ) ) {
-            $data = array_merge( $extra_data, $data );  // ✅ Ordem importante: colunas têm prioridade
-        }
-        
-        // ✅ Agora $data tem TUDO: colunas + JSON
-        
-        // Enrich data with submission metadata
+        // Enrich data with submission metadata (dates, tokens, etc)
         $data = $this->enrich_submission_data( $data, $sub_array );
         
         // Get form data
@@ -132,8 +116,17 @@ class FFC_PDF_Generator {
         
         // Add formatted date if missing
         if ( ! isset( $data['fill_date'] ) ) {
+            // ✅ v2.10.0: Use plugin date format setting
+            $settings = get_option( 'ffc_settings', array() );
+            $date_format = isset( $settings['date_format'] ) ? $settings['date_format'] : 'F j, Y';
+            
+            // If custom format selected, use it
+            if ( $date_format === 'custom' && ! empty( $settings['date_format_custom'] ) ) {
+                $date_format = $settings['date_format_custom'];
+            }
+            
             $data['fill_date'] = date_i18n(
-                get_option( 'date_format' ) . ' ' . get_option( 'time_format' ),
+                $date_format,
                 strtotime( $submission['submission_date'] )
             );
         }
@@ -184,7 +177,16 @@ class FFC_PDF_Generator {
         }
         
         // Replace standard placeholders
-        $layout = str_replace( '{{submission_date}}', date_i18n( get_option( 'date_format' ), current_time( 'timestamp' ) ), $layout );
+        // ✅ v2.10.0: Use plugin date format setting for {{submission_date}}
+        $settings = get_option( 'ffc_settings', array() );
+        $date_format = isset( $settings['date_format'] ) ? $settings['date_format'] : 'F j, Y';
+        
+        // If custom format selected, use it
+        if ( $date_format === 'custom' && ! empty( $settings['date_format_custom'] ) ) {
+            $date_format = $settings['date_format_custom'];
+        }
+        
+        $layout = str_replace( '{{submission_date}}', date_i18n( $date_format, current_time( 'timestamp' ) ), $layout );
         $layout = str_replace( '{{form_title}}', $form_title, $layout );
         
         // Ensure email field exists
@@ -529,53 +531,30 @@ class FFC_PDF_Generator {
      * @param string $submission_date Submission date
      * @return array PDF data array
      */
+    /**
+     * Generate PDF data from form submission (DEPRECATED - kept for backward compatibility)
+     * 
+     * This method is now a wrapper that redirects to generate_pdf_data()
+     * All PDF generation should use submission_id for consistency
+     * 
+     * @deprecated Use generate_pdf_data() instead
+     * @param array $submission_data Submission data (with submission_id)
+     * @param int $form_id Form ID
+     * @param string $submission_date Submission date
+     * @return array|WP_Error PDF data array or error
+     */
     public function generate_pdf_data_from_form( $submission_data, $form_id, $submission_date = null ) {
-        // Get form data
-        $form_post = get_post( $form_id );
-        if ( ! $form_post ) {
-            return new WP_Error( 'form_not_found', __( 'Form not found.', 'ffc' ) );
+        // ✅ v2.10.0: Redirect to unified method
+        // Check if submission_id exists in data
+        if ( isset( $submission_data['id'] ) ) {
+            $submission_id = $submission_data['id'];
+        } elseif ( isset( $submission_data['submission_id'] ) ) {
+            $submission_id = $submission_data['submission_id'];
+        } else {
+            return new WP_Error( 'missing_submission_id', __( 'Submission ID is required for PDF generation.', 'ffc' ) );
         }
         
-        $form_title = $form_post->post_title;
-        $form_config = get_post_meta( $form_id, '_ffc_form_config', true );
-        $bg_image_url = get_post_meta( $form_id, '_ffc_form_bg', true );
-        
-        // Add formatted date
-        if ( $submission_date ) {
-            $formatted_date = date_i18n(
-                get_option( 'date_format' ) . ' ' . get_option( 'time_format' ),
-                strtotime( $submission_date )
-            );
-            $submission_data['fill_date'] = $formatted_date;
-            $submission_data['date'] = $formatted_date;
-        }
-        
-        // ✅ Generate HTML using internal method
-        $html = $this->generate_html( $submission_data, $form_title, $form_config );
-        
-        // Get verification code
-        $auth_code = isset( $submission_data['auth_code'] ) ? $submission_data['auth_code'] : '';
-        
-        // Generate filename with verification code
-        $filename = $this->generate_filename( $form_title, $auth_code );
-        
-        // Log generation
-        if ( class_exists( 'FFC_Utils' ) && method_exists( 'FFC_Utils', 'debug_log' ) ) {
-            FFC_Utils::debug_log( 'PDF data generated from form', array(
-                'form_id' => $form_id,
-                'form_title' => FFC_Utils::truncate( $form_title, 50 ),
-                'html_length' => strlen( $html ),
-                'has_bg_image' => ! empty( $bg_image_url )
-            ) );
-        }
-        
-        return array(
-            'html'       => $html,
-            'template'   => $html,  // Alias for backward compatibility
-            'filename'   => $filename,
-            'form_title' => $form_title,
-            'submission' => $submission_data,
-            'bg_image'   => $bg_image_url
-        );
+        // Use the main unified method
+        return $this->generate_pdf_data( $submission_id, $this->submission_handler );
     }
 }

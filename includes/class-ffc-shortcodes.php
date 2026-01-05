@@ -209,6 +209,78 @@ class FFC_Shortcodes {
 
                 <?php echo $this->generate_security_fields(); ?>
 
+                <?php 
+                // ✅ v2.10.0: Dynamic restriction fields (password/ticket)
+                $form_config = get_post_meta($form_id, '_ffc_form_config', true);
+                $restrictions = isset($form_config['restrictions']) ? $form_config['restrictions'] : array();
+
+                // Password field (if active)
+                if (!empty($restrictions['password']) && $restrictions['password'] == '1') {
+                    ?>
+                    <div class="ffc-form-field ffc-restriction-field">
+                        <label for="ffc_password">
+                            <?php esc_html_e('Password', 'ffc'); ?> <span class="required">*</span>
+                        </label>
+                        <input type="password" 
+                               class="ffc-input" 
+                               name="ffc_password" 
+                               id="ffc_password" 
+                               required 
+                               autocomplete="off"
+                               maxlength="20"
+                               placeholder="<?php esc_attr_e('Enter password', 'ffc'); ?>">
+                    </div>
+                    <?php
+                }
+
+                // Ticket field (if active)
+                if (!empty($restrictions['ticket']) && $restrictions['ticket'] == '1') {
+                    ?>
+                    <div class="ffc-form-field ffc-restriction-field">
+                        <label for="ffc_ticket">
+                            <?php esc_html_e('Ticket Code', 'ffc'); ?> <span class="required">*</span>
+                        </label>
+                        <input type="text" 
+                               class="ffc-input ffc-ticket-input" 
+                               name="ffc_ticket" 
+                               id="ffc_ticket" 
+                               required 
+                               placeholder="ABCD-1234"
+                               style="text-transform: uppercase;"
+                               autocomplete="off"
+                               maxlength="9">
+                        <p class="description"><?php esc_html_e('Enter your unique ticket code', 'ffc'); ?></p>
+                    </div>
+                    <?php
+                }
+                ?>
+
+                <?php // ✅ v2.10.0: LGPD Consent Checkbox (MANDATORY) ?>
+                <div class="ffc-lgpd-consent">
+                    <label class="ffc-consent-label">
+                        <input type="checkbox" 
+                               name="ffc_lgpd_consent" 
+                               id="ffc_lgpd_consent" 
+                               required 
+                               value="1">
+                        
+                        <span class="ffc-consent-text">
+                            <?php 
+                            printf(
+                                /* translators: %s: Privacy Policy page link */
+                                esc_html__( 'I have read and agree to the %s and authorize the storage of my personal data for certificate issuance.', 'ffc' ),
+                                '<a href="' . esc_url( get_privacy_policy_url() ) . '" target="_blank">' . esc_html__( 'Privacy Policy', 'ffc' ) . '</a>'
+                            ); 
+                            ?>
+                            <span class="required">*</span>
+                        </span>
+                    </label>
+                    
+                    <p class="ffc-consent-description">
+                        <?php esc_html_e( 'Your data will be stored securely and encrypted. You can request deletion at any time.', 'ffc' ); ?>
+                    </p>
+                </div>
+
                 <button type="submit" class="ffc-submit-btn"><?php esc_html_e( 'Submit', 'ffc' ); ?></button>
                 <div class="ffc-message"></div>
             </form>

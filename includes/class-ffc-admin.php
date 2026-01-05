@@ -1,4 +1,9 @@
 <?php
+/**
+ * FFC_Admin
+ * v2.10.0: ENCRYPTION - Shows LGPD consent status, data auto-decrypted by Submission Handler
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
@@ -52,14 +57,6 @@ class FFC_Admin {
             'manage_options', 
             'ffc-submissions', 
             array( $this, 'display_submissions_page' ) 
-        );
-        add_submenu_page( 
-            'edit.php?post_type=ffc_form', 
-            __( 'Settings', 'ffc' ), 
-            __( 'Settings', 'ffc' ), 
-            'manage_options', 
-            'ffc-settings', 
-            array( $this->settings_page, 'display_settings_page' ) 
         );
     }
 
@@ -266,6 +263,8 @@ class FFC_Admin {
         $magic_token = isset( $sub_array['magic_token'] ) ? $sub_array['magic_token'] : '';
         $magic_link_url = FFC_Magic_Link_Helper::generate_magic_link( $magic_token );
 
+        $formatted_date = isset( $sub_array['submission_date'] ) ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $sub_array['submission_date'] ) ) : __( 'Unknown', 'ffc' );
+
         ?> 
         <div class="wrap">
             <h1><?php printf( __( 'Edit Submission #%s', 'ffc' ), $sub_array['id'] ); ?></h1>
@@ -362,6 +361,53 @@ class FFC_Admin {
                             </div>
                         </td>
                     </tr>
+
+                    <!-- ✅ v2.10.0: SEÇÃO LGPD CONSENT STATUS -->
+                    <?php 
+                    $consent_given = isset( $sub_array['consent_given'] ) ? (int) $sub_array['consent_given'] : 0;
+                    $consent_date = isset( $sub_array['consent_date'] ) ? $sub_array['consent_date'] : '';
+                    $consent_ip = isset( $sub_array['consent_ip'] ) ? $sub_array['consent_ip'] : '';
+                    ?>
+                    <tr>
+                        <td colspan="2" style="padding: 0;">
+                            <div style="margin: 20px 0; padding: 15px; background: <?php echo $consent_given ? '#e7f5e7' : '#fff8e1'; ?>; border-left: 4px solid <?php echo $consent_given ? '#46a049' : '#ffa500'; ?>; border-radius: 4px;">
+                                <h3 style="margin: 0 0 10px 0;">
+                                    <?php echo $consent_given ? '✅' : '⚠️'; ?> 
+                                    <?php _e( 'LGPD Consent Status', 'ffc' ); ?>
+                                </h3>
+                                
+                                <?php if ( $consent_given ): ?>
+                                    <p style="margin: 0; color: #2d5c2e;">
+                                        <strong><?php _e( 'Consent given:', 'ffc' ); ?></strong> 
+                                        <?php _e( 'User explicitly agreed to data storage and privacy policy.', 'ffc' ); ?>
+                                    </p>
+                                    <?php if ( $consent_date ): ?>
+                                        <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">
+                                            📅 <?php printf( __( 'Date: %s', 'ffc' ), esc_html( $consent_date ) ); ?>
+                                        </p>
+                                    <?php endif; ?>
+                                    
+                                    <?php if ( $consent_ip ): ?>
+                                        <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">
+                                            🌐 <?php printf( __( 'IP: %s', 'ffc' ), esc_html( $consent_ip ) ); ?>
+                                        </p>
+                                    <?php endif; ?>
+                                    
+                                    <p style="margin: 10px 0 0 0; padding: 10px; background: rgba(255,255,255,0.7); border-radius: 3px; font-size: 12px;">
+                                        🔒 <?php _e( 'Sensitive data (email, CPF/RF, IP) is encrypted in the database.', 'ffc' ); ?>
+                                    </p>
+                                <?php else: ?>
+                                    <p style="margin: 0; color: #7a5c00;">
+                                        <strong><?php _e( 'No consent recorded:', 'ffc' ); ?></strong> 
+                                        <?php _e( 'This submission was created before LGPD consent feature (v2.10.0).', 'ffc' ); ?>
+                                    </p>
+                                    <p style="margin: 10px 0 0 0; font-size: 12px; color: #666;">
+                                        ℹ️ <?php _e( 'Older submissions do not have explicit consent flag but may have been collected under privacy policy.', 'ffc' ); ?>
+                                    </p>
+                                <?php endif; ?>
+                            </div>
+                        </td>
+                    </tr>
                     
                     <!-- SEÇÃO: DADOS DO PARTICIPANTE -->
                     <tr>
@@ -374,7 +420,12 @@ class FFC_Admin {
                     
                     <tr>
                         <th><label for="user_email"><?php _e( 'Email', 'ffc' ); ?></label></th>
-                        <td><input type="email" name="user_email" id="user_email" value="<?php echo esc_attr($sub_array['email']); ?>" class="regular-text"></td>
+                        <td>
+                            <input type="email" name="user_email" id="user_email" value="<?php echo esc_attr($sub_array['email']); ?>" class="regular-text">
+                            <?php if ( ! empty( $sub_array['email_encrypted'] ) ): ?>
+                                <p class="description">🔒 <?php _e( 'This email is encrypted in the database.', 'ffc' ); ?></p>
+                            <?php endif; ?>
+                        </td>
                     </tr>
                     
                     <?php if(is_array($data)): foreach($data as $k => $v): 
@@ -399,6 +450,10 @@ class FFC_Admin {
                                 <?php if($is_protected): ?>
                                     <p class="description"><?php _e('Protected internal field.', 'ffc'); ?></p>
                                 <?php endif; ?>
+                                
+                                <?php if ( $k === 'cpf_rf' && ! empty( $sub_array['cpf_rf_encrypted'] ) ): ?>
+                                <p class="description">🔒 <?php _e( 'This CPF/RF is encrypted in the database.', 'ffc' ); ?></p>
+                            <?php endif; ?>
                             </td>
                         </tr>
                     <?php endforeach; endif; ?>

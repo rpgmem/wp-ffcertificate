@@ -1,77 +1,149 @@
 <?php
+/**
+ * FFC_Settings
+ * 
+ * Manages plugin settings with modular tab system
+ * 
+ * @package FFC
+ * @since 1.0.0
+ * @version 2.10.0 - Added Rate Limit tab
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-/**
- * Handles plugin settings, documentation tab, and data maintenance.
- * 
- * @since 2.9.0 Added QR Code settings
- */
 class FFC_Settings {
-
+    
     private $submission_handler;
-
-    /**
-     * Initialize the settings class.
-     */
+    private $tabs = array();
+    
     public function __construct( FFC_Submission_Handler $handler ) {
         $this->submission_handler = $handler;
+        
+        // Load tabs
+        $this->load_tabs();
+        
+        // Hooks
+        add_action( 'admin_menu', array( $this, 'add_settings_page' ), 20 );
         add_action( 'admin_init', array( $this, 'handle_settings_submission' ) );
         add_action( 'admin_init', array( $this, 'handle_clear_qr_cache' ) );
         add_action( 'admin_init', array( $this, 'handle_migration_execution' ) );
-    }
-
-    /**
-     * Define default plugin settings.
-     */
-    public function get_default_settings() { 
-        return array( 
-            'cleanup_days'           => 30, 
-            'smtp_mode'              => 'wp', 
-            'smtp_port'              => 587, 
-            'smtp_secure'            => 'tls',
-            'smtp_host'              => '',
-            'smtp_user'              => '',
-            'smtp_pass'              => '',
-            'smtp_from_email'        => '',
-            'smtp_from_name'         => '',
-            'qr_cache_enabled'       => false,
-            'qr_default_size'        => 200,
-            'qr_default_margin'      => 2,
-            'qr_default_error_level' => 'M'
-        ); 
+        add_action( 'wp_ajax_ffc_preview_date_format', array( $this, 'ajax_preview_date_format' ) );
     }
     
     /**
-     * Retrieve a specific option from the settings array.
+     * Load all tab classes
+     */
+    private function load_tabs() {
+        // Require abstract base class
+        require_once FFC_PLUGIN_DIR . 'includes/settings/abstract-ffc-settings-tab.php';
+        
+        // Tab files to load
+        $tab_files = array(
+            'documentation' => 'class-ffc-tab-documentation.php',
+            'general'       => 'class-ffc-tab-general.php',
+            'smtp'          => 'class-ffc-tab-smtp.php',
+            'qrcode'        => 'class-ffc-tab-qrcode.php',
+            'rate_limit'    => 'class-ffc-tab-rate-limit.php',  // ✅ ADDED
+            'migrations'    => 'class-ffc-tab-migrations.php'
+        );
+        
+        // Load each tab
+        foreach ( $tab_files as $tab_id => $filename ) {
+            $filepath = FFC_PLUGIN_DIR . 'includes/settings/' . $filename;
+            
+            if ( file_exists( $filepath ) ) {
+                require_once $filepath;
+                
+                // Instantiate tab class
+                $class_name = 'FFC_Tab_' . ucfirst( str_replace( '-', '_', $tab_id ) );
+                
+                if ( $tab_id === 'qrcode' ) {
+                    $class_name = 'FFC_Tab_QRCode';
+                } elseif ( $tab_id === 'smtp' ) {
+                    $class_name = 'FFC_Tab_SMTP';
+                } elseif ( $tab_id === 'rate_limit' ) {
+                    $class_name = 'FFC_Tab_Rate_Limit';
+                }
+                
+                if ( class_exists( $class_name ) ) {
+                    $this->tabs[ $tab_id ] = new $class_name();
+                }
+            }
+        }
+        
+        // Sort tabs by order
+        uasort( $this->tabs, function( $a, $b ) {
+            return $a->get_order() - $b->get_order();
+        });
+        
+        // Allow plugins to add custom tabs
+        $this->tabs = apply_filters( 'ffc_settings_tabs', $this->tabs );
+    }
+    
+    public function add_settings_page() {
+        add_submenu_page(
+            'edit.php?post_type=ffc_form',
+            __( 'Settings', 'ffc' ),
+            __( 'Settings', 'ffc' ),
+            'manage_options',
+            'ffc-settings',
+            array( $this, 'display_settings_page' )
+        );
+    }
+    
+    /**
+     * Get default settings
+     */
+    public function get_default_settings() { 
+        return array(
+            'cleanup_days'           => 365,
+            'smtp_mode'              => 'wp',
+            'smtp_host'              => '',
+            'smtp_port'              => 587,
+            'smtp_user'              => '',
+            'smtp_pass'              => '',
+            'smtp_secure'            => 'tls',
+            'smtp_from_email'        => '',
+            'smtp_from_name'         => '',
+            'qr_cache_enabled'       => 0,
+            'qr_default_size'        => 200,
+            'qr_default_margin'      => 2,
+            'qr_default_error_level' => 'M',
+            'date_format'            => 'F j, Y',
+            'date_format_custom'     => '',
+        );
+    }
+    
+    /**
+     * Get option value
      */
     public function get_option( $key ) { 
+        $settings = get_option( 'ffc_settings', array() );
         $defaults = $this->get_default_settings();
-        $saved_settings = get_option( 'ffc_settings', array() ); 
         
-        if ( ! is_array( $saved_settings ) || empty( $saved_settings ) ) {
-            return isset( $defaults[$key] ) ? $defaults[$key] : '';
+        if ( isset( $settings[ $key ] ) ) {
+            return $settings[ $key ];
         }
-
-        return isset( $saved_settings[$key] ) ? $saved_settings[$key] : (isset( $defaults[$key] ) ? $defaults[$key] : '');
+        
+        if ( isset( $defaults[ $key ] ) ) {
+            return $defaults[ $key ];
+        }
+        
+        return '';
     }
-
+    
     /**
-     * Process settings form submissions and data deletion requests.
-     * 
-     * v2.9.3: Fixed to preserve settings from other tabs
+     * Handle settings form submission
      */
     public function handle_settings_submission() {
         // Handle General/SMTP/QR Settings
         if ( isset( $_POST['ffc_settings_nonce'] ) && wp_verify_nonce( $_POST['ffc_settings_nonce'], 'ffc_settings_action' ) ) {
-            // ✅ v2.9.3: Get current settings to preserve
             $current = get_option( 'ffc_settings', array() );
             $new     = isset( $_POST['ffc_settings'] ) ? $_POST['ffc_settings'] : array();
             
-            // ✅ v2.9.3: Only update fields that are present in the POST
-            // This preserves settings from other tabs
-            $clean = $current; // Start with existing settings
+            $clean = $current;
             
             // General Tab Fields
             if ( isset( $new['cleanup_days'] ) ) {
@@ -105,9 +177,7 @@ class FFC_Settings {
             }
             
             // QR Code Tab Fields
-            // Checkbox: needs special handling (absent = false)
             if ( isset( $_POST['_ffc_tab'] ) && $_POST['_ffc_tab'] === 'qr_code' ) {
-                // Only update checkbox if we're on QR tab
                 $clean['qr_cache_enabled'] = isset( $new['qr_cache_enabled'] ) ? 1 : 0;
             }
             
@@ -119,6 +189,13 @@ class FFC_Settings {
             }
             if ( isset( $new['qr_default_error_level'] ) ) {
                 $clean['qr_default_error_level'] = sanitize_text_field( $new['qr_default_error_level'] );
+            }
+            // Date Format Settings (v2.10.0)
+            if ( isset( $new['date_format'] ) ) {
+                $clean['date_format'] = sanitize_text_field( $new['date_format'] );
+            }
+            if ( isset( $new['date_format_custom'] ) ) {
+                $clean['date_format_custom'] = sanitize_text_field( $new['date_format_custom'] );
             }
             
             update_option( 'ffc_settings', $clean );
@@ -137,44 +214,33 @@ class FFC_Settings {
     
     /**
      * Handle QR Code cache clearing
-     * 
-     * @since 2.9.0
      */
     public function handle_clear_qr_cache() {
-        if ( ! isset( $_GET['ffc_clear_qr_cache'] ) ) {
+        if ( ! isset( $_GET['ffc_clear_qr_cache'] ) || ! isset( $_GET['_wpnonce'] ) ) {
             return;
         }
         
-        if ( ! current_user_can( 'manage_options' ) ) {
-            wp_die( __( 'Insufficient permissions', 'ffc' ) );
+        if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'ffc_clear_qr_cache' ) ) {
+            return;
         }
         
-        check_admin_referer( 'ffc_clear_qr_cache' );
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'ffc_submissions';
         
-        if ( ! class_exists( 'FFC_QRCode_Generator' ) ) {
-            require_once FFC_PLUGIN_DIR . 'includes/class-ffc-qrcode-generator.php';
-        }
+        $cleared = $wpdb->query( "UPDATE {$table_name} SET qr_code_cache = NULL WHERE qr_code_cache IS NOT NULL" );
         
-        $qr_generator = new FFC_QRCode_Generator();
-        $cleared = $qr_generator->clear_cache();
-        
-        $redirect_url = add_query_arg(
-            array(
-                'post_type' => 'ffc_form',
-                'page' => 'ffc-settings',
-                'tab' => 'qr_code',
-                'msg' => 'qr_cache_cleared',
-                'cleared' => $cleared
-            ),
-            admin_url( 'edit.php' )
-        );
-        
-        wp_redirect( $redirect_url );
+        wp_safe_redirect( add_query_arg( array(
+            'post_type' => 'ffc_form',
+            'page' => 'ffc-settings',
+            'tab' => 'qr_code',
+            'msg' => 'qr_cache_cleared',
+            'cleared' => $cleared
+        ), admin_url( 'edit.php' ) ) );
         exit;
     }
     
     /**
-     * Render the settings page with tabs.
+     * Display settings page with modular tabs
      */
     public function display_settings_page() {
         // Handle messages
@@ -189,8 +255,16 @@ class FFC_Settings {
             }
         }
         
-        $active_tab = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : 'help'; 
-        $forms = get_posts( array('post_type'=>'ffc_form', 'posts_per_page'=>-1) );
+        // Get active tab (default to first tab)
+        $active_tab = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : '';
+        
+        // If no tab specified, use first tab
+        if ( empty( $active_tab ) && ! empty( $this->tabs ) ) {
+            reset( $this->tabs );
+            $first_tab = current( $this->tabs );
+            $active_tab = $first_tab->get_id();
+        }
+        
         ?>
         <div class="wrap ffc-settings-wrap">
             <h1><?php esc_html_e( 'Certificate Settings', 'ffc' ); ?></h1>
@@ -207,332 +281,35 @@ class FFC_Settings {
             ?>
             
             <h2 class="nav-tab-wrapper">
-                <a href="?post_type=ffc_form&page=ffc-settings&tab=help" class="nav-tab <?php echo $active_tab == 'help' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'Documentation', 'ffc' ); ?></a>
-                <a href="?post_type=ffc_form&page=ffc-settings&tab=general" class="nav-tab <?php echo $active_tab == 'general' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'General', 'ffc' ); ?></a>
-                <a href="?post_type=ffc_form&page=ffc-settings&tab=smtp" class="nav-tab <?php echo $active_tab == 'smtp' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e( 'SMTP', 'ffc' ); ?></a>
-                <a href="?post_type=ffc_form&page=ffc-settings&tab=qr_code" class="nav-tab <?php echo $active_tab == 'qr_code' ? 'nav-tab-active' : ''; ?>">📱 <?php esc_html_e( 'QR Code', 'ffc' ); ?></a>
-                <a href="?post_type=ffc_form&page=ffc-settings&tab=migrations" class="nav-tab <?php echo $active_tab == 'migrations' ? 'nav-tab-active' : ''; ?>">⚙️ <?php esc_html_e( 'Data Migrations', 'ffc' ); ?></a>
+                <?php foreach ( $this->tabs as $tab_id => $tab_obj ) : ?>
+                    <a href="?post_type=ffc_form&page=ffc-settings&tab=<?php echo esc_attr( $tab_id ); ?>" 
+                       class="nav-tab <?php echo $active_tab === $tab_id ? 'nav-tab-active' : ''; ?>">
+                        <?php echo $tab_obj->get_icon(); ?> 
+                        <?php echo esc_html( $tab_obj->get_title() ); ?>
+                    </a>
+                <?php endforeach; ?>
             </h2>
             
             <div class="ffc-tab-content">
-                <?php if ( $active_tab == 'help' ) : ?>
-                    <?php $this->render_help_tab(); ?>
-                    
-                <?php elseif ( $active_tab == 'general' ) : ?>
-                    <?php $this->render_general_tab( $forms ); ?>
-                    
-                <?php elseif ( $active_tab == 'smtp' ) : ?>
-                    <?php $this->render_smtp_tab(); ?>
-                    
-                <?php elseif ( $active_tab == 'qr_code' ) : ?>
-                    <?php $this->render_qr_code_tab(); ?>
-                
-                <?php elseif ( $active_tab == 'migrations' ) : ?>
-                    <?php $this->render_migrations_tab(); ?>
-                    
-                    
-                <?php endif; ?>
+                <?php
+                if ( isset( $this->tabs[ $active_tab ] ) ) {
+                    $this->tabs[ $active_tab ]->render();
+                } else {
+                    // Fallback: render first tab
+                    if ( ! empty( $this->tabs ) ) {
+                        reset( $this->tabs );
+                        $first_tab = current( $this->tabs );
+                        $first_tab->render();
+                    }
+                }
+                ?>
             </div>
         </div>
         <?php
     }
-
-
-    /**
-     * Render the Help/Documentation tab.
-     * 
-     * v2.9.16: Extracted to template file for better organization
-     */
-    private function render_help_tab() {
-        include FFC_PLUGIN_DIR . 'includes/settings-tabs/tab-documentation.php';
-    }
-    /**
-     * Render the General settings tab.
-     * 
-     * v2.9.3: Added hidden field to identify tab
-     */
-    private function render_general_tab( $forms ) {
-        ?>
-        <form method="post">
-            <?php wp_nonce_field( 'ffc_settings_action', 'ffc_settings_nonce' ); ?>
-            <!-- ✅ v2.9.3: Identify which tab is being saved -->
-            <input type="hidden" name="_ffc_tab" value="general">
-            
-            <table class="form-table">
-                <tr>
-                    <th><?php esc_html_e( 'Auto-delete (days)', 'ffc' ); ?></th>
-                    <td>
-                        <input type="number" name="ffc_settings[cleanup_days]" value="<?php echo esc_attr( $this->get_option( 'cleanup_days' ) ); ?>">
-                        <p class="description"><?php esc_html_e( 'Files removed after X days. Set to 0 to disable.', 'ffc' ); ?></p>
-                    </td>
-                </tr>
-            </table>
-            <?php submit_button(); ?>
-        </form>
-        
-        <div class="ffc-danger-zone">
-            <h2><?php esc_html_e( 'Danger Zone', 'ffc' ); ?></h2>
-            <p class="description"><?php esc_html_e( 'Warning: These actions cannot be undone.', 'ffc' ); ?></p>
-            <form method="post" id="ffc-danger-zone-form">
-                <?php wp_nonce_field( 'ffc_delete_all_data', 'ffc_critical_nonce' ); ?>
-                <input type="hidden" name="ffc_delete_all_data" value="1">
-                <div class="ffc-admin-flex-row">
-                    <select name="delete_target" id="ffc_delete_target" class="ffc-danger-select">
-                        <option value="all"><?php esc_html_e( 'Delete All Submissions', 'ffc' ); ?></option>
-                        <?php foreach ( $forms as $f ) : ?>
-                            <option value="<?php echo esc_attr( $f->ID ); ?>"><?php echo esc_html( $f->post_title ); ?></option>
-                        <?php endforeach; ?>
-                    </select> 
-                    <button type="submit" class="button button-link-delete" onclick="return confirm('<?php echo esc_js( __( 'Are you sure? This action cannot be undone.', 'ffc' ) ); ?>');">
-                        <?php esc_html_e( 'Clear Data', 'ffc' ); ?>
-                    </button>
-                </div>
-            </form>
-        </div>
-        <?php
-    }
-
-    /**
-     * Render the SMTP settings tab.
-     * 
-     * v2.9.3: Added hidden field to identify tab
-     */
-    private function render_smtp_tab() {
-        ?>
-        <form method="post">
-            <?php wp_nonce_field( 'ffc_settings_action', 'ffc_settings_nonce' ); ?>
-            <!-- ✅ v2.9.3: Identify which tab is being saved -->
-            <input type="hidden" name="_ffc_tab" value="smtp">
-            
-            <table class="form-table">
-                <tr>
-                    <th><?php esc_html_e( 'Mode', 'ffc' ); ?></th>
-                    <td>
-                        <label><input type="radio" name="ffc_settings[smtp_mode]" value="wp" <?php checked( 'wp', $this->get_option( 'smtp_mode' ) ); ?>> <?php esc_html_e( 'WP Default (PHPMail)', 'ffc' ); ?></label><br>
-                        <label><input type="radio" name="ffc_settings[smtp_mode]" value="custom" <?php checked( 'custom', $this->get_option( 'smtp_mode' ) ); ?>> <?php esc_html_e( 'Custom SMTP', 'ffc' ); ?></label>
-                    </td>
-                </tr>
-                <tbody id="smtp-options" class="<?php echo ( $this->get_option( 'smtp_mode' ) === 'custom' ) ? '' : 'ffc-hidden'; ?>">
-                    <tr>
-                        <th><?php esc_html_e( 'Host', 'ffc' ); ?></th>
-                        <td><input type="text" name="ffc_settings[smtp_host]" value="<?php echo esc_attr( $this->get_option( 'smtp_host' ) ); ?>" class="regular-text"></td>
-                    </tr>
-                    <tr>
-                        <th><?php esc_html_e( 'Port', 'ffc' ); ?></th>
-                        <td><input type="number" name="ffc_settings[smtp_port]" value="<?php echo esc_attr( $this->get_option( 'smtp_port' ) ); ?>" class="small-text"></td>
-                    </tr>
-                    <tr>
-                        <th><?php esc_html_e( 'User', 'ffc' ); ?></th>
-                        <td><input type="text" name="ffc_settings[smtp_user]" value="<?php echo esc_attr( $this->get_option( 'smtp_user' ) ); ?>" class="regular-text"></td>
-                    </tr>
-                    <tr>
-                        <th><?php esc_html_e( 'Password', 'ffc' ); ?></th>
-                        <td><input type="password" name="ffc_settings[smtp_pass]" value="<?php echo esc_attr( $this->get_option( 'smtp_pass' ) ); ?>" class="regular-text"></td>
-                    </tr>
-                    <tr>
-                        <th><?php esc_html_e( 'Encryption', 'ffc' ); ?></th>
-                        <td>
-                            <select name="ffc_settings[smtp_secure]">
-                                <option value="tls" <?php selected( 'tls', $this->get_option( 'smtp_secure' ) ); ?>>TLS</option>
-                                <option value="ssl" <?php selected( 'ssl', $this->get_option( 'smtp_secure' ) ); ?>>SSL</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th><?php esc_html_e( 'From Email', 'ffc' ); ?></th>
-                        <td><input type="email" name="ffc_settings[smtp_from_email]" value="<?php echo esc_attr( $this->get_option( 'smtp_from_email' ) ); ?>" class="regular-text"></td>
-                    </tr>
-                    <tr>
-                        <th><?php esc_html_e( 'From Name', 'ffc' ); ?></th>
-                        <td><input type="text" name="ffc_settings[smtp_from_name]" value="<?php echo esc_attr( $this->get_option( 'smtp_from_name' ) ); ?>" class="regular-text"></td>
-                    </tr>
-                </tbody>
-            </table>
-            <?php submit_button(); ?>
-        </form>
-        
-        <script>
-        jQuery(document).ready(function($) {
-            $('input[name="ffc_settings[smtp_mode]"]').on('change', function() {
-                if ($(this).val() === 'custom') {
-                    $('#smtp-options').removeClass('ffc-hidden');
-                } else {
-                    $('#smtp-options').addClass('ffc-hidden');
-                }
-            });
-        });
-        </script>
-        <?php
-    }
-
-    /**
-     * Render the QR Code settings tab
-     * 
-     * @since 2.9.0
-     * v2.9.3: Added hidden field to identify tab
-     */
-    private function render_qr_code_tab() {
-        ?>
-        <form method="post">
-            <?php wp_nonce_field( 'ffc_settings_action', 'ffc_settings_nonce' ); ?>
-            <!-- ✅ v2.9.3: Identify which tab is being saved -->
-            <input type="hidden" name="_ffc_tab" value="qr_code">
-            
-            <h2>📱 <?php esc_html_e( 'QR Code Generation Settings', 'ffc' ); ?></h2>
-            
-            <table class="form-table">
-                <tr>
-                    <th><?php esc_html_e( 'Enable QR Code Cache', 'ffc' ); ?></th>
-                    <td>
-                        <label>
-                            <input type="checkbox" name="ffc_settings[qr_cache_enabled]" value="1" <?php checked( 1, $this->get_option( 'qr_cache_enabled' ) ); ?>>
-                            <?php esc_html_e( 'Store generated QR Codes in database', 'ffc' ); ?>
-                        </label>
-                        <p class="description">
-                            <?php esc_html_e( 'Improves performance by caching QR Codes. Increases database size (~4KB per submission).', 'ffc' ); ?>
-                        </p>
-                    </td>
-                </tr>
-                
-                <tr>
-                    <th><?php esc_html_e( 'Default QR Code Size', 'ffc' ); ?></th>
-                    <td>
-                        <input type="number" name="ffc_settings[qr_default_size]" value="<?php echo esc_attr( $this->get_option( 'qr_default_size' ) ); ?>" min="100" max="500" step="10" class="small-text"> px
-                        <p class="description">
-                            <?php esc_html_e( 'Default size when {{qr_code}} placeholder is used without size parameter. Range: 100-500px.', 'ffc' ); ?>
-                        </p>
-                    </td>
-                </tr>
-                
-                <tr>
-                    <th><?php esc_html_e( 'Default QR Code Margin', 'ffc' ); ?></th>
-                    <td>
-                        <input type="number" name="ffc_settings[qr_default_margin]" value="<?php echo esc_attr( $this->get_option( 'qr_default_margin' ) ); ?>" min="0" max="10" step="1" class="small-text">
-                        <p class="description">
-                            <?php esc_html_e( 'White space around QR Code in modules. 0 = no margin, higher values = more white space.', 'ffc' ); ?>
-                        </p>
-                    </td>
-                </tr>
-                
-                <tr>
-                    <th><?php esc_html_e( 'Default Error Correction Level', 'ffc' ); ?></th>
-                    <td>
-                        <select name="ffc_settings[qr_default_error_level]">
-                            <option value="L" <?php selected( 'L', $this->get_option( 'qr_default_error_level' ) ); ?>><?php esc_html_e( 'L - Low (7% correction)', 'ffc' ); ?></option>
-                            <option value="M" <?php selected( 'M', $this->get_option( 'qr_default_error_level' ) ); ?>><?php esc_html_e( 'M - Medium (15% correction) - Recommended', 'ffc' ); ?></option>
-                            <option value="Q" <?php selected( 'Q', $this->get_option( 'qr_default_error_level' ) ); ?>><?php esc_html_e( 'Q - Quartile (25% correction)', 'ffc' ); ?></option>
-                            <option value="H" <?php selected( 'H', $this->get_option( 'qr_default_error_level' ) ); ?>><?php esc_html_e( 'H - High (30% correction)', 'ffc' ); ?></option>
-                        </select>
-                        <p class="description">
-                            <?php esc_html_e( 'Higher levels allow more damage to QR Code but create denser patterns.', 'ffc' ); ?>
-                        </p>
-                    </td>
-                </tr>
-            </table>
-            
-            <?php submit_button(); ?>
-        </form>
-        
-        <hr>
-        
-        <h3><?php esc_html_e( 'Cache Statistics', 'ffc' ); ?></h3>
-        <?php $this->render_qr_cache_stats(); ?>
-        
-        <hr>
-        
-        <h3><?php esc_html_e( 'Maintenance', 'ffc' ); ?></h3>
-        <?php $this->render_qr_clear_cache_button(); ?>
-        
-        <?php
-    }
-
-
-    /**
-     * Render the Data Migrations tab.
-     * 
-     * v2.9.16: New tab for database migrations management
-     */
-    private function render_migrations_tab() {
-        include FFC_PLUGIN_DIR . 'includes/settings-tabs/tab-migrations.php';
-    }
-    /**
-     * Render QR Code cache statistics
-     * 
-     * @since 2.9.0
-     */
-    public function render_qr_cache_stats() {
-        if ( ! class_exists( 'FFC_QRCode_Generator' ) ) {
-            require_once FFC_PLUGIN_DIR . 'includes/class-ffc-qrcode-generator.php';
-        }
-        
-        $qr_generator = new FFC_QRCode_Generator();
-        $stats = $qr_generator->get_cache_stats();
-        
-        ?>
-        <div class="ffc-qr-stats" style="background: #f0f0f1; padding: 15px; border-radius: 4px; border-left: 4px solid #2271b1; max-width: 600px;">
-            <table style="width: 100%;">
-                <tr>
-                    <td style="padding: 8px 0; width: 50%;"><strong><?php _e( 'Cache Status:', 'ffc' ); ?></strong></td>
-                    <td style="padding: 8px 0;">
-                        <?php if ( $stats['enabled'] ): ?>
-                            <span style="color: #00a32a; font-weight: 600;">✓ <?php _e( 'Enabled', 'ffc' ); ?></span>
-                        <?php else: ?>
-                            <span style="color: #d63638; font-weight: 600;">✗ <?php _e( 'Disabled', 'ffc' ); ?></span>
-                        <?php endif; ?>
-                    </td>
-                </tr>
-                <tr style="background: rgba(255,255,255,0.5);">
-                <td style="padding: 8px 0;"><strong><?php _e( 'Total Submissions:', 'ffc' ); ?></strong></td>
-                <td style="padding: 8px 0;"><?php echo number_format_i18n( $stats['total_submissions'] ); ?></td>
-                </tr>
-                <tr>
-                <td style="padding: 8px 0;"><strong><?php _e( 'Cached QR Codes:', 'ffc' ); ?></strong></td>
-                <td style="padding: 8px 0;"><?php echo number_format_i18n( $stats['cached_qr_codes'] ); ?></td>
-                </tr>
-                <tr style="background: rgba(255,255,255,0.5);">
-                <td style="padding: 8px 0;"><strong><?php _e( 'Estimated Cache Size:', 'ffc' ); ?></strong></td>
-                <td style="padding: 8px 0;"><?php echo $stats['cache_size_mb']; ?> MB</td>
-                </tr>
-                </table>
-        </div>
-                <p class="description" style="margin-top: 10px;">
-                <?php _e( 'Cache stores generated QR Codes to improve performance. Enable "QR Code Cache" above to start caching.', 'ffc' ); ?>
-                </p>
-        <?php
-    }
     
-    /**
-     * Render clear cache button
-     * 
-     * @since 2.9.0
-     */
-    public function render_qr_clear_cache_button() {
-    $clear_url = wp_nonce_url(
-        add_query_arg( array(
-            'post_type' => 'ffc_form',
-            'page' => 'ffc-settings',
-            'tab' => 'qr_code',
-            'ffc_clear_qr_cache' => '1'
-        ), admin_url( 'edit.php' ) ),
-        'ffc_clear_qr_cache'
-    );
-    
-    ?>
-    <a href="<?php echo esc_url( $clear_url ); ?>" 
-       class="button button-secondary" 
-       onclick="return confirm('<?php echo esc_js( __( 'Clear all cached QR Codes? They will be regenerated on next use.', 'ffc' ) ); ?>')">
-        🗑️ <?php _e( 'Clear All QR Code Cache', 'ffc' ); ?>
-    </a>
-    <p class="description" style="margin-top: 10px;">
-        <?php _e( 'Use this if QR Codes are outdated or to free database space. QR Codes will be regenerated automatically when needed.', 'ffc' ); ?>
-    </p>
-    <?php
-    }
-
     /**
      * Handle migration execution from settings page
-     * 
-     * v2.9.16: Execute migrations when requested
      */
     public function handle_migration_execution() {
         if ( ! isset( $_GET['ffc_run_migration'] ) ) {
@@ -576,6 +353,32 @@ class FFC_Settings {
         
         wp_redirect( $redirect_url );
         exit;
+    }
 
+    /**
+     * AJAX handler for date format preview
+     * 
+     * @since 2.10.0
+     */
+    public function ajax_preview_date_format() {
+        check_ajax_referer( 'ffc_preview_date', 'nonce' );
+        
+        $format = isset( $_POST['format'] ) ? sanitize_text_field( $_POST['format'] ) : 'F j, Y';
+        $custom_format = isset( $_POST['custom_format'] ) ? sanitize_text_field( $_POST['custom_format'] ) : '';
+        
+        // Sample date for preview
+        $sample_date = '2026-01-04 15:30:45';
+        
+        // Use custom format if selected
+        if ( $format === 'custom' && ! empty( $custom_format ) ) {
+            $format = $custom_format;
+        }
+        
+        try {
+            $formatted = date_i18n( $format, strtotime( $sample_date ) );
+            wp_send_json_success( array( 'formatted' => $formatted ) );
+        } catch ( Exception $e ) {
+            wp_send_json_error( array( 'message' => __( 'Invalid date format', 'ffc' ) ) );
+        }
     }
 }

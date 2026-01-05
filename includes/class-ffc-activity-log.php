@@ -10,8 +10,11 @@
  * - Automatic table creation on activation
  * - Cleanup of old logs
  * - Convenience methods for common events
+ * - LGPD-specific logging methods (v2.10.0)
+ * - Optional context encryption (v2.10.0)
  * 
  * @since 2.9.1
+ * @version 2.10.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -35,9 +38,10 @@ class FFC_Activity_Log {
      * @param string $level Log level (info, warning, error, debug)
      * @param array $context Additional context data
      * @param int $user_id User ID (0 for anonymous/system)
+     * @param int $submission_id Submission ID (0 if not related to submission) - v2.10.0
      * @return bool Success
      */
-    public static function log( $action, $level = self::LEVEL_INFO, $context = array(), $user_id = 0 ) {
+    public static function log( $action, $level = self::LEVEL_INFO, $context = array(), $user_id = 0, $submission_id = 0 ) {
         global $wpdb;
         
         // Check if logging is enabled in settings
@@ -52,29 +56,62 @@ class FFC_Activity_Log {
             $level = self::LEVEL_INFO;
         }
         
+        // ✅ v2.10.0: Encrypt context if contains sensitive data
+        $context_json = wp_json_encode( $context );
+        $context_encrypted = null;
+        
+        if ( class_exists( 'FFC_Encryption' ) && FFC_Encryption::is_configured() ) {
+            // Encrypt context for sensitive operations
+            $sensitive_actions = array(
+                'submission_created',
+                'data_accessed',
+                'data_modified',
+                'admin_searched',
+                'encryption_migration_batch'
+            );
+            
+            if ( in_array( $action, $sensitive_actions ) ) {
+                $context_encrypted = FFC_Encryption::encrypt( $context_json );
+            }
+        }
+        
         // Prepare data
         $log_data = array(
             'action' => sanitize_text_field( $action ),
             'level' => sanitize_key( $level ),
-            'context' => wp_json_encode( $context ),
+            'context' => $context_json,
             'user_id' => absint( $user_id ),
             'user_ip' => FFC_Utils::get_user_ip(),
             'created_at' => current_time( 'mysql' )
         );
         
-        // Insert into database
+        // ✅ v2.10.0: Add new fields if columns exist
         $table_name = $wpdb->prefix . 'ffc_activity_log';
+        
+        // Check if new columns exist
+        $columns = $wpdb->get_col( "DESCRIBE {$table_name}", 0 );
+        
+        if ( in_array( 'submission_id', $columns ) ) {
+            $log_data['submission_id'] = absint( $submission_id );
+        }
+        
+        if ( in_array( 'context_encrypted', $columns ) && $context_encrypted !== null ) {
+            $log_data['context_encrypted'] = $context_encrypted;
+        }
+        
+        // Insert into database
         $result = $wpdb->insert( $table_name, $log_data );
         
         // Also log to error_log if WP_DEBUG enabled
         if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
             $context_str = ! empty( $context ) ? wp_json_encode( $context ) : 'none';
             error_log( sprintf(
-                '[FFC Activity] %s | %s | User: %d | IP: %s | Context: %s',
+                '[FFC Activity] %s | %s | User: %d | IP: %s | Submission: %d | Context: %s',
                 strtoupper( $level ),
                 $action,
                 $user_id,
                 $log_data['user_ip'],
+                $submission_id,
                 $context_str
             ) );
         }
@@ -495,5 +532,154 @@ class FFC_Activity_Log {
             array( 'message' => $error_message ),
             $context
         ) );
+    }
+
+    /**
+     * ✅ v2.10.0: Log submission creation
+     * 
+     * @param int $submission_id Submission ID
+     * @param array $data Additional data (form_id, encrypted status, etc)
+     * @return bool Success
+     */
+    public static function log_submission_created( $submission_id, $data = array() ) {
+        return self::log(
+            'submission_created',
+            self::LEVEL_INFO,
+            $data,
+            get_current_user_id(),
+            $submission_id
+        );
+    }
+    
+    /**
+     * ✅ v2.10.0: Log data access (magic link, admin view, etc)
+     * 
+     * @param int $submission_id Submission ID
+     * @param array $context Access context (method, IP, etc)
+     * @return bool Success
+     */
+    public static function log_data_accessed( $submission_id, $context = array() ) {
+        return self::log(
+            'data_accessed',
+            self::LEVEL_INFO,
+            $context,
+            get_current_user_id(),
+            $submission_id
+        );
+    }
+    
+    /**
+     * ✅ v2.10.0: Log data modification
+     * 
+     * @param int $submission_id Submission ID
+     * @param array $changes What was changed
+     * @return bool Success
+     */
+    public static function log_data_modified( $submission_id, $changes = array() ) {
+        return self::log(
+            'data_modified',
+            self::LEVEL_INFO,
+            $changes,
+            get_current_user_id(),
+            $submission_id
+        );
+    }
+    
+    /**
+     * ✅ v2.10.0: Log LGPD consent given
+     * 
+     * @param int $submission_id Submission ID
+     * @param string $ip IP address of consent
+     * @return bool Success
+     */
+    public static function log_consent_given( $submission_id, $ip ) {
+        return self::log(
+            'consent_given',
+            self::LEVEL_INFO,
+            array(
+                'ip' => $ip,
+                'timestamp' => current_time( 'mysql' )
+            ),
+            0, // Anonymous user
+            $submission_id
+        );
+    }
+    
+    /**
+     * ✅ v2.10.0: Log admin search
+     * 
+     * @param string $query Search query
+     * @param int $results Number of results found
+     * @return bool Success
+     */
+    public static function log_admin_searched( $query, $results = 0 ) {
+        return self::log(
+            'admin_searched',
+            self::LEVEL_INFO,
+            array(
+                'query' => substr( $query, 0, 50 ), // Truncate for privacy
+                'results' => $results
+            ),
+            get_current_user_id()
+        );
+    }
+    
+    /**
+     * ✅ v2.10.0: Log encryption migration batch
+     * 
+     * @param array $batch_info Batch information (offset, migrated, etc)
+     * @return bool Success
+     */
+    public static function log_encryption_migration( $batch_info = array() ) {
+        return self::log(
+            'encryption_migration_batch',
+            self::LEVEL_INFO,
+            $batch_info,
+            get_current_user_id()
+        );
+    }
+    
+    /**
+     * ✅ v2.10.0: Get logs for specific submission (LGPD audit trail)
+     * 
+     * @param int $submission_id Submission ID
+     * @param int $limit Maximum number of logs to retrieve
+     * @return array Logs related to this submission
+     */
+    public static function get_submission_logs( $submission_id, $limit = 100 ) {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'ffc_activity_log';
+        
+        // Check if submission_id column exists
+        $columns = $wpdb->get_col( "DESCRIBE {$table_name}", 0 );
+        if ( ! in_array( 'submission_id', $columns ) ) {
+            return array(); // Column doesn't exist yet
+        }
+        
+        $logs = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT * FROM {$table_name} 
+                 WHERE submission_id = %d 
+                 ORDER BY created_at DESC 
+                 LIMIT %d",
+                $submission_id,
+                $limit
+            ),
+            ARRAY_A
+        );
+        
+        // Decrypt encrypted contexts if available
+        if ( class_exists( 'FFC_Encryption' ) && FFC_Encryption::is_configured() ) {
+            foreach ( $logs as &$log ) {
+                if ( ! empty( $log['context_encrypted'] ) ) {
+                    $decrypted = FFC_Encryption::decrypt( $log['context_encrypted'] );
+                    if ( $decrypted !== null ) {
+                        $log['context_decrypted'] = $decrypted;
+                    }
+                }
+            }
+        }
+        
+        return $logs;
     }
 }

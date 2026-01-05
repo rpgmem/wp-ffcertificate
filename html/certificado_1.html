@@ -54,13 +54,13 @@
     <div style="margin-top: 50px;border-top: 1px solid #eee;padding-top: 10px">
         <table style="width: 100%;border: none">
             <tr>
-                <td style="width: 20%; max-height: 50px; vertical-align: top;text-align: left;padding: 0">
-                    {{qr_code:size=50}}
+                <td style="width: 15%; max-height: 50px; vertical-align: top;text-align: left;padding: 0">
+                    {{qr_code:size=50:margin=0}}
                 </td>
-                <td style="width: 80%;vertical-align: middle;text-align: right;padding: 0;font-size: 9pt;color: #666">
+                <td style="width: 85%;vertical-align: middle;text-align: right;padding: 0;font-size: 9pt;color: #666">
                     Gerado em: {{submission_date}}. Para verificar a autenticidade acesse 
-                    <span style="color: blue;text-decoration: underline">https://deeppink-dog-866880.hostingersite.com/valid/</span> 
-                    e use o código: <strong>{{auth_code}}</strong>
+                    <span style="color: blue;text-decoration: underline">{{validation_url}}</span> e use o código:
+                    <br><strong>{{auth_code}}</strong>
                 </td>
             </tr>
         </table>

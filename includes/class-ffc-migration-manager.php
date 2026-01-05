@@ -103,6 +103,7 @@ class FFC_Migration_Manager {
                 'callback_args'   => array( $field_key ),
                 'batch_size'      => 100,
                 'icon'            => $field_config['icon'],
+                'column'          => $field_config['column_name'],
                 'required_column' => $field_config['column_name'],
                 'order'           => $order++
             );
@@ -119,6 +120,28 @@ class FFC_Migration_Manager {
             'order'           => 90  // Antes do cleanup
         );
         
+        // ✅ v2.10.0: Criptografia de dados sensíveis
+        $this->migrations['encrypt_sensitive_data'] = array(
+            'name'            => __( 'Encrypt Sensitive Data', 'ffc' ),
+            'description'     => __( 'Encrypt email, CPF/RF, IP address and JSON data with AES-256 encryption for LGPD compliance', 'ffc' ),
+            'callback'        => 'migrate_encryption',
+            'batch_size'      => 50,  // Menor devido ao custo da criptografia
+            'icon'            => '🔒',
+            'required_column' => 'email_encrypted',
+            'order'           => 95  // Depois de magic_tokens, antes de data_cleanup
+        );
+        
+        // ✅ v2.10.0: Limpeza de dados não criptografados (após 15 dias)
+        $this->migrations['cleanup_unencrypted'] = array(
+            'name'            => __( 'Cleanup Unencrypted Data (15+ days)', 'ffc' ),
+            'description'     => __( 'Remove unencrypted data from old columns for submissions older than 15 days (OPTIONAL - for LGPD compliance)', 'ffc' ),
+            'callback'        => 'cleanup_unencrypted_data',
+            'batch_size'      => 100,
+            'icon'            => '🗑️',
+            'required_column' => null,
+            'order'           => 96  // Depois de encrypt_sensitive_data
+        );
+
         // ✅ Limpeza do JSON (última migração)
         $this->migrations['data_cleanup'] = array(
             'name'            => __( 'JSON Data Cleanup', 'ffc' ),
@@ -141,9 +164,6 @@ class FFC_Migration_Manager {
         });
     }
     
-    /**
-     * Get all registered migrations
-     */
     /**
      * Get all registered migrations
      * 
@@ -215,10 +235,38 @@ class FFC_Migration_Manager {
                 );
             }
             
-            // Count migrated (column not empty)
-            $migrated = $wpdb->get_var( 
-                $wpdb->prepare( "SELECT COUNT(*) FROM {$this->table_name} WHERE %i IS NOT NULL AND %i != ''", $column, $column )
+            // ✅ v2.10.0: Check for encrypted column equivalent
+            $encrypted_column = $column . '_encrypted';
+            $column_exists = $wpdb->get_var( 
+                $wpdb->prepare( 
+                    "SELECT COUNT(*) FROM information_schema.COLUMNS 
+                    WHERE TABLE_SCHEMA = %s 
+                    AND TABLE_NAME = %s 
+                    AND COLUMN_NAME = %s",
+                    DB_NAME,
+                    $this->table_name,
+                    $encrypted_column
+                )
             );
+            
+            // Count migrated
+            if ( $column_exists ) {
+                // If encrypted column exists, count records that have EITHER:
+                // 1. Data in encrypted column (migrated with encryption)
+                // 2. NULL in both columns (already cleaned up)
+                $migrated = $wpdb->get_var( $wpdb->prepare(
+                    "SELECT COUNT(*) FROM {$this->table_name} 
+                    WHERE (%i IS NOT NULL AND %i != '') 
+                    OR (%i IS NULL AND %i IS NULL)",
+                    $encrypted_column, $encrypted_column,
+                    $column, $encrypted_column
+                ) );
+            } else {
+                // No encrypted column, use old logic
+                $migrated = $wpdb->get_var( 
+                    $wpdb->prepare( "SELECT COUNT(*) FROM {$this->table_name} WHERE %i IS NOT NULL AND %i != ''", $column, $column )
+                );
+            }
             
             $pending = $total - $migrated;
             $percent = ( $total > 0 ) ? ( $migrated / $total ) * 100 : 100;
@@ -246,6 +294,90 @@ class FFC_Migration_Manager {
                 'pending' => $pending,
                 'percent' => $percent,
                 'is_complete' => ( $pending == 0 )
+            );
+        }
+
+        // ✅ v2.10.0: Encrypt Sensitive Data migration
+        if ( $migration_key === 'encrypt_sensitive_data' ) {
+            $total = $wpdb->get_var( "SELECT COUNT(*) FROM {$this->table_name}" );
+            
+            if ( $total == 0 ) {
+                return array(
+                    'total' => 0,
+                    'migrated' => 0,
+                    'pending' => 0,
+                    'percent' => 100,
+                    'is_complete' => true
+                );
+            }
+            
+            // ✅ v2.10.0: Count as migrated if:
+            // 1. Has encrypted data (email_encrypted OR data_encrypted has data)
+            // 2. OR all sensitive columns are NULL (already cleaned)
+            $migrated = $wpdb->get_var( 
+                "SELECT COUNT(*) FROM {$this->table_name} 
+                WHERE (
+                    (email_encrypted IS NOT NULL AND email_encrypted != '')
+                    OR (data_encrypted IS NOT NULL AND data_encrypted != '')
+                    OR (email IS NULL AND data IS NULL AND user_ip IS NULL)
+                )"
+            );
+            
+            $pending = $total - $migrated;
+            $percent = ( $total > 0 ) ? ( $migrated / $total ) * 100 : 100;
+            
+            return array(
+                'total' => $total,
+                'migrated' => $migrated,
+                'pending' => $pending,
+                'percent' => round( $percent, 2 ),
+                'is_complete' => ( $pending == 0 )
+            );
+        }
+        
+        // ✅ v2.10.0: Cleanup Unencrypted Data (15+ days)
+        if ( $migration_key === 'cleanup_unencrypted' ) {
+            // Count submissions older than 15 days with encrypted data
+            $total_eligible = $wpdb->get_var(
+                "SELECT COUNT(*) FROM {$this->table_name} 
+                WHERE submission_date <= DATE_SUB(NOW(), INTERVAL 15 DAY)
+                AND (email_encrypted IS NOT NULL OR data_encrypted IS NOT NULL)"
+            );
+            
+            if ( $total_eligible == 0 ) {
+                return array(
+                    'total' => 0,
+                    'migrated' => 0,
+                    'pending' => 0,
+                    'percent' => 100,
+                    'is_complete' => true,
+                    'message' => __( 'No submissions older than 15 days with encrypted data', 'ffc' )
+                );
+            }
+            
+            // Count how many already have NULL in old columns
+            $cleaned = $wpdb->get_var(
+                "SELECT COUNT(*) FROM {$this->table_name} 
+                WHERE submission_date <= DATE_SUB(NOW(), INTERVAL 15 DAY)
+                AND (email_encrypted IS NOT NULL OR data_encrypted IS NOT NULL)
+                AND email IS NULL 
+                AND data IS NULL 
+                AND user_ip IS NULL"
+            );
+            
+            $pending = $total_eligible - $cleaned;
+            $percent = ( $total_eligible > 0 ) ? ( $cleaned / $total_eligible ) * 100 : 100;
+            
+            return array(
+                'total' => $total_eligible,
+                'migrated' => $cleaned,
+                'pending' => $pending,
+                'percent' => round( $percent, 2 ),
+                'is_complete' => ( $pending == 0 ),
+                'message' => sprintf( 
+                    __( '%d submissions eligible for cleanup (15+ days old with encrypted data)', 'ffc' ),
+                    $total_eligible
+                )
             );
         }
         
@@ -584,5 +716,465 @@ class FFC_Migration_Manager {
         }
         
         return sanitize_text_field( $value );
+    }
+
+    /**
+     * ✅ v2.10.0: Migrate data to encrypted fields
+     * 
+     * Encrypts sensitive data (email, CPF/RF, IP, JSON) using AES-256
+     * Creates searchable hashes for email and CPF/RF
+     * 
+     * @param int $offset Starting offset
+     * @param int $limit Batch size
+     * @return array|WP_Error Result with migrated count
+     */
+    public function migrate_encryption( $offset = 0, $limit = 50 ) {
+        global $wpdb;
+        
+        // Check if FFC_Encryption class exists
+        if ( ! class_exists( 'FFC_Encryption' ) ) {
+            return new WP_Error(
+                'encryption_class_missing',
+                __( 'FFC_Encryption class not found. Please ensure class-ffc-encryption.php is loaded.', 'ffc' )
+            );
+        }
+        
+        // Check if encryption is configured
+        if ( ! FFC_Encryption::is_configured() ) {
+            return new WP_Error(
+                'encryption_not_configured',
+                __( 'Encryption keys not configured. WordPress SECURE_AUTH_KEY and LOGGED_IN_KEY are required.', 'ffc' )
+            );
+        }
+        
+        // Get batch of submissions that need encryption
+        $submissions = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT * FROM {$this->table_name} 
+                 WHERE (email_encrypted IS NULL OR email_encrypted = '') 
+                 AND email IS NOT NULL 
+                 LIMIT %d OFFSET %d",
+                $limit,
+                $offset
+            ),
+            ARRAY_A
+        );
+        
+        if ( empty( $submissions ) ) {
+            return array(
+                'migrated' => 0,
+                'pending' => 0,
+                'has_more' => false
+            );
+        }
+        
+        $migrated = 0;
+        $errors = array();
+        
+        foreach ( $submissions as $submission ) {
+            try {
+                // Encrypt email
+                $email_encrypted = null;
+                $email_hash = null;
+                if ( ! empty( $submission['email'] ) ) {
+                    $email_encrypted = FFC_Encryption::encrypt( $submission['email'] );
+                    $email_hash = FFC_Encryption::hash( $submission['email'] );
+                }
+                
+                // Encrypt CPF/RF
+                $cpf_encrypted = null;
+                $cpf_hash = null;
+                if ( ! empty( $submission['cpf_rf'] ) ) {
+                    $cpf_encrypted = FFC_Encryption::encrypt( $submission['cpf_rf'] );
+                    $cpf_hash = FFC_Encryption::hash( $submission['cpf_rf'] );
+                }
+                
+                // Encrypt IP
+                $ip_encrypted = null;
+                if ( ! empty( $submission['user_ip'] ) ) {
+                    $ip_encrypted = FFC_Encryption::encrypt( $submission['user_ip'] );
+                }
+                
+                // Encrypt JSON data
+                $data_encrypted = null;
+                if ( ! empty( $submission['data'] ) ) {
+                    $data_encrypted = FFC_Encryption::encrypt( $submission['data'] );
+                }
+                
+                // Update database
+                $updated = $wpdb->update(
+                    $this->table_name,
+                    array(
+                        'email_encrypted' => $email_encrypted,
+                        'email_hash' => $email_hash,
+                        'cpf_rf_encrypted' => $cpf_encrypted,
+                        'cpf_rf_hash' => $cpf_hash,
+                        'user_ip_encrypted' => $ip_encrypted,
+                        'data_encrypted' => $data_encrypted
+                    ),
+                    array( 'id' => $submission['id'] ),
+                    array( '%s', '%s', '%s', '%s', '%s', '%s' ),
+                    array( '%d' )
+                );
+                
+                if ( $updated !== false ) {
+                    $migrated++;
+                } else {
+                    $errors[] = sprintf(
+                        'Failed to update submission ID %d: %s',
+                        $submission['id'],
+                        $wpdb->last_error
+                    );
+                }
+                
+            } catch ( Exception $e ) {
+                $errors[] = sprintf(
+                    'Encryption error for submission ID %d: %s',
+                    $submission['id'],
+                    $e->getMessage()
+                );
+            }
+        }
+        
+        // Log migration batch
+        if ( class_exists( 'FFC_Activity_Log' ) ) {
+            FFC_Activity_Log::log(
+                'encryption_migration_batch',
+                FFC_Activity_Log::LEVEL_INFO,
+                array(
+                    'offset' => $offset,
+                    'migrated' => $migrated,
+                    'errors' => count( $errors )
+                )
+            );
+        }
+        
+        // Calculate remaining
+        $total_pending = $this->count_pending_encryption();
+        $has_more = $total_pending > 0;
+        
+        // If migration complete, save completion date
+        if ( ! $has_more ) {
+            update_option( 'ffc_encryption_migration_completed_date', current_time( 'mysql' ) );
+        }
+        
+        return array(
+            'migrated' => $migrated,
+            'pending' => $total_pending,
+            'has_more' => $has_more,
+            'errors' => $errors
+        );
+    }
+    
+    /**
+     * ✅ v2.10.0: Count submissions pending encryption
+     * 
+     * @return int Number of submissions without encrypted data
+     */
+    private function count_pending_encryption() {
+        global $wpdb;
+        
+        return (int) $wpdb->get_var(
+            "SELECT COUNT(*) FROM {$this->table_name} 
+             WHERE (email_encrypted IS NULL OR email_encrypted = '') 
+             AND email IS NOT NULL"
+        );
+    }
+    
+    /**
+     * ✅ v2.10.0: Cleanup unencrypted data (15+ days old) - BATCH METHOD
+     * 
+     * Called by migration system.
+     * Only cleans submissions that:
+     * 1. Are 15+ days old
+     * 2. Have encrypted data
+     * 3. Still have unencrypted data in old columns
+     * 
+     * @param int $offset Batch offset
+     * @param int $limit Batch size
+     * @return array Result with cleaned count and errors
+     */
+    public function cleanup_unencrypted_data( $offset = 0, $limit = 100 ) {
+        global $wpdb;
+        
+        // Get submissions eligible for cleanup (15+ days old, encrypted, still have plain data)
+        $submissions = $wpdb->get_results( $wpdb->prepare(
+            "SELECT id FROM {$this->table_name} 
+            WHERE submission_date <= DATE_SUB(NOW(), INTERVAL 15 DAY)
+            AND (email_encrypted IS NOT NULL OR data_encrypted IS NOT NULL)
+            AND (email IS NOT NULL OR data IS NOT NULL OR user_ip IS NOT NULL)
+            ORDER BY id ASC
+            LIMIT %d OFFSET %d",
+            $limit,
+            $offset
+        ) );
+        
+        $cleaned = 0;
+        $errors = array();
+        
+        foreach ( $submissions as $submission ) {
+            // Nullify unencrypted columns
+            $result = $wpdb->update(
+                $this->table_name,
+                array(
+                    'email'   => null,
+                    'cpf_rf'  => null,
+                    'user_ip' => null,
+                    'data'    => null
+                ),
+                array( 'id' => $submission->id ),
+                array( '%s', '%s', '%s', '%s' ),
+                array( '%d' )
+            );
+            
+            if ( $result !== false ) {
+                $cleaned++;
+            } else {
+                $errors[] = sprintf(
+                    'Failed to cleanup submission ID %d: %s',
+                    $submission->id,
+                    $wpdb->last_error
+                );
+            }
+        }
+        
+        // Count remaining
+        $remaining = $wpdb->get_var(
+            "SELECT COUNT(*) FROM {$this->table_name} 
+            WHERE submission_date <= DATE_SUB(NOW(), INTERVAL 15 DAY)
+            AND (email_encrypted IS NOT NULL OR data_encrypted IS NOT NULL)
+            AND (email IS NOT NULL OR data IS NOT NULL OR user_ip IS NOT NULL)"
+        );
+        
+        $has_more = $remaining > 0;
+        
+        return array(
+            'migrated' => $cleaned,
+            'pending' => $remaining,
+            'has_more' => $has_more,
+            'errors' => $errors
+        );
+    }
+    
+    /**
+     * ✅ v2.10.0: Cleanup old unencrypted data (NULLIFY)
+     * 
+     * Sets old columns to NULL after successful encryption migration.
+     * This is REVERSIBLE - columns remain, just data is removed.
+     * 
+     * @return array|WP_Error Result with cleaned count
+     */
+    public function cleanup_old_data() {
+        global $wpdb;
+        
+        // Check if migration is 100% complete
+        $pending = $this->count_pending_encryption();
+        
+        if ( $pending > 0 ) {
+            return new WP_Error(
+                'migration_incomplete',
+                sprintf(
+                    __( 'Cannot cleanup: %d submissions still need encryption. Complete migration first.', 'ffc' ),
+                    $pending
+                )
+            );
+        }
+        
+        // Check if user confirmed
+        if ( ! isset( $_POST['ffc_confirm_cleanup'] ) || $_POST['ffc_confirm_cleanup'] !== 'yes' ) {
+            return new WP_Error(
+                'not_confirmed',
+                __( 'Cleanup must be explicitly confirmed by the user.', 'ffc' )
+            );
+        }
+        
+        // NULLIFY old data (reversible - columns remain)
+        $result = $wpdb->query(
+            "UPDATE {$this->table_name} 
+             SET email = NULL, 
+                 cpf_rf = NULL, 
+                 user_ip = NULL, 
+                 data = '{}' 
+             WHERE email_encrypted IS NOT NULL"
+        );
+        
+        if ( $result === false ) {
+            return new WP_Error(
+                'cleanup_failed',
+                sprintf( __( 'Database error: %s', 'ffc' ), $wpdb->last_error )
+            );
+        }
+        
+        // Save cleanup date
+        update_option( 'ffc_data_cleanup_executed_date', current_time( 'mysql' ) );
+        
+        // Calculate drop available date (15 days from now)
+        $drop_available = date( 'Y-m-d H:i:s', strtotime( '+15 days' ) );
+        update_option( 'ffc_drop_available_date', $drop_available );
+        
+        // Log
+        if ( class_exists( 'FFC_Activity_Log' ) ) {
+            FFC_Activity_Log::log(
+                'data_cleanup_executed',
+                FFC_Activity_Log::LEVEL_INFO,
+                array( 'rows_affected' => $result )
+            );
+        }
+        
+        return array(
+            'cleaned' => $result,
+            'message' => sprintf(
+                __( 'Successfully cleaned %d records. Old data set to NULL.', 'ffc' ),
+                $result
+            ),
+            'drop_available_date' => $drop_available
+        );
+    }
+    
+    /**
+     * ✅ v2.10.0: Drop old columns permanently (IRREVERSIBLE)
+     * 
+     * WARNING: This action is PERMANENT and cannot be undone!
+     * Only available 15 days after cleanup.
+     * 
+     * @return array|WP_Error Result
+     */
+    public function drop_old_columns() {
+        global $wpdb;
+        
+        // Check if cleanup was executed
+        $cleanup_date = get_option( 'ffc_data_cleanup_executed_date' );
+        
+        if ( ! $cleanup_date ) {
+            return new WP_Error(
+                'cleanup_not_executed',
+                __( 'You must execute data cleanup before dropping columns.', 'ffc' )
+            );
+        }
+        
+        // Check if 15 days have passed
+        $cleanup_time = strtotime( $cleanup_date );
+        $now = current_time( 'timestamp' );
+        $days_passed = ( $now - $cleanup_time ) / DAY_IN_SECONDS;
+        
+        if ( $days_passed < 15 ) {
+            $days_remaining = ceil( 15 - $days_passed );
+            return new WP_Error(
+                'waiting_period',
+                sprintf(
+                    __( 'Waiting period active. %d days remaining. Available on: %s', 'ffc' ),
+                    $days_remaining,
+                    get_option( 'ffc_drop_available_date' )
+                )
+            );
+        }
+        
+        // Check double confirmation
+        if ( ! isset( $_POST['ffc_confirm_drop'] ) || $_POST['ffc_confirm_drop'] !== 'CONFIRMAR EXCLUSÃO' ) {
+            return new WP_Error(
+                'not_confirmed',
+                __( 'You must type "CONFIRMAR EXCLUSÃO" to proceed.', 'ffc' )
+            );
+        }
+        
+        // Check checkboxes
+        $required_checks = array( 'backup_done', 'tested_15_days', 'understand_irreversible' );
+        foreach ( $required_checks as $check ) {
+            if ( empty( $_POST[ 'ffc_' . $check ] ) ) {
+                return new WP_Error(
+                    'confirmation_incomplete',
+                    __( 'All confirmation checkboxes must be checked.', 'ffc' )
+                );
+            }
+        }
+        
+        // DROP COLUMNS (IRREVERSIBLE!)
+        $columns_to_drop = array( 'email', 'cpf_rf', 'user_ip', 'data' );
+        $dropped = array();
+        $errors = array();
+        
+        foreach ( $columns_to_drop as $column ) {
+            $result = $wpdb->query(
+                "ALTER TABLE {$this->table_name} DROP COLUMN {$column}"
+            );
+            
+            if ( $result !== false ) {
+                $dropped[] = $column;
+            } else {
+                $errors[] = sprintf(
+                    'Failed to drop column %s: %s',
+                    $column,
+                    $wpdb->last_error
+                );
+            }
+        }
+        
+        // Save drop date
+        update_option( 'ffc_columns_dropped', true );
+        update_option( 'ffc_columns_dropped_date', current_time( 'mysql' ) );
+        
+        // Log
+        if ( class_exists( 'FFC_Activity_Log' ) ) {
+            FFC_Activity_Log::log(
+                'columns_dropped',
+                FFC_Activity_Log::LEVEL_INFO,
+                array(
+                    'dropped' => $dropped,
+                    'errors' => $errors
+                )
+            );
+        }
+        
+        return array(
+            'dropped' => $dropped,
+            'errors' => $errors,
+            'message' => sprintf(
+                __( 'Successfully dropped %d columns: %s', 'ffc' ),
+                count( $dropped ),
+                implode( ', ', $dropped )
+            )
+        );
+    }
+    
+    /**
+     * ✅ v2.10.0: Check if drop is available (15 days passed)
+     * 
+     * @return bool True if drop can be executed
+     */
+    public function can_drop_columns() {
+        $cleanup_date = get_option( 'ffc_data_cleanup_executed_date' );
+        
+        if ( ! $cleanup_date ) {
+            return false;
+        }
+        
+        $cleanup_time = strtotime( $cleanup_date );
+        $now = current_time( 'timestamp' );
+        $days_passed = ( $now - $cleanup_time ) / DAY_IN_SECONDS;
+        
+        return $days_passed >= 15;
+    }
+    
+    /**
+     * ✅ v2.10.0: Get days remaining until drop available
+     * 
+     * @return int Days remaining (0 if available)
+     */
+    public function get_drop_days_remaining() {
+        $cleanup_date = get_option( 'ffc_data_cleanup_executed_date' );
+        
+        if ( ! $cleanup_date ) {
+            return 999; // Not started
+        }
+        
+        $cleanup_time = strtotime( $cleanup_date );
+        $now = current_time( 'timestamp' );
+        $days_passed = ( $now - $cleanup_time ) / DAY_IN_SECONDS;
+        
+        if ( $days_passed >= 15 ) {
+            return 0; // Available now
+        }
+        
+        return ceil( 15 - $days_passed );
     }
 }

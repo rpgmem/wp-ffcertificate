@@ -369,6 +369,12 @@
                     }
                 },
                 error: function() {
+                    
+                if (response.data && response.data.rate_limit) {
+                    FFCRateLimit.show(response.data.message, response.data.wait_seconds);
+                    return; // Stop normal error handling
+                }
+                           
                     alert(ffc_ajax.strings.connectionError || 'Connection error');
                     $submitBtn.prop('disabled', false).text(originalBtnText);
                 }
@@ -398,6 +404,12 @@
                 window.ffcUtils.applyCpfRfMask();
                 console.log('[FFC] CPF/RF mask applied via ffcUtils');
             }
+            
+            // ✅ v2.10.0: Apply Ticket mask
+            if (window.ffcUtils.applyTicketMask) {
+                window.ffcUtils.applyTicketMask();
+                console.log('[FFC] Ticket mask applied via ffcUtils');
+            }
         } else {
             console.warn('[FFC] ffcUtils not loaded - masks disabled');
         }
@@ -418,6 +430,7 @@
         var observer = new MutationObserver(function(mutations) {
             var needsAuthMask = false;
             var needsCpfMask = false;
+            var needsTicketMask = false;
             
             mutations.forEach(function(mutation) {
                 // Only process added nodes
@@ -446,11 +459,18 @@
                         $node.find('input[name="cpf_rf"], input[name="cpf"]').length) {
                         needsCpfMask = true;
                     }
+                    
+                    // ✅ v2.10.0: Check for ticket fields
+                    if ($node.attr('name') === 'ffc_ticket' ||
+                        $node.hasClass('ffc-ticket-input') ||
+                        $node.find('input[name="ffc_ticket"], .ffc-ticket-input').length) {
+                        needsTicketMask = true;
+                    }
                 });
             });
             
             // Apply masks if needed (debounced)
-            if (needsAuthMask || needsCpfMask) {
+            if (needsAuthMask || needsCpfMask || needsTicketMask) {
                 clearTimeout(observer.maskTimeout);
                 observer.maskTimeout = setTimeout(function() {
                     if (needsAuthMask && window.ffcUtils.applyAuthCodeMask) {
@@ -461,6 +481,11 @@
                     if (needsCpfMask && window.ffcUtils.applyCpfRfMask) {
                         window.ffcUtils.applyCpfRfMask();
                         console.log('[FFC] CPF/RF mask re-applied');
+                    }
+                    
+                    if (needsTicketMask && window.ffcUtils.applyTicketMask) {
+                        window.ffcUtils.applyTicketMask();
+                        console.log('[FFC] Ticket mask re-applied');
                     }
                 }, 50);
             }

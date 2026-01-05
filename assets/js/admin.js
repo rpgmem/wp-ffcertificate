@@ -176,7 +176,7 @@
         fieldHtml += '    <table class="form-table">';
         fieldHtml += '      <tr>';
         fieldHtml += '        <th><label>Field Type:</label></th>';
-        fieldHtml += '        <td><select class="ffc-field-type" name="field_type[]">';
+        fieldHtml += '        <td><select class="ffc-field-type" name="ffc_fields[' + fieldCounter + '][type]">';
         
         fieldTypes.forEach(function(type) {
             var selected = type.value === fieldType ? ' selected' : '';
@@ -187,22 +187,22 @@
         fieldHtml += '      </tr>';
         fieldHtml += '      <tr>';
         fieldHtml += '        <th><label>Label:</label></th>';
-        fieldHtml += '        <td><input type="text" class="ffc-field-label regular-text" name="field_label[]" placeholder="Field Label"></td>';
+        fieldHtml += '        <td><input type="text" class="ffc-field-label regular-text" name="ffc_fields[' + fieldCounter + '][label]" placeholder="Field Label"></td>';
         fieldHtml += '      </tr>';
         fieldHtml += '      <tr>';
         fieldHtml += '        <th><label>Name (variable):</label></th>';
-        fieldHtml += '        <td><input type="text" class="ffc-field-name regular-text" name="field_name[]" placeholder="field_name"></td>';
+        fieldHtml += '        <td><input type="text" class="ffc-field-name regular-text" name="ffc_fields[' + fieldCounter + '][name]" placeholder="field_name"></td>';
         fieldHtml += '      </tr>';
         fieldHtml += '      <tr>';
         fieldHtml += '        <th><label>Required:</label></th>';
-        fieldHtml += '        <td><input type="checkbox" class="ffc-field-required" name="field_required_' + fieldCounter + '" value="1"></td>';
+        fieldHtml += '        <td><input type="checkbox" class="ffc-field-required" name="ffc_fields[' + fieldCounter + '][required]" value="1"></td>';
         fieldHtml += '      </tr>';
         
-        // Additional options for select/radio
+        // Additional options for select/radio/checkbox
         if (fieldType === 'select' || fieldType === 'radio' || fieldType === 'checkbox') {
             fieldHtml += '      <tr>';
             fieldHtml += '        <th><label>Options:</label></th>';
-            fieldHtml += '        <td><textarea class="ffc-field-options large-text" name="field_options[]" rows="3" placeholder="One option per line"></textarea></td>';
+            fieldHtml += '        <td><textarea class="ffc-field-options large-text" name="ffc_fields[' + fieldCounter + '][options]" rows="3" placeholder="Separate with commas"></textarea></td>';
             fieldHtml += '      </tr>';
         }
         
@@ -785,6 +785,37 @@
             menu: $menu.length,
             overlay: $overlay.length
         });
+        
+        // ✅ v2.10.0: Show/hide restriction fields based on checkboxes
+        function toggleRestrictionField(checkbox, fieldId) {
+            if ($(checkbox).is(':checked')) {
+                $(fieldId).slideDown();
+            } else {
+                $(fieldId).slideUp();
+            }
+        }
+        
+        // Password field
+        $('#ffc_restriction_password').on('change', function() {
+            toggleRestrictionField(this, '#ffc_password_field');
+        }).trigger('change');
+        
+        // Allowlist field
+        $('#ffc_restriction_allowlist').on('change', function() {
+            toggleRestrictionField(this, '#ffc_allowlist_field');
+        }).trigger('change');
+        
+        // Denylist field
+        $('#ffc_restriction_denylist').on('change', function() {
+            toggleRestrictionField(this, '#ffc_denylist_field');
+        }).trigger('change');
+        
+        // Ticket field
+        $('#ffc_restriction_ticket').on('change', function() {
+            toggleRestrictionField(this, '#ffc_ticket_field');
+        }).trigger('change');
+        
+        console.log('[FFC Admin] Restriction field toggles initialized');
     });
 
 })(jQuery);

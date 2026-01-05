@@ -298,13 +298,74 @@
         });
     }
 
+    /**
+     * Apply ticket code mask to input fields
+     * Format: XXXX-XXXX (8 alphanumeric characters)
+     * 
+     * @param {jQuery} $inputs - Input elements to apply mask (optional)
+     */
+    function applyTicketMask($inputs) {
+        // If no inputs provided, find all ticket inputs
+        if (!$inputs || $inputs.length === 0) {
+            $inputs = $('input[name="ffc_ticket"], .ffc-ticket-input, #ffc_ticket');
+        }
+        
+        if ($inputs.length === 0) {
+            return;
+        }
+        
+        console.log('[FFC Utils] Applying ticket mask to', $inputs.length, 'field(s)');
+        
+        $inputs.each(function() {
+            var $input = $(this);
+            
+            // Remove existing handlers to avoid duplicates
+            $input.off('input.ticket paste.ticket');
+            
+            // Apply mask on input
+            $input.on('input.ticket', function() {
+                // Remove all except A-Z and 0-9, convert to uppercase
+                var value = $(this).val().toUpperCase().replace(/[^A-Z0-9]/g, '');
+                
+                // Limit to 8 characters
+                if (value.length > 8) {
+                    value = value.substring(0, 8);
+                }
+                
+                // Apply mask: XXXX-XXXX
+                var masked = '';
+                if (value.length <= 4) {
+                    masked = value;
+                } else {
+                    masked = value.substring(0, 4) + '-' + value.substring(4);
+                }
+                
+                $(this).val(masked);
+            });
+            
+            // Apply on paste
+            $input.on('paste.ticket', function() {
+                var $this = $(this);
+                setTimeout(function() {
+                    $this.trigger('input');
+                }, 10);
+            });
+            
+            // Apply to initial value if exists
+            if ($input.val()) {
+                $input.trigger('input');
+            }
+        });
+    }
+
     // Export functions to global namespace
     window.ffcUtils = {
         showFormError: showFormError,
         showFormSuccess: showFormSuccess,
         refreshCaptcha: refreshCaptcha,
         applyCpfRfMask: applyCpfRfMask,
-        applyAuthCodeMask: applyAuthCodeMask
+        applyAuthCodeMask: applyAuthCodeMask,
+        applyTicketMask: applyTicketMask
     };
     
     console.log('[FFC Utils] Frontend utilities module loaded (v1.0.0)');

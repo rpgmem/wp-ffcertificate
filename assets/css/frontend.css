@@ -99,6 +99,169 @@
 }
 
 /* ============================================
+   LGPD CONSENT CHECKBOX - v2.10.0
+   ============================================ */
+
+.ffc-lgpd-consent {
+    margin: 25px 0 20px 0;
+    padding: 20px;
+    background: #f8f9fa;
+    border: 2px solid #0073aa;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 115, 170, 0.1);
+}
+
+.ffc-consent-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    margin-bottom: 0;
+    font-weight: normal;
+}
+
+.ffc-consent-label input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    margin: 2px 0 0 0;
+    cursor: pointer;
+    flex-shrink: 0;
+    accent-color: #0073aa;
+}
+
+.ffc-consent-text {
+    flex: 1;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #333;
+}
+
+.ffc-consent-text a {
+    color: #0073aa;
+    text-decoration: underline;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.ffc-consent-text a:hover {
+    color: #005a87;
+    text-decoration: none;
+}
+
+.ffc-consent-text .required {
+    color: #d63638;
+    font-weight: bold;
+    margin-left: 3px;
+}
+
+.ffc-consent-description {
+    margin: 12px 0 0 32px;
+    padding: 12px;
+    background: #fff;
+    border-left: 3px solid #0073aa;
+    border-radius: 4px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #666;
+}
+
+.ffc-consent-description a {
+    color: #0073aa;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.ffc-consent-description a:hover {
+    text-decoration: underline;
+}
+
+/* Checkbox validation states */
+.ffc-consent-label input[type="checkbox"]:invalid {
+    outline: 2px solid #d63638;
+    outline-offset: 2px;
+}
+
+.ffc-consent-label input[type="checkbox"]:valid {
+    outline: none;
+}
+
+.ffc-consent-label input[type="checkbox"]:focus {
+    outline: 2px solid #0073aa;
+    outline-offset: 2px;
+}
+
+/* Error state para validação customizada */
+.ffc-lgpd-consent.error {
+    border-color: #d63638;
+    background: #fff5f5;
+}
+
+.ffc-lgpd-consent.error .ffc-consent-text {
+    color: #d63638;
+}
+
+/* Success state (opcional - quando checkbox marcado) */
+.ffc-lgpd-consent.checked {
+    border-color: #46a049;
+    background: #f0f9f0;
+}
+
+/* ============================================
+   RESPONSIVE - MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .ffc-lgpd-consent {
+        padding: 15px;
+        margin: 20px 0 15px 0;
+    }
+    
+    .ffc-consent-label {
+        gap: 10px;
+    }
+    
+    .ffc-consent-text {
+        font-size: 14px;
+    }
+    
+    .ffc-consent-description {
+        margin-left: 0;
+        font-size: 12px;
+    }
+}
+
+/* ============================================
+   ACCESSIBILITY - HIGH CONTRAST
+   ============================================ */
+
+@media (prefers-contrast: high) {
+    .ffc-lgpd-consent {
+        border-width: 3px;
+        border-color: #000;
+    }
+    
+    .ffc-consent-text {
+        color: #000;
+    }
+    
+    .ffc-consent-text a {
+        color: #0000EE;
+        text-decoration: underline;
+    }
+}
+
+/* ============================================
+   PRINT - HIDE CHECKBOX
+   ============================================ */
+
+@media print {
+    .ffc-lgpd-consent {
+        display: none;
+    }
+}
+
+/* ============================================
    SECURITY FIELDS
    ============================================ */
 .ffc-security-container {
@@ -201,7 +364,7 @@
 }
 
 /* ============================================
-   VERIFICATION PAGE - GENERAL
+   VERIFICATION PAGE
    ============================================ */
 .ffc-verification-container {
     max-width: 700px;
@@ -372,7 +535,7 @@
 
 .ffc-status-badge {
     display: inline-block;
-    font-size: 18px;
+    font-size: 22px;
     font-weight: 600;
     padding: 5px 15px;
     background: rgba(255, 255, 255, 0.2);

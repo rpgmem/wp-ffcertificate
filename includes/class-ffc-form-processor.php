@@ -6,6 +6,7 @@
  * v2.9.2: Unified PDF generation with FFC_PDF_Generator
  * v2.9.11: Using FFC_Utils for validation and sanitization
  * v2.9.13: Optimized detect_reprint() to use cpf_rf column with fallback
+ * v2.10.0: LGPD - Validates consent checkbox (mandatory)
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -26,78 +27,136 @@ class FFC_Form_Processor {
     }
 
     /**
-     * Check if submission passes restriction rules (whitelist/denylist/tickets)
-     * Returns array with 'allowed' (bool) and 'message' (string) and 'is_ticket' (bool)
+     * ✅ v2.10.0: Check if submission passes restriction rules
+     * 
+     * NEW: Modular checkbox-based restrictions (password, allowlist, denylist, ticket)
+     * Validation order: Password → Denylist (priority) → Allowlist → Ticket (consumed)
+     * 
+     * @param array $form_config Form configuration
+     * @param string $val_cpf CPF/RF from form (already cleaned)
+     * @param string $val_ticket Ticket from form
+     * @param int $form_id Form ID (needed for ticket consumption)
+     * @return array ['allowed' => bool, 'message' => string, 'is_ticket' => bool]
      */
-    private function check_restrictions( $form_config, $val_cpf, $val_ticket ) {
-        $restriction_enabled = isset( $form_config['enable_restriction'] ) && $form_config['enable_restriction'] == 1;
-        $is_ticket_usage = false;
-
-        // Denylist check
-        if ( ! empty( $val_cpf ) || ! empty( $val_ticket ) ) {
-            $denied_raw = isset( $form_config['denied_users_list'] ) ? $form_config['denied_users_list'] : '';
-            $denied_list = array_filter( array_map( 'trim', explode( "\n", $denied_raw ) ) );
+    private function check_restrictions( $form_config, $val_cpf, $val_ticket, $form_id ) {
+        $restrictions = isset($form_config['restrictions']) ? $form_config['restrictions'] : array();
+        
+        // Clean CPF/RF (remove any mask)
+        $clean_cpf = preg_replace('/\D/', '', $val_cpf);
+        
+        // ========================================
+        // 1. PASSWORD CHECK (if active)
+        // ========================================
+        if (!empty($restrictions['password']) && $restrictions['password'] == '1') {
+            $password = isset($_POST['ffc_password']) ? trim($_POST['ffc_password']) : '';
+            $valid_password = isset($form_config['validation_code']) ? $form_config['validation_code'] : '';
             
-            if ( (!empty($val_cpf) && in_array( $val_cpf, $denied_list )) || (!empty($val_ticket) && in_array( $val_ticket, $denied_list )) ) {
+            if (empty($password)) {
                 return array(
-                    'allowed' => false,
-                    'message' => __( 'Warning: Certificate issuance is blocked for this ID.', 'ffc' ),
+                    'allowed' => false, 
+                    'message' => __('Password is required.', 'ffc'), 
+                    'is_ticket' => false
+                );
+            }
+            
+            if ($password !== $valid_password) {
+                return array(
+                    'allowed' => false, 
+                    'message' => __('Incorrect password.', 'ffc'), 
                     'is_ticket' => false
                 );
             }
         }
-
-        // If restriction is disabled, allow everyone
-        if ( ! $restriction_enabled ) {
+        
+        // ========================================
+        // 2. DENYLIST CHECK (if active - HAS PRIORITY)
+        // ========================================
+        if (!empty($restrictions['denylist']) && $restrictions['denylist'] == '1') {
+            $denied_raw = isset($form_config['denied_users_list']) ? $form_config['denied_users_list'] : '';
+            $denied_list = array_filter(array_map('trim', explode("\n", $denied_raw)));
+            
+            // Clean masks from denylist before comparing
+            $denied_clean = array_map(function($d) { 
+                return preg_replace('/\D/', '', $d); 
+            }, $denied_list);
+            
+            if (in_array($clean_cpf, $denied_clean)) {
+                return array(
+                    'allowed' => false, 
+                    'message' => __('Your CPF/RF is blocked.', 'ffc'), 
+                    'is_ticket' => false
+                );
+            }
+        }
+        
+        // ========================================
+        // 3. ALLOWLIST CHECK (if active)
+        // ========================================
+        if (!empty($restrictions['allowlist']) && $restrictions['allowlist'] == '1') {
+            $allowed_raw = isset($form_config['allowed_users_list']) ? $form_config['allowed_users_list'] : '';
+            $allowed_list = array_filter(array_map('trim', explode("\n", $allowed_raw)));
+            
+            // Clean masks from allowlist before comparing
+            $allowed_clean = array_map(function($a) { 
+                return preg_replace('/\D/', '', $a); 
+            }, $allowed_list);
+            
+            if (!in_array($clean_cpf, $allowed_clean)) {
+                return array(
+                    'allowed' => false, 
+                    'message' => __('Your CPF/RF is not authorized.', 'ffc'), 
+                    'is_ticket' => false
+                );
+            }
+        }
+        
+        // ========================================
+        // 4. TICKET CHECK (if active - CONSUMED)
+        // ========================================
+        if (!empty($restrictions['ticket']) && $restrictions['ticket'] == '1') {
+            $ticket = strtoupper(trim($val_ticket));
+            
+            if (empty($ticket)) {
+                return array(
+                    'allowed' => false, 
+                    'message' => __('Ticket code is required.', 'ffc'), 
+                    'is_ticket' => false
+                );
+            }
+            
+            $tickets_raw = isset($form_config['generated_codes_list']) ? $form_config['generated_codes_list'] : '';
+            $tickets = array_filter(array_map(function($t) { 
+                return strtoupper(trim($t)); 
+            }, explode("\n", $tickets_raw)));
+            
+            if (!in_array($ticket, $tickets)) {
+                return array(
+                    'allowed' => false, 
+                    'message' => __('Invalid or already used ticket.', 'ffc'), 
+                    'is_ticket' => false
+                );
+            }
+            
+            // ✅ CONSUME TICKET (remove from list)
+            $tickets = array_diff($tickets, array($ticket));
+            $form_config['generated_codes_list'] = implode("\n", $tickets);
+            update_post_meta($form_id, '_ffc_form_config', $form_config);
+            
             return array(
-                'allowed' => true,
-                'message' => '',
-                'is_ticket' => false
+                'allowed' => true, 
+                'message' => '', 
+                'is_ticket' => true
             );
         }
-
-        // Restriction is enabled - check ticket first, then whitelist
-        if ( ! empty( $val_ticket ) ) {
-            $generated_raw = isset( $form_config['generated_codes_list'] ) ? $form_config['generated_codes_list'] : '';
-            $generated_list = array_filter( array_map( 'trim', explode( "\n", $generated_raw ) ) );
-            
-            if ( in_array( $val_ticket, $generated_list ) ) {
-                return array(
-                    'allowed' => true,
-                    'message' => '',
-                    'is_ticket' => true
-                );
-            } else {
-                return array(
-                    'allowed' => false,
-                    'message' => __( 'Invalid or already used ticket.', 'ffc' ),
-                    'is_ticket' => false
-                );
-            }
-        } elseif ( ! empty( $val_cpf ) ) {
-            $allowed_raw = isset( $form_config['allowed_users_list'] ) ? $form_config['allowed_users_list'] : '';
-            $allowed_list = array_filter( array_map( 'trim', explode( "\n", $allowed_raw ) ) );
-            
-            if ( in_array( $val_cpf, $allowed_list ) ) {
-                return array(
-                    'allowed' => true,
-                    'message' => '',
-                    'is_ticket' => false
-                );
-            } else {
-                return array(
-                    'allowed' => false,
-                    'message' => __( 'Access Denied: Your data was not found in the authorization list.', 'ffc' ),
-                    'is_ticket' => false
-                );
-            }
-        } else {
-            return array(
-                'allowed' => false,
-                'message' => __( 'Error: A validation field (Ticket or CPF) is required.', 'ffc' ),
-                'is_ticket' => false
-            );
-        }
+        
+        // ========================================
+        // NO RESTRICTIONS ACTIVE - ALLOW
+        // ========================================
+        return array(
+            'allowed' => true, 
+            'message' => '', 
+            'is_ticket' => false
+        );
     }
 
     /**
@@ -269,12 +328,47 @@ class FFC_Form_Processor {
         if ( empty( $user_email ) ) {
             wp_send_json_error( array( 'message' => __( 'Email address is required.', 'ffc' ) ) );
         }
+        // ✅ v2.10.0: Validate LGPD consent (mandatory)
+        if ( empty( $_POST['ffc_lgpd_consent'] ) || $_POST['ffc_lgpd_consent'] !== '1' ) {
+            wp_send_json_error( array( 
+                'message' => __( 'You must agree to the Privacy Policy to continue.', 'ffc' ) 
+            ) );
+        }
+        
+        // ✅ v2.10.0: Add consent to submission data
+        $submission_data['ffc_lgpd_consent'] = '1';
 
+        // ✅ v2.10.0: Capture restriction fields (password/ticket) from POST
+        // These are NOT in $fields_config, so capture separately
+        $val_password = isset($_POST['ffc_password']) ? trim($_POST['ffc_password']) : '';
+        $val_ticket = isset($_POST['ffc_ticket']) ? strtoupper(trim($_POST['ffc_ticket'])) : '';
+        
         $val_cpf = isset($submission_data['cpf_rf']) ? trim($submission_data['cpf_rf']) : '';
-        $val_ticket = isset($submission_data['ticket']) ? trim($submission_data['ticket']) : '';
+
+        // ✅ v2.10.0: Rate Limit Check
+        if (class_exists('FFC_Rate_Limiter')) {
+            $ip = FFC_Utils::get_user_ip();
+            $email = $user_email;
+            $cpf = $val_cpf;
+            
+            $rate_check = FFC_Rate_Limiter::check_all($ip, $email, $cpf, $form_id);
+            
+            if (!$rate_check['allowed']) {
+                wp_send_json_error(array(
+                    'message' => $rate_check['message'] ?? 'Rate limit exceeded.',
+                    'rate_limit' => true,
+                    'wait_seconds' => $rate_check['wait_seconds'] ?? 0
+                ));
+            }
+            
+            // Record attempt
+            FFC_Rate_Limiter::record_attempt('ip', $ip, $form_id);
+            if ($email) FFC_Rate_Limiter::record_attempt('email', $email, $form_id);
+            if ($cpf) FFC_Rate_Limiter::record_attempt('cpf', preg_replace('/[^0-9]/', '', $cpf), $form_id);
+        }
 
         // Check restrictions (whitelist/denylist/tickets)
-        $restriction_result = $this->check_restrictions( $form_config, $val_cpf, $val_ticket );
+        $restriction_result = $this->check_restrictions( $form_config, $val_cpf, $val_ticket, $form_id );
         
         if ( ! $restriction_result['allowed'] ) {
             wp_send_json_error( array( 'message' => $restriction_result['message'] ) );
@@ -287,14 +381,11 @@ class FFC_Form_Processor {
         $is_reprint = $reprint_result['is_reprint'];
         
         if ( $is_reprint ) {
-            // Use existing data
-            $submission_data = $reprint_result['data'];
-            $result = $reprint_result['id'];
-            $user_email = $reprint_result['email'];
-            $real_submission_date = $reprint_result['date'];
+            // Reprint - use existing submission ID
+            $submission_id = $reprint_result['id'];
         } else {
             // New submission - save to database
-            $result = $this->submission_handler->process_submission( 
+            $submission_id = $this->submission_handler->process_submission( 
                 $form_id, 
                 $form_post->post_title, 
                 $submission_data, 
@@ -303,50 +394,22 @@ class FFC_Form_Processor {
                 $form_config 
             );
             
-            if ( is_wp_error( $result ) ) {
-                wp_send_json_error( array( 'message' => $result->get_error_message() ) );
+            if ( is_wp_error( $submission_id ) ) {
+                wp_send_json_error( array( 'message' => $submission_id->get_error_message() ) );
             }
             
             // Remove used ticket if applicable
             if ( $restriction_result['is_ticket'] && ! empty( $val_ticket ) ) {
                 $this->consume_ticket( $form_id, $val_ticket );
             }
-            
-            // Retrieve saved data from database
-            global $wpdb;
-            $table_name = FFC_Utils::get_submissions_table();
-            $saved_record = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table_name} WHERE id = %d", $result ) );
-            
-            if ( $saved_record ) {
-                $decoded_new = json_decode( $saved_record->data, true );
-                if ( !is_array( $decoded_new ) ) {
-                    $decoded_new = json_decode( stripslashes( $saved_record->data ), true );
-                }
-                
-                // ✅ v2.9.16: RECONSTRUIR dados completos (colunas + JSON)
-                if ( ! isset( $decoded_new['email'] ) && ! empty( $saved_record->email ) ) {
-                    $decoded_new['email'] = $saved_record->email;
-                }
-                if ( ! isset( $decoded_new['cpf_rf'] ) && ! empty( $saved_record->cpf_rf ) ) {
-                    $decoded_new['cpf_rf'] = $saved_record->cpf_rf;
-                }
-                if ( ! isset( $decoded_new['auth_code'] ) && ! empty( $saved_record->auth_code ) ) {
-                    $decoded_new['auth_code'] = $saved_record->auth_code;
-                }
-                
-                $submission_data = $decoded_new;
-                $real_submission_date = $saved_record->submission_date;
-            } else {
-                $real_submission_date = current_time( 'mysql' );
-            }
         }
 
-        // ✅ v2.9.2: Use centralized PDF generator
-        $pdf_generator = new FFC_PDF_Generator( $this->email_handler );
-        $pdf_data = $pdf_generator->generate_pdf_data_from_form( 
-            $submission_data, 
-            $form_id, 
-            $real_submission_date 
+        // ✅ v2.10.0: Use unified PDF generation method
+        // All we need is the submission_id - everything else is retrieved automatically
+        $pdf_generator = new FFC_PDF_Generator( $this->submission_handler );
+        $pdf_data = $pdf_generator->generate_pdf_data( 
+            $submission_id, 
+            $this->submission_handler 
         );
         
         if ( is_wp_error( $pdf_data ) ) {

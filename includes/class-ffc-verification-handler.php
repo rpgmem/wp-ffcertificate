@@ -6,6 +6,7 @@
  * v2.8.0: Added magic link verification with rate limiting
  * v2.9.0: Added QR Code support in verification
  * v2.9.2: Unified PDF generation with FFC_PDF_Generator, removed prepare_pdf_data()
+ * v2.10.0: ENCRYPTION - Auto-decryption via Submission Handler + Access logging
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -31,7 +32,7 @@ class FFC_Verification_Handler {
     /**
      * Search for certificate by authentication code
      * 
-     * ✅ v2.9.15: RECONSTRUÇÃO - Combina colunas + JSON
+     * v2.9.15: RECONSTRUÇÃO - Combina colunas + JSON
      */
     private function search_certificate( $auth_code ) {
         global $wpdb;
@@ -47,7 +48,7 @@ class FFC_Verification_Handler {
             );
         }
         
-        // ✅ PRIORITY 1: Try optimized query (indexed column)
+        // PRIORITY 1: Try optimized query (indexed column)
         $submission = $wpdb->get_row( $wpdb->prepare( 
             "SELECT * FROM {$table_name} WHERE auth_code = %s LIMIT 1", 
             $clean_code 
@@ -70,21 +71,21 @@ class FFC_Verification_Handler {
             );
         }
         
-        // ✅ v2.9.15: RECONSTRUIR dados completos (colunas + JSON)
+        // v2.9.15: RECONSTRUIR dados completos (colunas + JSON)
         
         // Passo 1: Campos obrigatórios das colunas
         $data = array(
-            'email' => $submission->email,  // ✅ Da coluna
+            'email' => $submission->email,  // Da coluna
         );
         
         // Adicionar auth_code se existir na coluna
         if ( ! empty( $submission->auth_code ) ) {
-            $data['auth_code'] = $submission->auth_code;  // ✅ Da coluna
+            $data['auth_code'] = $submission->auth_code;  // Da coluna
         }
         
         // Adicionar cpf_rf se existir na coluna
         if ( ! empty( $submission->cpf_rf ) ) {
-            $data['cpf_rf'] = $submission->cpf_rf;  // ✅ Da coluna
+            $data['cpf_rf'] = $submission->cpf_rf;  // Da coluna
         }
         
         // Passo 2: Campos extras do JSON
@@ -95,15 +96,15 @@ class FFC_Verification_Handler {
         
         // Passo 3: Merge (extras NÃO sobrescrevem obrigatórios)
         if ( is_array( $extra_data ) && ! empty( $extra_data ) ) {
-            $data = array_merge( $extra_data, $data );  // ✅ Colunas têm prioridade
+            $data = array_merge( $extra_data, $data );  // Colunas têm prioridade
         }
         
-        // ✅ Agora $data tem TUDO: colunas + JSON
+        // Agora $data tem TUDO: colunas + JSON
         
         return array(
             'found' => true,
             'submission' => $submission,
-            'data' => $data  // ✅ Dados completos reconstruídos
+            'data' => $data  // Dados completos reconstruídos
         );
     }
 
@@ -153,8 +154,25 @@ class FFC_Verification_Handler {
             );
         }
 
+        // v2.10.0: Log access for LGPD compliance
+        if ( class_exists( 'FFC_Activity_Log' ) ) {
+            FFC_Activity_Log::log_data_accessed(
+                $submission['id'],
+                array(
+                    'method' => 'magic_link',
+                    'token' => substr( $token, 0, 8 ) . '...',
+                    'ip' => FFC_Utils::get_user_ip()
+                )
+            );
+        }
+
         // v2.9.16: RECONSTRUIR dados completos (colunas + JSON)
-        
+        // v2.10.0: NOTE - Descriptografia automática
+        // Os dados já vêm descriptografados do Submission Handler.
+        // O método get_submission_by_token() chama decrypt_submission_data()
+        // internamente, então os campos email, cpf_rf, user_ip, data já
+        // estão em texto puro aqui. Não é necessário descriptografar novamente.
+
         // Passo 1: Campos obrigatórios das colunas
         $data = array();
         
@@ -196,11 +214,11 @@ class FFC_Verification_Handler {
     }
 
     /**
- * Format verification response HTML
- * 
- * ✅ v2.9.7 ENHANCED: Shows more fields with better formatting
- */
-private function format_verification_response( $submission, $data, $show_download_button = false ) {
+     * Format verification response HTML
+     * 
+     * ✅ v2.9.7 ENHANCED: Shows more fields with better formatting
+     */
+    private function format_verification_response( $submission, $data, $show_download_button = false ) {
     $form = get_post( $submission->form_id );
     $form_title = $form ? $form->post_title : __( 'N/A', 'ffc' );
     $date_generated = date_i18n( 
@@ -307,12 +325,12 @@ private function format_verification_response( $submission, $data, $show_downloa
 }
 
     /**
- * Get human-readable field label
- * 
- * @param string $field_key Field key
- * @return string Formatted label
- */
-private function get_field_label( $field_key ) {
+     * Get human-readable field label
+     * 
+     * @param string $field_key Field key
+     * @return string Formatted label
+     */
+    private function get_field_label( $field_key ) {
     // Custom labels for known fields
     $labels = array(
         'cpf_rf'   => __( 'CPF/RF', 'ffc' ),
@@ -343,13 +361,13 @@ private function get_field_label( $field_key ) {
 }
 
     /**
- * Format field value for display
- * 
- * @param string $field_key Field key
- * @param mixed $value Field value
- * @return string Formatted value
- */
-private function format_field_value( $field_key, $value ) {
+     * Format field value for display
+     * 
+     * @param string $field_key Field key
+     * @param mixed $value Field value
+     * @return string Formatted value
+     */
+    private function format_field_value( $field_key, $value ) {
     // Handle arrays
     if ( is_array( $value ) ) {
         return implode( ', ', $value );
@@ -371,6 +389,19 @@ private function format_field_value( $field_key, $value ) {
      */
     public function verify_certificate( $auth_code ) {
         $result = $this->search_certificate( $auth_code );
+        if ( $result['found'] && isset( $result['submission']['id'] ) ) {
+        // ✅ v2.10.0: Log access for LGPD compliance
+        if ( class_exists( 'FFC_Activity_Log' ) ) {
+            FFC_Activity_Log::log_data_accessed(
+                $result['submission']['id'],
+                array(
+                    'method' => 'manual_verification',
+                    'auth_code' => substr( $auth_code, 0, 4 ) . '...',
+                    'ip' => FFC_Utils::get_user_ip()
+                )
+            );
+        }
+        }
         
         if ( ! $result['found'] ) {
             return array(

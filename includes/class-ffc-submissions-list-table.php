@@ -207,7 +207,17 @@ class FFC_Submission_List extends WP_List_Table {
         
         $where = array( $wpdb->prepare( "status = %s", $status ) );
         if ( ! empty( $search ) ) {
-            $where[] = $wpdb->prepare( "(email LIKE %s OR data LIKE %s)", '%' . $wpdb->esc_like( $search ) . '%', '%' . $wpdb->esc_like( $search ) . '%' );
+            // ✅ v2.10.0: Search in encrypted hash fields (for email/CPF) and decrypted data
+            // Hash the search term to search encrypted fields
+            $search_hash = class_exists('FFC_Encryption') ? FFC_Encryption::hash( $search ) : '';
+            
+            $where[] = $wpdb->prepare( 
+                "(email_hash = %s OR cpf_rf_hash = %s OR data LIKE %s OR data_encrypted LIKE %s)", 
+                $search_hash,
+                $search_hash,
+                '%' . $wpdb->esc_like( $search ) . '%',
+                '%' . $wpdb->esc_like( $search ) . '%'
+            );
         }
         $where_clause = 'WHERE ' . implode( ' AND ', $where );
         
@@ -223,6 +233,13 @@ class FFC_Submission_List extends WP_List_Table {
             $wpdb->prepare( "SELECT * FROM $table_name $where_clause ORDER BY $orderby $order LIMIT %d OFFSET %d", $per_page, $offset ),
             ARRAY_A
         );
+        
+        // ✅ v2.10.0: Decrypt encrypted data for display
+        if ( ! empty( $this->items ) ) {
+            foreach ( $this->items as $key => $item ) {
+                $this->items[$key] = $this->submission_handler->decrypt_submission_data( $item );
+            }
+        }
 
         // 6. Configurar Paginação
         $this->set_pagination_args( array(
