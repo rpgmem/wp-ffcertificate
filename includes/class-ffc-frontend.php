@@ -100,6 +100,7 @@ class FFC_Frontend {
             'pleaseWait'            => __( 'Please wait, this may take a few seconds...', 'ffc' ),
             )
         ) );
+        }
     }
 
     /**
