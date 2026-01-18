@@ -60,11 +60,16 @@
                     this.handleBlocked(formWrapper, config.datetime.hideMode, datetimeValid.message, config.datetime.message);
                     return; // Stop here, don't check geo
                 }
+                // DateTime validation passed, continue...
             }
 
             // PRIORITY 2: Validate Geolocation (if enabled)
             if (config.geo && config.geo.enabled && config.geo.gpsEnabled) {
                 this.validateGeolocation(formWrapper, config.geo);
+            } else {
+                // No geolocation check needed, show form now
+                formWrapper.find('.ffc-submission-form').show();
+                this.debug('No geolocation validation, showing form');
             }
         },
 

@@ -196,9 +196,19 @@ class FFC_Shortcodes {
             'ip' => FFC_Utils::get_user_ip()
         ) );
 
+        // ✅ v3.0.0: Check if geofence is active for this form
+        $geofence_config = get_post_meta( $form_id, '_ffc_geofence_config', true );
+        $has_geofence = false;
+        if ( is_array( $geofence_config ) ) {
+            $has_datetime = ! empty( $geofence_config['datetime_enabled'] ) && $geofence_config['datetime_enabled'] == '1';
+            $has_geo = ! empty( $geofence_config['geo_enabled'] ) && $geofence_config['geo_enabled'] == '1';
+            $has_geofence = $has_datetime || $has_geo;
+        }
+        $wrapper_class = $has_geofence ? 'ffc-form-wrapper ffc-has-geofence' : 'ffc-form-wrapper';
+
         ob_start();
         ?>
-        <div class="ffc-form-wrapper" id="ffc-form-<?php echo esc_attr( $form_id ); ?>">
+        <div class="<?php echo esc_attr( $wrapper_class ); ?>" id="ffc-form-<?php echo esc_attr( $form_id ); ?>">
             <h2 class="ffc-form-title"><?php echo esc_html( $form_title ); ?></h2>
             <form class="ffc-submission-form" id="ffc-form-element-<?php echo esc_attr( $form_id ); ?>">
                 <input type="hidden" name="form_id" value="<?php echo esc_attr( $form_id ); ?>">

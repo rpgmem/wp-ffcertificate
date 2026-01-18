@@ -652,6 +652,41 @@
 }
 
 /* ============================================
+   GEOFENCE - PREVENT FORM FLASH (v3.0.0)
+   ============================================ */
+/* Hide form initially when geofence is active to prevent flash */
+.ffc-has-geofence .ffc-submission-form {
+    display: none !important;
+}
+
+/* Geofence loading message */
+.ffc-geofence-loading-msg {
+    text-align: center;
+    padding: 30px 20px;
+}
+
+.ffc-geofence-loading-msg p {
+    margin: 20px 0 0 0;
+    color: #666;
+    font-size: 16px;
+}
+
+/* Geofence blocked message */
+.ffc-geofence-blocked {
+    background: #fff3cd;
+    border-left: 4px solid #ffc107;
+    padding: 15px 20px;
+    margin: 20px 0;
+    border-radius: 4px;
+}
+
+.ffc-geofence-blocked p {
+    margin: 0;
+    color: #856404;
+    font-size: 15px;
+}
+
+/* ============================================
    LOADING STATE (Magic Link)
    ============================================ */
 .ffc-verify-loading {
