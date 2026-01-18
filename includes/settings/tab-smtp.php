@@ -20,15 +20,30 @@ $get_option = function($key, $default = '') {
     <form method="post">
         <?php wp_nonce_field('ffc_settings_action', 'ffc_settings_nonce'); ?>
         <input type="hidden" name="_ffc_tab" value="smtp">
-        
+
         <table class="form-table" role="presentation">
             <tbody>
+                <tr>
+                    <th scope="row">
+                        <label for="disable_all_emails"><?php esc_html_e('Email Status', 'ffc'); ?></label>
+                    </th>
+                    <td>
+                        <label>
+                            <input type="checkbox" name="ffc_settings[disable_all_emails]" id="disable_all_emails" value="1" <?php checked('1', $get_option('disable_all_emails')); ?>>
+                            <strong style="color: #d63638;"><?php esc_html_e('Disable ALL emails from this plugin globally', 'ffc'); ?></strong>
+                        </label>
+                        <p class="description">
+                            <?php _e('When enabled, the plugin will NOT send any emails (certificates, notifications, password resets, etc.). Use this for testing or if you want to completely disable email functionality.', 'ffc'); ?>
+                        </p>
+                    </td>
+                </tr>
+
                 <tr>
                     <th scope="row">
                         <label><?php esc_html_e('Mode', 'ffc'); ?></label>
                     </th>
                     <td>
-                        <fieldset>
+                        <fieldset id="smtp-mode-options">
                             <label>
                                 <input type="radio" name="ffc_settings[smtp_mode]" value="wp" <?php checked('wp', $get_option('smtp_mode')); ?>>
                                 <strong><?php esc_html_e('WP Default (PHPMail)', 'ffc'); ?></strong>
@@ -36,7 +51,7 @@ $get_option = function($key, $default = '') {
                             <p class="description">
                                 <?php _e('Uses WordPress default mail function. Simple but may have deliverability issues.', 'ffc'); ?>
                             </p>
-                            
+
                             <label>
                                 <input type="radio" name="ffc_settings[smtp_mode]" value="custom" <?php checked('custom', $get_option('smtp_mode')); ?>>
                                 <strong><?php esc_html_e('Custom SMTP', 'ffc'); ?></strong>
@@ -157,6 +172,7 @@ $get_option = function($key, $default = '') {
 
 <script>
 jQuery(document).ready(function($) {
+    // Handle SMTP mode toggle
     $('input[name="ffc_settings[smtp_mode]"]').on('change', function() {
         if ($(this).val() === 'custom') {
             $('#smtp-options').removeClass('ffc-hidden').slideDown(200);
@@ -166,5 +182,22 @@ jQuery(document).ready(function($) {
             });
         }
     });
+
+    // Handle disable all emails toggle
+    function toggleEmailOptions() {
+        var disabled = $('#disable_all_emails').is(':checked');
+        $('#smtp-mode-options input, #smtp-options input, #smtp-options select').prop('disabled', disabled);
+
+        if (disabled) {
+            $('#smtp-mode-options, #smtp-options').css('opacity', '0.5');
+        } else {
+            $('#smtp-mode-options, #smtp-options').css('opacity', '1');
+        }
+    }
+
+    $('#disable_all_emails').on('change', toggleEmailOptions);
+
+    // Run on page load
+    toggleEmailOptions();
 });
 </script>
