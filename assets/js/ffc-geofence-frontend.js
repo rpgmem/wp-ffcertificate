@@ -83,6 +83,20 @@
         },
 
         /**
+         * Get translated string
+         *
+         * @param {string} key String key
+         * @param {string} fallback Fallback if translation not found
+         * @returns {string} Translated string or fallback
+         */
+        getString: function(key, fallback) {
+            if (window.ffcGeofenceConfig && window.ffcGeofenceConfig._global && window.ffcGeofenceConfig._global.strings) {
+                return window.ffcGeofenceConfig._global.strings[key] || fallback;
+            }
+            return fallback;
+        },
+
+        /**
          * Validate date/time restrictions
          *
          * @param {object} config DateTime configuration
@@ -106,14 +120,14 @@
             if (config.dateStart && currentDate < config.dateStart) {
                 return {
                     valid: false,
-                    message: config.message || 'This form is not yet available.'
+                    message: config.message || this.getString('formNotYetAvailable', 'This form is not yet available.')
                 };
             }
 
             if (config.dateEnd && currentDate > config.dateEnd) {
                 return {
                     valid: false,
-                    message: config.message || 'This form is no longer available.'
+                    message: config.message || this.getString('formNoLongerAvailable', 'This form is no longer available.')
                 };
             }
 
@@ -122,7 +136,7 @@
                 if (currentTime < config.timeStart || currentTime > config.timeEnd) {
                     return {
                         valid: false,
-                        message: config.message || 'This form is only available during specific hours.'
+                        message: config.message || this.getString('formOnlyDuringHours', 'This form is only available during specific hours.')
                     };
                 }
             }
@@ -144,7 +158,7 @@
                 this.handleBlocked(
                     formWrapper,
                     config.hideMode,
-                    'Your browser does not support geolocation.',
+                    this.getString('browserNoSupport', 'Your browser does not support geolocation.'),
                     config.messageError
                 );
                 return;
@@ -161,7 +175,7 @@
             // IMPORTANT: Hide form BEFORE requesting location
             formWrapper.find('.ffc-submission-form').hide();
             formWrapper.addClass('ffc-geofence-loading');
-            this.showLoadingMessage(formWrapper, 'Detecting your location...');
+            this.showLoadingMessage(formWrapper, this.getString('detectingLocation', 'Detecting your location...'));
 
             // Request geolocation
             navigator.geolocation.getCurrentPosition(
@@ -193,17 +207,17 @@
 
                     self.debug('Geolocation error', error);
 
-                    let errorMessage = config.messageError || 'Unable to determine your location.';
+                    let errorMessage = config.messageError || self.getString('locationError', 'Unable to determine your location.');
 
                     switch (error.code) {
                         case error.PERMISSION_DENIED:
-                            errorMessage = 'Location permission denied. Please enable location services.';
+                            errorMessage = self.getString('permissionDenied', 'Location permission denied. Please enable location services.');
                             break;
                         case error.POSITION_UNAVAILABLE:
-                            errorMessage = 'Location information is unavailable.';
+                            errorMessage = self.getString('positionUnavailable', 'Location information is unavailable.');
                             break;
                         case error.TIMEOUT:
-                            errorMessage = 'Location request timed out.';
+                            errorMessage = self.getString('timeout', 'Location request timed out.');
                             break;
                     }
 
@@ -261,7 +275,7 @@
                 this.handleBlocked(
                     formWrapper,
                     config.hideMode,
-                    'You are outside the allowed area for this form.',
+                    this.getString('outsideArea', 'You are outside the allowed area for this form.'),
                     config.messageBlocked
                 );
             } else {
@@ -369,7 +383,7 @@
         showAdminBypassMessages: function(formWrapper, bypassInfo) {
             if (!bypassInfo) {
                 // Fallback: show generic message if no bypass info
-                const message = '🔓 Admin Bypass Mode Active - Geofence restrictions are disabled for administrators';
+                const message = '🔓 ' + this.getString('bypassGeneric', 'Admin Bypass Mode Active - Geofence restrictions are disabled for administrators');
                 const html = '<div class="ffc-geofence-admin-bypass"><p>' + this.escapeHtml(message) + '</p></div>';
                 formWrapper.prepend(html);
                 return;
@@ -377,20 +391,20 @@
 
             // Show specific messages for each bypassed restriction
             if (bypassInfo.hasDatetime) {
-                const datetimeMsg = '🔓 Admin Bypass: Date/Time restrictions are disabled for administrators';
+                const datetimeMsg = '🔓 ' + this.getString('bypassDatetime', 'Admin Bypass: Date/Time restrictions are disabled for administrators');
                 const datetimeHtml = '<div class="ffc-geofence-admin-bypass"><p>' + this.escapeHtml(datetimeMsg) + '</p></div>';
                 formWrapper.prepend(datetimeHtml);
             }
 
             if (bypassInfo.hasGeo) {
-                const geoMsg = '🔓 Admin Bypass: Geolocation restrictions are disabled for administrators';
+                const geoMsg = '🔓 ' + this.getString('bypassGeo', 'Admin Bypass: Geolocation restrictions are disabled for administrators');
                 const geoHtml = '<div class="ffc-geofence-admin-bypass"><p>' + this.escapeHtml(geoMsg) + '</p></div>';
                 formWrapper.prepend(geoHtml);
             }
 
             // If neither, show generic message
             if (!bypassInfo.hasDatetime && !bypassInfo.hasGeo) {
-                const message = '🔓 Admin Bypass Mode Active';
+                const message = '🔓 ' + this.getString('bypassActive', 'Admin Bypass Mode Active');
                 const html = '<div class="ffc-geofence-admin-bypass"><p>' + this.escapeHtml(message) + '</p></div>';
                 formWrapper.prepend(html);
             }

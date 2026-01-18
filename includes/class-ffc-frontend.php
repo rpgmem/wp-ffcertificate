@@ -134,7 +134,28 @@ class FFC_Frontend {
 
         // Add global settings without re-indexing form IDs
         $geofence_configs['_global'] = array(
-            'debug' => !empty($global_settings['debug_enabled'])
+            'debug' => !empty($global_settings['debug_enabled']),
+            'strings' => array(
+                // Admin bypass messages
+                'bypassGeneric' => __('Admin Bypass Mode Active - Geofence restrictions are disabled for administrators', 'ffc'),
+                'bypassDatetime' => __('Admin Bypass: Date/Time restrictions are disabled for administrators', 'ffc'),
+                'bypassGeo' => __('Admin Bypass: Geolocation restrictions are disabled for administrators', 'ffc'),
+                'bypassActive' => __('Admin Bypass Mode Active', 'ffc'),
+
+                // Geolocation messages
+                'detectingLocation' => __('Detecting your location...', 'ffc'),
+                'browserNoSupport' => __('Your browser does not support geolocation.', 'ffc'),
+                'locationError' => __('Unable to determine your location.', 'ffc'),
+                'permissionDenied' => __('Location permission denied. Please enable location services.', 'ffc'),
+                'positionUnavailable' => __('Location information is unavailable.', 'ffc'),
+                'timeout' => __('Location request timed out.', 'ffc'),
+                'outsideArea' => __('You are outside the allowed area for this form.', 'ffc'),
+
+                // DateTime messages
+                'formNotYetAvailable' => __('This form is not yet available.', 'ffc'),
+                'formNoLongerAvailable' => __('This form is no longer available.', 'ffc'),
+                'formOnlyDuringHours' => __('This form is only available during specific hours.', 'ffc'),
+            ),
         );
 
         // Localize script with preserved array keys
