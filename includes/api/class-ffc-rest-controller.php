@@ -49,9 +49,9 @@ class FFC_REST_Controller {
      */
     private function load_repositories() {
         $repo_files = array(
-            'abstract-repository.php',
-            'form-repository.php',
-            'submission-repository.php'
+            'ffc-abstract-repository.php',
+            'ffc-form-repository.php',
+            'ffc-submission-repository.php'
         );
         
         foreach ($repo_files as $file) {

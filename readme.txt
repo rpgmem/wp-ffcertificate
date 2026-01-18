@@ -192,7 +192,7 @@ IMPROVED:
   - JavaScript strings localized via `wp_localize_script`
   - Created `.pot` file for translators
 * **CSS Consolidation:** Removed all inline styles
-  - Moved to `admin.css` and `frontend.css`
+  - Moved to `ffc-admin.css` and `ffc-frontend.css`
   - Better organization and maintainability
 * **Code Quality:**
   - Removed dead code
@@ -317,8 +317,8 @@ wp-ffcertificate/
 ├── readme.txt
 ├── includes/ 
 │   ├── settings-tabs/
-│   	├── tab-documentation.php
-│   	├── tab-migrations.php
+│   	├── ff-tab-documentation.php
+│   	├── ffc-tab-migrations.php
 │   ├── class-ffc-activator.php (Installation logic + migration)
 │   ├── class-ffc-activity-log.php
 │   ├── class-ffc-admin-ajax.php
@@ -345,9 +345,9 @@ wp-ffcertificate/
 ├── assets/
 │   ├── css/
 │   │   ├── ffc-pdf-core.css (PDF rendering)
-│   │   ├── admin.css (Admin styles)
-│   │   ├── editor-placeholders.css
-│   │   └── frontend.css (Public styles + magic link preview)
+│   │   ├── ffc-admin.css (Admin styles)
+│   │   ├── ffc-editor-placeholders.css
+│   │   └── ffc-frontend.css (Public styles + magic link preview)
 │   └── js/
 │       ├── html2canvas.min.js (v1.4.1)
 │       ├── jspdf.umd.min.js (v2.5.1)

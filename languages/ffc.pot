@@ -21,12 +21,12 @@ msgstr ""
 msgid " by <strong>%s</strong>"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:45
+#: includes/settings/ffc-tab-rate-limit.php:45
 #, php-format
 msgid "%1$s attempts in %2$s hour(s)"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:55
+#: includes/settings/ffc-tab-rate-limit.php:55
 #, php-format
 msgid "%1$s hours"
 msgstr ""
@@ -72,7 +72,7 @@ msgstr ""
 msgid "%s: %d records migrated successfully."
 msgstr ""
 
-#: includes/settings/tab-documentation.php:164
+#: includes/settings/ffc-tab-documentation.php:164
 msgid "(default: 2)"
 msgstr ""
 
@@ -80,15 +80,15 @@ msgstr ""
 msgid "(Deleted)"
 msgstr ""
 
-#: includes/settings/tab-general.php:134
+#: includes/settings/ffc-tab-general.php:134
 msgid "(recommended)"
 msgstr ""
 
-#: includes/settings/tab-general.php:23
+#: includes/settings/ffc-tab-general.php:23
 msgid "04 of January, 2026"
 msgstr ""
 
-#: includes/settings/tab-general.php:193
+#: includes/settings/ffc-tab-general.php:193
 msgid "1 hour (default)"
 msgstr ""
 
@@ -96,19 +96,19 @@ msgstr ""
 msgid "1. Certificate Layout"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:21 includes/settings/tab-documentation.php:37
+#: includes/settings/ffc-tab-documentation.php:21 includes/settings/ffc-tab-documentation.php:37
 msgid "1. Shortcodes"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:30 includes/settings/tab-documentation.php:553
+#: includes/settings/ffc-tab-documentation.php:30 includes/settings/ffc-tab-documentation.php:553
 msgid "10. Troubleshooting"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:157
+#: includes/settings/ffc-tab-documentation.php:157
 msgid "100px at 500px"
 msgstr ""
 
-#: includes/settings/tab-general.php:191
+#: includes/settings/ffc-tab-general.php:191
 msgid "15 minutes"
 msgstr ""
 
@@ -116,23 +116,23 @@ msgstr ""
 msgid "2. Form Builder (Fields)"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:67
+#: includes/settings/ffc-tab-documentation.php:67
 msgid "2. PDF Template Variables"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:22
+#: includes/settings/ffc-tab-documentation.php:22
 msgid "2. Template Variables"
 msgstr ""
 
-#: includes/settings/tab-general.php:194
+#: includes/settings/ffc-tab-general.php:194
 msgid "24 hours"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:23
+#: includes/settings/ffc-tab-documentation.php:23
 msgid "3. QR Code Options"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:135
+#: includes/settings/ffc-tab-documentation.php:135
 msgid "3. QR Code Options & Attributes"
 msgstr ""
 
@@ -140,11 +140,11 @@ msgstr ""
 msgid "3. Restriction & Security"
 msgstr ""
 
-#: includes/settings/tab-general.php:192
+#: includes/settings/ffc-tab-general.php:192
 msgid "30 minutes"
 msgstr ""
 
-#: includes/settings/tab-general.php:22
+#: includes/settings/ffc-tab-general.php:22
 msgid "4 of January, 2026"
 msgstr ""
 
@@ -152,31 +152,31 @@ msgstr ""
 msgid "4. Email Configuration"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:24 includes/settings/tab-documentation.php:188
+#: includes/settings/ffc-tab-documentation.php:24 includes/settings/ffc-tab-documentation.php:188
 msgid "4. Validation URL"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:25 includes/settings/tab-documentation.php:224
+#: includes/settings/ffc-tab-documentation.php:25 includes/settings/ffc-tab-documentation.php:224
 msgid "5. HTML & Styling"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:26 includes/settings/tab-documentation.php:346
+#: includes/settings/ffc-tab-documentation.php:26 includes/settings/ffc-tab-documentation.php:346
 msgid "6. Custom Fields"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:27 includes/settings/tab-documentation.php:372
+#: includes/settings/ffc-tab-documentation.php:27 includes/settings/ffc-tab-documentation.php:372
 msgid "7. Features"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:28 includes/settings/tab-documentation.php:428
+#: includes/settings/ffc-tab-documentation.php:28 includes/settings/ffc-tab-documentation.php:428
 msgid "8. Security Features"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:29
+#: includes/settings/ffc-tab-documentation.php:29
 msgid "9. Complete Examples"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:464
+#: includes/settings/ffc-tab-documentation.php:464
 msgid "9. Complete Template Examples"
 msgstr ""
 
@@ -188,7 +188,7 @@ msgstr ""
 msgid "Access Certificate Online"
 msgstr ""
 
-#: includes/class-ffc-submissions-list-table.php:37 includes/class-ffc-form-editor.php:118 includes/settings/tab-general.php:250
+#: includes/class-ffc-submissions-list-table.php:37 includes/class-ffc-form-editor.php:118 includes/settings/ffc-tab-general.php:250
 msgid "Actions"
 msgstr ""
 
@@ -200,7 +200,7 @@ msgstr ""
 msgid "Add New Form"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:576
+#: includes/settings/ffc-tab-documentation.php:576
 msgid "Add width/height attributes"
 msgstr ""
 
@@ -224,11 +224,11 @@ msgstr ""
 msgid "All Forms"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:17
+#: includes/settings/ffc-tab-rate-limit.php:17
 msgid "All forms"
 msgstr ""
 
-#: includes/settings/tab-migrations.php:162
+#: includes/settings/ffc-tab-migrations.php:162
 msgid "All records have been successfully migrated."
 msgstr ""
 
@@ -240,7 +240,7 @@ msgstr ""
 msgid "Allowlist (CPFs / IDs)"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:436
+#: includes/settings/ffc-tab-documentation.php:436
 msgid "Allowlist/Denylist:"
 msgstr ""
 
@@ -248,19 +248,19 @@ msgstr ""
 msgid "Allows creation of dynamic forms, saves submissions, generates a PDF certificate, and enables CSV export."
 msgstr ""
 
-#: includes/settings/tab-documentation.php:597
+#: includes/settings/ffc-tab-documentation.php:597
 msgid "Always use inline styles"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:126
+#: includes/settings/ffc-tab-documentation.php:126
 msgid "Any custom field name you created"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:348
+#: includes/settings/ffc-tab-documentation.php:348
 msgid "Any custom field you create in Form Builder automatically becomes a template variable:"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:17
+#: includes/settings/ffc-tab-rate-limit.php:17
 msgid "Apply to"
 msgstr ""
 
@@ -280,27 +280,27 @@ msgstr ""
 msgid "Authenticity:"
 msgstr ""
 
-#: includes/settings/tab-general.php:46
+#: includes/settings/ffc-tab-general.php:46
 msgid "Auto-delete (days)"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:404
+#: includes/settings/ffc-tab-documentation.php:404
 msgid "Auto-delete:"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:397
+#: includes/settings/ffc-tab-documentation.php:397
 msgid "Automatic (or not) email sent with certificate PDF attached upon submission"
 msgstr ""
 
-#: includes/settings/tab-general.php:202
+#: includes/settings/ffc-tab-general.php:202
 msgid "Automatic Warming"
 msgstr ""
 
-#: includes/settings/tab-general.php:224
+#: includes/settings/ffc-tab-general.php:224
 msgid "Backend:"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:325
+#: includes/settings/ffc-tab-documentation.php:325
 msgid "Background color"
 msgstr ""
 
@@ -316,23 +316,23 @@ msgstr ""
 msgid "Banned users..."
 msgstr ""
 
-#: includes/settings/tab-documentation.php:457
+#: includes/settings/ffc-tab-documentation.php:457
 msgid "Basic humanity verification"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:85
+#: includes/settings/ffc-tab-rate-limit.php:85
 msgid "Blacklist"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:42
+#: includes/settings/ffc-tab-rate-limit.php:42
 msgid "Block after"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:52
+#: includes/settings/ffc-tab-rate-limit.php:52
 msgid "Block duration"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:115
+#: includes/settings/ffc-tab-rate-limit.php:115
 msgid "Blocked (30 days):"
 msgstr ""
 
@@ -340,15 +340,15 @@ msgstr ""
 msgid "Blocked CPF/RF cannot submit"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:114
+#: includes/settings/ffc-tab-rate-limit.php:114
 msgid "Blocked today:"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:238
+#: includes/settings/ffc-tab-documentation.php:238
 msgid "Bold text:"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:337
+#: includes/settings/ffc-tab-documentation.php:337
 msgid "Border"
 msgstr ""
 
@@ -356,27 +356,27 @@ msgstr ""
 msgid "Bulk action completed."
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:117
+#: includes/settings/ffc-tab-rate-limit.php:117
 msgid "By type:"
 msgstr ""
 
-#: includes/settings/tab-qrcode.php:99
+#: includes/settings/ffc-tab-qrcode.php:99
 msgid "Cache Statistics"
 msgstr ""
 
-#: includes/settings/tab-qrcode.php:113
+#: includes/settings/ffc-tab-qrcode.php:113
 msgid "Cache Status:"
 msgstr ""
 
-#: includes/settings/tab-qrcode.php:138
+#: includes/settings/ffc-tab-qrcode.php:138
 msgid "Cache stores generated QR Codes to improve performance. Enable \"QR Code Cache\" above to start caching."
 msgstr ""
 
-#: includes/settings/tab-qrcode.php:127
+#: includes/settings/ffc-tab-qrcode.php:127
 msgid "Cached QR Codes:"
 msgstr ""
 
-#: includes/settings/tab-migrations.php:203
+#: includes/settings/ffc-tab-migrations.php:203
 msgid "Can I undo a migration?"
 msgstr ""
 
@@ -424,15 +424,15 @@ msgstr ""
 msgid "Certificate Verification"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:25 includes/settings/tab-rate-limit.php:37
+#: includes/settings/ffc-tab-rate-limit.php:25 includes/settings/ffc-tab-rate-limit.php:37
 msgid "Check database"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:575
+#: includes/settings/ffc-tab-documentation.php:575
 msgid "Check image is publicly accessible"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:566
+#: includes/settings/ffc-tab-documentation.php:566
 msgid "Check spelling matches exactly"
 msgstr ""
 
@@ -448,27 +448,27 @@ msgstr ""
 msgid "Cleanup Unencrypted Data (15+ days)"
 msgstr ""
 
-#: includes/settings/tab-general.php:255
+#: includes/settings/ffc-tab-general.php:255
 msgid "Clear all cache?"
 msgstr ""
 
-#: includes/settings/tab-qrcode.php:163
+#: includes/settings/ffc-tab-qrcode.php:163
 msgid "Clear all cached QR Codes?\\n\\nThey will be regenerated automatically when needed."
 msgstr ""
 
-#: includes/settings/tab-qrcode.php:164
+#: includes/settings/ffc-tab-qrcode.php:164
 msgid "Clear All QR Code Cache"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:606
+#: includes/settings/ffc-tab-documentation.php:606
 msgid "Clear browser cache (Ctrl+F5)"
 msgstr ""
 
-#: includes/settings/tab-general.php:256
+#: includes/settings/ffc-tab-general.php:256
 msgid "Clear Cache"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:605
+#: includes/settings/ffc-tab-documentation.php:605
 msgid "Clear WordPress cache"
 msgstr ""
 
@@ -476,7 +476,7 @@ msgstr ""
 msgid "Click the button above to view and download your certificate"
 msgstr ""
 
-#: includes/settings/tab-migrations.php:175
+#: includes/settings/ffc-tab-migrations.php:175
 #, php-format
 msgid "Click to migrate up to 100 records. %s records remaining."
 msgstr ""
@@ -485,15 +485,15 @@ msgstr ""
 msgid "codes generated"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:180
+#: includes/settings/ffc-tab-documentation.php:180
 msgid "Combining multiple attributes (separate with colons)"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:303
+#: includes/settings/ffc-tab-documentation.php:303
 msgid "Common Inline Styles:"
 msgstr ""
 
-#: includes/settings/tab-smtp.php:70
+#: includes/settings/ffc-tab-smtp.php:70
 msgid "Common ports: 587 (TLS), 465 (SSL), 25 (unencrypted)"
 msgstr ""
 
@@ -501,11 +501,11 @@ msgstr ""
 msgid "Common variables include {{auth_code}}, {{submission_date}}, and {{ticket}}."
 msgstr ""
 
-#: includes/settings/tab-migrations.php:148
+#: includes/settings/ffc-tab-migrations.php:148
 msgid "Complete"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:14
+#: includes/settings/ffc-tab-documentation.php:14
 msgid "Complete Plugin Documentation"
 msgstr ""
 
@@ -525,11 +525,11 @@ msgstr ""
 msgid "Consent given:"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:258
+#: includes/settings/ffc-tab-documentation.php:258
 msgid "Container for sections"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:16
+#: includes/settings/ffc-tab-rate-limit.php:16
 msgid "Cooldown (sec)"
 msgstr ""
 
@@ -549,7 +549,7 @@ msgstr ""
 msgid "Copy to clipboard"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:109
+#: includes/settings/ffc-tab-rate-limit.php:109
 msgid "Countdown timer"
 msgstr ""
 
@@ -577,7 +577,7 @@ msgstr ""
 msgid "CPF/RF must be exactly 7 or 11 digits."
 msgstr ""
 
-#: includes/settings/tab-documentation.php:353
+#: includes/settings/ffc-tab-documentation.php:353
 msgid "Create a field in Form Builder (e.g., field name:"
 msgstr ""
 
@@ -585,19 +585,19 @@ msgstr ""
 msgid "Create Verification Page"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:392
+#: includes/settings/ffc-tab-documentation.php:392
 msgid "CSV Export:"
 msgstr ""
 
-#: includes/settings/tab-general.php:25
+#: includes/settings/ffc-tab-general.php:25
 msgid "Custom Format"
 msgstr ""
 
-#: includes/settings/tab-general.php:81
+#: includes/settings/ffc-tab-general.php:81
 msgid "Custom Format:"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:156
+#: includes/settings/ffc-tab-documentation.php:156
 msgid "Custom size (150x150 pixels)"
 msgstr ""
 
@@ -609,7 +609,7 @@ msgstr ""
 msgid "Custom size without margin"
 msgstr ""
 
-#: includes/settings/tab-smtp.php:42
+#: includes/settings/ffc-tab-smtp.php:42
 msgid "Custom SMTP"
 msgstr ""
 
@@ -617,7 +617,7 @@ msgstr ""
 msgid "Daily verification limit reached. Please try again tomorrow."
 msgstr ""
 
-#: includes/settings/tab-general.php:101
+#: includes/settings/ffc-tab-general.php:101
 msgid "Danger Zone"
 msgstr ""
 
@@ -633,7 +633,7 @@ msgstr ""
 msgid "Data deleted successfully."
 msgstr ""
 
-#: includes/settings/tab-documentation.php:448
+#: includes/settings/ffc-tab-documentation.php:448
 msgid "Data Encryption:"
 msgstr ""
 
@@ -641,7 +641,7 @@ msgstr ""
 msgid "Data Migrations"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:412
+#: includes/settings/ffc-tab-documentation.php:412
 msgid "Data Migrations:"
 msgstr ""
 
@@ -650,7 +650,7 @@ msgstr ""
 msgid "Database error: %s"
 msgstr ""
 
-#: includes/settings/tab-migrations.php:24
+#: includes/settings/ffc-tab-migrations.php:24
 msgid "Database Migrations"
 msgstr ""
 
@@ -658,15 +658,15 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:106
+#: includes/settings/ffc-tab-documentation.php:106
 msgid "Date certificate was issued"
 msgstr ""
 
-#: includes/settings/tab-general.php:56
+#: includes/settings/ffc-tab-general.php:56
 msgid "Date Format"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:408
+#: includes/settings/ffc-tab-documentation.php:408
 msgid "Date Format:"
 msgstr ""
 
@@ -679,11 +679,11 @@ msgstr ""
 msgid "Date: %s"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:100
+#: includes/settings/ffc-tab-rate-limit.php:100
 msgid "days"
 msgstr ""
 
-#: includes/settings/tab-qrcode.php:68
+#: includes/settings/ffc-tab-qrcode.php:68
 msgid "Default Error Correction Level"
 msgstr ""
 
@@ -691,27 +691,27 @@ msgstr ""
 msgid "Default QR Code (200x200px)"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:149
+#: includes/settings/ffc-tab-documentation.php:149
 msgid "Default QR code (uses settings from QR Code tab)"
 msgstr ""
 
-#: includes/settings/tab-qrcode.php:56
+#: includes/settings/ffc-tab-qrcode.php:56
 msgid "Default QR Code Margin"
 msgstr ""
 
-#: includes/settings/tab-qrcode.php:44
+#: includes/settings/ffc-tab-qrcode.php:44
 msgid "Default QR Code Size"
 msgstr ""
 
-#: includes/settings/tab-qrcode.php:49
+#: includes/settings/ffc-tab-qrcode.php:49
 msgid "Default size when {{qr_code}} placeholder is used without size parameter. Range: 100-500px."
 msgstr ""
 
-#: includes/settings/tab-documentation.php:150
+#: includes/settings/ffc-tab-documentation.php:150
 msgid "Default size:"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:202
+#: includes/settings/ffc-tab-documentation.php:202
 msgid "Default: link to magic, text shows /valid"
 msgstr ""
 
@@ -723,7 +723,7 @@ msgstr ""
 msgid "Delete Permanently"
 msgstr ""
 
-#: includes/settings/tab-general.php:112
+#: includes/settings/ffc-tab-general.php:112
 msgid "Delete Submissions"
 msgstr ""
 
@@ -735,19 +735,19 @@ msgstr ""
 msgid "Denylist (CPF/RF)"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:43 includes/settings/tab-documentation.php:74 includes/settings/tab-documentation.php:142 includes/settings/tab-documentation.php:195
+#: includes/settings/ffc-tab-documentation.php:43 includes/settings/ffc-tab-documentation.php:74 includes/settings/ffc-tab-documentation.php:142 includes/settings/ffc-tab-documentation.php:195
 msgid "Description"
 msgstr ""
 
-#: includes/settings/tab-qrcode.php:118
+#: includes/settings/ffc-tab-qrcode.php:118
 msgid "Disabled"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:50
+#: includes/settings/ffc-tab-documentation.php:50
 msgid "Displays the certificate issuance form."
 msgstr ""
 
-#: includes/settings/tab-documentation.php:57
+#: includes/settings/ffc-tab-documentation.php:57
 msgid "Displays the public verification page."
 msgstr ""
 
@@ -763,7 +763,7 @@ msgstr ""
 msgid "Documentation view file not found."
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:79 includes/settings/tab-rate-limit.php:89
+#: includes/settings/ffc-tab-rate-limit.php:79 includes/settings/ffc-tab-rate-limit.php:89
 msgid "Domains"
 msgstr ""
 
@@ -791,7 +791,7 @@ msgstr ""
 msgid "E-mail"
 msgstr ""
 
-#: includes/settings/tab-migrations.php:201
+#: includes/settings/ffc-tab-migrations.php:201
 msgid "Each migration processes 100 records at a time. For large databases, you may need to click \"Run Migration\" multiple times until it reaches 100%."
 msgstr ""
 
@@ -828,7 +828,7 @@ msgstr ""
 msgid "Email address is required."
 msgstr ""
 
-#: includes/settings/tab-smtp.php:102
+#: includes/settings/ffc-tab-smtp.php:102
 msgid "Email address to send from"
 msgstr ""
 
@@ -836,43 +836,43 @@ msgstr ""
 msgid "Email Body (HTML)"
 msgstr ""
 
-#: includes/settings/tab-smtp.php:18
+#: includes/settings/ffc-tab-smtp.php:18
 msgid "Email Configuration"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:396
+#: includes/settings/ffc-tab-documentation.php:396
 msgid "Email Notifications:"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:23
+#: includes/settings/ffc-tab-rate-limit.php:23
 msgid "Email Rate Limit"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:78 includes/settings/tab-rate-limit.php:88
+#: includes/settings/ffc-tab-rate-limit.php:78 includes/settings/ffc-tab-rate-limit.php:88
 msgid "Emails"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:12 includes/settings/tab-rate-limit.php:24 includes/settings/tab-rate-limit.php:36 includes/settings/tab-rate-limit.php:66
+#: includes/settings/ffc-tab-rate-limit.php:12 includes/settings/ffc-tab-rate-limit.php:24 includes/settings/ffc-tab-rate-limit.php:36 includes/settings/ffc-tab-rate-limit.php:66
 msgid "Enable"
 msgstr ""
 
-#: includes/settings/tab-general.php:174
+#: includes/settings/ffc-tab-general.php:174
 msgid "Enable Cache"
 msgstr ""
 
-#: includes/settings/tab-general.php:179
+#: includes/settings/ffc-tab-general.php:179
 msgid "Enable form caching"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:96
+#: includes/settings/ffc-tab-rate-limit.php:96
 msgid "Enable logs"
 msgstr ""
 
-#: includes/settings/tab-qrcode.php:29
+#: includes/settings/ffc-tab-qrcode.php:29
 msgid "Enable QR Code Cache"
 msgstr ""
 
-#: includes/settings/tab-qrcode.php:116
+#: includes/settings/ffc-tab-qrcode.php:116
 msgid "Enabled"
 msgstr ""
 
@@ -884,11 +884,11 @@ msgstr ""
 msgid "Encrypt Sensitive Data"
 msgstr ""
 
-#: includes/settings/tab-smtp.php:88
+#: includes/settings/ffc-tab-smtp.php:88
 msgid "Encryption"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:449
+#: includes/settings/ffc-tab-documentation.php:449
 msgid "Encryption for sensitive data (LGPD compliant)"
 msgstr ""
 
@@ -896,15 +896,15 @@ msgstr ""
 msgid "Encryption keys not configured. WordPress SECURE_AUTH_KEY and LOGGED_IN_KEY are required."
 msgstr ""
 
-#: includes/settings/tab-documentation.php:567
+#: includes/settings/ffc-tab-documentation.php:567
 msgid "Ensure field exists in form"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:405
+#: includes/settings/ffc-tab-documentation.php:405
 msgid "Ensure submissions are deleted after \"X\" days."
 msgstr ""
 
-#: includes/settings/tab-documentation.php:437
+#: includes/settings/ffc-tab-documentation.php:437
 msgid "Ensure that the listed IDs are allowed or blocked from retrieving certificates."
 msgstr ""
 
@@ -920,7 +920,7 @@ msgstr ""
 msgid "Enter your unique ticket code"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:170
+#: includes/settings/ffc-tab-documentation.php:170
 msgid "Error correction level"
 msgstr ""
 
@@ -968,7 +968,7 @@ msgstr ""
 msgid "Error: The math answer is incorrect."
 msgstr ""
 
-#: includes/settings/tab-qrcode.php:131
+#: includes/settings/ffc-tab-qrcode.php:131
 msgid "Estimated Cache Size:"
 msgstr ""
 
@@ -976,7 +976,7 @@ msgstr ""
 msgid "Event:"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:377
+#: includes/settings/ffc-tab-documentation.php:377
 msgid "Every certificate gets a unique 12-character code (e.g., A1B2-C3D4-E5F6)"
 msgstr ""
 
@@ -992,35 +992,35 @@ msgstr ""
 msgid "Ex: PASS2025"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:283 includes/settings/tab-documentation.php:308
+#: includes/settings/ffc-tab-documentation.php:283 includes/settings/ffc-tab-documentation.php:308
 msgid "Example"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:467
+#: includes/settings/ffc-tab-documentation.php:467
 msgid "Example 1: Simple Certificate"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:485
+#: includes/settings/ffc-tab-documentation.php:485
 msgid "Example 2: Certificate with Header & Footer"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:75
+#: includes/settings/ffc-tab-documentation.php:75
 msgid "Example Output"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:360
+#: includes/settings/ffc-tab-documentation.php:360
 msgid "Example:"
 msgstr ""
 
-#: includes/settings/tab-general.php:187
+#: includes/settings/ffc-tab-general.php:187
 msgid "Expiration Time"
 msgstr ""
 
-#: includes/settings/tab-general.php:232
+#: includes/settings/ffc-tab-general.php:232
 msgid "Expiration:"
 msgstr ""
 
-#: includes/settings/tab-general.php:160
+#: includes/settings/ffc-tab-general.php:160
 msgid "External cache active (Redis/Memcached)"
 msgstr ""
 
@@ -1044,7 +1044,7 @@ msgstr ""
 msgid "File imported successfully!"
 msgstr ""
 
-#: includes/settings/tab-general.php:50
+#: includes/settings/ffc-tab-general.php:50
 msgid "Files removed after X days. Set to 0 to disable."
 msgstr ""
 
@@ -1052,15 +1052,15 @@ msgstr ""
 msgid "Filtered CSV"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:333
+#: includes/settings/ffc-tab-documentation.php:333
 msgid "Font family"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:313
+#: includes/settings/ffc-tab-documentation.php:313
 msgid "Font size"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:615
+#: includes/settings/ffc-tab-documentation.php:615
 msgid "For additional support, check the plugin repository documentation or contact support."
 msgstr ""
 
@@ -1068,11 +1068,11 @@ msgstr ""
 msgid "Form"
 msgstr ""
 
-#: includes/settings/tab-general.php:156
+#: includes/settings/ffc-tab-general.php:156
 msgid "Form Cache"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:416
+#: includes/settings/ffc-tab-documentation.php:416
 msgid "Form Cache:"
 msgstr ""
 
@@ -1108,15 +1108,15 @@ msgstr ""
 msgid "Form:"
 msgstr ""
 
-#: includes/settings/tab-general.php:67 includes/settings/tab-documentation.php:409
+#: includes/settings/ffc-tab-general.php:67 includes/settings/ffc-tab-documentation.php:409
 msgid "Format used for {{submission_date}} placeholder in PDFs and emails."
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:79 includes/settings/tab-rate-limit.php:89
+#: includes/settings/ffc-tab-rate-limit.php:79 includes/settings/ffc-tab-rate-limit.php:89
 msgid "Format: *@domain.com"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:587
+#: includes/settings/ffc-tab-documentation.php:587
 msgid "Formatting not showing (bold, italic)"
 msgstr ""
 
@@ -1129,19 +1129,19 @@ msgstr ""
 msgid "Free Form Certificate:"
 msgstr ""
 
-#: includes/settings/tab-smtp.php:99
+#: includes/settings/ffc-tab-smtp.php:99
 msgid "From Email"
 msgstr ""
 
-#: includes/settings/tab-smtp.php:106
+#: includes/settings/ffc-tab-smtp.php:106
 msgid "From Name"
 msgstr ""
 
-#: includes/settings/tab-smtp.php:136
+#: includes/settings/ffc-tab-smtp.php:136
 msgid "Full email as username"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:401
+#: includes/settings/ffc-tab-documentation.php:401
 msgid "Full HTML editor to design your own certificate layout"
 msgstr ""
 
@@ -1149,7 +1149,7 @@ msgstr ""
 msgid "Full Name"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:81
+#: includes/settings/ffc-tab-documentation.php:81
 msgid "Full name of the participant"
 msgstr ""
 
@@ -1161,7 +1161,7 @@ msgstr ""
 msgid "General settings view file not found."
 msgstr ""
 
-#: includes/settings/tab-documentation.php:393
+#: includes/settings/ffc-tab-documentation.php:393
 msgid "Generate a CSV list with the submissions already sent."
 msgstr ""
 
@@ -1181,7 +1181,7 @@ msgstr ""
 msgid "Generating..."
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:65
+#: includes/settings/ffc-tab-rate-limit.php:65
 msgid "Global Rate Limit"
 msgstr ""
 
@@ -1189,7 +1189,7 @@ msgstr ""
 msgid "Grade"
 msgstr ""
 
-#: includes/settings/tab-general.php:228
+#: includes/settings/ffc-tab-general.php:228
 msgid "Group:"
 msgstr ""
 
@@ -1197,7 +1197,7 @@ msgstr ""
 msgid "Has priority over Allowlist. Accepts same formats."
 msgstr ""
 
-#: includes/settings/tab-documentation.php:270
+#: includes/settings/ffc-tab-documentation.php:270
 msgid "Headers/titles"
 msgstr ""
 
@@ -1205,11 +1205,11 @@ msgstr ""
 msgid "Hidden Field"
 msgstr ""
 
-#: includes/settings/tab-qrcode.php:82
+#: includes/settings/ffc-tab-qrcode.php:82
 msgid "High (30% correction)"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:175
+#: includes/settings/ffc-tab-documentation.php:175
 msgid "High (30%)"
 msgstr ""
 
@@ -1217,11 +1217,11 @@ msgstr ""
 msgid "High error correction (30%)"
 msgstr ""
 
-#: includes/settings/tab-qrcode.php:86
+#: includes/settings/ffc-tab-qrcode.php:86
 msgid "Higher levels allow more damage to QR Code but create denser patterns."
 msgstr ""
 
-#: includes/settings/tab-documentation.php:452
+#: includes/settings/ffc-tab-documentation.php:452
 msgid "Honeypot Fields:"
 msgstr ""
 
@@ -1229,11 +1229,11 @@ msgstr ""
 msgid "Hours"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:351
+#: includes/settings/ffc-tab-documentation.php:351
 msgid "How It Works:"
 msgstr ""
 
-#: includes/settings/tab-migrations.php:200
+#: includes/settings/ffc-tab-migrations.php:200
 msgid "How many times should I run it?"
 msgstr ""
 
@@ -1251,23 +1251,23 @@ msgstr ""
 msgid "ID"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:86
+#: includes/settings/ffc-tab-documentation.php:86
 msgid "ID/CPF/RF entered by user"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:361
+#: includes/settings/ffc-tab-documentation.php:361
 msgid "If you create these custom fields:"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:279
+#: includes/settings/ffc-tab-documentation.php:279
 msgid "Image Attributes:"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:572
+#: includes/settings/ffc-tab-documentation.php:572
 msgid "Image not showing in PDF"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:266
+#: includes/settings/ffc-tab-documentation.php:266
 msgid "Images (logos, signatures, decorations)"
 msgstr ""
 
@@ -1275,11 +1275,11 @@ msgstr ""
 msgid "Import HTML"
 msgstr ""
 
-#: includes/settings/tab-migrations.php:32
+#: includes/settings/ffc-tab-migrations.php:32
 msgid "Important:"
 msgstr ""
 
-#: includes/settings/tab-qrcode.php:37
+#: includes/settings/ffc-tab-qrcode.php:37
 msgid "Improves performance by caching QR Codes. Increases database size (~4KB per submission)."
 msgstr ""
 
@@ -1295,7 +1295,7 @@ msgstr ""
 msgid "Insufficient permissions"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:106
+#: includes/settings/ffc-tab-rate-limit.php:106
 msgid "Interface"
 msgstr ""
 
@@ -1347,11 +1347,11 @@ msgstr ""
 msgid "Invalid token."
 msgstr ""
 
-#: includes/settings/tab-documentation.php:453
+#: includes/settings/ffc-tab-documentation.php:453
 msgid "Invisible spam protection"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:11
+#: includes/settings/ffc-tab-rate-limit.php:11
 msgid "IP Rate Limit"
 msgstr ""
 
@@ -1360,11 +1360,11 @@ msgstr ""
 msgid "IP: %s"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:77 includes/settings/tab-rate-limit.php:87
+#: includes/settings/ffc-tab-rate-limit.php:77 includes/settings/ffc-tab-rate-limit.php:87
 msgid "IPs"
 msgstr ""
 
-#: includes/settings/tab-migrations.php:197
+#: includes/settings/ffc-tab-migrations.php:197
 msgid "Is it safe?"
 msgstr ""
 
@@ -1372,7 +1372,7 @@ msgstr ""
 msgid "Issued on:"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:242
+#: includes/settings/ffc-tab-documentation.php:242
 msgid "Italic text:"
 msgstr ""
 
@@ -1388,7 +1388,7 @@ msgstr ""
 msgid "Item restored."
 msgstr ""
 
-#: includes/settings/tab-general.php:21
+#: includes/settings/ffc-tab-general.php:21
 msgid "January 4, 2026 (Month Day, Year)"
 msgstr ""
 
@@ -1400,7 +1400,7 @@ msgstr ""
 msgid "Label"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:594
+#: includes/settings/ffc-tab-documentation.php:594
 msgid "Layout broken in PDF"
 msgstr ""
 
@@ -1408,43 +1408,43 @@ msgstr ""
 msgid "LGPD Consent Status"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:250
+#: includes/settings/ffc-tab-documentation.php:250
 msgid "Line break"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:212
+#: includes/settings/ffc-tab-documentation.php:212
 msgid "Link to /valid, custom text"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:209
+#: includes/settings/ffc-tab-documentation.php:209
 msgid "Link to /valid, text /valid"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:211
+#: includes/settings/ffc-tab-documentation.php:211
 msgid "Link to /valid, text magic"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:213
+#: includes/settings/ffc-tab-documentation.php:213
 msgid "Link to magic, custom text"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:208
+#: includes/settings/ffc-tab-documentation.php:208
 msgid "Link to magic, text /valid"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:210
+#: includes/settings/ffc-tab-documentation.php:210
 msgid "Link to magic, text magic"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:121
+#: includes/settings/ffc-tab-documentation.php:121
 msgid "Link to page with certificate validation"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:385
+#: includes/settings/ffc-tab-documentation.php:385
 msgid "Links that don't pass validation on the website. Shared by email and quickly verifying the certificate's."
 msgstr ""
 
-#: includes/settings/tab-documentation.php:274
+#: includes/settings/ffc-tab-documentation.php:274
 msgid "Lists (bullet or numbered)"
 msgstr ""
 
@@ -1456,27 +1456,27 @@ msgstr ""
 msgid "Loading..."
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:97
+#: includes/settings/ffc-tab-rate-limit.php:97
 msgid "Log allowed requests"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:98
+#: includes/settings/ffc-tab-rate-limit.php:98
 msgid "Log blocked requests"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:290
+#: includes/settings/ffc-tab-documentation.php:290
 msgid "Logo with fixed width"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:95
+#: includes/settings/ffc-tab-rate-limit.php:95
 msgid "Logs"
 msgstr ""
 
-#: includes/settings/tab-qrcode.php:73
+#: includes/settings/ffc-tab-qrcode.php:73
 msgid "Low (7% correction)"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:172
+#: includes/settings/ffc-tab-documentation.php:172
 msgid "Low (7%)"
 msgstr ""
 
@@ -1484,7 +1484,7 @@ msgstr ""
 msgid "Magic Link Token"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:384
+#: includes/settings/ffc-tab-documentation.php:384
 msgid "Magic Links:"
 msgstr ""
 
@@ -1492,11 +1492,11 @@ msgstr ""
 msgid "Magic Tokens"
 msgstr ""
 
-#: includes/settings/tab-qrcode.php:144
+#: includes/settings/ffc-tab-qrcode.php:144
 msgid "Maintenance"
 msgstr ""
 
-#: includes/settings/tab-migrations.php:27
+#: includes/settings/ffc-tab-migrations.php:27
 msgid "Manage database structure migrations to improve performance and data organization. These migrations move data from JSON storage to dedicated database columns for faster queries and better reliability."
 msgstr ""
 
@@ -1504,51 +1504,51 @@ msgstr ""
 msgid "Mandatory Tags:"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:329
+#: includes/settings/ffc-tab-documentation.php:329
 msgid "Margins/padding"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:456
+#: includes/settings/ffc-tab-documentation.php:456
 msgid "Math CAPTCHA:"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:101
+#: includes/settings/ffc-tab-rate-limit.php:101
 msgid "Max logs"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:15 includes/settings/tab-rate-limit.php:27
+#: includes/settings/ffc-tab-rate-limit.php:15 includes/settings/ffc-tab-rate-limit.php:27
 msgid "Max per day"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:14 includes/settings/tab-rate-limit.php:69
+#: includes/settings/ffc-tab-rate-limit.php:14 includes/settings/ffc-tab-rate-limit.php:69
 msgid "Max per hour"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:68
+#: includes/settings/ffc-tab-rate-limit.php:68
 msgid "Max per minute"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:29 includes/settings/tab-rate-limit.php:39
+#: includes/settings/ffc-tab-rate-limit.php:29 includes/settings/ffc-tab-rate-limit.php:39
 msgid "Max per month"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:28
+#: includes/settings/ffc-tab-rate-limit.php:28
 msgid "Max per week"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:40
+#: includes/settings/ffc-tab-rate-limit.php:40
 msgid "Max per year"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:173
+#: includes/settings/ffc-tab-documentation.php:173
 msgid "Medium (15% - recommended)"
 msgstr ""
 
-#: includes/settings/tab-qrcode.php:76
+#: includes/settings/ffc-tab-qrcode.php:76
 msgid "Medium (15% correction) - Recommended"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:18 includes/settings/tab-rate-limit.php:30 includes/settings/tab-rate-limit.php:60 includes/settings/tab-rate-limit.php:70
+#: includes/settings/ffc-tab-rate-limit.php:18 includes/settings/ffc-tab-rate-limit.php:30 includes/settings/ffc-tab-rate-limit.php:60 includes/settings/ffc-tab-rate-limit.php:70
 msgid "Message"
 msgstr ""
 
@@ -1557,7 +1557,7 @@ msgstr ""
 msgid "Migrate %s from JSON data to dedicated %s column"
 msgstr ""
 
-#: includes/settings/tab-migrations.php:117
+#: includes/settings/ffc-tab-migrations.php:117
 msgid "Migrated"
 msgstr ""
 
@@ -1569,7 +1569,7 @@ msgstr ""
 msgid "Migration callback not found."
 msgstr ""
 
-#: includes/settings/tab-migrations.php:158
+#: includes/settings/ffc-tab-migrations.php:158
 msgid "Migration Complete"
 msgstr ""
 
@@ -1589,19 +1589,19 @@ msgstr ""
 msgid "Migration not found."
 msgstr ""
 
-#: includes/settings/tab-documentation.php:413
+#: includes/settings/ffc-tab-documentation.php:413
 msgid "Migration of all data from the plugin's old infrastructure."
 msgstr ""
 
-#: includes/settings/tab-migrations.php:33
+#: includes/settings/ffc-tab-migrations.php:33
 msgid "Migrations are safe to run multiple times. Each migration processes up to 100 records at a time. Run again if needed until 100% complete."
 msgstr ""
 
-#: includes/settings/tab-migrations.php:204
+#: includes/settings/ffc-tab-migrations.php:204
 msgid "Migrations cannot be undone, but they don't delete any data. If you experience issues, your original data remains in the JSON column and can be accessed."
 msgstr ""
 
-#: includes/settings/tab-migrations.php:195
+#: includes/settings/ffc-tab-migrations.php:195
 msgid "Migrations improve database performance by moving frequently queried data from JSON format to dedicated database columns. This makes searches and filtering much faster."
 msgstr ""
 
@@ -1613,7 +1613,7 @@ msgstr ""
 msgid "Minimal fields (Tag):"
 msgstr ""
 
-#: includes/settings/tab-smtp.php:28
+#: includes/settings/ffc-tab-smtp.php:28
 msgid "Mode"
 msgstr ""
 
@@ -1621,7 +1621,7 @@ msgstr ""
 msgid "Move to Trash"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:420
+#: includes/settings/ffc-tab-documentation.php:420
 msgid "Multi-language Support:"
 msgstr ""
 
@@ -1633,15 +1633,15 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: includes/settings/tab-smtp.php:109
+#: includes/settings/ffc-tab-smtp.php:109
 msgid "Name to display as sender"
 msgstr ""
 
-#: includes/settings/tab-migrations.php:192
+#: includes/settings/ffc-tab-migrations.php:192
 msgid "Need Help?"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:614
+#: includes/settings/ffc-tab-documentation.php:614
 msgid "Need More Help?"
 msgstr ""
 
@@ -1674,7 +1674,7 @@ msgstr ""
 msgid "No magic token"
 msgstr ""
 
-#: includes/settings/tab-migrations.php:43
+#: includes/settings/ffc-tab-migrations.php:43
 msgid "No migrations available at this time."
 msgstr ""
 
@@ -1690,7 +1690,7 @@ msgstr ""
 msgid "No submissions older than 15 days with encrypted data"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:163
+#: includes/settings/ffc-tab-documentation.php:163
 msgid "No white margin around QR code"
 msgstr ""
 
@@ -1710,7 +1710,7 @@ msgstr ""
 msgid "Older submissions do not have explicit consent flag but may have been collected under privacy policy."
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:77
+#: includes/settings/ffc-tab-rate-limit.php:77
 msgid "One per line"
 msgstr ""
 
@@ -1734,11 +1734,11 @@ msgstr ""
 msgid "Options (separate with commas):"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:171
+#: includes/settings/ffc-tab-documentation.php:171
 msgid "Options:"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:590
+#: includes/settings/ffc-tab-documentation.php:590
 msgid "Or inline style:"
 msgstr ""
 
@@ -1746,7 +1746,7 @@ msgstr ""
 msgid "Original submission timestamp (read-only)."
 msgstr ""
 
-#: includes/settings/tab-documentation.php:254
+#: includes/settings/ffc-tab-documentation.php:254
 msgid "Paragraph with spacing"
 msgstr ""
 
@@ -1758,7 +1758,7 @@ msgstr ""
 msgid "Participant Data:"
 msgstr ""
 
-#: includes/class-ffc-shortcodes.php:222 includes/settings/tab-smtp.php:81
+#: includes/class-ffc-shortcodes.php:222 includes/settings/ffc-tab-smtp.php:81
 msgid "Password"
 msgstr ""
 
@@ -1778,11 +1778,11 @@ msgstr ""
 msgid "PDF"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:400
+#: includes/settings/ffc-tab-documentation.php:400
 msgid "PDF Customization:"
 msgstr ""
 
-#: includes/settings/tab-migrations.php:126
+#: includes/settings/ffc-tab-migrations.php:126
 msgid "Pending"
 msgstr ""
 
@@ -1798,7 +1798,7 @@ msgstr ""
 msgid "Phone"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:298
+#: includes/settings/ffc-tab-documentation.php:298
 msgid "Photo cropped to fit dimensions"
 msgstr ""
 
@@ -1818,7 +1818,7 @@ msgstr ""
 msgid "Please wait, this may take a few seconds..."
 msgstr ""
 
-#: includes/settings/tab-smtp.php:122
+#: includes/settings/ffc-tab-smtp.php:122
 msgid "Popular SMTP Providers"
 msgstr ""
 
@@ -1832,19 +1832,19 @@ msgctxt "Post Type Singular Name"
 msgid "Form"
 msgstr ""
 
-#: includes/settings/tab-general.php:207
+#: includes/settings/ffc-tab-general.php:207
 msgid "Pre-load cache daily"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:445
+#: includes/settings/ffc-tab-documentation.php:445
 msgid "Prevents abuse with configurable submission limits"
 msgstr ""
 
-#: includes/settings/tab-general.php:69
+#: includes/settings/ffc-tab-general.php:69
 msgid "Preview:"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:389
+#: includes/settings/ffc-tab-documentation.php:389
 msgid "Previously submitted identification information (CPF/RF) does not generate new certificates."
 msgstr ""
 
@@ -1852,7 +1852,7 @@ msgstr ""
 msgid "Privacy Policy"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:558
+#: includes/settings/ffc-tab-documentation.php:558
 msgid "Problem"
 msgstr ""
 
@@ -1864,11 +1864,11 @@ msgstr ""
 msgid "Program"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:111
+#: includes/settings/ffc-tab-documentation.php:111
 msgid "Program/Course name (if custom field exists)"
 msgstr ""
 
-#: includes/settings/tab-migrations.php:135
+#: includes/settings/ffc-tab-migrations.php:135
 msgid "Progress"
 msgstr ""
 
@@ -1884,7 +1884,7 @@ msgstr ""
 msgid "Published"
 msgstr ""
 
-#: includes/settings/tab-general.php:236
+#: includes/settings/ffc-tab-general.php:236
 msgid "Published Forms:"
 msgstr ""
 
@@ -1892,11 +1892,11 @@ msgstr ""
 msgid "QR Code"
 msgstr ""
 
-#: includes/settings/tab-qrcode.php:19
+#: includes/settings/ffc-tab-qrcode.php:19
 msgid "QR Code Generation Settings"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:116
+#: includes/settings/ffc-tab-documentation.php:116
 msgid "QR Code image (see section 3 for options)"
 msgstr ""
 
@@ -1908,11 +1908,11 @@ msgstr ""
 msgid "QR Code settings view file not found."
 msgstr ""
 
-#: includes/settings/tab-documentation.php:580
+#: includes/settings/ffc-tab-documentation.php:580
 msgid "QR Code too large/small"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:380
+#: includes/settings/ffc-tab-documentation.php:380
 msgid "QR Code Validation:"
 msgstr ""
 
@@ -1920,7 +1920,7 @@ msgstr ""
 msgid "QR Codes automatically link to this certificate verification page. Configure defaults in Settings → QR Code."
 msgstr ""
 
-#: includes/settings/tab-qrcode.php:169
+#: includes/settings/ffc-tab-qrcode.php:169
 msgid "QR Codes will be regenerated automatically when needed. This action is safe and reversible."
 msgstr ""
 
@@ -1928,15 +1928,15 @@ msgstr ""
 msgid "Quantity must be between 1 and 1000."
 msgstr ""
 
-#: includes/settings/tab-qrcode.php:79
+#: includes/settings/ffc-tab-qrcode.php:79
 msgid "Quartile (25% correction)"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:174
+#: includes/settings/ffc-tab-documentation.php:174
 msgid "Quartile (25%)"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:19
+#: includes/settings/ffc-tab-documentation.php:19
 msgid "Quick Navigation"
 msgstr ""
 
@@ -1944,7 +1944,7 @@ msgstr ""
 msgid "Radio Box"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:157 includes/settings/tab-documentation.php:164
+#: includes/settings/ffc-tab-documentation.php:157 includes/settings/ffc-tab-documentation.php:164
 msgid "Range:"
 msgstr ""
 
@@ -1952,15 +1952,15 @@ msgstr ""
 msgid "Rate Limit"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:444
+#: includes/settings/ffc-tab-documentation.php:444
 msgid "Rate Limiting:"
 msgstr ""
 
-#: includes/settings/tab-general.php:181
+#: includes/settings/ffc-tab-general.php:181
 msgid "Recommended for sites with many forms or high traffic."
 msgstr ""
 
-#: includes/settings/tab-documentation.php:583
+#: includes/settings/ffc-tab-documentation.php:583
 msgid "Recommended: 100-200px for certificates"
 msgstr ""
 
@@ -1980,15 +1980,15 @@ msgstr ""
 msgid "Remove unencrypted data from old columns for submissions older than 15 days (OPTIONAL - for LGPD compliance)"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:51
+#: includes/settings/ffc-tab-documentation.php:51
 msgid "Replace \"123\" with your Form ID from the \"All Forms\" list."
 msgstr ""
 
-#: includes/settings/tab-documentation.php:388
+#: includes/settings/ffc-tab-documentation.php:388
 msgid "Reprinting certificates:"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:441
+#: includes/settings/ffc-tab-documentation.php:441
 msgid "Require users to have a single-use ticket to generate the certificate (it is consumed after use)."
 msgstr ""
 
@@ -2005,7 +2005,7 @@ msgstr ""
 msgid "Requires valid ticket (consumed after use)"
 msgstr ""
 
-#: includes/settings/tab-general.php:133
+#: includes/settings/ffc-tab-general.php:133
 msgid "Reset ID counter to 1"
 msgstr ""
 
@@ -2013,11 +2013,11 @@ msgstr ""
 msgid "Restore"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:284
+#: includes/settings/ffc-tab-documentation.php:284
 msgid "Result"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:100
+#: includes/settings/ffc-tab-rate-limit.php:100
 msgid "Retention"
 msgstr ""
 
@@ -2029,28 +2029,28 @@ msgstr ""
 msgid "RG"
 msgstr ""
 
-#: includes/settings/tab-migrations.php:167
+#: includes/settings/ffc-tab-migrations.php:167
 #, php-format
 msgid "Run %s migration?\\n\\nThis will process up to 100 records. Safe to run multiple times until complete."
 msgstr ""
 
-#: includes/settings/tab-migrations.php:169
+#: includes/settings/ffc-tab-migrations.php:169
 msgid "Run Migration"
 msgstr ""
 
-#: includes/settings/tab-general.php:209
+#: includes/settings/ffc-tab-general.php:209
 msgid "Runs a daily cron job to keep the cache always updated."
 msgstr ""
 
-#: includes/settings/tab-general.php:24
+#: includes/settings/ffc-tab-general.php:24
 msgid "Saturday, January 4, 2026"
 msgstr ""
 
-#: includes/class-ffc-admin.php:567 includes/settings/tab-rate-limit.php:130
+#: includes/class-ffc-admin.php:567 includes/settings/ffc-tab-rate-limit.php:130
 msgid "Save Changes"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:381
+#: includes/settings/ffc-tab-documentation.php:381
 msgid "Scan to instantly verify certificate authenticity"
 msgstr ""
 
@@ -2082,7 +2082,7 @@ msgstr ""
 msgid "Security: How much is %d + %d?"
 msgstr ""
 
-#: includes/settings/tab-general.php:86
+#: includes/settings/ffc-tab-general.php:86
 msgid "See documentation"
 msgstr ""
 
@@ -2118,7 +2118,7 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:602
+#: includes/settings/ffc-tab-documentation.php:602
 msgid "Settings not saving between tabs"
 msgstr ""
 
@@ -2130,19 +2130,19 @@ msgstr ""
 msgid "Shared password for all users"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:42
+#: includes/settings/ffc-tab-documentation.php:42
 msgid "Shortcode"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:107
+#: includes/settings/ffc-tab-rate-limit.php:107
 msgid "Show remaining attempts"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:108
+#: includes/settings/ffc-tab-rate-limit.php:108
 msgid "Show wait time"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:294
+#: includes/settings/ffc-tab-documentation.php:294
 msgid "Signature with fixed height, proportional width"
 msgstr ""
 
@@ -2150,7 +2150,7 @@ msgstr ""
 msgid "Single Password"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:432
+#: includes/settings/ffc-tab-documentation.php:432
 msgid "Single Password:"
 msgstr ""
 
@@ -2158,15 +2158,15 @@ msgstr ""
 msgid "SMTP"
 msgstr ""
 
-#: includes/settings/tab-smtp.php:60
+#: includes/settings/ffc-tab-smtp.php:60
 msgid "SMTP Host"
 msgstr ""
 
-#: includes/settings/tab-smtp.php:67
+#: includes/settings/ffc-tab-smtp.php:67
 msgid "SMTP Port"
 msgstr ""
 
-#: includes/settings/tab-smtp.php:55
+#: includes/settings/ffc-tab-smtp.php:55
 msgid "SMTP Server Configuration"
 msgstr ""
 
@@ -2174,7 +2174,7 @@ msgstr ""
 msgid "SMTP settings view file not found."
 msgstr ""
 
-#: includes/settings/tab-documentation.php:559
+#: includes/settings/ffc-tab-documentation.php:559
 msgid "Solution"
 msgstr ""
 
@@ -2182,7 +2182,7 @@ msgstr ""
 msgid "State"
 msgstr ""
 
-#: includes/settings/tab-general.php:215 includes/settings/tab-rate-limit.php:113
+#: includes/settings/ffc-tab-general.php:215 includes/settings/ffc-tab-rate-limit.php:113
 msgid "Statistics"
 msgstr ""
 
@@ -2190,23 +2190,23 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:353
+#: includes/settings/ffc-tab-documentation.php:353
 msgid "Step 1:"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:354
+#: includes/settings/ffc-tab-documentation.php:354
 msgid "Step 2:"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:355
+#: includes/settings/ffc-tab-documentation.php:355
 msgid "Step 3:"
 msgstr ""
 
-#: includes/settings/tab-qrcode.php:34
+#: includes/settings/ffc-tab-qrcode.php:34
 msgid "Store generated QR Codes in database"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:307
+#: includes/settings/ffc-tab-documentation.php:307
 msgid "Style"
 msgstr ""
 
@@ -2267,11 +2267,11 @@ msgstr ""
 msgid "Successfully dropped %d columns: %s"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:227
+#: includes/settings/ffc-tab-documentation.php:227
 msgid "Supported HTML Tags:"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:421
+#: includes/settings/ffc-tab-documentation.php:421
 msgid "Supports Portuguese and English languages"
 msgstr ""
 
@@ -2279,19 +2279,19 @@ msgstr ""
 msgid "System Information"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:262
+#: includes/settings/ffc-tab-documentation.php:262
 msgid "Tables for layout (logos, signatures)"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:231
+#: includes/settings/ffc-tab-documentation.php:231
 msgid "Tag"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:35
+#: includes/settings/ffc-tab-rate-limit.php:35
 msgid "Tax ID (CPF) Rate Limit"
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:80 includes/settings/tab-rate-limit.php:90
+#: includes/settings/ffc-tab-rate-limit.php:80 includes/settings/ffc-tab-rate-limit.php:90
 msgid "Tax IDs (CPFs)"
 msgstr ""
 
@@ -2303,7 +2303,7 @@ msgstr ""
 msgid "Template not found."
 msgstr ""
 
-#: includes/settings/tab-documentation.php:598
+#: includes/settings/ffc-tab-documentation.php:598
 msgid "Test with simple content first"
 msgstr ""
 
@@ -2311,11 +2311,11 @@ msgstr ""
 msgid "Text"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:321
+#: includes/settings/ffc-tab-documentation.php:321
 msgid "Text alignment"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:317
+#: includes/settings/ffc-tab-documentation.php:317
 msgid "Text color"
 msgstr ""
 
@@ -2323,11 +2323,11 @@ msgstr ""
 msgid "Textarea"
 msgstr ""
 
-#: includes/settings/tab-general.php:158 includes/settings/tab-documentation.php:417
+#: includes/settings/ffc-tab-general.php:158 includes/settings/ffc-tab-documentation.php:417
 msgid "The cache stores form settings to improve performance."
 msgstr ""
 
-#: includes/settings/tab-documentation.php:433
+#: includes/settings/ffc-tab-documentation.php:433
 msgid "The form will have a global password for submission."
 msgstr ""
 
@@ -2335,11 +2335,11 @@ msgstr ""
 msgid "The ID must have exactly 7 digits (RF) or 11 digits (CPF)."
 msgstr ""
 
-#: includes/settings/tab-documentation.php:136
+#: includes/settings/ffc-tab-documentation.php:136
 msgid "The QR code can be customized with various attributes:"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:189
+#: includes/settings/ffc-tab-documentation.php:189
 msgid "The Validation URL can be customized with various attributes:"
 msgstr ""
 
@@ -2363,7 +2363,7 @@ msgstr ""
 msgid "This password will be required from all users."
 msgstr ""
 
-#: includes/settings/tab-documentation.php:15
+#: includes/settings/ffc-tab-documentation.php:15
 msgid "This plugin allows you to create certificate issuance forms, generate PDFs automatically, and verify authenticity with QR codes."
 msgstr ""
 
@@ -2384,7 +2384,7 @@ msgstr ""
 msgid "Ticket (Unique Codes)"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:440
+#: includes/settings/ffc-tab-documentation.php:440
 msgid "Ticket (Unique Codes):"
 msgstr ""
 
@@ -2404,11 +2404,11 @@ msgstr ""
 msgid "Tickets are consumed (removed) after successful use."
 msgstr ""
 
-#: includes/settings/tab-general.php:196
+#: includes/settings/ffc-tab-general.php:196
 msgid "Time the data remains in cache before being updated."
 msgstr ""
 
-#: includes/settings/tab-general.php:242
+#: includes/settings/ffc-tab-general.php:242
 msgid "Tip: Install Redis or Memcached for better performance."
 msgstr ""
 
@@ -2416,11 +2416,11 @@ msgstr ""
 msgid "Tips:"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:101
+#: includes/settings/ffc-tab-documentation.php:101
 msgid "Title of the form/event"
 msgstr ""
 
-#: includes/settings/tab-smtp.php:95
+#: includes/settings/ffc-tab-smtp.php:95
 msgid "TLS is recommended for port 587, SSL for port 465"
 msgstr ""
 
@@ -2441,15 +2441,15 @@ msgstr ""
 msgid "Too many verification attempts. Please wait %s."
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:123
+#: includes/settings/ffc-tab-rate-limit.php:123
 msgid "Top blocked IPs:"
 msgstr ""
 
-#: includes/settings/tab-migrations.php:108
+#: includes/settings/ffc-tab-migrations.php:108
 msgid "Total Records"
 msgstr ""
 
-#: includes/settings/tab-qrcode.php:123
+#: includes/settings/ffc-tab-qrcode.php:123
 msgid "Total Submissions:"
 msgstr ""
 
@@ -2461,15 +2461,15 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:246
+#: includes/settings/ffc-tab-documentation.php:246
 msgid "Underline text:"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:96
+#: includes/settings/ffc-tab-documentation.php:96
 msgid "Unique authentication code for validation"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:376
+#: includes/settings/ffc-tab-documentation.php:376
 msgid "Unique Authentication Codes:"
 msgstr ""
 
@@ -2493,15 +2493,15 @@ msgstr ""
 msgid "Unknown migration type"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:604
+#: includes/settings/ffc-tab-documentation.php:604
 msgid "Update to latest version"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:141 includes/settings/tab-documentation.php:194 includes/settings/tab-documentation.php:232
+#: includes/settings/ffc-tab-documentation.php:141 includes/settings/ffc-tab-documentation.php:194 includes/settings/ffc-tab-documentation.php:232
 msgid "Usage"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:51 includes/settings/tab-documentation.php:58
+#: includes/settings/ffc-tab-documentation.php:51 includes/settings/ffc-tab-documentation.php:58
 msgid "Usage:"
 msgstr ""
 
@@ -2509,47 +2509,47 @@ msgstr ""
 msgid "Use <b>{{field_name}}</b> in the PDF Layout to insert user data."
 msgstr ""
 
-#: includes/settings/tab-documentation.php:574
+#: includes/settings/ffc-tab-documentation.php:574
 msgid "Use absolute URLs (https://...)"
 msgstr ""
 
-#: includes/settings/tab-smtp.php:45
+#: includes/settings/ffc-tab-smtp.php:45
 msgid "Use an external SMTP server. Better deliverability and tracking."
 msgstr ""
 
-#: includes/settings/tab-smtp.php:143
+#: includes/settings/ffc-tab-smtp.php:143
 msgid "Use API key as password"
 msgstr ""
 
-#: includes/settings/tab-smtp.php:150
+#: includes/settings/ffc-tab-smtp.php:150
 msgid "Use API key as password, or find your settings in hPanel."
 msgstr ""
 
-#: includes/settings/tab-smtp.php:129
+#: includes/settings/ffc-tab-smtp.php:129
 msgid "Use app-specific password"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:589
+#: includes/settings/ffc-tab-documentation.php:589
 msgid "Use HTML tags:"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:354
+#: includes/settings/ffc-tab-documentation.php:354
 msgid "Use in template:"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:568
+#: includes/settings/ffc-tab-documentation.php:568
 msgid "Use lowercase for custom fields"
 msgstr ""
 
-#: includes/settings/tab-general.php:85
+#: includes/settings/ffc-tab-general.php:85
 msgid "Use PHP date format characters."
 msgstr ""
 
-#: includes/settings/tab-documentation.php:596
+#: includes/settings/ffc-tab-documentation.php:596
 msgid "Use tables for complex layouts"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:68
+#: includes/settings/ffc-tab-documentation.php:68
 msgid "Use these variables in your PDF template (HTML editor). They will be automatically replaced with user data:"
 msgstr ""
 
@@ -2557,11 +2557,11 @@ msgstr ""
 msgid "Use this image"
 msgstr ""
 
-#: includes/settings/tab-qrcode.php:158
+#: includes/settings/ffc-tab-qrcode.php:158
 msgid "Use this to clear outdated QR Codes or free database space."
 msgstr ""
 
-#: includes/settings/tab-documentation.php:363 includes/settings/tab-documentation.php:364 includes/settings/tab-documentation.php:365 includes/settings/tab-documentation.php:582
+#: includes/settings/ffc-tab-documentation.php:363 includes/settings/ffc-tab-documentation.php:364 includes/settings/ffc-tab-documentation.php:365 includes/settings/ffc-tab-documentation.php:582
 msgid "Use:"
 msgstr ""
 
@@ -2569,7 +2569,7 @@ msgstr ""
 msgid "User agreed to Privacy Policy and data storage"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:91
+#: includes/settings/ffc-tab-documentation.php:91
 msgid "User email address"
 msgstr ""
 
@@ -2581,19 +2581,19 @@ msgstr ""
 msgid "User IP"
 msgstr ""
 
-#: includes/settings/tab-smtp.php:74
+#: includes/settings/ffc-tab-smtp.php:74
 msgid "Username"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:58
+#: includes/settings/ffc-tab-documentation.php:58
 msgid "Users can validate certificates by entering the authentication code."
 msgstr ""
 
-#: includes/settings/tab-smtp.php:37
+#: includes/settings/ffc-tab-smtp.php:37
 msgid "Uses WordPress default mail function. Simple but may have deliverability issues."
 msgstr ""
 
-#: includes/settings/tab-general.php:162
+#: includes/settings/ffc-tab-general.php:162
 msgid "Using default WordPress cache (database)"
 msgstr ""
 
@@ -2601,11 +2601,11 @@ msgstr ""
 msgid "Valid Certificate"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:355
+#: includes/settings/ffc-tab-documentation.php:355
 msgid "Value gets replaced automatically in PDF"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:73
+#: includes/settings/ffc-tab-documentation.php:73
 msgid "Variable"
 msgstr ""
 
@@ -2613,7 +2613,7 @@ msgstr ""
 msgid "Variable Name (Tag)"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:564
+#: includes/settings/ffc-tab-documentation.php:564
 msgid "Variable not replaced"
 msgstr ""
 
@@ -2642,7 +2642,7 @@ msgstr ""
 msgid "Waiting period active. %d days remaining. Available on: %s"
 msgstr ""
 
-#: includes/settings/tab-general.php:253
+#: includes/settings/ffc-tab-general.php:253
 msgid "Warm Cache Now"
 msgstr ""
 
@@ -2650,7 +2650,7 @@ msgstr ""
 msgid "Warning! Missing required tags in PDF Layout:"
 msgstr ""
 
-#: includes/settings/tab-general.php:102
+#: includes/settings/ffc-tab-general.php:102
 msgid "Warning: These actions cannot be undone."
 msgstr ""
 
@@ -2662,31 +2662,31 @@ msgstr ""
 msgid "We certify that the holder of the data below has completed the event."
 msgstr ""
 
-#: includes/settings/tab-migrations.php:194
+#: includes/settings/ffc-tab-migrations.php:194
 msgid "What are migrations?"
 msgstr ""
 
-#: includes/settings/tab-general.php:138
+#: includes/settings/ffc-tab-general.php:138
 msgid "When checked, next submission will start from ID #1. Only works if table becomes empty."
 msgstr ""
 
-#: includes/settings/tab-qrcode.php:61
+#: includes/settings/ffc-tab-qrcode.php:61
 msgid "White space around QR Code in modules. 0 = no margin, higher values = more white space."
 msgstr ""
 
-#: includes/settings/tab-rate-limit.php:75
+#: includes/settings/ffc-tab-rate-limit.php:75
 msgid "Whitelist"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:215
+#: includes/settings/ffc-tab-documentation.php:215
 msgid "With color link"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:214
+#: includes/settings/ffc-tab-documentation.php:214
 msgid "With target"
 msgstr ""
 
-#: includes/settings/tab-smtp.php:34
+#: includes/settings/ffc-tab-smtp.php:34
 msgid "WP Default (PHPMail)"
 msgstr ""
 
@@ -2698,7 +2698,7 @@ msgstr ""
 msgid "Yes"
 msgstr ""
 
-#: includes/settings/tab-migrations.php:198
+#: includes/settings/ffc-tab-migrations.php:198
 msgid "Yes! Migrations only copy data to new columns - your original data remains intact. They are safe to run multiple times."
 msgstr ""
 
@@ -2710,7 +2710,7 @@ msgstr ""
 msgid "You can also verify this certificate manually at"
 msgstr ""
 
-#: includes/settings/tab-documentation.php:225
+#: includes/settings/ffc-tab-documentation.php:225
 msgid "You can use HTML and inline CSS to style your certificate:"
 msgstr ""
 
@@ -2759,15 +2759,15 @@ msgstr ""
 msgid "Your data will be stored securely and encrypted. You can request deletion at any time."
 msgstr ""
 
-#: includes/settings/tab-smtp.php:84
+#: includes/settings/ffc-tab-smtp.php:84
 msgid "Your SMTP password or app-specific password"
 msgstr ""
 
-#: includes/settings/tab-smtp.php:63
+#: includes/settings/ffc-tab-smtp.php:63
 msgid "Your SMTP server address"
 msgstr ""
 
-#: includes/settings/tab-smtp.php:77
+#: includes/settings/ffc-tab-smtp.php:77
 msgid "Your SMTP username (usually your email)"
 msgstr ""
 
@@ -2775,7 +2775,7 @@ msgstr ""
 msgid "ZIP Code"
 msgstr ""
 
-#: includes/settings/tab-general.php:143
+#: includes/settings/ffc-tab-general.php:143
 msgid "⚠️ Are you absolutely sure?\\n\\nThis action CANNOT be undone!\\n\\nAll selected data will be permanently deleted."
 msgstr ""
 
@@ -2783,10 +2783,10 @@ msgstr ""
 msgid "⚠️ Warning:"
 msgstr ""
 
-#: includes/settings/tab-general.php:116
+#: includes/settings/ffc-tab-general.php:116
 msgid "🗑️ Delete All Submissions (All Forms)"
 msgstr ""
 
-#: includes/settings/tab-general.php:144
+#: includes/settings/ffc-tab-general.php:144
 msgid "🗑️ Delete Data Permanently"
 msgstr ""

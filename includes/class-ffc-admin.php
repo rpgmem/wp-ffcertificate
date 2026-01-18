@@ -73,16 +73,16 @@ class FFC_Admin {
             wp_enqueue_style( 'ffc-pdf-core', FFC_PLUGIN_URL . 'assets/css/ffc-pdf-core.css', array(), FFC_VERSION);
             
             // 2. Admin general styles (depends on pdf-core)
-            wp_enqueue_style( 'ffc-admin-css', FFC_PLUGIN_URL . 'assets/css/admin.css', array('ffc-pdf-core'), FFC_VERSION );
+            wp_enqueue_style( 'ffc-admin-css', FFC_PLUGIN_URL . 'assets/css/ffc-admin.css', array('ffc-pdf-core'), FFC_VERSION );
             
-            // 3. Submissions page styles (depends on admin.css)
-            wp_enqueue_style( 'ffc-admin-submissions-css', FFC_PLUGIN_URL . 'assets/css/admin-submissions.css', array('ffc-admin-css'), FFC_VERSION );
+            // 3. Submissions page styles (depends on ffc-admin.css)
+            wp_enqueue_style( 'ffc-admin-submissions-css', FFC_PLUGIN_URL . 'assets/css/ffc-admin-submissions.css', array('ffc-admin-css'), FFC_VERSION );
             
             // 4. Settings tabs styles (ONLY on settings page)
             if (isset($_GET['page']) && $_GET['page'] === 'ffc-settings') {
                 wp_enqueue_style(
                     'ffc-admin-settings',
-                    FFC_PLUGIN_URL . 'assets/css/admin-settings.css',
+                    FFC_PLUGIN_URL . 'assets/css/ffc-admin-settings.css',
                     array('ffc-admin-css'),
                     FFC_VERSION
                 );
@@ -799,7 +799,7 @@ class FFC_Admin {
         // } else {
         //     $init['content_css'] .= ',';
         // }
-        // $init['content_css'] .= plugins_url( 'assets/css/editor-placeholders.css', FFC_PLUGIN_FILE );
+        // $init['content_css'] .= plugins_url( 'assets/css/ffc-editor-placeholders.css', FFC_PLUGIN_FILE );
         
         // ⭐ DEBUG: Uncomment to see final config
         // error_log('FFC: noneditable_regexp = ' . $init['noneditable_regexp']);

@@ -46,9 +46,9 @@ class Free_Form_Certificate_Loader {
         require_once FFC_PLUGIN_DIR . 'includes/class-ffc-deactivator.php';
         
         // Repositories (v3.0.0)
-        require_once FFC_PLUGIN_DIR . 'includes/repositories/abstract-repository.php';
-        require_once FFC_PLUGIN_DIR . 'includes/repositories/submission-repository.php';
-        require_once FFC_PLUGIN_DIR . 'includes/repositories/form-repository.php';
+        require_once FFC_PLUGIN_DIR . 'includes/repositories/ffc-abstract-repository.php';
+        require_once FFC_PLUGIN_DIR . 'includes/repositories/ffc-submission-repository.php';
+        require_once FFC_PLUGIN_DIR . 'includes/repositories/ffc-form-repository.php';
         
         // Security & helpers
         require_once FFC_PLUGIN_DIR . 'includes/class-ffc-magic-link-helper.php';
@@ -122,7 +122,7 @@ class Free_Form_Certificate_Loader {
     
     public function enqueue_rate_limit_assets() {
         wp_enqueue_script('ffc-rate-limit', FFC_PLUGIN_URL . 'assets/js/ffc-frontend-helpers.js', ['jquery'], FFC_VERSION, true);
-        wp_enqueue_style('ffc-rate-limit', FFC_PLUGIN_URL . 'assets/css/admin-rate-limit.css', [], FFC_VERSION);
+        wp_enqueue_style('ffc-rate-limit', FFC_PLUGIN_URL . 'assets/css/ffc-admin-rate-limit.css', [], FFC_VERSION);
     }
     
     // For future use

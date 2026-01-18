@@ -21,7 +21,7 @@ class FFC_Tab_QRCode extends FFC_Settings_Tab {
     
     public function render() {
         // Include view file
-        $view_file = FFC_PLUGIN_DIR . 'includes/settings/tab-qrcode.php';
+        $view_file = FFC_PLUGIN_DIR . 'includes/settings/ffc-tab-qrcode.php';
         
         if ( file_exists( $view_file ) ) {
             include $view_file;

@@ -18,7 +18,7 @@ class FFC_Frontend {
             require_once FFC_PLUGIN_DIR . 'includes/class-ffc-form-processor.php';
         }
         if (!class_exists('FFC_Shortcodes')) {
-            require_once FFC_PLUGIN_DIR . 'includes/class-ffc-shortcodes.php';
+            require_once FFC_PLUGIN_DIR . 'includes/shortcodes/class-ffc-shortcodes.php';
         }
 
         $this->verification_handler = new FFC_Verification_Handler( $submission_handler, $email_handler );
@@ -59,7 +59,7 @@ class FFC_Frontend {
             
             // CSS - Using centralized version constant
             wp_enqueue_style( 'ffc-pdf-core', FFC_PLUGIN_URL . 'assets/css/ffc-pdf-core.css', array(), FFC_VERSION );
-            wp_enqueue_style( 'ffc-frontend-css', FFC_PLUGIN_URL . 'assets/css/frontend.css', array('ffc-pdf-core'), FFC_VERSION );
+            wp_enqueue_style( 'ffc-frontend-css', FFC_PLUGIN_URL . 'assets/css/ffc-frontend.css', array('ffc-pdf-core'), FFC_VERSION );
             
             // PDF Libraries - Using centralized version constants
             wp_enqueue_script( 'html2canvas', FFC_PLUGIN_URL . 'assets/js/html2canvas.min.js', array(), FFC_HTML2CANVAS_VERSION, true );
