@@ -100,7 +100,7 @@ $get_option = function($key, $default = '') {
     
     <?php
     if (!class_exists('FFC_QRCode_Generator')) {
-        require_once FFC_PLUGIN_DIR . 'includes/class-ffc-qrcode-generator.php';
+        require_once FFC_PLUGIN_DIR . 'includes/generators/class-ffc-qrcode-generator.php';
     }
     
     $qr_generator = new FFC_QRCode_Generator();
