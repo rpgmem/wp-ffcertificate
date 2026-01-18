@@ -58,6 +58,13 @@ if (!defined('ABSPATH')) exit;
                     <strong><?php esc_html_e('Usage:', 'ffc'); ?></strong> <?php esc_html_e('Users can validate certificates by entering the authentication code.', 'ffc'); ?>
                 </td>
             </tr>
+            <tr>
+                <td><code>[user_dashboard_personal]</code></td>
+                <td>
+                    <?php esc_html_e('Displays dashboard page.', 'ffc'); ?><br>
+                    <strong><?php esc_html_e('Usage:', 'ffc'); ?></strong> <?php esc_html_e('Logged-in users will be able to view all certificates generated for their own CPF/RF (Brazilian tax identification number).', 'ffc'); ?>
+                </td>
+            </tr>            
         </tbody>
     </table>
 </div>
