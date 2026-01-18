@@ -846,6 +846,7 @@ class FFC_Form_Editor {
                 'date_end' => !empty($geofence['date_end']) ? sanitize_text_field($geofence['date_end']) : '',
                 'time_start' => !empty($geofence['time_start']) ? sanitize_text_field($geofence['time_start']) : '',
                 'time_end' => !empty($geofence['time_end']) ? sanitize_text_field($geofence['time_end']) : '',
+                'time_mode' => sanitize_key($geofence['time_mode'] ?? 'daily'),
                 'datetime_hide_mode' => sanitize_key($geofence['datetime_hide_mode'] ?? 'message'),
                 'msg_datetime' => sanitize_textarea_field($geofence['msg_datetime'] ?? ''),
 
