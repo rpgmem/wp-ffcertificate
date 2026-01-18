@@ -448,9 +448,9 @@ class FFC_Form_Editor {
                         <th><label><?php esc_html_e('Display Mode', 'ffc'); ?></label></th>
                         <td>
                             <select name="ffc_geofence[datetime_hide_mode]">
-                                <option value="hide" <?php selected($datetime_hide_mode, 'hide'); ?>><?php esc_html_e('Hide form completely', 'ffc'); ?></option>
-                                <option value="message" <?php selected($datetime_hide_mode, 'message'); ?>><?php esc_html_e('Show blocked message', 'ffc'); ?></option>
+                                <option value="message" <?php selected($datetime_hide_mode, 'message'); ?>><?php esc_html_e('Show blocked message (Recommended)', 'ffc'); ?></option>
                                 <option value="title_message" <?php selected($datetime_hide_mode, 'title_message'); ?>><?php esc_html_e('Show title + description + message', 'ffc'); ?></option>
+                                <option value="hide" <?php selected($datetime_hide_mode, 'hide'); ?>><?php esc_html_e('Hide form completely', 'ffc'); ?></option>
                             </select>
                             <p class="description"><?php esc_html_e('How to display the form when date/time is invalid.', 'ffc'); ?></p>
                         </td>
@@ -524,9 +524,9 @@ class FFC_Form_Editor {
                         <th><label><?php esc_html_e('Display Mode', 'ffc'); ?></label></th>
                         <td>
                             <select name="ffc_geofence[geo_hide_mode]">
-                                <option value="hide" <?php selected($geo_hide_mode, 'hide'); ?>><?php esc_html_e('Hide form completely', 'ffc'); ?></option>
-                                <option value="message" <?php selected($geo_hide_mode, 'message'); ?>><?php esc_html_e('Show blocked message', 'ffc'); ?></option>
+                                <option value="message" <?php selected($geo_hide_mode, 'message'); ?>><?php esc_html_e('Show blocked message (Recommended)', 'ffc'); ?></option>
                                 <option value="title_message" <?php selected($geo_hide_mode, 'title_message'); ?>><?php esc_html_e('Show title + description + message', 'ffc'); ?></option>
+                                <option value="hide" <?php selected($geo_hide_mode, 'hide'); ?>><?php esc_html_e('Hide form completely', 'ffc'); ?></option>
                             </select>
                             <p class="description"><?php esc_html_e('How to display the form when user is outside allowed areas.', 'ffc'); ?></p>
                         </td>
@@ -557,6 +557,66 @@ class FFC_Form_Editor {
                     $(this).addClass('active');
                     $('.ffc-geo-tab-content').removeClass('active');
                     $('#ffc-tab-' + tab).addClass('active');
+                });
+
+                // DateTime restrictions - Enable/Disable fields based on checkbox
+                function toggleDateTimeFields() {
+                    var enabled = $('input[name="ffc_geofence[datetime_enabled]"]').is(':checked');
+                    $('#ffc-tab-datetime input[type="date"], #ffc-tab-datetime input[type="time"], #ffc-tab-datetime select, #ffc-tab-datetime textarea')
+                        .not('input[name="ffc_geofence[datetime_enabled]"]')
+                        .prop('disabled', !enabled)
+                        .closest('tr').css('opacity', enabled ? '1' : '0.5');
+                }
+
+                $('input[name="ffc_geofence[datetime_enabled]"]').on('change', toggleDateTimeFields);
+                toggleDateTimeFields(); // Run on load
+
+                // Geolocation restrictions - Enable/Disable fields based on checkbox
+                function toggleGeoFields() {
+                    var enabled = $('input[name="ffc_geofence[geo_enabled]"]').is(':checked');
+                    $('#ffc-tab-geolocation input[type="checkbox"], #ffc-tab-geolocation textarea, #ffc-tab-geolocation select')
+                        .not('input[name="ffc_geofence[geo_enabled]"]')
+                        .prop('disabled', !enabled)
+                        .closest('tr').css('opacity', enabled ? '1' : '0.5');
+
+                    // If geolocation is enabled, ensure at least one method is selected
+                    if (enabled) {
+                        validateGeoMethods();
+                    }
+                }
+
+                $('input[name="ffc_geofence[geo_enabled]"]').on('change', toggleGeoFields);
+                toggleGeoFields(); // Run on load
+
+                // Validate that at least GPS or IP is enabled when geolocation is active
+                function validateGeoMethods() {
+                    var geoEnabled = $('input[name="ffc_geofence[geo_enabled]"]').is(':checked');
+                    var gpsEnabled = $('input[name="ffc_geofence[geo_gps_enabled]"]').is(':checked');
+                    var ipEnabled = $('input[name="ffc_geofence[geo_ip_enabled]"]').is(':checked');
+
+                    if (geoEnabled && !gpsEnabled && !ipEnabled) {
+                        // Auto-enable GPS as default
+                        $('input[name="ffc_geofence[geo_gps_enabled]"]').prop('checked', true);
+                    }
+                }
+
+                // When geolocation is enabled, validate methods
+                $('input[name="ffc_geofence[geo_enabled]"]').on('change', function() {
+                    if ($(this).is(':checked')) {
+                        validateGeoMethods();
+                    }
+                });
+
+                // Prevent unchecking both GPS and IP when geolocation is enabled
+                $('input[name="ffc_geofence[geo_gps_enabled]"], input[name="ffc_geofence[geo_ip_enabled]"]').on('change', function() {
+                    var geoEnabled = $('input[name="ffc_geofence[geo_enabled]"]').is(':checked');
+                    var gpsEnabled = $('input[name="ffc_geofence[geo_gps_enabled]"]').is(':checked');
+                    var ipEnabled = $('input[name="ffc_geofence[geo_ip_enabled]"]').is(':checked');
+
+                    if (geoEnabled && !gpsEnabled && !ipEnabled) {
+                        alert('<?php esc_html_e('At least one geolocation method (GPS or IP) must be enabled when geolocation is active.', 'ffc'); ?>');
+                        $(this).prop('checked', true);
+                    }
                 });
             });
             </script>
