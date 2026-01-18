@@ -38,7 +38,7 @@ class FFC_Settings {
      */
     private function load_tabs() {
         // Require abstract base class
-        require_once FFC_PLUGIN_DIR . 'includes/settings/abstract-ffc-settings-tab.php';
+        require_once FFC_PLUGIN_DIR . 'includes/settings/views/abstract-ffc-settings-tab.php';
         
         // Tab files to load
         $tab_files = array(
@@ -54,7 +54,7 @@ class FFC_Settings {
         
         // Load each tab
         foreach ( $tab_files as $tab_id => $filename ) {
-            $filepath = FFC_PLUGIN_DIR . 'includes/settings/' . $filename;
+            $filepath = FFC_PLUGIN_DIR . 'includes/settings/views/' . $filename;
             
             if ( file_exists( $filepath ) ) {
                 require_once $filepath;

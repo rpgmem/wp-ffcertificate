@@ -41,7 +41,7 @@ class FFC_Tab_General extends FFC_Settings_Tab {
         };
         
         // Include view file
-        $view_file = FFC_PLUGIN_DIR . 'includes/settings/ffc-tab-general.php';
+        $view_file = FFC_PLUGIN_DIR . 'includes/settings/views/ffc-tab-general.php';
         
         if ( file_exists( $view_file ) ) {
             // ✅ Make variables available to view

@@ -46,9 +46,9 @@ class Free_Form_Certificate_Loader {
         require_once FFC_PLUGIN_DIR . 'includes/class-ffc-deactivator.php';
 
         // Repositories (v3.0.0)
-        require_once FFC_PLUGIN_DIR . 'includes/repositories/abstract-repository.php';
-        require_once FFC_PLUGIN_DIR . 'includes/repositories/submission-repository.php';
-        require_once FFC_PLUGIN_DIR . 'includes/repositories/form-repository.php';
+        require_once FFC_PLUGIN_DIR . 'includes/repositories/ffc-abstract-repository.php';
+        require_once FFC_PLUGIN_DIR . 'includes/repositories/ffc-submission-repository.php';
+        require_once FFC_PLUGIN_DIR . 'includes/repositories/ffc-form-repository.php';
 
         // Migrations
         require_once FFC_PLUGIN_DIR . 'includes/migrations/class-ffc-migration-manager.php';
@@ -74,8 +74,8 @@ class Free_Form_Certificate_Loader {
         require_once FFC_PLUGIN_DIR . 'includes/admin/class-ffc-admin-user-columns.php';
 
         // Settings system (load BEFORE admin classes)
-        if (file_exists(FFC_PLUGIN_DIR . 'includes/settings/abstract-ffc-settings-tab.php')) {
-            require_once FFC_PLUGIN_DIR . 'includes/settings/abstract-ffc-settings-tab.php';
+        if (file_exists(FFC_PLUGIN_DIR . 'includes/settings/views/abstract-ffc-settings-tab.php')) {
+            require_once FFC_PLUGIN_DIR . 'includes/settings/views/abstract-ffc-settings-tab.php';
         }
 
         // Submissions
