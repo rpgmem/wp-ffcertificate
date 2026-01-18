@@ -134,63 +134,69 @@
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
-    table-layout: auto;
+    table-layout: fixed;
 }
 
 .ffc-certificates-table th {
     background: #f5f5f5;
-    padding: 12px 8px;
+    padding: 10px 8px;
     text-align: left;
     font-weight: 600;
+    font-size: 13px;
     border-bottom: 2px solid #e0e0e0;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .ffc-certificates-table td {
-    padding: 12px 8px;
+    padding: 10px 8px;
     border-bottom: 1px solid #e0e0e0;
     vertical-align: middle;
+    font-size: 13px;
 }
 
-/* Column widths */
+/* Column widths - Fixed layout for consistency */
 .ffc-certificates-table th:nth-child(1),
 .ffc-certificates-table td:nth-child(1) {
-    width: 25%;
-    min-width: 150px;
+    width: 20%;
 }
 
 .ffc-certificates-table th:nth-child(2),
 .ffc-certificates-table td:nth-child(2) {
-    width: 12%;
-    min-width: 100px;
+    width: 13%;
 }
 
 .ffc-certificates-table th:nth-child(3),
 .ffc-certificates-table td:nth-child(3) {
     width: 15%;
-    min-width: 120px;
     text-align: center;
 }
 
 .ffc-certificates-table th:nth-child(4),
 .ffc-certificates-table td:nth-child(4) {
-    width: 20%;
-    min-width: 150px;
-    word-break: break-word;
+    width: 22%;
+    word-break: break-all;
 }
 
 .ffc-certificates-table th:nth-child(5),
 .ffc-certificates-table td:nth-child(5) {
-    width: 15%;
-    min-width: 120px;
-    font-family: 'Courier New', monospace;
-    font-size: 13px;
+    width: 17%;
+}
+
+.ffc-certificates-table td:nth-child(5) {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .ffc-certificates-table th:nth-child(6),
 .ffc-certificates-table td:nth-child(6) {
     width: 13%;
-    min-width: 100px;
     text-align: center;
 }
 
@@ -201,16 +207,18 @@
 .ffc-certificates-table .consent-yes {
     color: #28a745;
     font-weight: 600;
+    font-size: 13px;
 }
 
 .ffc-certificates-table .consent-no {
     color: #dc3545;
     font-weight: 600;
+    font-size: 13px;
 }
 
 .ffc-certificates-table .button {
-    padding: 6px 12px;
-    font-size: 13px;
+    padding: 5px 10px;
+    font-size: 12px;
     text-decoration: none;
     white-space: nowrap;
     display: inline-block;
@@ -315,15 +323,30 @@
         -webkit-overflow-scrolling: touch;
     }
 
+    .ffc-certificates-table thead,
+    .ffc-certificates-table tbody,
+    .ffc-certificates-table tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+    }
+
     .ffc-certificates-table th,
     .ffc-certificates-table td {
         padding: 8px 6px;
-        font-size: 13px;
-        min-width: 80px;
+        font-size: 12px;
+    }
+
+    .ffc-certificates-table th {
+        font-size: 12px;
+    }
+
+    .ffc-certificates-table td:nth-child(5) {
+        font-size: 10px;
     }
 
     .ffc-certificates-table .button {
-        padding: 5px 10px;
-        font-size: 12px;
+        padding: 4px 8px;
+        font-size: 11px;
     }
 }
