@@ -58,6 +58,12 @@ class Free_Form_Certificate_Loader {
         require_once FFC_PLUGIN_DIR . 'includes/class-ffc-ip-geolocation.php';
         require_once FFC_PLUGIN_DIR . 'includes/class-ffc-geofence.php';
 
+        // User Dashboard (v3.1.0)
+        require_once FFC_PLUGIN_DIR . 'includes/class-ffc-migration-user-link.php';
+        require_once FFC_PLUGIN_DIR . 'includes/user-dashboard/class-ffc-user-manager.php';
+        require_once FFC_PLUGIN_DIR . 'includes/user-dashboard/class-ffc-access-control.php';
+        require_once FFC_PLUGIN_DIR . 'includes/shortcodes/class-ffc-dashboard-shortcode.php';
+
         // Settings system (load BEFORE rate-limiter)
         if (file_exists(FFC_PLUGIN_DIR . 'includes/settings/abstract-ffc-settings-tab.php')) {
             require_once FFC_PLUGIN_DIR . 'includes/settings/abstract-ffc-settings-tab.php';

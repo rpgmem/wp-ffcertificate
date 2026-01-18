@@ -13,12 +13,18 @@ class FFC_Activator {
         self::create_activity_log_table();
         self::add_columns();
         self::create_verification_page();
-        
+
         // ✅ v2.10.0: Create Rate Limit tables
         if (class_exists('FFC_Rate_Limit_Activator')) {
             FFC_Rate_Limit_Activator::create_tables();
         }
-        
+
+        // ✅ v3.1.0: Register ffc_user role
+        self::register_user_role();
+
+        // ✅ v3.1.0: Create dashboard page
+        self::create_dashboard_page();
+
         self::run_migrations();
         flush_rewrite_rules();
     }
@@ -187,6 +193,57 @@ class FFC_Activator {
             if (isset($result['has_more']) && !$result['has_more']) {
                 update_option($option_key, true);
             }
+        }
+    }
+
+    /**
+     * Register ffc_user role
+     *
+     * @since 3.1.0
+     */
+    private static function register_user_role() {
+        // Load User Manager if not already loaded
+        if (!class_exists('FFC_User_Manager')) {
+            $user_manager_file = FFC_PLUGIN_DIR . 'includes/user-dashboard/class-ffc-user-manager.php';
+            if (file_exists($user_manager_file)) {
+                require_once $user_manager_file;
+            }
+        }
+
+        if (class_exists('FFC_User_Manager')) {
+            FFC_User_Manager::register_role();
+        }
+    }
+
+    /**
+     * Create dashboard page
+     *
+     * @since 3.1.0
+     */
+    private static function create_dashboard_page() {
+        $existing_page = get_page_by_path('dashboard');
+
+        if ($existing_page) {
+            update_option('ffc_dashboard_page_id', $existing_page->ID);
+            return;
+        }
+
+        $page_data = array(
+            'post_title'     => __('My Dashboard', 'ffc'),
+            'post_content'   => '[user_dashboard_personal]',
+            'post_status'    => 'publish',
+            'post_type'      => 'page',
+            'post_name'      => 'dashboard',
+            'post_author'    => 1,
+            'comment_status' => 'closed',
+            'ping_status'    => 'closed'
+        );
+
+        $page_id = wp_insert_post($page_data);
+
+        if ($page_id && !is_wp_error($page_id)) {
+            update_option('ffc_dashboard_page_id', $page_id);
+            update_post_meta($page_id, '_ffc_managed_page', '1');
         }
     }
 }

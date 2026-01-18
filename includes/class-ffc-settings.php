@@ -48,6 +48,7 @@ class FFC_Settings {
             'qrcode'        => 'class-ffc-tab-qrcode.php',
             'rate_limit'    => 'class-ffc-tab-rate-limit.php',
             'geolocation'   => 'class-ffc-tab-geolocation.php',
+            'user_access'   => 'class-ffc-tab-user-access.php',
             'migrations'    => 'class-ffc-tab-migrations.php'
         );
         
@@ -69,6 +70,8 @@ class FFC_Settings {
                     $class_name = 'FFC_Tab_Rate_Limit';
                 } elseif ( $tab_id === 'geolocation' ) {
                     $class_name = 'FFC_Tab_Geolocation';
+                } elseif ( $tab_id === 'user_access' ) {
+                    $class_name = 'FFC_Tab_User_Access';
                 }
                 
                 if ( class_exists( $class_name ) ) {
@@ -208,7 +211,22 @@ class FFC_Settings {
             update_option( 'ffc_settings', $clean );
             add_settings_error( 'ffc_settings', 'ffc_settings_updated', __( 'Settings saved.', 'ffc' ), 'updated' );
         }
-        
+
+        // Handle User Access Settings (v3.1.0)
+        if ( isset( $_POST['ffc_user_access_nonce'] ) && wp_verify_nonce( $_POST['ffc_user_access_nonce'], 'ffc_user_access_settings' ) ) {
+            $settings = array(
+                'block_wp_admin' => isset( $_POST['block_wp_admin'] ),
+                'blocked_roles' => isset( $_POST['blocked_roles'] ) && is_array( $_POST['blocked_roles'] ) ? array_map( 'sanitize_text_field', $_POST['blocked_roles'] ) : array( 'ffc_user' ),
+                'redirect_url' => isset( $_POST['redirect_url'] ) ? esc_url_raw( $_POST['redirect_url'] ) : home_url( '/dashboard' ),
+                'redirect_message' => isset( $_POST['redirect_message'] ) ? sanitize_textarea_field( $_POST['redirect_message'] ) : '',
+                'allow_admin_bar' => isset( $_POST['allow_admin_bar'] ),
+                'bypass_for_admins' => isset( $_POST['bypass_for_admins'] ),
+            );
+
+            update_option( 'ffc_user_access_settings', $settings );
+            add_settings_error( 'ffc_user_access_settings', 'ffc_user_access_updated', __( 'User Access settings saved successfully.', 'ffc' ), 'updated' );
+        }
+
         // Handle Global Data Deletion (Danger Zone)
         if ( isset( $_POST['ffc_delete_all_data'] ) && check_admin_referer( 'ffc_delete_all_data', 'ffc_critical_nonce' ) ) {
             $target = isset($_POST['delete_target']) ? $_POST['delete_target'] : 'all';
