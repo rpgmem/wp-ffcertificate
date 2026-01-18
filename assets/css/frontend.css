@@ -691,6 +691,22 @@
     font-size: 15px;
 }
 
+/* Admin bypass message (informational - blue theme) */
+.ffc-geofence-admin-bypass {
+    background: #d1ecf1;
+    border-left: 4px solid #0c5460;
+    padding: 15px 20px;
+    margin: 0 0 20px 0;
+    border-radius: 4px;
+}
+
+.ffc-geofence-admin-bypass p {
+    margin: 0;
+    color: #0c5460;
+    font-size: 15px;
+    font-weight: 500;
+}
+
 /* ============================================
    LOADING STATE (Magic Link)
    ============================================ */

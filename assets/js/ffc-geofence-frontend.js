@@ -47,10 +47,19 @@
 
             this.debug('Processing form', {
                 formId: formId,
+                adminBypass: config.adminBypass || false,
                 datetimeEnabled: config.datetime ? config.datetime.enabled : false,
                 geoEnabled: config.geo ? config.geo.enabled : false,
                 config: config
             });
+
+            // Check for admin bypass mode
+            if (config.adminBypass === true) {
+                this.showAdminBypassMessage(formWrapper);
+                this.showForm(formWrapper);
+                this.debug('Admin bypass active, showing form');
+                return;
+            }
 
             // PRIORITY 1: Validate Date/Time (server timestamp is trusted)
             if (config.datetime && config.datetime.enabled) {
@@ -349,6 +358,15 @@
         showBlockedMessage: function(formWrapper, message) {
             const html = '<div class="ffc-geofence-blocked"><p>' + this.escapeHtml(message) + '</p></div>';
             formWrapper.append(html);
+        },
+
+        /**
+         * Show admin bypass message
+         */
+        showAdminBypassMessage: function(formWrapper) {
+            const message = '🔓 Admin Bypass Mode Active - Geofence restrictions are disabled for administrators';
+            const html = '<div class="ffc-geofence-admin-bypass"><p>' + this.escapeHtml(message) + '</p></div>';
+            formWrapper.prepend(html);
         },
 
         /**

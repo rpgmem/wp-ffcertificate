@@ -348,14 +348,23 @@ class FFC_Geofence {
             return null;
         }
 
-        // Admin bypass
+        // Admin bypass - return special config with bypass flag
         if (self::should_bypass_for_admin()) {
-            return null; // No restrictions for admin in debug mode
+            return array(
+                'formId' => $form_id,
+                'adminBypass' => true,
+                'datetime' => array('enabled' => false),
+                'geo' => array('enabled' => false),
+                'global' => array(
+                    'debug' => !empty(get_option('ffc_geolocation_settings')['debug_enabled']),
+                ),
+            );
         }
 
         // Build frontend config
         $frontend_config = array(
             'formId' => $form_id,
+            'adminBypass' => false,
             'datetime' => array(
                 'enabled' => $config['datetime_enabled'] == '1',
                 'dateStart' => $config['date_start'] ?? '',
