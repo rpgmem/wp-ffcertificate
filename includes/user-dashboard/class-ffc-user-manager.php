@@ -64,6 +64,11 @@ class FFC_User_Manager {
             // Add ffc_user role (keeps other roles)
             $existing_user->add_role('ffc_user');
 
+            // Update display name if empty (username as fallback is not user-friendly)
+            if (empty($existing_user->display_name) || $existing_user->display_name === $existing_user->user_login) {
+                self::sync_user_metadata($user_id, $submission_data);
+            }
+
             return $user_id;
         }
 
