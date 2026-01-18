@@ -387,6 +387,7 @@ class FFC_Form_Editor {
         $date_end = $config['date_end'] ?? '';
         $time_start = $config['time_start'] ?? '';
         $time_end = $config['time_end'] ?? '';
+        $time_mode = $config['time_mode'] ?? 'daily'; // 'daily' or 'span'
         $datetime_hide_mode = $config['datetime_hide_mode'] ?? 'message';
         $msg_datetime = $config['msg_datetime'] ?? __('This form is not available at this time.', 'ffc');
 
@@ -436,12 +437,36 @@ class FFC_Form_Editor {
                         </td>
                     </tr>
                     <tr>
-                        <th><label><?php esc_html_e('Daily Time Range', 'ffc'); ?></label></th>
+                        <th><label><?php esc_html_e('Time Range', 'ffc'); ?></label></th>
                         <td>
                             <label><?php esc_html_e('From:', 'ffc'); ?> <input type="time" name="ffc_geofence[time_start]" value="<?php echo esc_attr($time_start); ?>"></label>
                             &nbsp;&nbsp;
                             <label><?php esc_html_e('To:', 'ffc'); ?> <input type="time" name="ffc_geofence[time_end]" value="<?php echo esc_attr($time_end); ?>"></label>
-                            <p class="description"><?php esc_html_e('Restrict access to specific hours each day. Leave empty for 24/7 access.', 'ffc'); ?></p>
+                            <p class="description"><?php esc_html_e('Leave empty for 24/7 access. Default: 00:00 to 23:59', 'ffc'); ?></p>
+                        </td>
+                    </tr>
+                    <tr id="ffc-time-mode-row" style="<?php echo (empty($date_start) || empty($date_end) || $date_start === $date_end) ? 'display:none;' : ''; ?>">
+                        <th><label><?php esc_html_e('Time Behavior', 'ffc'); ?></label></th>
+                        <td>
+                            <fieldset>
+                                <label>
+                                    <input type="radio" name="ffc_geofence[time_mode]" value="span" <?php checked($time_mode, 'span'); ?>>
+                                    <strong><?php esc_html_e('Time spans across dates', 'ffc'); ?></strong>
+                                </label>
+                                <p class="description" style="margin-left: 20px; margin-top: 5px;">
+                                    <?php esc_html_e('Start time applies to start date, end time applies to end date. Form is open continuously between those timestamps.', 'ffc'); ?><br>
+                                    <?php esc_html_e('Example: Start 01/01 12:00 + End 10/01 23:00 = Open from 12:00 on Jan 1st until 23:00 on Jan 10th', 'ffc'); ?>
+                                </p>
+
+                                <label>
+                                    <input type="radio" name="ffc_geofence[time_mode]" value="daily" <?php checked($time_mode, 'daily'); ?>>
+                                    <strong><?php esc_html_e('Time applies to each day individually', 'ffc'); ?></strong>
+                                </label>
+                                <p class="description" style="margin-left: 20px; margin-top: 5px;">
+                                    <?php esc_html_e('Time range applies to every day in the date range. Form respects daily hours.', 'ffc'); ?><br>
+                                    <?php esc_html_e('Example: Start 01/01 + End 10/01 + Time 12:00-23:00 = Open 12:00-23:00 every day from Jan 1-10', 'ffc'); ?>
+                                </p>
+                            </fieldset>
                         </td>
                     </tr>
                     <tr>
@@ -562,14 +587,34 @@ class FFC_Form_Editor {
                 // DateTime restrictions - Enable/Disable fields based on checkbox
                 function toggleDateTimeFields() {
                     var enabled = $('input[name="ffc_geofence[datetime_enabled]"]').is(':checked');
-                    $('#ffc-tab-datetime input[type="date"], #ffc-tab-datetime input[type="time"], #ffc-tab-datetime select, #ffc-tab-datetime textarea')
+                    $('#ffc-tab-datetime input[type="date"], #ffc-tab-datetime input[type="time"], #ffc-tab-datetime select, #ffc-tab-datetime textarea, #ffc-tab-datetime input[type="radio"]')
                         .not('input[name="ffc_geofence[datetime_enabled]"]')
                         .prop('disabled', !enabled)
                         .closest('tr').css('opacity', enabled ? '1' : '0.5');
+
+                    // Also check if time mode row should be visible
+                    toggleTimeModeRow();
                 }
 
                 $('input[name="ffc_geofence[datetime_enabled]"]').on('change', toggleDateTimeFields);
                 toggleDateTimeFields(); // Run on load
+
+                // Show/hide time mode row based on date range
+                function toggleTimeModeRow() {
+                    var dateStart = $('input[name="ffc_geofence[date_start]"]').val();
+                    var dateEnd = $('input[name="ffc_geofence[date_end]"]').val();
+
+                    // Only show time mode option if different dates are set
+                    if (dateStart && dateEnd && dateStart !== dateEnd) {
+                        $('#ffc-time-mode-row').slideDown(200);
+                    } else {
+                        $('#ffc-time-mode-row').slideUp(200);
+                    }
+                }
+
+                // Watch date changes to show/hide time mode
+                $('input[name="ffc_geofence[date_start]"], input[name="ffc_geofence[date_end]"]').on('change', toggleTimeModeRow);
+                toggleTimeModeRow(); // Run on load
 
                 // Geolocation restrictions - Enable/Disable fields based on checkbox
                 function toggleGeoFields() {
