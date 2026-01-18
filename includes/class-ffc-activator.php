@@ -68,6 +68,7 @@ class FFC_Activator {
         $table_name = FFC_Utils::get_submissions_table();
 
         $columns = array(
+            'user_id' => array('type' => 'BIGINT(20) UNSIGNED DEFAULT NULL', 'after' => 'form_id', 'index' => 'user_id'),
             'magic_token' => array('type' => 'VARCHAR(32) DEFAULT NULL', 'after' => 'status', 'index' => 'magic_token'),
             'cpf_rf' => array('type' => 'VARCHAR(20) DEFAULT NULL', 'after' => 'magic_token', 'index' => 'cpf_rf'),
             'auth_code' => array('type' => 'VARCHAR(20) DEFAULT NULL', 'after' => 'cpf_rf', 'index' => 'auth_code'),
