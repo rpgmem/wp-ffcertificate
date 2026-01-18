@@ -33,7 +33,7 @@ class FFC_Migration_User_Link {
 
         // 2. Get all submissions without user_id, ordered by date (oldest first)
         $submissions = $wpdb->get_results(
-            "SELECT id, cpf_rf_hash, email_encrypted
+            "SELECT id, cpf_rf_hash, email_encrypted, data_encrypted
              FROM {$table}
              WHERE cpf_rf_hash IS NOT NULL
              AND cpf_rf_hash != ''
@@ -156,6 +156,11 @@ class FFC_Migration_User_Link {
                 // Email exists → add capabilities (keep existing roles)
                 $existing_user->add_role('ffc_user');
 
+                // Update display name if empty
+                if (empty($existing_user->display_name) || $existing_user->display_name === $existing_user->user_login) {
+                    self::set_user_display_name($user_id, $submission);
+                }
+
             } else {
                 // STEP 5: Email doesn't exist → Create new user
                 $user_id = wp_create_user(
@@ -176,6 +181,9 @@ class FFC_Migration_User_Link {
                 // Set role
                 $user = new WP_User($user_id);
                 $user->set_role('ffc_user');
+
+                // STEP 5.1: Extract and set user display name from submission data
+                self::set_user_display_name($user_id, $submission);
 
                 // NOTE: Do NOT send password reset email during migration
                 // Users will use WordPress "Forgot Password" if needed
@@ -227,6 +235,57 @@ class FFC_Migration_User_Link {
                 count($errors)
             ),
         );
+    }
+
+    /**
+     * Extract name from submission data and set user display name
+     *
+     * @param int $user_id WordPress user ID
+     * @param array $submission Submission data row (includes data_encrypted)
+     * @return void
+     */
+    private static function set_user_display_name($user_id, $submission) {
+        // Try to decrypt and extract name from submission data
+        if (empty($submission['data_encrypted'])) {
+            return;
+        }
+
+        try {
+            $data_json = FFC_Encryption::decrypt($submission['data_encrypted']);
+            $data = json_decode($data_json, true);
+
+            if (!is_array($data)) {
+                return;
+            }
+
+            // Try to extract nome_completo from various field names
+            $nome_completo = '';
+            $possible_names = array('nome_completo', 'nome', 'name', 'full_name', 'ffc_nome');
+
+            foreach ($possible_names as $field) {
+                if (!empty($data[$field])) {
+                    $nome_completo = $data[$field];
+                    break;
+                }
+            }
+
+            // Update WordPress user fields if name found
+            if (!empty($nome_completo)) {
+                wp_update_user(array(
+                    'ID' => $user_id,
+                    'display_name' => sanitize_text_field($nome_completo),
+                    'first_name' => sanitize_text_field($nome_completo),
+                ));
+            }
+
+        } catch (Exception $e) {
+            // Silently fail - name is not critical for user creation
+            error_log(sprintf(
+                'FFC Migration User Link: Failed to extract name for user %d - %s',
+                $user_id,
+                $e->getMessage()
+            ));
+        }
     }
 
     /**
