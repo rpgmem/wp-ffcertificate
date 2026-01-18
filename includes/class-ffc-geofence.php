@@ -357,7 +357,7 @@ class FFC_Geofence {
         $frontend_config = array(
             'formId' => $form_id,
             'datetime' => array(
-                'enabled' => $config['datetime_enabled'],
+                'enabled' => $config['datetime_enabled'] == '1',
                 'dateStart' => $config['date_start'] ?? '',
                 'dateEnd' => $config['date_end'] ?? '',
                 'timeStart' => $config['time_start'] ?? '',
@@ -366,8 +366,8 @@ class FFC_Geofence {
                 'hideMode' => $config['datetime_hide_mode'] ?? 'message', // 'hide' or 'message'
             ),
             'geo' => array(
-                'enabled' => $config['geo_enabled'],
-                'gpsEnabled' => $config['geo_gps_enabled'],
+                'enabled' => $config['geo_enabled'] == '1',
+                'gpsEnabled' => $config['geo_gps_enabled'] == '1',
                 'areas' => self::parse_areas($config['geo_areas'] ?? ''),
                 'gpsIpLogic' => $config['geo_gps_ip_logic'] ?? 'or', // 'and' or 'or'
                 'messageBlocked' => $config['msg_geo_blocked'] ?? '',

@@ -382,7 +382,7 @@ class FFC_Form_Editor {
         if ( !is_array($config) ) $config = array();
 
         // Defaults
-        $datetime_enabled = isset($config['datetime_enabled']) ? '1' : '0';
+        $datetime_enabled = ($config['datetime_enabled'] ?? '0') == '1' ? '1' : '0';
         $date_start = $config['date_start'] ?? '';
         $date_end = $config['date_end'] ?? '';
         $time_start = $config['time_start'] ?? '';
@@ -390,11 +390,11 @@ class FFC_Form_Editor {
         $datetime_hide_mode = $config['datetime_hide_mode'] ?? 'message';
         $msg_datetime = $config['msg_datetime'] ?? __('This form is not available at this time.', 'ffc');
 
-        $geo_enabled = isset($config['geo_enabled']) ? '1' : '0';
-        $geo_gps_enabled = isset($config['geo_gps_enabled']) ? '1' : '0';
-        $geo_ip_enabled = isset($config['geo_ip_enabled']) ? '1' : '0';
+        $geo_enabled = ($config['geo_enabled'] ?? '0') == '1' ? '1' : '0';
+        $geo_gps_enabled = ($config['geo_gps_enabled'] ?? '0') == '1' ? '1' : '0';
+        $geo_ip_enabled = ($config['geo_ip_enabled'] ?? '0') == '1' ? '1' : '0';
         $geo_areas = $config['geo_areas'] ?? '';
-        $geo_ip_areas_permissive = isset($config['geo_ip_areas_permissive']) ? '1' : '0';
+        $geo_ip_areas_permissive = ($config['geo_ip_areas_permissive'] ?? '0') == '1' ? '1' : '0';
         $geo_ip_areas = $config['geo_ip_areas'] ?? '';
         $geo_gps_ip_logic = $config['geo_gps_ip_logic'] ?? 'or';
         $geo_hide_mode = $config['geo_hide_mode'] ?? 'message';
