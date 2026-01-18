@@ -142,6 +142,17 @@ class FFC_Migration_Manager {
             'order'           => 96  // Depois de encrypt_sensitive_data
         );
 
+        // ✅ v3.1.0: Link submissions to WordPress users
+        $this->migrations['user_link'] = array(
+            'name'            => __( 'Link Users', 'ffc' ),
+            'description'     => __( 'Link existing submissions to WordPress users based on CPF/RF and email', 'ffc' ),
+            'callback'        => 'migrate_user_link',
+            'batch_size'      => 100,
+            'icon'            => '👥',
+            'required_column' => 'user_id',
+            'order'           => 97  // Antes de data_cleanup
+        );
+
         // ✅ Limpeza do JSON (última migração)
         $this->migrations['data_cleanup'] = array(
             'name'            => __( 'JSON Data Cleanup', 'ffc' ),
@@ -190,7 +201,7 @@ class FFC_Migration_Manager {
         }
         
         // Special migrations always available
-        if ( $migration_key === 'magic_tokens' || $migration_key === 'data_cleanup' ) {
+        if ( $migration_key === 'magic_tokens' || $migration_key === 'data_cleanup' || $migration_key === 'user_link' ) {
             return true;
         }
         
@@ -1157,24 +1168,59 @@ class FFC_Migration_Manager {
     
     /**
      * ✅ v2.10.0: Get days remaining until drop available
-     * 
+     *
      * @return int Days remaining (0 if available)
      */
     public function get_drop_days_remaining() {
         $cleanup_date = get_option( 'ffc_data_cleanup_executed_date' );
-        
+
         if ( ! $cleanup_date ) {
             return 999; // Not started
         }
-        
+
         $cleanup_time = strtotime( $cleanup_date );
         $now = current_time( 'timestamp' );
         $days_passed = ( $now - $cleanup_time ) / DAY_IN_SECONDS;
-        
+
         if ( $days_passed >= 15 ) {
             return 0; // Available now
         }
-        
+
         return ceil( 15 - $days_passed );
+    }
+
+    /**
+     * ✅ v3.1.0: Link submissions to WordPress users
+     *
+     * Delegates to FFC_Migration_User_Link class
+     *
+     * @param int $batch_number Batch number (0-indexed)
+     * @return array Result with migrated count
+     */
+    private function migrate_user_link( $batch_number = 0 ) {
+        // Load migration class if not already loaded
+        if ( ! class_exists( 'FFC_Migration_User_Link' ) ) {
+            $migration_file = FFC_PLUGIN_DIR . 'includes/class-ffc-migration-user-link.php';
+            if ( file_exists( $migration_file ) ) {
+                require_once $migration_file;
+            } else {
+                return array(
+                    'success' => false,
+                    'processed' => 0,
+                    'errors' => 1,
+                    'message' => __( 'Migration class file not found', 'ffc' ),
+                );
+            }
+        }
+
+        // Run migration (this is a one-time migration, not batched)
+        $result = FFC_Migration_User_Link::run();
+
+        // Convert to expected format
+        return array(
+            'migrated'  => $result['processed'] ?? 0,
+            'processed' => $result['processed'] ?? 0,
+            'has_more'  => false, // One-time migration
+        );
     }
 }

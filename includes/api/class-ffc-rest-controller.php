@@ -164,6 +164,20 @@ class FFC_REST_Controller {
                 ),
             ),
         ));
+
+        // GET /user/certificates - Get current user's certificates (v3.1.0)
+        register_rest_route($this->namespace, '/user/certificates', array(
+            'methods' => WP_REST_Server::READABLE,
+            'callback' => array($this, 'get_user_certificates'),
+            'permission_callback' => 'is_user_logged_in', // Requires logged in user
+        ));
+
+        // GET /user/profile - Get current user's profile data (v3.1.0)
+        register_rest_route($this->namespace, '/user/profile', array(
+            'methods' => WP_REST_Server::READABLE,
+            'callback' => array($this, 'get_user_profile'),
+            'permission_callback' => 'is_user_logged_in', // Requires logged in user
+        ));
     }
     
     /**
@@ -733,5 +747,201 @@ class FFC_REST_Controller {
         }
         
         return $errors;
+    }
+
+    /**
+     * GET /user/certificates
+     * Get current user's certificates
+     *
+     * @since 3.1.0
+     * @param WP_REST_Request $request
+     * @return WP_REST_Response|WP_Error
+     */
+    public function get_user_certificates($request) {
+        try {
+            $user_id = get_current_user_id();
+
+            if (!$user_id) {
+                return new WP_Error(
+                    'not_logged_in',
+                    __('You must be logged in to view certificates', 'ffc'),
+                    array('status' => 401)
+                );
+            }
+
+            global $wpdb;
+            $table = FFC_Utils::get_submissions_table();
+
+            // Get date format from settings
+            $settings = get_option('ffc_settings', array());
+            $date_format = $settings['date_format'] ?? 'F j, Y';
+
+            // Get all submissions for this user (includes both CPF and RF)
+            $submissions = $wpdb->get_results($wpdb->prepare(
+                "SELECT s.*, p.post_title as form_title
+                 FROM {$table} s
+                 LEFT JOIN {$wpdb->posts} p ON s.form_id = p.ID
+                 WHERE s.user_id = %d
+                 AND s.status != 'trash'
+                 ORDER BY s.submission_date DESC",
+                $user_id
+            ), ARRAY_A);
+
+            // Format response
+            $certificates = array();
+
+            foreach ($submissions as $submission) {
+                // Decrypt email
+                $email_display = '';
+                if (!empty($submission['email_encrypted'])) {
+                    try {
+                        $email_plain = FFC_Encryption::decrypt($submission['email_encrypted']);
+                        $email_display = $this->mask_email($email_plain);
+                    } catch (Exception $e) {
+                        $email_display = __('Error decrypting', 'ffc');
+                    }
+                }
+
+                // Get verification page URL
+                $verification_page_id = get_option('ffc_verification_page_id');
+                $verification_url = $verification_page_id ? get_permalink($verification_page_id) : home_url('/valid');
+
+                // Build magic link
+                $magic_link = '';
+                if (!empty($submission['magic_token'])) {
+                    $magic_link = add_query_arg('token', $submission['magic_token'], $verification_url);
+                }
+
+                // Format auth code
+                $auth_code_formatted = '';
+                if (!empty($submission['auth_code'])) {
+                    $auth_code_formatted = FFC_Utils::format_auth_code($submission['auth_code']);
+                }
+
+                // Format date using plugin settings
+                $date_formatted = date_i18n($date_format, strtotime($submission['submission_date']));
+
+                $certificates[] = array(
+                    'id' => $submission['id'],
+                    'form_id' => $submission['form_id'],
+                    'form_title' => $submission['form_title'] ?? __('Unknown Form', 'ffc'),
+                    'submission_date' => $date_formatted,
+                    'submission_date_raw' => $submission['submission_date'],
+                    'consent_given' => (bool) $submission['consent_given'],
+                    'email' => $email_display,
+                    'auth_code' => $auth_code_formatted,
+                    'magic_link' => $magic_link,
+                    'pdf_url' => $magic_link,  // Same as magic_link
+                );
+            }
+
+            return rest_ensure_response(array(
+                'certificates' => $certificates,
+                'total' => count($certificates),
+            ));
+
+        } catch (Exception $e) {
+            return new WP_Error(
+                'get_certificates_error',
+                $e->getMessage(),
+                array('status' => 500)
+            );
+        }
+    }
+
+    /**
+     * GET /user/profile
+     * Get current user's profile data
+     *
+     * @since 3.1.0
+     * @param WP_REST_Request $request
+     * @return WP_REST_Response|WP_Error
+     */
+    public function get_user_profile($request) {
+        try {
+            $user_id = get_current_user_id();
+
+            if (!$user_id) {
+                return new WP_Error(
+                    'not_logged_in',
+                    __('You must be logged in to view profile', 'ffc'),
+                    array('status' => 401)
+                );
+            }
+
+            // Load User Manager if needed
+            if (!class_exists('FFC_User_Manager')) {
+                $user_manager_file = FFC_PLUGIN_DIR . 'includes/user-dashboard/class-ffc-user-manager.php';
+                if (file_exists($user_manager_file)) {
+                    require_once $user_manager_file;
+                }
+            }
+
+            $user = wp_get_current_user();
+
+            // Get CPF/RF (masked)
+            $cpf_masked = '';
+            if (class_exists('FFC_User_Manager')) {
+                $cpf_masked = FFC_User_Manager::get_user_cpf_masked($user_id);
+            }
+
+            // Get all emails used
+            $emails = array();
+            if (class_exists('FFC_User_Manager')) {
+                $emails = FFC_User_Manager::get_user_emails($user_id);
+            }
+
+            // Format member since date
+            $member_since = '';
+            if ($user->user_registered) {
+                $settings = get_option('ffc_settings', array());
+                $date_format = $settings['date_format'] ?? 'F j, Y';
+                $member_since = date_i18n($date_format, strtotime($user->user_registered));
+            }
+
+            return rest_ensure_response(array(
+                'user_id' => $user_id,
+                'display_name' => $user->display_name,
+                'email' => $user->user_email,
+                'emails' => $emails,
+                'cpf_masked' => $cpf_masked ?? __('Not found', 'ffc'),
+                'member_since' => $member_since,
+                'roles' => $user->roles,
+            ));
+
+        } catch (Exception $e) {
+            return new WP_Error(
+                'get_profile_error',
+                $e->getMessage(),
+                array('status' => 500)
+            );
+        }
+    }
+
+    /**
+     * Mask email for display
+     *
+     * Example: joao@gmail.com → j***@gmail.com
+     *
+     * @param string $email Email address
+     * @return string Masked email
+     */
+    private function mask_email($email) {
+        if (!is_email($email)) {
+            return $email;
+        }
+
+        $parts = explode('@', $email);
+        if (count($parts) !== 2) {
+            return $email;
+        }
+
+        $local = $parts[0];
+        $domain = $parts[1];
+
+        // Show first character + *** + @domain
+        $masked_local = substr($local, 0, 1) . '***';
+
+        return $masked_local . '@' . $domain;
     }
 }

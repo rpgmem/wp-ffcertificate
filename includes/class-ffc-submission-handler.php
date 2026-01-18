@@ -135,10 +135,31 @@ class FFC_Submission_Handler {
         $consent_given = isset($submission_data['ffc_lgpd_consent']) && $submission_data['ffc_lgpd_consent'] == '1' ? 1 : 0;
         $consent_date = $consent_given ? current_time('mysql') : null;
         $consent_text = $consent_given ? __('User agreed to Privacy Policy and data storage', 'ffc') : null;
-        
-        // 8. Prepare insert data
+
+        // 8. Link to WordPress user (v3.1.0)
+        $user_id = null;
+        if (!empty($cpf_hash) && !empty($user_email)) {
+            // Load User Manager if not already loaded
+            if (!class_exists('FFC_User_Manager')) {
+                $user_manager_file = FFC_PLUGIN_DIR . 'includes/user-dashboard/class-ffc-user-manager.php';
+                if (file_exists($user_manager_file)) {
+                    require_once $user_manager_file;
+                }
+            }
+
+            if (class_exists('FFC_User_Manager')) {
+                $user_result = FFC_User_Manager::get_or_create_user($cpf_hash, $user_email, $submission_data);
+
+                if (!is_wp_error($user_result)) {
+                    $user_id = $user_result;
+                }
+            }
+        }
+
+        // 9. Prepare insert data
         $insert_data = [
             'form_id' => $form_id,
+            'user_id' => $user_id,  // v3.1.0: Link to WordPress user
             'submission_date' => current_time('mysql'),
             'auth_code' => $clean_auth_code,
             'status' => 'publish',
