@@ -113,7 +113,9 @@ class FFC_User_Manager {
         self::sync_user_metadata($user_id, $submission_data);
 
         // Send password reset email (only for new users, not migration)
-        if (!isset($submission_data['skip_email'])) {
+        // Check if emails are globally disabled
+        $settings = get_option('ffc_settings', array());
+        if (!isset($submission_data['skip_email']) && empty($settings['disable_all_emails'])) {
             wp_new_user_notification($user_id, null, 'user');
         }
 

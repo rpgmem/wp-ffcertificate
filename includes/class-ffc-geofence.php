@@ -90,8 +90,50 @@ class FFC_Geofence {
         $now = current_time('timestamp');
         $current_date = date('Y-m-d', $now);
         $current_time = date('H:i', $now);
+        $time_mode = $config['time_mode'] ?? 'daily';
 
-        // Check date range
+        // Determine if time validation is needed
+        $has_time_range = !empty($config['time_start']) && !empty($config['time_end']);
+        $has_date_range = !empty($config['date_start']) && !empty($config['date_end']);
+        $different_dates = $has_date_range && $config['date_start'] !== $config['date_end'];
+
+        // MODE 1: Time spans across dates (start datetime → end datetime)
+        if ($time_mode === 'span' && $has_date_range && $has_time_range && $different_dates) {
+            $start_datetime = strtotime($config['date_start'] . ' ' . $config['time_start']);
+            $end_datetime = strtotime($config['date_end'] . ' ' . $config['time_end']);
+
+            if ($now < $start_datetime) {
+                return array(
+                    'valid' => false,
+                    'message' => $config['msg_datetime'] ?? __('This form is not yet available.', 'ffc'),
+                    'details' => array(
+                        'reason' => 'before_start_datetime',
+                        'mode' => 'span',
+                        'now' => $now,
+                        'start' => $start_datetime
+                    )
+                );
+            }
+
+            if ($now > $end_datetime) {
+                return array(
+                    'valid' => false,
+                    'message' => $config['msg_datetime'] ?? __('This form is no longer available.', 'ffc'),
+                    'details' => array(
+                        'reason' => 'after_end_datetime',
+                        'mode' => 'span',
+                        'now' => $now,
+                        'end' => $end_datetime
+                    )
+                );
+            }
+
+            // Within the datetime span - allow access
+            return array('valid' => true, 'message' => '', 'details' => array());
+        }
+
+        // MODE 2: Daily time range (default behavior)
+        // Check date range first
         if (!empty($config['date_start']) && $current_date < $config['date_start']) {
             return array(
                 'valid' => false,
@@ -116,17 +158,22 @@ class FFC_Geofence {
             );
         }
 
-        // Check time range (daily)
-        if (!empty($config['time_start']) && !empty($config['time_end'])) {
-            if ($current_time < $config['time_start'] || $current_time > $config['time_end']) {
+        // Then check daily time range (if within date range)
+        if ($has_time_range) {
+            // Default to 00:00 - 23:59 if empty
+            $time_start = $config['time_start'] ?: '00:00';
+            $time_end = $config['time_end'] ?: '23:59';
+
+            if ($current_time < $time_start || $current_time > $time_end) {
                 return array(
                     'valid' => false,
                     'message' => $config['msg_datetime'] ?? __('This form is only available during specific hours.', 'ffc'),
                     'details' => array(
                         'reason' => 'outside_time_range',
+                        'mode' => 'daily',
                         'current_time' => $current_time,
-                        'time_start' => $config['time_start'],
-                        'time_end' => $config['time_end']
+                        'time_start' => $time_start,
+                        'time_end' => $time_end
                     )
                 );
             }
@@ -400,6 +447,7 @@ class FFC_Geofence {
                 'dateEnd' => $config['date_end'] ?? '',
                 'timeStart' => $config['time_start'] ?? '',
                 'timeEnd' => $config['time_end'] ?? '',
+                'timeMode' => $config['time_mode'] ?? 'daily', // 'span' or 'daily'
                 'message' => $config['msg_datetime'] ?? '',
                 'hideMode' => $config['datetime_hide_mode'] ?? 'message', // 'hide' or 'message'
             ),

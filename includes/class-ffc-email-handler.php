@@ -195,8 +195,14 @@ class FFC_Email_Handler {
     }
 
     private function send_user_email( $to, $form_title, $html_content, $form_config, $submission_data, $magic_token = '' ) {
-        $subject = ! empty( $form_config['email_subject'] ) 
-            ? $form_config['email_subject'] 
+        // Check if all emails are globally disabled
+        $settings = get_option( 'ffc_settings', array() );
+        if ( ! empty( $settings['disable_all_emails'] ) ) {
+            return; // Emails are globally disabled
+        }
+
+        $subject = ! empty( $form_config['email_subject'] )
+            ? $form_config['email_subject']
             : sprintf( __( 'Your Certificate: %s', 'ffc' ), $form_title );
         
         $magic_link_url = '';
@@ -254,10 +260,16 @@ class FFC_Email_Handler {
     }
 
     private function send_admin_notification( $form_title, $data, $form_config ) {
-        $admins = isset( $form_config['email_admin'] ) 
-            ? array_filter(array_map('trim', explode( ',', $form_config['email_admin'] ))) 
+        // Check if all emails are globally disabled
+        $settings = get_option( 'ffc_settings', array() );
+        if ( ! empty( $settings['disable_all_emails'] ) ) {
+            return; // Emails are globally disabled
+        }
+
+        $admins = isset( $form_config['email_admin'] )
+            ? array_filter(array_map('trim', explode( ',', $form_config['email_admin'] )))
             : array( get_option( 'admin_email' ) );
-        
+
         $subject = sprintf( __( 'New Issuance: %s', 'ffc' ), $form_title );
         $body    = '<div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">';
         $body   .= '<h3 style="color: #0073aa;">' . __( 'Submission Details:', 'ffc' ) . '</h3>';
