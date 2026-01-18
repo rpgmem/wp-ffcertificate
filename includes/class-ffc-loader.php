@@ -45,14 +45,18 @@ class Free_Form_Certificate_Loader {
         require_once FFC_PLUGIN_DIR . 'includes/class-ffc-activator.php';
         require_once FFC_PLUGIN_DIR . 'includes/class-ffc-deactivator.php';
 
-        // Repositories (v3.0.0)
-        require_once FFC_PLUGIN_DIR . 'includes/repositories/abstract-repository.php';
-        require_once FFC_PLUGIN_DIR . 'includes/repositories/submission-repository.php';
-        require_once FFC_PLUGIN_DIR . 'includes/repositories/form-repository.php';
+        // Repositories (v3.0.0) - with existence check
+        if (file_exists(FFC_PLUGIN_DIR . 'includes/repositories/abstract-repository.php')) {
+            require_once FFC_PLUGIN_DIR . 'includes/repositories/abstract-repository.php';
+            require_once FFC_PLUGIN_DIR . 'includes/repositories/submission-repository.php';
+            require_once FFC_PLUGIN_DIR . 'includes/repositories/form-repository.php';
+        }
 
         // Migrations
         require_once FFC_PLUGIN_DIR . 'includes/migrations/class-ffc-migration-manager.php';
-        require_once FFC_PLUGIN_DIR . 'includes/migrations/class-ffc-migration-user-link.php';
+        if (file_exists(FFC_PLUGIN_DIR . 'includes/migrations/class-ffc-migration-user-link.php')) {
+            require_once FFC_PLUGIN_DIR . 'includes/migrations/class-ffc-migration-user-link.php';
+        }
 
         // Integrations
         require_once FFC_PLUGIN_DIR . 'includes/integrations/class-ffc-ip-geolocation.php';
@@ -67,11 +71,15 @@ class Free_Form_Certificate_Loader {
         require_once FFC_PLUGIN_DIR . 'includes/generators/class-ffc-qrcode-generator.php';
         require_once FFC_PLUGIN_DIR . 'includes/generators/class-ffc-pdf-generator.php';
 
-        // User Dashboard (v3.1.0)
-        require_once FFC_PLUGIN_DIR . 'includes/user-dashboard/class-ffc-user-manager.php';
-        require_once FFC_PLUGIN_DIR . 'includes/user-dashboard/class-ffc-access-control.php';
-        require_once FFC_PLUGIN_DIR . 'includes/shortcodes/class-ffc-dashboard-shortcode.php';
-        require_once FFC_PLUGIN_DIR . 'includes/admin/class-ffc-admin-user-columns.php';
+        // User Dashboard (v3.1.0) - with existence check
+        if (file_exists(FFC_PLUGIN_DIR . 'includes/user-dashboard/class-ffc-user-manager.php')) {
+            require_once FFC_PLUGIN_DIR . 'includes/user-dashboard/class-ffc-user-manager.php';
+            require_once FFC_PLUGIN_DIR . 'includes/user-dashboard/class-ffc-access-control.php';
+            require_once FFC_PLUGIN_DIR . 'includes/shortcodes/class-ffc-dashboard-shortcode.php';
+        }
+        if (file_exists(FFC_PLUGIN_DIR . 'includes/admin/class-ffc-admin-user-columns.php')) {
+            require_once FFC_PLUGIN_DIR . 'includes/admin/class-ffc-admin-user-columns.php';
+        }
 
         // Settings system (load BEFORE admin classes)
         if (file_exists(FFC_PLUGIN_DIR . 'includes/settings/abstract-ffc-settings-tab.php')) {
