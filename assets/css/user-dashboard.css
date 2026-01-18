@@ -1,0 +1,264 @@
+/**
+ * FFC User Dashboard Styles
+ * @since 3.1.0
+ */
+
+/* Dashboard Container */
+.ffc-user-dashboard {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Notices */
+.ffc-dashboard-notice {
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    border-left: 4px solid #ccc;
+}
+
+.ffc-notice-info {
+    background: #d1ecf1;
+    border-left-color: #0c5460;
+    color: #0c5460;
+}
+
+.ffc-notice-warning {
+    background: #fff3cd;
+    border-left-color: #856404;
+    color: #856404;
+}
+
+.ffc-dashboard-notice p {
+    margin: 0.5em 0;
+}
+
+.ffc-dashboard-notice .button {
+    margin-top: 10px;
+}
+
+/* Tabs Navigation */
+.ffc-dashboard-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.ffc-tab {
+    padding: 12px 24px;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    font-size: 16px;
+    color: #666;
+    transition: all 0.3s ease;
+}
+
+.ffc-tab:hover {
+    color: #333;
+    background: #f5f5f5;
+}
+
+.ffc-tab.active {
+    color: #0073aa;
+    border-bottom-color: #0073aa;
+    font-weight: 600;
+}
+
+/* Tab Content */
+.ffc-tab-content {
+    display: none;
+    padding: 20px 0;
+    animation: fadeIn 0.3s ease;
+}
+
+.ffc-tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Loading State */
+.ffc-loading {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+    font-size: 16px;
+}
+
+.ffc-loading::after {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-left: 10px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #0073aa;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Certificates Table */
+.ffc-certificates-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.ffc-certificates-table th {
+    background: #f5f5f5;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.ffc-certificates-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.ffc-certificates-table tr:hover {
+    background: #f9f9f9;
+}
+
+.ffc-certificates-table .consent-yes {
+    color: #28a745;
+    font-weight: 600;
+}
+
+.ffc-certificates-table .consent-no {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+.ffc-certificates-table .button {
+    padding: 6px 12px;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+/* Profile Section */
+.ffc-profile-info {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 4px;
+    margin-top: 20px;
+}
+
+.ffc-profile-field {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.ffc-profile-field:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.ffc-profile-field label {
+    display: block;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.ffc-profile-field .value {
+    color: #666;
+    font-size: 16px;
+}
+
+.ffc-profile-field .email-list {
+    list-style: none;
+    padding: 0;
+    margin: 5px 0 0 0;
+}
+
+.ffc-profile-field .email-list li {
+    padding: 5px 0;
+    color: #666;
+}
+
+.ffc-profile-field .email-list li::before {
+    content: '• ';
+    color: #0073aa;
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+/* Error Message */
+.ffc-error {
+    background: #f8d7da;
+    border-left: 4px solid #dc3545;
+    color: #721c24;
+    padding: 15px 20px;
+    border-radius: 4px;
+    margin: 20px 0;
+}
+
+/* Empty State */
+.ffc-empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+}
+
+.ffc-empty-state p {
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .ffc-user-dashboard {
+        padding: 15px;
+    }
+
+    .ffc-dashboard-tabs {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .ffc-tab {
+        border-bottom: 1px solid #e0e0e0;
+        text-align: left;
+    }
+
+    .ffc-tab.active {
+        border-left: 4px solid #0073aa;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .ffc-certificates-table {
+        display: block;
+        overflow-x: auto;
+    }
+
+    .ffc-certificates-table th,
+    .ffc-certificates-table td {
+        padding: 8px;
+        font-size: 14px;
+    }
+}
