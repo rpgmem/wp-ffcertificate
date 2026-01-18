@@ -8,7 +8,7 @@
 
 if (!defined('ABSPATH')) exit;
 
-require_once __DIR__ . '/abstract-repository.php';
+require_once __DIR__ . '/ffc-abstract-repository.php';
 
 class FFC_Form_Repository extends FFC_Abstract_Repository {
     

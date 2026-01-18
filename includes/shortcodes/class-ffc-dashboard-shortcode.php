@@ -209,7 +209,7 @@ class FFC_Dashboard_Shortcode {
         // Enqueue CSS
         wp_enqueue_style(
             'ffc-dashboard',
-            FFC_PLUGIN_URL . 'assets/css/user-dashboard.css',
+            FFC_PLUGIN_URL . 'assets/css/ffc-user-dashboard.css',
             array(),
             FFC_VERSION
         );
@@ -217,7 +217,7 @@ class FFC_Dashboard_Shortcode {
         // Enqueue JavaScript
         wp_enqueue_script(
             'ffc-dashboard',
-            FFC_PLUGIN_URL . 'assets/js/user-dashboard.js',
+            FFC_PLUGIN_URL . 'assets/js/ffc-user-dashboard.js',
             array('jquery'),
             FFC_VERSION,
             true

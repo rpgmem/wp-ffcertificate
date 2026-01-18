@@ -1366,7 +1366,7 @@ do_action('mycompany_after_custom_process', $submission_id, $custom_data);
 
 - **WordPress Plugin Handbook:** https://developer.wordpress.org/plugins/hooks/
 - **FFC_Utils Reference:** Ver class-ffc-utils.php
-- **Repository Pattern:** Ver abstract-repository.php
+- **Repository Pattern:** Ver ffc-abstract-repository.php
 - **REST API:** Ver class-ffc-rest-controller.php
 
 ---
