@@ -127,8 +127,8 @@
    ========================================================================== */
 
 .button[title*="PDF"]::before {
-    display: inline-block;
-    content: "📄 ";
+    display: inline-block !important;
+    content: "📄 " !important;
     margin-right: 4px;
 }
 
@@ -289,8 +289,9 @@
     pointer-events: none;
 }
 
-.button[title]:hover::before {
-    content: attr(title);
+/* Tooltip arrow - only for buttons without emoji icons */
+.button[title]:not([title*="PDF"]):not([href*="action=edit"]):not([href*="action=trash"]):not([href*="action=restore"]):not(.ffc-delete-btn):hover::before {
+    content: '';
     position: absolute;
     bottom: 100%;
     left: 50%;
