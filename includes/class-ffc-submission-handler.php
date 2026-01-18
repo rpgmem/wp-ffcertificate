@@ -372,13 +372,42 @@ class FFC_Submission_Handler {
         }
         
         // Delete ALL submissions from ALL forms
+        $result = false;
+
         if ($reset_auto_increment) {
             // TRUNCATE resets AUTO_INCREMENT automatically
-            return $wpdb->query("TRUNCATE TABLE {$table}");
+            $result = $wpdb->query("TRUNCATE TABLE {$table}");
+
+            // Also reset migration counters when resetting auto increment
+            // This ensures migration panel shows correct stats after cleanup
+            if ($result !== false) {
+                $this->reset_migration_counters();
+            }
         } else {
             // DELETE keeps AUTO_INCREMENT
-            return $wpdb->query("DELETE FROM {$table}");
+            $result = $wpdb->query("DELETE FROM {$table}");
         }
+
+        return $result;
+    }
+
+    /**
+     * Reset all migration completion flags
+     * Called when all submissions are deleted and counter is reset
+     *
+     * @return void
+     */
+    private function reset_migration_counters() {
+        global $wpdb;
+
+        // Delete all migration completion flags
+        $wpdb->query(
+            "DELETE FROM {$wpdb->options}
+             WHERE option_name LIKE 'ffc_migration_%_completed'"
+        );
+
+        // Clear object cache for affected options
+        wp_cache_delete('alloptions', 'options');
     }
     
     /**
