@@ -336,72 +336,14 @@
 }
 
 /* ==========================================================================
-   8. UTILITY CLASSES
+   8. UTILITY CLASSES & INTERACTIVE ELEMENTS
    ========================================================================== */
-.ffc-w100 { 
-    width: 100% !important; 
-}
+/* ✅ v3.1.0: Admin-specific utilities moved to ffc-admin-utilities.css
+ * See: assets/css/ffc-admin-utilities.css
+ * For shared utilities (admin + frontend), see: assets/css/ffc-common.css
+ */
 
-.ffc-mt15 { 
-    margin-top: 15px; 
-}
-
-.ffc-mt20 { 
-    margin-top: 20px; 
-}
-
-.ffc-mb5 { 
-    margin-bottom: 5px; 
-}
-
-.ffc-block-label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 5px;
-}
-
-.ffc-input-small {
-    width: 80px;
-}
-
-.ffc-input-readonly {
-    background-color: #f0f0f1 !important;
-    cursor: not-allowed;
-}
-
-.ffc-select-full {
-    width: 100%;
-    max-width: 400px;
-}
-
-.ffc-admin-flex-row {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-.ffc-flex-wrap {
-    flex-wrap: wrap;
-}
-
-.ffc-action-group {
-    display: flex;
-    gap: 5px;
-}
-
-.ffc-template-loader {
-    display: flex;
-    gap: 5px;
-    align-items: center;
-}
-
-.ffc-input-group {
-    margin-bottom: 15px;
-}
-
-/* ==========================================================================
-   9. SORT HANDLE & INTERACTIVE ELEMENTS
-   ========================================================================== */
+/* Sort handle and interactive elements */
 .ffc-sort-handle { 
     cursor: move; 
     color: #c3c4c7; 

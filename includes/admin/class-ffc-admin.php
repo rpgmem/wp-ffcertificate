@@ -78,13 +78,16 @@ class FFC_Admin {
             // 2. Common utilities (shared between admin and frontend)
             wp_enqueue_style( 'ffc-common', FFC_PLUGIN_URL . 'assets/css/ffc-common.css', array(), FFC_VERSION);
 
-            // 3. Admin general styles (depends on pdf-core and common)
-            wp_enqueue_style( 'ffc-admin-css', FFC_PLUGIN_URL . 'assets/css/ffc-admin.css', array('ffc-pdf-core', 'ffc-common'), FFC_VERSION );
-            
-            // 3. Submissions page styles (depends on ffc-admin.css)
+            // 3. Admin-specific utilities (v3.1.0)
+            wp_enqueue_style( 'ffc-admin-utilities', FFC_PLUGIN_URL . 'assets/css/ffc-admin-utilities.css', array('ffc-common'), FFC_VERSION);
+
+            // 4. Admin general styles (depends on pdf-core, common, and admin-utilities)
+            wp_enqueue_style( 'ffc-admin-css', FFC_PLUGIN_URL . 'assets/css/ffc-admin.css', array('ffc-pdf-core', 'ffc-common', 'ffc-admin-utilities'), FFC_VERSION );
+
+            // 5. Submissions page styles (depends on ffc-admin.css)
             wp_enqueue_style( 'ffc-admin-submissions-css', FFC_PLUGIN_URL . 'assets/css/ffc-admin-submissions.css', array('ffc-admin-css'), FFC_VERSION );
-            
-            // 4. Settings tabs styles (ONLY on settings page)
+
+            // 6. Settings tabs styles (ONLY on settings page)
             if (isset($_GET['page']) && $_GET['page'] === 'ffc-settings') {
                 wp_enqueue_style(
                     'ffc-admin-settings',
@@ -93,8 +96,8 @@ class FFC_Admin {
                     FFC_VERSION
                 );
             }
-    
-            // 5. Submission edit styles (ONLY on edit page)
+
+            // 7. Submission edit styles (ONLY on edit page)
             if (isset($_GET['page']) && $_GET['page'] === 'ffc-submissions' && isset($_GET['action']) && $_GET['action'] === 'edit') {
                 wp_enqueue_style( 'ffc-admin-submission-edit', FFC_PLUGIN_URL . 'assets/css/ffc-admin-submission-edit.css', array('ffc-admin-css'), FFC_VERSION );
 

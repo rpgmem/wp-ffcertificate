@@ -1,0 +1,184 @@
+/**
+ * FFC Admin Utilities
+ * v3.1.0 - Admin-specific utility classes
+ *
+ * This file contains utility classes used exclusively in the WordPress admin area.
+ * For shared utilities used in both admin and frontend, see ffc-common.css
+ *
+ * @since 3.1.0
+ */
+
+/* ==========================================================================
+   LAYOUT UTILITIES
+   ========================================================================== */
+
+/**
+ * Width utilities
+ */
+.ffc-w100 {
+    width: 100% !important;
+}
+
+/* ==========================================================================
+   SPACING UTILITIES
+   ========================================================================== */
+
+/**
+ * Margin top utilities
+ */
+.ffc-mt15 {
+    margin-top: 15px;
+}
+
+.ffc-mt20 {
+    margin-top: 20px;
+}
+
+/**
+ * Margin bottom utilities
+ */
+.ffc-mb5 {
+    margin-bottom: 5px;
+}
+
+.ffc-mt-10 {
+    margin-top: 10px !important;
+}
+
+.ffc-mt-15 {
+    margin-top: 15px !important;
+}
+
+.ffc-mt-20 {
+    margin-top: 20px !important;
+}
+
+.ffc-mb-10 {
+    margin-bottom: 10px !important;
+}
+
+.ffc-mb-15 {
+    margin-bottom: 15px !important;
+}
+
+.ffc-mb-20 {
+    margin-bottom: 20px !important;
+}
+
+/* ==========================================================================
+   FORM UTILITIES
+   ========================================================================== */
+
+/**
+ * Form label styling
+ */
+.ffc-block-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+/**
+ * Input sizing
+ */
+.ffc-input-small {
+    width: 80px;
+}
+
+/**
+ * Readonly input styling
+ */
+.ffc-input-readonly {
+    background-color: #f0f0f1 !important;
+    cursor: not-allowed;
+}
+
+/**
+ * Select full width
+ */
+.ffc-select-full {
+    width: 100%;
+    max-width: 400px;
+}
+
+/**
+ * Form input grouping
+ */
+.ffc-input-group {
+    margin-bottom: 15px;
+}
+
+/* ==========================================================================
+   FLEXBOX UTILITIES
+   ========================================================================== */
+
+/**
+ * Admin flex row layout
+ */
+.ffc-admin-flex-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/**
+ * Flex wrap utility
+ */
+.ffc-flex-wrap {
+    flex-wrap: wrap;
+}
+
+/**
+ * Action button grouping
+ */
+.ffc-action-group {
+    display: flex;
+    gap: 5px;
+}
+
+/**
+ * Template loader controls
+ */
+.ffc-template-loader {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+/* ==========================================================================
+   TEXT UTILITIES
+   ========================================================================== */
+
+/**
+ * Text color utilities
+ */
+.ffc-text-muted {
+    color: #646970;
+}
+
+.ffc-text-success {
+    color: #00a32a;
+    font-weight: 600;
+}
+
+.ffc-text-error {
+    color: #d63638;
+    font-weight: 600;
+}
+
+.ffc-text-info {
+    color: #2271b1;
+    font-weight: 600;
+}
+
+.ffc-text-warning {
+    color: #f0b849;
+    font-weight: 600;
+}
+
+/**
+ * Monospace font utility
+ */
+.ffc-monospace {
+    font-family: 'SF Mono', Monaco, Consolas, monospace;
+}

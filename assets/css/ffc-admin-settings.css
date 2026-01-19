@@ -425,97 +425,15 @@
 /* ==========================================================================
    DOCUMENTATION TAB
    ========================================================================== */
-.ffc-doc-section {
-    margin-bottom: 30px;
-}
-
-.ffc-doc-section h3 {
-    margin-top: 0;
-    margin-bottom: 15px;
-    font-size: 16px;
-    font-weight: 600;
-}
-
-.ffc-doc-section pre {
-    background: #f6f7f7;
-    padding: 15px;
-    border-radius: 4px;
-    border-left: 4px solid #2271b1;
-    overflow-x: auto;
-    font-size: 13px;
-}
-
-.ffc-doc-section code {
-    background: #f6f7f7;
-    padding: 2px 6px;
-    border-radius: 3px;
-    font-size: 13px;
-    font-family: 'SF Mono', Monaco, Consolas, monospace;
-}
-
-.ffc-doc-section pre code {
-    background: none;
-    padding: 0;
-}
+/* ✅ v3.1.0: Documentation styles consolidated below (see line ~598) */
 
 /* ==========================================================================
    UTILITY CLASSES
    ========================================================================== */
-.ffc-hidden {
-    display: none !important;
-}
-
-.ffc-text-muted {
-    color: #646970;
-}
-
-.ffc-text-success {
-    color: #00a32a;
-    font-weight: 600;
-}
-
-.ffc-text-error {
-    color: #d63638;
-    font-weight: 600;
-}
-
-.ffc-text-info {
-    color: #2271b1;
-    font-weight: 600;
-}
-
-.ffc-text-warning {
-    color: #f0b849;
-    font-weight: 600;
-}
-
-.ffc-monospace {
-    font-family: 'SF Mono', Monaco, Consolas, monospace;
-}
-
-.ffc-mt-10 {
-    margin-top: 10px !important;
-}
-
-.ffc-mt-15 {
-    margin-top: 15px !important;
-}
-
-.ffc-mt-20 {
-    margin-top: 20px !important;
-}
-
-.ffc-mb-10 {
-    margin-bottom: 10px !important;
-}
-
-.ffc-mb-15 {
-    margin-bottom: 15px !important;
-}
-
-.ffc-mb-20 {
-    margin-bottom: 20px !important;
-}
+/* ✅ v3.1.0: Utilities moved to modular files
+ * - Shared utilities (admin + frontend): ffc-common.css
+ * - Admin-only utilities: ffc-admin-utilities.css
+ */
 
 /* ==========================================================================
    BUTTONS
@@ -595,8 +513,42 @@
 }
 
 /* ==========================================================================
-   DOCUMENTATION TAB - SPECIFIC STYLES
+   DOCUMENTATION TAB - COMPLETE STYLES
    ========================================================================== */
+
+/* General Documentation Sections */
+.ffc-doc-section {
+    margin-bottom: 30px;
+}
+
+.ffc-doc-section h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.ffc-doc-section pre {
+    background: #f6f7f7;
+    padding: 15px;
+    border-radius: 4px;
+    border-left: 4px solid #2271b1;
+    overflow-x: auto;
+    font-size: 13px;
+}
+
+.ffc-doc-section code {
+    background: #f6f7f7;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-family: 'SF Mono', Monaco, Consolas, monospace;
+}
+
+.ffc-doc-section pre code {
+    background: none;
+    padding: 0;
+}
 
 /* Table of Contents */
 .ffc-doc-toc {
