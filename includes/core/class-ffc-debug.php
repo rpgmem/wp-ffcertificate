@@ -20,6 +20,7 @@ class FFC_Debug {
     const AREA_EMAIL_HANDLER = 'debug_email_handler';
     const AREA_FORM_PROCESSOR = 'debug_form_processor';
     const AREA_ENCRYPTION = 'debug_encryption';
+    const AREA_GEOFENCE = 'debug_geofence';
 
     /**
      * Check if debug is enabled for a specific area
@@ -95,5 +96,15 @@ class FFC_Debug {
      */
     public static function log_encryption( $message, $data = null ) {
         self::log( self::AREA_ENCRYPTION, $message, $data );
+    }
+
+    /**
+     * Log for Geofence area
+     *
+     * @param string $message Message to log
+     * @param mixed $data Optional data to include
+     */
+    public static function log_geofence( $message, $data = null ) {
+        self::log( self::AREA_GEOFENCE, $message, $data );
     }
 }

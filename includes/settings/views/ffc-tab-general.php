@@ -160,9 +160,24 @@ $custom_format = $get_option('date_format_custom', '');
                         </p>
                     </td>
                 </tr>
+
+                <tr>
+                    <th scope="row">
+                        <label for="debug_geofence"><?php esc_html_e('Geofence', 'ffc'); ?></label>
+                    </th>
+                    <td>
+                        <label>
+                            <input type="checkbox" name="ffc_settings[debug_geofence]" id="debug_geofence" value="1" <?php checked($get_option('debug_geofence'), 1); ?>>
+                            <?php esc_html_e('Enable debug logging for geofence validation', 'ffc'); ?>
+                        </label>
+                        <p class="description">
+                            <?php esc_html_e('Logs date/time restrictions, GPS validation, IP geolocation, and access denied events.', 'ffc'); ?>
+                        </p>
+                    </td>
+                </tr>
             </tbody>
         </table>
-        
+
         <?php submit_button(); ?>
     </form>
 </div>

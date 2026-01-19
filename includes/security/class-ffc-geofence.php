@@ -267,10 +267,13 @@ class FFC_Geofence {
         $global_settings = get_option('ffc_geolocation_settings', array());
         $fallback = $global_settings['api_fallback'] ?? 'gps_only';
 
-        self::debug_log('IP API failed, applying fallback', array(
-            'error' => $error->get_error_message(),
-            'fallback' => $fallback
-        ));
+        // Use centralized debug system
+        if (class_exists('FFC_Debug')) {
+            FFC_Debug::log_geofence('IP API failed, applying fallback', array(
+                'error' => $error->get_error_message(),
+                'fallback' => $fallback
+            ));
+        }
 
         switch ($fallback) {
             case 'allow':
@@ -484,39 +487,12 @@ class FFC_Geofence {
 
         FFC_Activity_Log::log_access_denied($reason, FFC_Utils::get_user_ip());
 
-        self::debug_log('Access denied', array_merge(array(
-            'form_id' => $form_id,
-            'reason' => $reason,
-        ), $details));
-    }
-
-    /**
-     * Debug logging
-     *
-     * @param string $message Log message
-     * @param array $context Additional context
-     */
-    private static function debug_log($message, $context = array()) {
-        $settings = get_option('ffc_geolocation_settings', array());
-
-        if (empty($settings['debug_enabled'])) {
-            return;
-        }
-
-        if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log(sprintf(
-                '[FFC Geofence] %s | %s',
-                $message,
-                !empty($context) ? json_encode($context) : 'no context'
-            ));
-        }
-
-        if (class_exists('FFC_Activity_Log')) {
-            FFC_Activity_Log::log(
-                'geofence_debug',
-                FFC_Activity_Log::LEVEL_DEBUG,
-                array_merge(array('message' => $message), $context)
-            );
+        // Use centralized debug system
+        if (class_exists('FFC_Debug')) {
+            FFC_Debug::log_geofence('Access denied', array_merge(array(
+                'form_id' => $form_id,
+                'reason' => $reason,
+            ), $details));
         }
     }
 }
