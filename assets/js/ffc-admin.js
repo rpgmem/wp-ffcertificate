@@ -267,7 +267,7 @@
             overlay: $overlay.length
         });
 
-        // Show/hide restriction fields based on checkboxes
+        // Show/hide restriction fields based on checkboxes - Using event delegation
         function toggleRestrictionField(checkbox, fieldId) {
             if ($(checkbox).is(':checked')) {
                 $(fieldId).slideDown();
@@ -276,25 +276,29 @@
             }
         }
 
-        // Password field
-        $('#ffc_restriction_password').on('change', function() {
+        // Password field - Using event delegation
+        $(document).on('change', '#ffc_restriction_password', function() {
             toggleRestrictionField(this, '#ffc_password_field');
-        }).trigger('change');
+        });
+        $('#ffc_restriction_password').trigger('change');
 
-        // Allowlist field
-        $('#ffc_restriction_allowlist').on('change', function() {
+        // Allowlist field - Using event delegation
+        $(document).on('change', '#ffc_restriction_allowlist', function() {
             toggleRestrictionField(this, '#ffc_allowlist_field');
-        }).trigger('change');
+        });
+        $('#ffc_restriction_allowlist').trigger('change');
 
-        // Denylist field
-        $('#ffc_restriction_denylist').on('change', function() {
+        // Denylist field - Using event delegation
+        $(document).on('change', '#ffc_restriction_denylist', function() {
             toggleRestrictionField(this, '#ffc_denylist_field');
-        }).trigger('change');
+        });
+        $('#ffc_restriction_denylist').trigger('change');
 
-        // Ticket field
-        $('#ffc_restriction_ticket').on('change', function() {
+        // Ticket field - Using event delegation
+        $(document).on('change', '#ffc_restriction_ticket', function() {
             toggleRestrictionField(this, '#ffc_ticket_field');
-        }).trigger('change');
+        });
+        $('#ffc_restriction_ticket').trigger('change');
 
         console.log('[FFC Admin] Restriction field toggles initialized');
     });

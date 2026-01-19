@@ -3,12 +3,14 @@
  *
  * JavaScript for geofence metabox in form editor
  *
+ * v3.1.0: Standardized to use event delegation pattern
+ *
  * @since 3.0.0
  */
 
 jQuery(document).ready(function($) {
-    // Tab switching
-    $('.ffc-geo-tab-btn').on('click', function() {
+    // Tab switching - Using event delegation
+    $(document).on('click', '.ffc-geo-tab-btn', function() {
         var tab = $(this).data('tab');
         $('.ffc-geo-tab-btn').removeClass('active');
         $(this).addClass('active');
@@ -28,7 +30,8 @@ jQuery(document).ready(function($) {
         toggleTimeModeRow();
     }
 
-    $('input[name="ffc_geofence[datetime_enabled]"]').on('change', toggleDateTimeFields);
+    // Using event delegation for datetime enabled checkbox
+    $(document).on('change', 'input[name="ffc_geofence[datetime_enabled]"]', toggleDateTimeFields);
     toggleDateTimeFields(); // Run on load
 
     // Show/hide time mode row based on date range
@@ -44,8 +47,8 @@ jQuery(document).ready(function($) {
         }
     }
 
-    // Watch date changes to show/hide time mode
-    $('input[name="ffc_geofence[date_start]"], input[name="ffc_geofence[date_end]"]').on('change', toggleTimeModeRow);
+    // Using event delegation for date changes
+    $(document).on('change', 'input[name="ffc_geofence[date_start]"], input[name="ffc_geofence[date_end]"]', toggleTimeModeRow);
     toggleTimeModeRow(); // Run on load
 
     // Geolocation restrictions - Enable/Disable fields based on checkbox
@@ -62,7 +65,15 @@ jQuery(document).ready(function($) {
         }
     }
 
-    $('input[name="ffc_geofence[geo_enabled]"]').on('change', toggleGeoFields);
+    // Using event delegation for geo enabled checkbox
+    $(document).on('change', 'input[name="ffc_geofence[geo_enabled]"]', function() {
+        toggleGeoFields();
+
+        // When geolocation is enabled, validate methods
+        if ($(this).is(':checked')) {
+            validateGeoMethods();
+        }
+    });
     toggleGeoFields(); // Run on load
 
     // Validate that at least GPS or IP is enabled when geolocation is active
@@ -77,15 +88,8 @@ jQuery(document).ready(function($) {
         }
     }
 
-    // When geolocation is enabled, validate methods
-    $('input[name="ffc_geofence[geo_enabled]"]').on('change', function() {
-        if ($(this).is(':checked')) {
-            validateGeoMethods();
-        }
-    });
-
-    // Prevent unchecking both GPS and IP when geolocation is enabled
-    $('input[name="ffc_geofence[geo_gps_enabled]"], input[name="ffc_geofence[geo_ip_enabled]"]').on('change', function() {
+    // Prevent unchecking both GPS and IP when geolocation is enabled - Using event delegation
+    $(document).on('change', 'input[name="ffc_geofence[geo_gps_enabled]"], input[name="ffc_geofence[geo_ip_enabled]"]', function() {
         var geoEnabled = $('input[name="ffc_geofence[geo_enabled]"]').is(':checked');
         var gpsEnabled = $('input[name="ffc_geofence[geo_gps_enabled]"]').is(':checked');
         var ipEnabled = $('input[name="ffc_geofence[geo_ip_enabled]"]').is(':checked');

@@ -1,5 +1,6 @@
 /**
  * FFC User Dashboard JavaScript
+ * v3.1.0: Standardized to use event delegation pattern
  * @since 3.1.0
  */
 
@@ -17,10 +18,10 @@
         },
 
         /**
-         * Bind event listeners
+         * Bind event listeners - Using event delegation
          */
         bindEvents: function() {
-            $('.ffc-tab').on('click', this.switchTab.bind(this));
+            $(document).on('click', '.ffc-tab', this.switchTab.bind(this));
         },
 
         /**
