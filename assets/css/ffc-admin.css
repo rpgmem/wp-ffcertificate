@@ -4,41 +4,11 @@
    ========================================================================== */
 
 /* ==========================================================================
-   1. METABOX TABS (Native WP Style)
+   1. METABOX TABS (Native WP Style) - REMOVED v3.1.0
    ========================================================================== */
-.ffc-metabox-tabs { 
-    margin-top: 10px; 
-}
-
-.ffc-metabox-tabs .ffc-tabs-nav {
-    border-bottom: 1px solid #c3c4c7;
-    margin: 0 0 15px;
-    padding: 0;
-    list-style: none;
-    display: flex;
-    gap: 5px;
-}
-
-.ffc-metabox-tabs .ffc-tabs-nav li {
-    background: #f0f0f1;
-    border: 1px solid #c3c4c7;
-    border-bottom: none;
-    padding: 8px 14px;
-    margin-bottom: -1px;
-    color: #2271b1;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 13px;
-    border-radius: 4px 4px 0 0;
-    transition: background 0.2s;
-}
-
-.ffc-metabox-tabs .ffc-tabs-nav li.nav-tab-active {
-    background: #ffffff;
-    border-bottom: 1px solid #ffffff;
-    color: #1d2327;
-    pointer-events: none;
-}
+/* ✅ Phase 3: Unused metabox tabs classes removed
+ * Removed: .ffc-metabox-tabs, .ffc-tabs-nav (never instantiated)
+ */
 
 /* ==========================================================================
    2. FORM BUILDER (Field Rows) - RESPONSIVE GRID
@@ -151,15 +121,7 @@
     border: 1px solid #1e1e1e;
 }
 
-.ffc-pdf-preview-container {
-    border: 1px solid #c3c4c7;
-    background: #f0f0f1;
-    padding: 20px;
-    margin-top: 10px;
-    display: flex;
-    justify-content: center;
-    overflow: auto;
-}
+/* ✅ v3.1.0 Phase 3: Removed .ffc-pdf-preview-container (never instantiated) */
 
 /* ==========================================================================
    4. TICKET GENERATOR & CODE FIELDS
@@ -211,11 +173,7 @@
     border-collapse: collapse;
 }
 
-.ffc-more-fields {
-    color: #666;
-    font-size: 11px;
-    font-style: italic;
-}
+/* ✅ v3.1.0 Phase 3: Removed .ffc-more-fields (never rendered) */
 
 /* Quebra de texto em emails e dados */
 .ffc-table-responsive table.wp-list-table td.column-email,
@@ -261,29 +219,11 @@
 /* ==========================================================================
    6. SETTINGS & DOCUMENTATION
    ========================================================================== */
-.ffc-settings-card { 
-    max-width: 100%; 
-    padding: 20px; 
-}
-
-.ffc-help-table { 
-    margin-bottom: 25px; 
-    width: 100%; 
-    border-collapse: collapse; 
-}
-
-.ffc-help-table th { 
-    text-align: left; 
-    padding: 10px; 
-    border-bottom: 2px solid #eee; 
-    background: #f9f9f9;
-    width: 200px;
-}
-
-.ffc-help-table td { 
-    padding: 10px; 
-    border-bottom: 1px solid #eee; 
-}
+/* ✅ v3.1.0 Phase 3: Removed unused classes
+ * - .ffc-settings-card (never used)
+ * - .ffc-help-table, .ffc-help-table th, .ffc-help-table td (never instantiated)
+ * - .ffc-danger-select (never applied)
+ */
 
 .ffc-danger-zone {
     margin-top: 40px;
@@ -293,13 +233,9 @@
     border-radius: 4px;
 }
 
-.ffc-danger-zone h2 { 
-    color: #d63638; 
-    margin-top: 0; 
-}
-
-.ffc-danger-select {
-    min-width: 200px;
+.ffc-danger-zone h2 {
+    color: #d63638;
+    margin-top: 0;
 }
 
 /* ==========================================================================
@@ -369,42 +305,20 @@
 }
 
 /* ==========================================================================
-   10. STATUS BADGES
+   10. STATUS BADGES - REMOVED v3.1.0
    ========================================================================== */
-.ffc-status-badge {
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 11px;
-    font-weight: 600;
-}
-
-.ffc-status-publish { 
-    background: #e7f5ec; 
-    color: #008a20; 
-}
-
-.ffc-status-trash { 
-    background: #fcf0f1; 
-    color: #d63638; 
-}
+/* ✅ Phase 3: Status badges moved to ffc-common.css
+ * Removed duplicates: .ffc-status-badge, .ffc-status-publish, .ffc-status-trash
+ * See assets/css/ffc-common.css for the consolidated version
+ */
 
 /* ==========================================================================
-   11. ADMIN NOTICES
+   11. ADMIN NOTICES - REMOVED v3.1.0
    ========================================================================== */
-.ffc-admin-notice {
-    padding: 10px 15px;
-    border-left: 4px solid #fff;
-    margin: 10px 0;
-    box-shadow: 0 1px 1px rgba(0,0,0,0.04);
-}
-
-.ffc-admin-notice-success { 
-    border-color: #00a32a; 
-}
-
-.ffc-admin-notice-warning { 
-    border-left: 4px solid #f0ad4e; 
-}
+/* ✅ Phase 3: Unused admin notice classes removed
+ * Removed: .ffc-admin-notice, .ffc-admin-notice-success, .ffc-admin-notice-warning
+ * These classes were never rendered in the codebase
+ */
 
 /* ==========================================================================
    12. HIGHLIGHTS
@@ -439,10 +353,8 @@
         flex-direction: column;
         align-items: flex-start;
     }
-    
-    .ffc-row-actions {
-        flex-direction: column;
-    }
+
+    /* ✅ v3.1.0 Phase 3: Removed .ffc-row-actions (class never defined or used) */
 }
 
 /* ==========================================================================
@@ -549,16 +461,7 @@
    CORREÇÕES SPRINT 3.0 - v3.0.0
    ========================================================================== */
 
-/* Fix: Largura das abas de configurações */
-.ffc-settings-card {
-    max-width: none !important;
-    width: 100% !important;
-    box-sizing: border-box;
-}
-
-.wrap .ffc-settings-card {
-    max-width: none !important;
-}
+/* ✅ v3.1.0 Phase 3: Removed duplicate .ffc-settings-card (never used, already removed above) */
 
 /* Fix: Ícones não duplicar nos botões */
 .ffc-template-loader .button::before {

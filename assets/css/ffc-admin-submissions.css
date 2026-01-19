@@ -77,11 +77,7 @@
     font-size: 13px;
 }
 
-.ffc-invalid-data {
-    color: #a7aaad;
-    font-style: italic;
-    font-size: 13px;
-}
+/* ✅ v3.1.0 Phase 3: Removed .ffc-invalid-data (never applied to elements) */
 
 .ffc-data-preview {
     font-size: 13px;
@@ -202,8 +198,7 @@
         font-size: 12px;
     }
     
-    .ffc-empty-data,
-    .ffc-invalid-data {
+    .ffc-empty-data {
         font-size: 12px;
     }
 }

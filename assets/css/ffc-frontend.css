@@ -840,6 +840,4 @@
     font-size: 18px;
 }
 
-.ffc-success-actions {
-    margin-top: 20px;
-}
+/* ✅ v3.1.0 Phase 3: Removed .ffc-success-actions (never used in templates) */

@@ -126,37 +126,8 @@
    ACCESSIBILITY
    ========================================================================== */
 
-/**
- * Screen reader only text
- * Visually hidden but accessible to screen readers
+/* ✅ v3.1.0 Phase 3: Removed unused accessibility classes
+ * - .ffc-sr-only (never used in templates)
+ * - .ffc-skip-link (never rendered)
+ * These can be re-added if accessibility features are implemented in the future.
  */
-.ffc-sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-}
-
-/**
- * Skip to content link
- * Visible only on focus for keyboard navigation
- */
-.ffc-skip-link {
-    position: absolute;
-    top: -40px;
-    left: 0;
-    background: #2271b1;
-    color: #fff;
-    padding: 8px;
-    text-decoration: none;
-    z-index: 100000;
-}
-
-.ffc-skip-link:focus {
-    top: 0;
-}
