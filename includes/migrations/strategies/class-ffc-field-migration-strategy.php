@@ -1,0 +1,255 @@
+<?php
+/**
+ * FFC_Field_Migration_Strategy
+ *
+ * Generic strategy for migrating fields from JSON data to dedicated columns.
+ * Handles email, cpf_rf, auth_code, and any other configured field migrations.
+ *
+ * @since 3.1.0 (Extracted from FFC_Migration_Manager)
+ * @version 1.0.0
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+class FFC_Field_Migration_Strategy implements FFC_Migration_Strategy {
+
+    /**
+     * @var string Database table name
+     */
+    private $table_name;
+
+    /**
+     * @var FFC_Migration_Registry
+     */
+    private $registry;
+
+    /**
+     * Constructor
+     *
+     * @param FFC_Migration_Registry $registry Migration registry instance
+     */
+    public function __construct( $registry ) {
+        global $wpdb;
+        $this->table_name = FFC_Utils::get_submissions_table();
+        $this->registry = $registry;
+    }
+
+    /**
+     * Calculate migration status for a field
+     *
+     * @param string $migration_key Migration identifier
+     * @param array $migration_config Migration configuration
+     * @return array Status information
+     */
+    public function calculate_status( $migration_key, $migration_config ) {
+        global $wpdb;
+
+        $column = isset( $migration_config['column'] ) ? $migration_config['column'] : null;
+
+        if ( ! $column ) {
+            return new WP_Error( 'invalid_config', __( 'Missing column configuration', 'ffc' ) );
+        }
+
+        // Count total records
+        $total = $wpdb->get_var( "SELECT COUNT(*) FROM {$this->table_name}" );
+
+        if ( $total == 0 ) {
+            return array(
+                'total' => 0,
+                'migrated' => 0,
+                'pending' => 0,
+                'percent' => 100,
+                'is_complete' => true
+            );
+        }
+
+        // Check for encrypted column equivalent (v2.10.0+)
+        $encrypted_column = $column . '_encrypted';
+        $encrypted_column_exists = $wpdb->get_var( $wpdb->prepare(
+            "SELECT COUNT(*) FROM information_schema.COLUMNS
+            WHERE TABLE_SCHEMA = %s
+            AND TABLE_NAME = %s
+            AND COLUMN_NAME = %s",
+            DB_NAME,
+            $this->table_name,
+            $encrypted_column
+        ));
+
+        // Count migrated records
+        if ( $encrypted_column_exists ) {
+            // If encrypted column exists, count records that have EITHER:
+            // 1. Data in encrypted column (migrated with encryption)
+            // 2. NULL in both columns (already cleaned up)
+            $migrated = $wpdb->get_var( $wpdb->prepare(
+                "SELECT COUNT(*) FROM {$this->table_name}
+                WHERE (%i IS NOT NULL AND %i != '')
+                OR (%i IS NULL AND %i IS NULL)",
+                $encrypted_column, $encrypted_column,
+                $column, $encrypted_column
+            ));
+        } else {
+            // No encrypted column, use old logic
+            $migrated = $wpdb->get_var( $wpdb->prepare(
+                "SELECT COUNT(*) FROM {$this->table_name}
+                WHERE %i IS NOT NULL AND %i != ''",
+                $column, $column
+            ));
+        }
+
+        $pending = $total - $migrated;
+        $percent = ( $total > 0 ) ? ( $migrated / $total ) * 100 : 100;
+
+        return array(
+            'total' => $total,
+            'migrated' => $migrated,
+            'pending' => $pending,
+            'percent' => $percent,
+            'is_complete' => ( $pending == 0 )
+        );
+    }
+
+    /**
+     * Execute field migration for a batch
+     *
+     * @param string $migration_key Migration identifier (field key)
+     * @param array $migration_config Migration configuration
+     * @param int $batch_number Batch number
+     * @return array Execution result
+     */
+    public function execute( $migration_key, $migration_config, $batch_number = 0 ) {
+        global $wpdb;
+
+        // Get field definition
+        $field_def = $this->registry->get_field_definition( $migration_key );
+
+        if ( ! $field_def ) {
+            return array(
+                'success' => false,
+                'processed' => 0,
+                'message' => __( 'Field definition not found', 'ffc' )
+            );
+        }
+
+        $batch_size = isset( $migration_config['batch_size'] ) ? intval( $migration_config['batch_size'] ) : 100;
+        $offset = $batch_number > 0 ? ( $batch_number - 1 ) * $batch_size : 0;
+
+        $column = $migration_config['column'];
+
+        // Get submissions without migrated field value
+        $submissions = $wpdb->get_results( $wpdb->prepare(
+            "SELECT id, data FROM {$this->table_name}
+            WHERE (%i IS NULL OR %i = '')
+            AND (data IS NOT NULL AND data != '' AND data != '[]' AND data != '{}')
+            ORDER BY id ASC
+            LIMIT %d OFFSET %d",
+            $column, $column,
+            $batch_size,
+            $offset
+        ), ARRAY_A );
+
+        if ( empty( $submissions ) ) {
+            return array(
+                'success' => true,
+                'processed' => 0,
+                'has_more' => false,
+                'message' => __( 'No submissions to process', 'ffc' )
+            );
+        }
+
+        $processed = 0;
+        foreach ( $submissions as $submission ) {
+            $data = json_decode( $submission['data'], true );
+
+            if ( ! is_array( $data ) ) {
+                continue;
+            }
+
+            // Extract field value using possible JSON keys
+            $field_value = FFC_Data_Sanitizer::extract_field_from_json( $data, $field_def['json_keys'] );
+
+            if ( empty( $field_value ) ) {
+                continue;
+            }
+
+            // Sanitize value
+            $sanitized_value = FFC_Data_Sanitizer::sanitize_field_value( $field_value, $field_def );
+
+            // Update submission
+            $updated = $wpdb->update(
+                $this->table_name,
+                array( $column => $sanitized_value ),
+                array( 'id' => $submission['id'] ),
+                array( '%s' ),
+                array( '%d' )
+            );
+
+            if ( $updated !== false ) {
+                $processed++;
+            }
+        }
+
+        $has_more = count( $submissions ) === $batch_size;
+
+        return array(
+            'success' => true,
+            'processed' => $processed,
+            'has_more' => $has_more,
+            'message' => sprintf( __( 'Migrated %d %s values', 'ffc' ), $processed, $field_def['description'] )
+        );
+    }
+
+    /**
+     * Check if field migration can run
+     *
+     * @param string $migration_key Migration identifier
+     * @param array $migration_config Migration configuration
+     * @return bool|WP_Error
+     */
+    public function can_run( $migration_key, $migration_config ) {
+        global $wpdb;
+
+        $column = isset( $migration_config['column'] ) ? $migration_config['column'] : null;
+
+        if ( ! $column ) {
+            return new WP_Error( 'invalid_config', __( 'Missing column configuration', 'ffc' ) );
+        }
+
+        // Check if column exists
+        $column_exists = $wpdb->get_var( $wpdb->prepare(
+            "SELECT COUNT(*) FROM information_schema.COLUMNS
+            WHERE TABLE_SCHEMA = %s
+            AND TABLE_NAME = %s
+            AND COLUMN_NAME = %s",
+            DB_NAME,
+            $this->table_name,
+            $column
+        ));
+
+        if ( ! $column_exists ) {
+            return new WP_Error(
+                'missing_column',
+                sprintf( __( '%s column does not exist. Please update the database schema first.', 'ffc' ), $column )
+            );
+        }
+
+        // Check if field definition exists
+        $field_def = $this->registry->get_field_definition( $migration_key );
+
+        if ( ! $field_def ) {
+            return new WP_Error( 'missing_field_def', __( 'Field definition not found in registry', 'ffc' ) );
+        }
+
+        return true;
+    }
+
+    /**
+     * Get strategy name
+     *
+     * @return string
+     */
+    public function get_name() {
+        return __( 'Field Migration Strategy', 'ffc' );
+    }
+}
