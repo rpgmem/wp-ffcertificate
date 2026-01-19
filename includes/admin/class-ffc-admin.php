@@ -88,6 +88,32 @@ class FFC_Admin {
                 );
             }
     
+            // 5. Submission edit styles (ONLY on edit page)
+            if (isset($_GET['page']) && $_GET['page'] === 'ffc-submissions' && isset($_GET['action']) && $_GET['action'] === 'edit') {
+                wp_enqueue_style(
+                    'ffc-admin-submission-edit',
+                    FFC_PLUGIN_URL . 'assets/css/admin-submission-edit.css',
+                    array('ffc-admin-css'),
+                    FFC_VERSION
+                );
+
+                wp_enqueue_script(
+                    'ffc-admin-submission-edit',
+                    FFC_PLUGIN_URL . 'assets/js/ffc-admin-submission-edit.js',
+                    array('jquery'),
+                    FFC_VERSION,
+                    true
+                );
+
+                wp_localize_script(
+                    'ffc-admin-submission-edit',
+                    'ffc_submission_edit',
+                    array(
+                        'copied_text' => '✅ ' . __('Copied!', 'ffc')
+                    )
+                );
+            }
+
             wp_enqueue_script( 'ffc-admin-js', FFC_PLUGIN_URL . 'assets/js/ffc-admin.js', array( ), FFC_VERSION, true );
             
             // Localizar para AMBOS os scripts
@@ -316,11 +342,11 @@ class FFC_Admin {
             <?php wp_nonce_field( 'ffc_edit_submission_nonce', 'ffc_edit_submission_action' ); ?>
             <input type="hidden" name="submission_id" value="<?php echo $sub_array['id']; ?>">
             
-            <table class="form-table">
+            <table class="form-table ffc-edit-table">
                 <!-- SEÇÃO: INFORMAÇÕES DO SISTEMA -->
                 <tr>
-                    <td colspan="2" style="padding: 0;">
-                        <h2 style="margin: 20px 0 10px 0; padding: 10px; background: #f0f0f1; border-left: 4px solid #2271b1;">
+                    <td colspan="2">
+                        <h2 class="ffc-section-header">
                             <?php _e( 'System Information', 'ffc' ); ?>
                         </h2>
                     </td>
@@ -379,49 +405,49 @@ class FFC_Admin {
 
                 <!-- SEÇÃO: QR CODE USAGE -->
                 <tr>
-                    <td colspan="2" style="padding: 0;">
-                        <div style="margin: 20px 0; padding: 15px; background: #f0f6fc; border-left: 4px solid #0073aa; border-radius: 4px;">
-                            <h3 style="margin: 0 0 10px 0;">
+                    <td colspan="2">
+                        <div class="ffc-qr-info-box">
+                            <h3>
                                 📱 <?php _e( 'QR Code Placeholder Usage', 'ffc' ); ?>
                             </h3>
-                            <p style="margin: 0 0 10px 0;">
+                            <p>
                                 <?php _e( 'You can add dynamic QR Codes to your certificate template using these placeholders:', 'ffc' ); ?>
                             </p>
-                            <table style="width: 100%; font-family: monospace; font-size: 12px; border-collapse: collapse;">
+                            <table>
                                 <tr>
-                                    <td style="padding: 5px; background: #fff; border: 1px solid #ddd;">
+                                    <td>
                                         <code>{{qr_code}}</code>
                                     </td>
-                                    <td style="padding: 5px;">
+                                    <td>
                                         <?php _e( 'Default QR Code (200x200px)', 'ffc' ); ?>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding: 5px; background: #fff; border: 1px solid #ddd;">
+                                    <td>
                                         <code>{{qr_code:size=150}}</code>
                                     </td>
-                                    <td style="padding: 5px;">
+                                    <td>
                                         <?php _e( 'Custom size (150x150px)', 'ffc' ); ?>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding: 5px; background: #fff; border: 1px solid #ddd;">
+                                    <td>
                                         <code>{{qr_code:size=250:margin=0}}</code>
                                     </td>
-                                    <td style="padding: 5px;">
+                                    <td>
                                         <?php _e( 'Custom size without margin', 'ffc' ); ?>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding: 5px; background: #fff; border: 1px solid #ddd;">
+                                    <td>
                                         <code>{{qr_code:error=H}}</code>
                                     </td>
-                                    <td style="padding: 5px;">
+                                    <td>
                                         <?php _e( 'High error correction (30%)', 'ffc' ); ?>
                                     </td>
                                 </tr>
                             </table>
-                            <p style="margin: 10px 0 0 0; font-size: 12px; color: #666;">
+                            <p class="ffc-qr-note">
                                 💡 <?php _e( 'QR Codes automatically link to this certificate verification page. Configure defaults in Settings → QR Code.', 'ffc' ); ?>
                             </p>
                         </div>
@@ -435,39 +461,39 @@ class FFC_Admin {
                 $consent_ip = isset( $sub_array['consent_ip'] ) ? $sub_array['consent_ip'] : '';
                 ?>
                 <tr>
-                    <td colspan="2" style="padding: 0;">
-                        <div style="margin: 20px 0; padding: 15px; background: <?php echo $consent_given ? '#e7f5e7' : '#fff8e1'; ?>; border-left: 4px solid <?php echo $consent_given ? '#46a049' : '#ffa500'; ?>; border-radius: 4px;">
-                            <h3 style="margin: 0 0 10px 0;">
-                                <?php echo $consent_given ? '✅' : '⚠️'; ?> 
+                    <td colspan="2">
+                        <div class="ffc-consent-box <?php echo $consent_given ? 'consent-given' : 'consent-not-given'; ?>">
+                            <h3>
+                                <?php echo $consent_given ? '✅' : '⚠️'; ?>
                                 <?php _e( 'LGPD Consent Status', 'ffc' ); ?>
                             </h3>
-                            
+
                             <?php if ( $consent_given ): ?>
-                                <p style="margin: 0; color: #2d5c2e;">
-                                    <strong><?php _e( 'Consent given:', 'ffc' ); ?></strong> 
+                                <p>
+                                    <strong><?php _e( 'Consent given:', 'ffc' ); ?></strong>
                                     <?php _e( 'User explicitly agreed to data storage and privacy policy.', 'ffc' ); ?>
                                 </p>
                                 <?php if ( $consent_date ): ?>
-                                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">
+                                    <p class="description">
                                         📅 <?php printf( __( 'Date: %s', 'ffc' ), esc_html( $consent_date ) ); ?>
                                     </p>
                                 <?php endif; ?>
-                                
+
                                 <?php if ( $consent_ip ): ?>
-                                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">
+                                    <p class="description">
                                         🌐 <?php printf( __( 'IP: %s', 'ffc' ), esc_html( $consent_ip ) ); ?>
                                     </p>
                                 <?php endif; ?>
-                                
-                                <p style="margin: 10px 0 0 0; padding: 10px; background: rgba(255,255,255,0.7); border-radius: 3px; font-size: 12px;">
+
+                                <p class="description">
                                     🔒 <?php _e( 'Sensitive data (email, CPF/RF, IP) is encrypted in the database.', 'ffc' ); ?>
                                 </p>
                             <?php else: ?>
-                                <p style="margin: 0; color: #7a5c00;">
-                                    <strong><?php _e( 'No consent recorded:', 'ffc' ); ?></strong> 
+                                <p>
+                                    <strong><?php _e( 'No consent recorded:', 'ffc' ); ?></strong>
                                     <?php _e( 'This submission was created before LGPD consent feature (v2.10.0).', 'ffc' ); ?>
                                 </p>
-                                <p style="margin: 10px 0 0 0; font-size: 12px; color: #666;">
+                                <p class="description">
                                     ℹ️ <?php _e( 'Older submissions do not have explicit consent flag but may have been collected under privacy policy.', 'ffc' ); ?>
                                 </p>
                             <?php endif; ?>
@@ -477,8 +503,8 @@ class FFC_Admin {
                 
                 <!-- SEÇÃO: DADOS DO PARTICIPANTE -->
                 <tr>
-                    <td colspan="2" style="padding: 0;">
-                        <h2 style="margin: 20px 0 10px 0; padding: 10px; background: #f0f0f1; border-left: 4px solid #0073aa;">
+                    <td colspan="2">
+                        <h2 class="ffc-section-header">
                             <?php _e( 'Participant Data', 'ffc' ); ?>
                         </h2>
                     </td>
@@ -554,29 +580,6 @@ class FFC_Admin {
             </p>
         </form>
     </div>
-    
-    <script>
-    jQuery(document).ready(function($) {
-        $('.ffc-copy-magic-link').on('click', function(e) {
-            e.preventDefault();
-            var url = $(this).data('url');
-            var $btn = $(this);
-            
-            var $temp = $('<input>');
-            $('body').append($temp);
-            $temp.val(url).select();
-            document.execCommand('copy');
-            $temp.remove();
-            
-            var originalText = $btn.text();
-            $btn.text('✅ <?php _e( 'Copied!', 'ffc' ); ?>').prop('disabled', true);
-            
-            setTimeout(function() {
-                $btn.text(originalText).prop('disabled', false);
-            }, 2000);
-        });
-    });
-    </script>
     <?php
     }
 

@@ -19,8 +19,8 @@ class FFC_Admin_User_Columns {
         add_filter('manage_users_columns', array(__CLASS__, 'add_certificates_column'));
         add_filter('manage_users_custom_column', array(__CLASS__, 'render_certificates_column'), 10, 3);
 
-        // Add custom CSS for the column
-        add_action('admin_head-users.php', array(__CLASS__, 'add_column_styles'));
+        // Enqueue styles for the column
+        add_action('admin_enqueue_scripts', array(__CLASS__, 'enqueue_styles'));
     }
 
     /**
@@ -61,7 +61,7 @@ class FFC_Admin_User_Columns {
         $count = self::get_user_certificate_count($user_id);
 
         if ($count === 0) {
-            return '<span style="color: #999;">—</span>';
+            return '<span class="ffc-empty-value">—</span>';
         }
 
         // Get dashboard page URL
@@ -110,25 +110,20 @@ class FFC_Admin_User_Columns {
     }
 
     /**
-     * Add custom CSS for certificates column
+     * Enqueue CSS for certificates column
      */
-    public static function add_column_styles() {
-        ?>
-        <style>
-            .column-ffc_certificates {
-                width: 150px;
-            }
-            .ffc-view-as-user {
-                color: #2271b1;
-                text-decoration: none;
-                font-size: 12px;
-            }
-            .ffc-view-as-user:hover {
-                color: #135e96;
-                text-decoration: underline;
-            }
-        </style>
-        <?php
+    public static function enqueue_styles($hook) {
+        // Only load on users.php page
+        if ($hook !== 'users.php') {
+            return;
+        }
+
+        wp_enqueue_style(
+            'ffc-admin-user-columns',
+            FFC_PLUGIN_URL . 'assets/css/admin-user-columns.css',
+            array(),
+            FFC_VERSION
+        );
     }
 }
 

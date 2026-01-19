@@ -1,0 +1,93 @@
+/**
+ * FFC Admin Submission Edit Styles
+ *
+ * Styles for the submission edit page in admin
+ *
+ * @since 3.1.0
+ */
+
+/* Section headers */
+.ffc-section-header {
+    margin: 20px 0 10px 0;
+    padding: 10px;
+    background: #f0f0f1;
+    border-left: 4px solid #2271b1;
+}
+
+/* QR Code info box */
+.ffc-qr-info-box {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f0f6fc;
+    border-left: 4px solid #0073aa;
+    border-radius: 4px;
+}
+
+.ffc-qr-info-box h3 {
+    margin: 0 0 10px 0;
+}
+
+.ffc-qr-info-box p {
+    margin: 0 0 10px 0;
+}
+
+.ffc-qr-info-box table {
+    width: 100%;
+    font-family: monospace;
+    font-size: 12px;
+    border-collapse: collapse;
+}
+
+.ffc-qr-info-box td {
+    padding: 5px;
+}
+
+.ffc-qr-info-box td:first-child {
+    background: #fff;
+    border: 1px solid #ddd;
+}
+
+.ffc-qr-info-box .ffc-qr-note {
+    margin: 10px 0 0 0;
+    font-size: 12px;
+    color: #666;
+}
+
+/* LGPD consent box */
+.ffc-consent-box {
+    margin: 20px 0;
+    padding: 15px;
+    border-left: 4px solid;
+    border-radius: 4px;
+}
+
+.ffc-consent-box.consent-given {
+    background: #e7f5e7;
+    border-color: #46a049;
+}
+
+.ffc-consent-box.consent-not-given {
+    background: #fff8e1;
+    border-color: #ffa500;
+}
+
+.ffc-consent-box h3 {
+    margin: 0 0 10px 0;
+}
+
+.ffc-consent-box p {
+    margin: 0;
+}
+
+.ffc-consent-box.consent-given p {
+    color: #2d5c2e;
+}
+
+.ffc-consent-box.consent-not-given p {
+    color: #856404;
+}
+
+/* Table spacing fix */
+.ffc-edit-table td[colspan="2"] {
+    padding: 0;
+}

@@ -14,10 +14,42 @@ class FFC_Form_Editor {
         add_action( 'add_meta_boxes', array( $this, 'add_custom_metaboxes' ), 20 );
         add_action( 'save_post', array( $this, 'save_form_data' ) );
         add_action( 'admin_notices', array( $this, 'display_save_errors' ) );
+        add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 
         // AJAX handlers for the editor
         add_action( 'wp_ajax_ffc_generate_codes', array( $this, 'ajax_generate_random_codes' ) );
         add_action( 'wp_ajax_ffc_load_template', array( $this, 'ajax_load_template' ) );
+    }
+
+    /**
+     * Enqueue scripts and styles for form editor
+     */
+    public function enqueue_scripts($hook) {
+        // Only load on form edit page
+        if ( ! in_array( $hook, array( 'post.php', 'post-new.php' ) ) ) {
+            return;
+        }
+
+        $screen = get_current_screen();
+        if ( ! $screen || $screen->post_type !== 'ffc_form' ) {
+            return;
+        }
+
+        wp_enqueue_script(
+            'ffc-geofence-admin',
+            FFC_PLUGIN_URL . 'assets/js/ffc-geofence-admin.js',
+            array( 'jquery' ),
+            FFC_VERSION,
+            true
+        );
+
+        wp_localize_script(
+            'ffc-geofence-admin',
+            'ffc_geofence_admin',
+            array(
+                'alert_message' => __( 'At least one geolocation method (GPS or IP) must be enabled when geolocation is active.', 'ffc' )
+            )
+        );
     }
 
     /**
@@ -572,99 +604,6 @@ class FFC_Form_Editor {
                     </tr>
                 </table>
             </div>
-
-            <script>
-            jQuery(document).ready(function($) {
-                // Tab switching
-                $('.ffc-geo-tab-btn').on('click', function() {
-                    var tab = $(this).data('tab');
-                    $('.ffc-geo-tab-btn').removeClass('active');
-                    $(this).addClass('active');
-                    $('.ffc-geo-tab-content').removeClass('active');
-                    $('#ffc-tab-' + tab).addClass('active');
-                });
-
-                // DateTime restrictions - Enable/Disable fields based on checkbox
-                function toggleDateTimeFields() {
-                    var enabled = $('input[name="ffc_geofence[datetime_enabled]"]').is(':checked');
-                    $('#ffc-tab-datetime input[type="date"], #ffc-tab-datetime input[type="time"], #ffc-tab-datetime select, #ffc-tab-datetime textarea, #ffc-tab-datetime input[type="radio"]')
-                        .not('input[name="ffc_geofence[datetime_enabled]"]')
-                        .prop('disabled', !enabled)
-                        .closest('tr').css('opacity', enabled ? '1' : '0.5');
-
-                    // Also check if time mode row should be visible
-                    toggleTimeModeRow();
-                }
-
-                $('input[name="ffc_geofence[datetime_enabled]"]').on('change', toggleDateTimeFields);
-                toggleDateTimeFields(); // Run on load
-
-                // Show/hide time mode row based on date range
-                function toggleTimeModeRow() {
-                    var dateStart = $('input[name="ffc_geofence[date_start]"]').val();
-                    var dateEnd = $('input[name="ffc_geofence[date_end]"]').val();
-
-                    // Only show time mode option if different dates are set
-                    if (dateStart && dateEnd && dateStart !== dateEnd) {
-                        $('#ffc-time-mode-row').slideDown(200);
-                    } else {
-                        $('#ffc-time-mode-row').slideUp(200);
-                    }
-                }
-
-                // Watch date changes to show/hide time mode
-                $('input[name="ffc_geofence[date_start]"], input[name="ffc_geofence[date_end]"]').on('change', toggleTimeModeRow);
-                toggleTimeModeRow(); // Run on load
-
-                // Geolocation restrictions - Enable/Disable fields based on checkbox
-                function toggleGeoFields() {
-                    var enabled = $('input[name="ffc_geofence[geo_enabled]"]').is(':checked');
-                    $('#ffc-tab-geolocation input[type="checkbox"], #ffc-tab-geolocation textarea, #ffc-tab-geolocation select')
-                        .not('input[name="ffc_geofence[geo_enabled]"]')
-                        .prop('disabled', !enabled)
-                        .closest('tr').css('opacity', enabled ? '1' : '0.5');
-
-                    // If geolocation is enabled, ensure at least one method is selected
-                    if (enabled) {
-                        validateGeoMethods();
-                    }
-                }
-
-                $('input[name="ffc_geofence[geo_enabled]"]').on('change', toggleGeoFields);
-                toggleGeoFields(); // Run on load
-
-                // Validate that at least GPS or IP is enabled when geolocation is active
-                function validateGeoMethods() {
-                    var geoEnabled = $('input[name="ffc_geofence[geo_enabled]"]').is(':checked');
-                    var gpsEnabled = $('input[name="ffc_geofence[geo_gps_enabled]"]').is(':checked');
-                    var ipEnabled = $('input[name="ffc_geofence[geo_ip_enabled]"]').is(':checked');
-
-                    if (geoEnabled && !gpsEnabled && !ipEnabled) {
-                        // Auto-enable GPS as default
-                        $('input[name="ffc_geofence[geo_gps_enabled]"]').prop('checked', true);
-                    }
-                }
-
-                // When geolocation is enabled, validate methods
-                $('input[name="ffc_geofence[geo_enabled]"]').on('change', function() {
-                    if ($(this).is(':checked')) {
-                        validateGeoMethods();
-                    }
-                });
-
-                // Prevent unchecking both GPS and IP when geolocation is enabled
-                $('input[name="ffc_geofence[geo_gps_enabled]"], input[name="ffc_geofence[geo_ip_enabled]"]').on('change', function() {
-                    var geoEnabled = $('input[name="ffc_geofence[geo_enabled]"]').is(':checked');
-                    var gpsEnabled = $('input[name="ffc_geofence[geo_gps_enabled]"]').is(':checked');
-                    var ipEnabled = $('input[name="ffc_geofence[geo_ip_enabled]"]').is(':checked');
-
-                    if (geoEnabled && !gpsEnabled && !ipEnabled) {
-                        alert('<?php esc_html_e('At least one geolocation method (GPS or IP) must be enabled when geolocation is active.', 'ffc'); ?>');
-                        $(this).prop('checked', true);
-                    }
-                });
-            });
-            </script>
         </div>
         <?php
     }
