@@ -64,9 +64,11 @@ class FFC_Admin_User_Columns {
             return '<span class="ffc-empty-value">—</span>';
         }
 
-        // Get dashboard page URL
-        $dashboard_page_id = get_option('ffc_dashboard_page_id');
-        $dashboard_url = $dashboard_page_id ? get_permalink($dashboard_page_id) : home_url('/dashboard');
+        // ✅ v3.1.1: Get dashboard URL from User Access Settings
+        $user_access_settings = get_option('ffc_user_access_settings', array());
+        $dashboard_url = isset($user_access_settings['redirect_url']) && !empty($user_access_settings['redirect_url'])
+            ? $user_access_settings['redirect_url']
+            : home_url('/dashboard'); // Fallback se não configurado
 
         // Create view-as link with nonce
         $view_as_url = add_query_arg(array(
