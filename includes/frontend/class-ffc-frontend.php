@@ -90,12 +90,18 @@ class FFC_Frontend {
             'enterCode'             => __( 'Please enter the code.', 'ffc' ),
             'generatingCertificate' => __( 'Generating certificate in the background, please wait 10 seconds and check your downloads folder...', 'ffc' ),
             'idMustHaveDigits'      => __( 'The ID must have exactly 7 digits (RF) or 11 digits (CPF).', 'ffc' ),
-            'pdfLibrariesFailed'    => __( 'Error: PDF libraries (html2canvas/jspdf) failed to load.', 'ffc' ),
+            'pdfLibrariesFailed'    => __( 'PDF libraries failed to load. Please refresh the page.', 'ffc' ),
             'pdfGenerationError'    => __( 'Error generating PDF (html2canvas). Please try again.', 'ffc' ),
             'invalidToken'          => __( 'Invalid token.', 'ffc' ),
             'generating'            => __( 'Generating...', 'ffc' ),
             'downloadAgain'         => __( 'Download Again', 'ffc' ),
             'pleaseWait'            => __( 'Please wait, this may take a few seconds...', 'ffc' ),
+            'generatingPdf'         => __( 'Generating PDF...', 'ffc' ),
+            'pdfContainerNotFound'  => __( 'Error: PDF container not found', 'ffc' ),
+            'errorGeneratingPdf'    => __( 'Error generating PDF', 'ffc' ),
+            'html2canvasFailed'     => __( 'Error: html2canvas failed', 'ffc' ),
+            'fillRequired'          => __( 'Please fill all required fields', 'ffc' ),
+            'error'                 => __( 'Error occurred', 'ffc' ),
             )
         ) );
         }

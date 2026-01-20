@@ -56,7 +56,12 @@
         $(document).on('click', '.ffc-remove-field', function(e) {
             e.preventDefault();
 
-            if (confirm('Remove this field?')) {
+            // Get localized string or fallback to English
+            var confirmMsg = (typeof ffc_ajax !== 'undefined' && ffc_ajax.strings && ffc_ajax.strings.confirmDeleteField)
+                ? ffc_ajax.strings.confirmDeleteField
+                : 'Remove this field?';
+
+            if (confirm(confirmMsg)) {
                 $(this).closest('.ffc-field-row').fadeOut(300, function() {
                     $(this).remove();
                     updateFieldsJSON();

@@ -58,19 +58,27 @@
             'animation': 'ffc-spin 1s linear infinite'
         });
 
+        var titleText = (typeof ffc_ajax !== 'undefined' && ffc_ajax.strings && ffc_ajax.strings.generatingPdf)
+            ? ffc_ajax.strings.generatingPdf
+            : 'Generating PDF...';
+
         var title = $('<h3></h3>').css({
             'margin': '0 0 10px 0',
             'color': '#333',
             'font-size': '18px',
             'font-weight': '600'
-        }).text('Generating PDF...');
+        }).text(titleText);
+
+        var messageText = (typeof ffc_ajax !== 'undefined' && ffc_ajax.strings && ffc_ajax.strings.pleaseWait)
+            ? ffc_ajax.strings.pleaseWait
+            : 'Please wait, this may take a few seconds...';
 
         var message = $('<p></p>').css({
             'margin': '0',
             'color': '#666',
             'font-size': '14px',
             'line-height': '1.5'
-        }).text('Please wait, this may take a few seconds...');
+        }).text(messageText);
 
         content.append(spinner).append(title).append(message);
         overlay.append(content);
@@ -92,7 +100,10 @@
         console.log('[FFC PDF] Template length:', pdfData.template ? pdfData.template.length : 0);
         
         if (!checkPDFLibraries()) {
-            alert('PDF libraries failed to load. Please refresh the page.');
+            var errorMsg = (typeof ffc_ajax !== 'undefined' && ffc_ajax.strings && ffc_ajax.strings.pdfLibrariesFailed)
+                ? ffc_ajax.strings.pdfLibrariesFailed
+                : 'PDF libraries failed to load. Please refresh the page.';
+            alert(errorMsg);
             return;
         }
 
@@ -202,7 +213,10 @@
                 
                 if (!element) {
                     console.error('[FFC PDF] Wrapper not found!');
-                    alert('Error: PDF container not found');
+                    var errorMsg = (typeof ffc_ajax !== 'undefined' && ffc_ajax.strings && ffc_ajax.strings.pdfContainerNotFound)
+                        ? ffc_ajax.strings.pdfContainerNotFound
+                        : 'Error: PDF container not found';
+                    alert(errorMsg);
                     $tempContainer.remove();
                     hideOverlay();
                     return;
@@ -275,13 +289,19 @@
                             hideOverlay();
                         } catch (error) {
                             console.error('[FFC PDF] Error:', error);
-                            alert('Error generating PDF');
+                            var errorMsg = (typeof ffc_ajax !== 'undefined' && ffc_ajax.strings && ffc_ajax.strings.errorGeneratingPdf)
+                                ? ffc_ajax.strings.errorGeneratingPdf
+                                : 'Error generating PDF';
+                            alert(errorMsg);
                             $tempContainer.remove();
                             hideOverlay();
                         }
                     }).catch(function(error) {
                         console.error('[FFC PDF] html2canvas error:', error);
-                        alert('Error: html2canvas failed');
+                        var errorMsg = (typeof ffc_ajax !== 'undefined' && ffc_ajax.strings && ffc_ajax.strings.html2canvasFailed)
+                            ? ffc_ajax.strings.html2canvasFailed
+                            : 'Error: html2canvas failed';
+                        alert(errorMsg);
                         $tempContainer.remove();
                         hideOverlay();
                     });

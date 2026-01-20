@@ -286,12 +286,17 @@ class FFC_Admin_Assets_Manager {
                 'codesGenerated'          => __( 'codes generated', 'ffc' ),
                 'errorGeneratingCodes'    => __( 'Error generating codes.', 'ffc' ),
                 'confirmDeleteField'      => __( 'Remove this field?', 'ffc' ),
-                'pdfLibrariesFailed'      => __( 'Error: PDF libraries failed to load.', 'ffc' ),
+                'pdfLibrariesFailed'      => __( 'PDF libraries failed to load. Please refresh the page.', 'ffc' ),
                 'pdfGenerationError'      => __( 'Error generating PDF. Please try again.', 'ffc' ),
                 'pleaseWait'              => __( 'Please wait, this may take a few seconds...', 'ffc' ),
                 'downloadAgain'           => __( 'Download Again', 'ffc' ),
                 'verifying'               => __( 'Verifying...', 'ffc' ),
                 'processing'              => __( 'Processing...', 'ffc' ),
+                'generatingPdf'           => __( 'Generating PDF...', 'ffc' ),
+                'pdfContainerNotFound'    => __( 'Error: PDF container not found', 'ffc' ),
+                'errorGeneratingPdf'      => __( 'Error generating PDF', 'ffc' ),
+                'html2canvasFailed'       => __( 'Error: html2canvas failed', 'ffc' ),
+                'confirmLoadTemplate'     => __( 'Load "%s"? This will replace your current certificate HTML.', 'ffc' ),
             )
         );
     }

@@ -79,7 +79,12 @@
 
             $('#ffc-template-modal').remove();
 
-            if (!confirm('Load "' + templateName + '"? This will replace your current certificate HTML.')) {
+            // Get localized string or fallback to English
+            var confirmMsg = (typeof ffc_ajax !== 'undefined' && ffc_ajax.strings && ffc_ajax.strings.confirmLoadTemplate)
+                ? ffc_ajax.strings.confirmLoadTemplate.replace('%s', templateName)
+                : 'Load "' + templateName + '"? This will replace your current certificate HTML.';
+
+            if (!confirm(confirmMsg)) {
                 return;
             }
 
