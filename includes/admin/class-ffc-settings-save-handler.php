@@ -227,7 +227,7 @@ class FFC_Settings_Save_Handler {
             'blocked_roles' => isset( $_POST['blocked_roles'] ) && is_array( $_POST['blocked_roles'] )
                 ? array_map( 'sanitize_text_field', $_POST['blocked_roles'] )
                 : array( 'ffc_user' ),
-            'redirect_url' => isset( $_POST['redirect_url'] )
+            'redirect_url' => !empty( $_POST['redirect_url'] )
                 ? esc_url_raw( $_POST['redirect_url'] )
                 : home_url( '/dashboard' ),
             'redirect_message' => isset( $_POST['redirect_message'] )

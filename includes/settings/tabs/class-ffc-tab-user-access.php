@@ -71,7 +71,7 @@ class FFC_Tab_User_Access extends FFC_Settings_Tab {
         $settings = array(
             'block_wp_admin' => isset($_POST['block_wp_admin']),
             'blocked_roles' => isset($_POST['blocked_roles']) && is_array($_POST['blocked_roles']) ? $_POST['blocked_roles'] : array('ffc_user'),
-            'redirect_url' => isset($_POST['redirect_url']) ? esc_url_raw($_POST['redirect_url']) : home_url('/dashboard'),
+            'redirect_url' => !empty($_POST['redirect_url']) ? esc_url_raw($_POST['redirect_url']) : home_url('/dashboard'),
             'redirect_message' => isset($_POST['redirect_message']) ? sanitize_textarea_field($_POST['redirect_message']) : '',
             'allow_admin_bar' => isset($_POST['allow_admin_bar']),
             'bypass_for_admins' => isset($_POST['bypass_for_admins']),
