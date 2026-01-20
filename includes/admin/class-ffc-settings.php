@@ -1,12 +1,21 @@
 <?php
 /**
  * FFC_Settings
- * 
+ *
  * Manages plugin settings with modular tab system
- * 
+ * Acts as coordinator, delegating save operations to FFC_Settings_Save_Handler
+ *
+ * Responsibilities:
+ * - Load and manage settings tabs
+ * - Render settings page UI
+ * - Delegate saving to Save Handler (v3.1.1)
+ * - Handle cache actions and QR cache clearing
+ * - Handle migration execution
+ * - AJAX handlers
+ *
  * @package FFC
  * @since 1.0.0
- * @version 2.10.0 - Added Rate Limit tab
+ * @version 3.1.1 - Extracted save logic to Save Handler
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -14,13 +23,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class FFC_Settings {
-    
+
     private $submission_handler;
     private $tabs = array();
-    
+    private $save_handler;  // ✅ v3.1.1: Save Handler
+
     public function __construct( FFC_Submission_Handler $handler ) {
         $this->submission_handler = $handler;
-        
+
+        // ✅ v3.1.1: Initialize Save Handler (extracted from FFC_Settings)
+        require_once plugin_dir_path( __FILE__ ) . 'class-ffc-settings-save-handler.php';
+        $this->save_handler = new FFC_Settings_Save_Handler( $handler );
+
         // Load tabs
         $this->load_tabs();
         
@@ -146,107 +160,13 @@ class FFC_Settings {
     
     /**
      * Handle settings form submission
+     *
+     * @deprecated 3.1.1 Settings saving now handled by FFC_Settings_Save_Handler
      */
     public function handle_settings_submission() {
-        // Handle General/SMTP/QR Settings
-        if ( isset( $_POST['ffc_settings_nonce'] ) && wp_verify_nonce( $_POST['ffc_settings_nonce'], 'ffc_settings_action' ) ) {
-            $current = get_option( 'ffc_settings', array() );
-            $new     = isset( $_POST['ffc_settings'] ) ? $_POST['ffc_settings'] : array();
-            
-            $clean = $current;
-            
-            // General Tab Fields
-            if ( isset( $new['cleanup_days'] ) ) {
-                $clean['cleanup_days'] = absint( $new['cleanup_days'] );
-            }
-            
-            // SMTP Tab Fields
-            if ( isset( $new['smtp_mode'] ) ) {
-                $clean['smtp_mode'] = sanitize_key( $new['smtp_mode'] );
-            }
-            if ( isset( $new['smtp_host'] ) ) {
-                $clean['smtp_host'] = sanitize_text_field( $new['smtp_host'] );
-            }
-            if ( isset( $new['smtp_port'] ) ) {
-                $clean['smtp_port'] = absint( $new['smtp_port'] );
-            }
-            if ( isset( $new['smtp_user'] ) ) {
-                $clean['smtp_user'] = sanitize_text_field( $new['smtp_user'] );
-            }
-            if ( isset( $new['smtp_pass'] ) ) {
-                $clean['smtp_pass'] = sanitize_text_field( $new['smtp_pass'] );
-            }
-            if ( isset( $new['smtp_secure'] ) ) {
-                $clean['smtp_secure'] = sanitize_key( $new['smtp_secure'] );
-            }
-            if ( isset( $new['smtp_from_email'] ) ) {
-                $clean['smtp_from_email'] = sanitize_email( $new['smtp_from_email'] );
-            }
-            if ( isset( $new['smtp_from_name'] ) ) {
-                $clean['smtp_from_name'] = sanitize_text_field( $new['smtp_from_name'] );
-            }
-            
-            // QR Code Tab Fields
-            if ( isset( $_POST['_ffc_tab'] ) && $_POST['_ffc_tab'] === 'qr_code' ) {
-                $clean['qr_cache_enabled'] = isset( $new['qr_cache_enabled'] ) ? 1 : 0;
-            }
-            
-            if ( isset( $new['qr_default_size'] ) ) {
-                $clean['qr_default_size'] = absint( $new['qr_default_size'] );
-            }
-            if ( isset( $new['qr_default_margin'] ) ) {
-                $clean['qr_default_margin'] = absint( $new['qr_default_margin'] );
-            }
-            if ( isset( $new['qr_default_error_level'] ) ) {
-                $clean['qr_default_error_level'] = sanitize_text_field( $new['qr_default_error_level'] );
-            }
-            // Date Format Settings (v2.10.0)
-            if ( isset( $new['date_format'] ) ) {
-                $clean['date_format'] = sanitize_text_field( $new['date_format'] );
-            }
-            if ( isset( $new['date_format_custom'] ) ) {
-                $clean['date_format_custom'] = sanitize_text_field( $new['date_format_custom'] );
-            }
-            
-            update_option( 'ffc_settings', $clean );
-            add_settings_error( 'ffc_settings', 'ffc_settings_updated', __( 'Settings saved.', 'ffc' ), 'updated' );
-        }
-
-        // Handle User Access Settings (v3.1.0)
-        if ( isset( $_POST['ffc_user_access_nonce'] ) && wp_verify_nonce( $_POST['ffc_user_access_nonce'], 'ffc_user_access_settings' ) ) {
-            $settings = array(
-                'block_wp_admin' => isset( $_POST['block_wp_admin'] ),
-                'blocked_roles' => isset( $_POST['blocked_roles'] ) && is_array( $_POST['blocked_roles'] ) ? array_map( 'sanitize_text_field', $_POST['blocked_roles'] ) : array( 'ffc_user' ),
-                'redirect_url' => isset( $_POST['redirect_url'] ) ? esc_url_raw( $_POST['redirect_url'] ) : home_url( '/dashboard' ),
-                'redirect_message' => isset( $_POST['redirect_message'] ) ? sanitize_textarea_field( $_POST['redirect_message'] ) : '',
-                'allow_admin_bar' => isset( $_POST['allow_admin_bar'] ),
-                'bypass_for_admins' => isset( $_POST['bypass_for_admins'] ),
-            );
-
-            update_option( 'ffc_user_access_settings', $settings );
-            add_settings_error( 'ffc_user_access_settings', 'ffc_user_access_updated', __( 'User Access settings saved successfully.', 'ffc' ), 'updated' );
-        }
-
-        // Handle Global Data Deletion (Danger Zone)
-        if ( isset( $_POST['ffc_delete_all_data'] ) && check_admin_referer( 'ffc_delete_all_data', 'ffc_critical_nonce' ) ) {
-            $target = isset($_POST['delete_target']) ? $_POST['delete_target'] : 'all';
-            $reset_counter = isset($_POST['reset_counter']) && $_POST['reset_counter'] == '1';
-            
-            $result = $this->submission_handler->delete_all_submissions( 
-                $target === 'all' ? null : absint($target),
-                $reset_counter
-            );
-            
-            if ($result !== false) {
-                $message = $reset_counter 
-                    ? __('Data deleted and counter reset successfully.', 'ffc')
-                    : __('Data deleted successfully.', 'ffc');
-                add_settings_error('ffc_settings', 'ffc_data_deleted', $message, 'updated');
-            } else {
-                add_settings_error('ffc_settings', 'ffc_data_delete_failed', __('Failed to delete data.', 'ffc'), 'error');
-            }
-        }
-
+        // ✅ v3.1.1: All settings saving logic extracted to FFC_Settings_Save_Handler
+        // This maintains backward compatibility while delegating to specialized handler
+        $this->save_handler->handle_all_submissions();
     }
     
     /**

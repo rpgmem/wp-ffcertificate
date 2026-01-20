@@ -1,0 +1,272 @@
+<?php
+/**
+ * FFC_Settings_Save_Handler
+ * Handles saving and validation of all settings types
+ *
+ * Extracted from FFC_Settings (v3.1.1) following Single Responsibility Principle
+ *
+ * Responsibilities:
+ * - Validate and sanitize all settings types
+ * - Handle General, SMTP, QR Code, Date Format, User Access settings
+ * - Handle Danger Zone (data deletion)
+ * - Display success/error messages
+ *
+ * @package FFC
+ * @since 3.1.1
+ * @version 3.1.1
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+class FFC_Settings_Save_Handler {
+
+    private $submission_handler;
+
+    /**
+     * Constructor
+     *
+     * @param FFC_Submission_Handler $handler Submission handler for danger zone
+     */
+    public function __construct( FFC_Submission_Handler $handler ) {
+        $this->submission_handler = $handler;
+    }
+
+    /**
+     * Handle all settings submissions
+     * Main entry point called by FFC_Settings
+     */
+    public function handle_all_submissions() {
+        // Handle General/SMTP/QR Settings
+        if ( isset( $_POST['ffc_settings_nonce'] ) && wp_verify_nonce( $_POST['ffc_settings_nonce'], 'ffc_settings_action' ) ) {
+            $this->save_general_and_specific_settings();
+        }
+
+        // Handle User Access Settings (v3.1.0)
+        if ( isset( $_POST['ffc_user_access_nonce'] ) && wp_verify_nonce( $_POST['ffc_user_access_nonce'], 'ffc_user_access_settings' ) ) {
+            $this->save_user_access_settings();
+        }
+
+        // Handle Global Data Deletion (Danger Zone)
+        if ( isset( $_POST['ffc_delete_all_data'] ) && check_admin_referer( 'ffc_delete_all_data', 'ffc_critical_nonce' ) ) {
+            $this->handle_danger_zone();
+        }
+    }
+
+    /**
+     * Save general and tab-specific settings (General, SMTP, QR Code, Date Format)
+     *
+     * @return void
+     */
+    private function save_general_and_specific_settings() {
+        $current = get_option( 'ffc_settings', array() );
+        $new     = isset( $_POST['ffc_settings'] ) ? $_POST['ffc_settings'] : array();
+
+        $clean = $current;
+
+        // Process each settings type
+        $clean = $this->save_general_settings( $clean, $new );
+        $clean = $this->save_smtp_settings( $clean, $new );
+        $clean = $this->save_qrcode_settings( $clean, $new );
+        $clean = $this->save_date_format_settings( $clean, $new );
+
+        update_option( 'ffc_settings', $clean );
+        add_settings_error( 'ffc_settings', 'ffc_settings_updated', __( 'Settings saved.', 'ffc' ), 'updated' );
+    }
+
+    /**
+     * Save General tab settings
+     *
+     * @param array $clean Current settings
+     * @param array $new New settings from POST
+     * @return array Updated settings
+     */
+    private function save_general_settings( $clean, $new ) {
+        // Cleanup Days
+        if ( isset( $new['cleanup_days'] ) ) {
+            $clean['cleanup_days'] = absint( $new['cleanup_days'] );
+        }
+
+        // Activity Log (v3.1.1)
+        if ( isset( $_POST['_ffc_tab'] ) && $_POST['_ffc_tab'] === 'general' ) {
+            $clean['enable_activity_log'] = isset( $new['enable_activity_log'] ) ? 1 : 0;
+        }
+
+        // Form Cache Settings (v3.1.0)
+        if ( isset( $_POST['_ffc_tab'] ) && $_POST['_ffc_tab'] === 'general' ) {
+            $clean['cache_enabled'] = isset( $new['cache_enabled'] ) ? 1 : 0;
+
+            if ( isset( $new['cache_expiration'] ) ) {
+                $clean['cache_expiration'] = absint( $new['cache_expiration'] );
+            }
+
+            $clean['cache_auto_warm'] = isset( $new['cache_auto_warm'] ) ? 1 : 0;
+        }
+
+        // Debug Settings
+        $debug_flags = array(
+            'debug_pdf_generator',
+            'debug_email_handler',
+            'debug_form_processor',
+            'debug_encryption',
+            'debug_geofence',
+            'debug_user_manager',
+            'debug_rest_api',
+            'debug_migrations',
+            'debug_activity_log'
+        );
+
+        if ( isset( $_POST['_ffc_tab'] ) && $_POST['_ffc_tab'] === 'general' ) {
+            foreach ( $debug_flags as $flag ) {
+                $clean[ $flag ] = isset( $new[ $flag ] ) ? 1 : 0;
+            }
+        }
+
+        return $clean;
+    }
+
+    /**
+     * Save SMTP tab settings
+     *
+     * @param array $clean Current settings
+     * @param array $new New settings from POST
+     * @return array Updated settings
+     */
+    private function save_smtp_settings( $clean, $new ) {
+        if ( isset( $new['smtp_mode'] ) ) {
+            $clean['smtp_mode'] = sanitize_key( $new['smtp_mode'] );
+        }
+
+        if ( isset( $new['smtp_host'] ) ) {
+            $clean['smtp_host'] = sanitize_text_field( $new['smtp_host'] );
+        }
+
+        if ( isset( $new['smtp_port'] ) ) {
+            $clean['smtp_port'] = absint( $new['smtp_port'] );
+        }
+
+        if ( isset( $new['smtp_user'] ) ) {
+            $clean['smtp_user'] = sanitize_text_field( $new['smtp_user'] );
+        }
+
+        if ( isset( $new['smtp_pass'] ) ) {
+            $clean['smtp_pass'] = sanitize_text_field( $new['smtp_pass'] );
+        }
+
+        if ( isset( $new['smtp_secure'] ) ) {
+            $clean['smtp_secure'] = sanitize_key( $new['smtp_secure'] );
+        }
+
+        if ( isset( $new['smtp_from_email'] ) ) {
+            $clean['smtp_from_email'] = sanitize_email( $new['smtp_from_email'] );
+        }
+
+        if ( isset( $new['smtp_from_name'] ) ) {
+            $clean['smtp_from_name'] = sanitize_text_field( $new['smtp_from_name'] );
+        }
+
+        return $clean;
+    }
+
+    /**
+     * Save QR Code tab settings
+     *
+     * @param array $clean Current settings
+     * @param array $new New settings from POST
+     * @return array Updated settings
+     */
+    private function save_qrcode_settings( $clean, $new ) {
+        // QR Cache (checkbox - only set if on QR tab)
+        if ( isset( $_POST['_ffc_tab'] ) && $_POST['_ffc_tab'] === 'qr_code' ) {
+            $clean['qr_cache_enabled'] = isset( $new['qr_cache_enabled'] ) ? 1 : 0;
+        }
+
+        if ( isset( $new['qr_default_size'] ) ) {
+            $clean['qr_default_size'] = absint( $new['qr_default_size'] );
+        }
+
+        if ( isset( $new['qr_default_margin'] ) ) {
+            $clean['qr_default_margin'] = absint( $new['qr_default_margin'] );
+        }
+
+        if ( isset( $new['qr_default_error_level'] ) ) {
+            $clean['qr_default_error_level'] = sanitize_text_field( $new['qr_default_error_level'] );
+        }
+
+        return $clean;
+    }
+
+    /**
+     * Save Date Format settings (v2.10.0)
+     *
+     * @param array $clean Current settings
+     * @param array $new New settings from POST
+     * @return array Updated settings
+     */
+    private function save_date_format_settings( $clean, $new ) {
+        if ( isset( $new['date_format'] ) ) {
+            $clean['date_format'] = sanitize_text_field( $new['date_format'] );
+        }
+
+        if ( isset( $new['date_format_custom'] ) ) {
+            $clean['date_format_custom'] = sanitize_text_field( $new['date_format_custom'] );
+        }
+
+        return $clean;
+    }
+
+    /**
+     * Save User Access settings (v3.1.0)
+     *
+     * @return void
+     */
+    private function save_user_access_settings() {
+        $settings = array(
+            'block_wp_admin' => isset( $_POST['block_wp_admin'] ),
+            'blocked_roles' => isset( $_POST['blocked_roles'] ) && is_array( $_POST['blocked_roles'] )
+                ? array_map( 'sanitize_text_field', $_POST['blocked_roles'] )
+                : array( 'ffc_user' ),
+            'redirect_url' => isset( $_POST['redirect_url'] )
+                ? esc_url_raw( $_POST['redirect_url'] )
+                : home_url( '/dashboard' ),
+            'redirect_message' => isset( $_POST['redirect_message'] )
+                ? sanitize_textarea_field( $_POST['redirect_message'] )
+                : '',
+            'allow_admin_bar' => isset( $_POST['allow_admin_bar'] ),
+            'bypass_for_admins' => isset( $_POST['bypass_for_admins'] ),
+        );
+
+        update_option( 'ffc_user_access_settings', $settings );
+        add_settings_error(
+            'ffc_user_access_settings',
+            'ffc_user_access_updated',
+            __( 'User Access settings saved successfully.', 'ffc' ),
+            'updated'
+        );
+    }
+
+    /**
+     * Handle Danger Zone - Global Data Deletion
+     *
+     * @return void
+     */
+    private function handle_danger_zone() {
+        $target = isset( $_POST['delete_target'] ) ? $_POST['delete_target'] : 'all';
+        $reset_counter = isset( $_POST['reset_counter'] ) && $_POST['reset_counter'] == '1';
+
+        $result = $this->submission_handler->delete_all_submissions(
+            $target === 'all' ? null : absint( $target ),
+            $reset_counter
+        );
+
+        if ( $result !== false ) {
+            $message = $reset_counter
+                ? __( 'Data deleted and counter reset successfully.', 'ffc' )
+                : __( 'Data deleted successfully.', 'ffc' );
+            add_settings_error( 'ffc_settings', 'ffc_data_deleted', $message, 'updated' );
+        } else {
+            add_settings_error( 'ffc_settings', 'ffc_data_delete_failed', __( 'Failed to delete data.', 'ffc' ), 'error' );
+        }
+    }
+}
