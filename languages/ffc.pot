@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Free Form Certificate\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-18 16:55+0000\n"
+"POT-Creation-Date: 2026-01-20 01:45+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -16,7 +16,7 @@ msgstr ""
 "X-Loco-Version: 2.8.1; wp-6.9; php-8.3.23\n"
 "X-Domain: ffc"
 
-#: includes/class-ffc-admin.php:308
+#: includes/admin/class-ffc-admin-submission-edit-page.php:138
 #, php-format
 msgid " by <strong>%s</strong>"
 msgstr ""
@@ -31,43 +31,55 @@ msgstr ""
 msgid "%1$s hours"
 msgstr ""
 
-#: includes/class-ffc-rate-limiter.php:196
+#: includes/security/class-ffc-rate-limiter.php:196
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-ffc-rate-limiter.php:192
+#: includes/security/class-ffc-rate-limiter.php:192
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-ffc-settings.php:290
+#: includes/admin/class-ffc-settings.php:210
 msgid "%d QR Code(s) cleared from cache successfully."
 msgstr ""
 
-#: includes/class-ffc-rate-limiter.php:187
+#: includes/security/class-ffc-rate-limiter.php:187
 msgid "%d second"
 msgid_plural "%d seconds"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-ffc-migration-manager.php:389
+#: includes/migrations/strategies/class-ffc-cleanup-migration-strategy.php:80
 msgid "%d submissions eligible for cleanup (15+ days old with encrypted data)"
 msgstr ""
 
-#: includes/class-ffc-cpt.php:110
+#: includes/admin/class-ffc-cpt.php:110
 #, php-format
 msgid "%s (Copy)"
 msgstr ""
 
-#: includes/class-ffc-migration-manager.php:96
+#: includes/migrations/strategies/class-ffc-field-migration-strategy.php:233
+#, php-format
+msgid "%s column does not exist. Please update the database schema first."
+msgstr ""
+
+#: includes/admin/views/ffc-admin-activity-log.php:156
+#, php-format
+msgid "%s log"
+msgid_plural "%s logs"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/migrations/class-ffc-migration-registry.php:86
 #, php-format
 msgid "%s Migration"
 msgstr ""
 
-#: includes/class-ffc-admin.php:238
+#: includes/admin/class-ffc-admin.php:207 includes/admin/class-ffc-admin-notice-manager.php:56
 #, php-format
 msgid "%s: %d records migrated successfully."
 msgstr ""
@@ -76,11 +88,11 @@ msgstr ""
 msgid "(default: 2)"
 msgstr ""
 
-#: includes/class-ffc-submissions-list-table.php:57 includes/class-ffc-csv-exporter.php:100
+#: includes/admin/class-ffc-submissions-list-table.php:57 includes/admin/class-ffc-csv-exporter.php:100
 msgid "(Deleted)"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:134
+#: includes/settings/views/ffc-tab-general.php:313
 msgid "(recommended)"
 msgstr ""
 
@@ -88,11 +100,11 @@ msgstr ""
 msgid "04 of January, 2026"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:193
+#: includes/settings/views/ffc-tab-general.php:372
 msgid "1 hour (default)"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:35
+#: includes/admin/class-ffc-form-editor.php:80
 msgid "1. Certificate Layout"
 msgstr ""
 
@@ -108,11 +120,11 @@ msgstr ""
 msgid "100px at 500px"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:191
+#: includes/settings/views/ffc-tab-general.php:370
 msgid "15 minutes"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:44
+#: includes/admin/class-ffc-form-editor.php:89
 msgid "2. Form Builder (Fields)"
 msgstr ""
 
@@ -124,7 +136,7 @@ msgstr ""
 msgid "2. Template Variables"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:194
+#: includes/settings/views/ffc-tab-general.php:373
 msgid "24 hours"
 msgstr ""
 
@@ -136,11 +148,11 @@ msgstr ""
 msgid "3. QR Code Options & Attributes"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:53
+#: includes/admin/class-ffc-form-editor.php:98
 msgid "3. Restriction & Security"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:192
+#: includes/settings/views/ffc-tab-general.php:371
 msgid "30 minutes"
 msgstr ""
 
@@ -148,7 +160,7 @@ msgstr ""
 msgid "4 of January, 2026"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:62
+#: includes/admin/class-ffc-form-editor.php:107
 msgid "4. Email Configuration"
 msgstr ""
 
@@ -156,7 +168,7 @@ msgstr ""
 msgid "4. Validation URL"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:71
+#: includes/admin/class-ffc-form-editor.php:116
 msgid "5. Geolocation & Date/Time Restrictions"
 msgstr ""
 
@@ -184,23 +196,55 @@ msgstr ""
 msgid "9. Complete Template Examples"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:305
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:242
 msgid "Accepts formats: 12345678900 or 123.456.789-00"
 msgstr ""
 
-#: includes/class-ffc-email-handler.php:237
+#: includes/integrations/class-ffc-email-handler.php:237
 msgid "Access Certificate Online"
 msgstr ""
 
-#: includes/class-ffc-submissions-list-table.php:37 includes/class-ffc-form-editor.php:127 includes/settings/views/ffc-tab-general.php:250
+#: includes/admin/class-ffc-admin-activity-log-page.php:138
+msgid "Access Denied"
+msgstr ""
+
+#: includes/admin/views/ffc-admin-activity-log.php:85
+msgid "Action"
+msgstr ""
+
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:60 includes/admin/class-ffc-submissions-list-table.php:37 includes/settings/views/ffc-tab-general.php:429
 msgid "Actions"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:204
+#: includes/admin/class-ffc-admin-activity-log-page.php:27 includes/admin/class-ffc-admin-activity-log-page.php:28 includes/admin/class-ffc-admin-activity-log-page.php:88 includes/admin/class-ffc-admin-activity-log-page.php:99 includes/settings/views/ffc-tab-general.php:259 includes/admin/views/ffc-admin-activity-log.php:13
+msgid "Activity Log"
+msgstr ""
+
+#: includes/admin/class-ffc-admin-activity-log-page.php:102
+msgid "Activity Log is currently disabled."
+msgstr ""
+
+#: includes/settings/views/ffc-tab-general.php:95
+msgid "Activity Log Settings"
+msgstr ""
+
+#: includes/settings/views/ffc-tab-general.php:97
+msgid "Activity Log tracks important actions in your system for audit and compliance purposes (LGPD)."
+msgstr ""
+
+#: includes/admin/views/ffc-admin-activity-log.php:16
+msgid "Activity logs track important actions for audit and LGPD compliance."
+msgstr ""
+
+#: includes/admin/views/ffc-admin-activity-log.php:177
+msgid "Activity Summary (Last 30 Days)"
+msgstr ""
+
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:139
 msgid "Add New Field"
 msgstr ""
 
-#: includes/class-ffc-cpt.php:30 includes/class-ffc-cpt.php:31
+#: includes/admin/class-ffc-cpt.php:30 includes/admin/class-ffc-cpt.php:31
 msgid "Add New Form"
 msgstr ""
 
@@ -208,27 +252,27 @@ msgstr ""
 msgid "Add width/height attributes"
 msgstr ""
 
-#: includes/class-ffc-verification-handler.php:328
+#: includes/frontend/class-ffc-verification-handler.php:263
 msgid "Address"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-user-access.php:168
+#: includes/settings/views/ffc-tab-user-access.php:166
 msgid "Admin Bar"
 msgstr ""
 
-#: includes/class-ffc-frontend.php:143
+#: includes/frontend/class-ffc-frontend.php:141
 msgid "Admin Bypass Mode Active"
 msgstr ""
 
-#: includes/class-ffc-frontend.php:140
+#: includes/frontend/class-ffc-frontend.php:138
 msgid "Admin Bypass Mode Active - Geofence restrictions are disabled for administrators"
 msgstr ""
 
-#: includes/class-ffc-frontend.php:141
+#: includes/frontend/class-ffc-frontend.php:139
 msgid "Admin Bypass: Date/Time restrictions are disabled for administrators"
 msgstr ""
 
-#: includes/class-ffc-frontend.php:142
+#: includes/frontend/class-ffc-frontend.php:140
 msgid "Admin Bypass: Geolocation restrictions are disabled for administrators"
 msgstr ""
 
@@ -252,20 +296,24 @@ msgstr ""
 msgid "Alex Meusburger"
 msgstr ""
 
-#: includes/class-ffc-migration-manager.php:1134
-msgid "All confirmation checkboxes must be checked."
+#: includes/admin/views/ffc-admin-activity-log.php:38
+msgid "All Actions"
 msgstr ""
 
-#: includes/class-ffc-admin.php:186
+#: includes/admin/class-ffc-admin.php:155
 msgid "All CSV"
 msgstr ""
 
-#: includes/class-ffc-cpt.php:35
+#: includes/admin/class-ffc-cpt.php:35
 msgid "All Forms"
 msgstr ""
 
 #: includes/settings/views/ffc-tab-rate-limit.php:17
 msgid "All forms"
+msgstr ""
+
+#: includes/admin/views/ffc-admin-activity-log.php:28
+msgid "All Levels"
 msgstr ""
 
 #: includes/settings/views/ffc-tab-migrations.php:162
@@ -288,19 +336,19 @@ msgstr ""
 msgid "Allow administrators to bypass geofence restrictions for testing and content management."
 msgstr ""
 
-#: includes/settings/views/ffc-tab-user-access.php:108
+#: includes/settings/views/ffc-tab-user-access.php:106
 msgid "Allow administrators to bypass the block (recommended)"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:521
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:462
 msgid "Allowed Areas (GPS)"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:257
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:194
 msgid "Allowlist (CPF/RF)"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:300
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:237
 msgid "Allowlist (CPFs / IDs)"
 msgstr ""
 
@@ -316,7 +364,7 @@ msgstr ""
 msgid "Always use inline styles"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:543
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:484
 msgid "AND - Require both GPS AND IP to be valid (stricter)"
 msgstr ""
 
@@ -332,23 +380,27 @@ msgstr ""
 msgid "Apply to"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:662
+#: includes/migrations/class-ffc-migration-registry.php:132
+msgid "Associate submissions with WordPress users based on CPF/RF"
+msgstr ""
+
+#: includes/admin/class-ffc-form-editor.php:61
 msgid "At least one geolocation method (GPS or IP) must be enabled when geolocation is active."
 msgstr ""
 
-#: includes/class-ffc-admin.php:514 includes/class-ffc-csv-exporter.php:59
+#: includes/admin/class-ffc-csv-exporter.php:59 includes/admin/class-ffc-admin-submission-edit-page.php:357
 msgid "Auth Code"
 msgstr ""
 
-#: includes/class-ffc-migration-manager.php:78
+#: includes/migrations/class-ffc-migration-registry.php:66
 msgid "Authentication code"
 msgstr ""
 
-#: includes/class-ffc-utils.php:672 includes/class-ffc-email-handler.php:229 includes/class-ffc-verification-handler.php:227
+#: templates/certificate-preview.php:34 templates/submission-success.php:33 includes/integrations/class-ffc-email-handler.php:229
 msgid "Authentication Code:"
 msgstr ""
 
-#: includes/class-ffc-email-handler.php:89 includes/class-ffc-pdf-generator.php:509
+#: includes/integrations/class-ffc-email-handler.php:89 includes/generators/class-ffc-pdf-generator.php:510
 msgid "Authenticity:"
 msgstr ""
 
@@ -364,11 +416,11 @@ msgstr ""
 msgid "Automatic (or not) email sent with certificate PDF attached upon submission"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:202
+#: includes/settings/views/ffc-tab-general.php:381
 msgid "Automatic Warming"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:224
+#: includes/settings/views/ffc-tab-general.php:403
 msgid "Backend:"
 msgstr ""
 
@@ -376,15 +428,15 @@ msgstr ""
 msgid "Background color"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:136
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:69
 msgid "Background Image"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:163
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:96
 msgid "Background Image URL:"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:314
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:251
 msgid "Banned users..."
 msgstr ""
 
@@ -416,7 +468,7 @@ msgstr ""
 msgid "Block duration"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-user-access.php:50
+#: includes/settings/views/ffc-tab-user-access.php:48
 msgid "Block WP-Admin Access"
 msgstr ""
 
@@ -424,15 +476,15 @@ msgstr ""
 msgid "Blocked (30 days):"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:268
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:205
 msgid "Blocked CPF/RF cannot submit"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:484 includes/class-ffc-form-editor.php:560
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:425 includes/admin/class-ffc-form-editor-metabox-renderer.php:501
 msgid "Blocked Message"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-user-access.php:71
+#: includes/settings/views/ffc-tab-user-access.php:69
 msgid "Blocked Roles"
 msgstr ""
 
@@ -448,8 +500,12 @@ msgstr ""
 msgid "Border"
 msgstr ""
 
-#: includes/class-ffc-admin.php:230
+#: includes/admin/class-ffc-admin.php:199 includes/admin/class-ffc-admin-notice-manager.php:46
 msgid "Bulk action completed."
+msgstr ""
+
+#: includes/admin/views/ffc-admin-activity-log.php:186
+msgid "By Level:"
 msgstr ""
 
 #: includes/settings/views/ffc-tab-rate-limit.php:117
@@ -460,7 +516,7 @@ msgstr ""
 msgid "Bypass Date/Time"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-user-access.php:98
+#: includes/settings/views/ffc-tab-user-access.php:96
 msgid "Bypass for Administrators"
 msgstr ""
 
@@ -496,15 +552,11 @@ msgstr ""
 msgid "Can I undo a migration?"
 msgstr ""
 
-#: includes/class-ffc-admin.php:553
+#: includes/admin/class-ffc-admin-submission-edit-page.php:99
 msgid "Cancel"
 msgstr ""
 
-#: includes/class-ffc-migration-manager.php:1025
-msgid "Cannot cleanup: %d submissions still need encryption. Complete migration first."
-msgstr ""
-
-#: includes/class-ffc-utils.php:650
+#: includes/core/class-ffc-utils.php:650
 msgid "Certificate"
 msgstr ""
 
@@ -514,35 +566,35 @@ msgid_plural "certificates"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-ffc-verification-handler.php:224
+#: templates/certificate-preview.php:31
 msgid "Certificate Details"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:156
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:89
 msgid "Certificate HTML Editor"
 msgstr ""
 
-#: includes/class-ffc-verification-handler.php:393 includes/class-ffc-verification-handler.php:511
+#: includes/frontend/class-ffc-verification-handler.php:328 includes/frontend/class-ffc-verification-handler.php:446
 msgid "Certificate not found or invalid code."
 msgstr ""
 
-#: includes/class-ffc-verification-handler.php:443
+#: includes/frontend/class-ffc-verification-handler.php:378
 msgid "Certificate not found or invalid link."
 msgstr ""
 
-#: includes/class-ffc-email-handler.php:246
+#: includes/integrations/class-ffc-email-handler.php:246
 msgid "Certificate Preview:"
 msgstr ""
 
-#: includes/class-ffc-form-processor.php:501
+#: includes/frontend/class-ffc-form-processor.php:501
 msgid "Certificate previously issued (Reprint)."
 msgstr ""
 
-#: includes/class-ffc-settings.php:324
+#: includes/admin/class-ffc-settings.php:244
 msgid "Certificate Settings"
 msgstr ""
 
-#: includes/class-ffc-page-manager.php:101 includes/class-ffc-activator.php:149
+#: includes/class-ffc-activator.php:149 includes/core/class-ffc-page-manager.php:101
 msgid "Certificate Verification"
 msgstr ""
 
@@ -558,23 +610,27 @@ msgstr ""
 msgid "Check spelling matches exactly"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:517
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:458
 msgid "Choose one or both methods. GPS is more accurate but requires user permission."
 msgstr ""
 
-#: includes/class-ffc-verification-handler.php:329
+#: includes/frontend/class-ffc-verification-handler.php:264
 msgid "City"
 msgstr ""
 
-#: includes/class-ffc-migration-manager.php:1035
-msgid "Cleanup must be explicitly confirmed by the user."
+#: includes/migrations/strategies/class-ffc-cleanup-migration-strategy.php:164
+msgid "Cleaned %d submissions"
 msgstr ""
 
-#: includes/class-ffc-migration-manager.php:136
+#: includes/migrations/class-ffc-migration-registry.php:121
 msgid "Cleanup Unencrypted Data (15+ days)"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:255
+#: includes/migrations/strategies/class-ffc-cleanup-migration-strategy.php:202
+msgid "Cleanup Unencrypted Data Strategy"
+msgstr ""
+
+#: includes/settings/views/ffc-tab-general.php:434
 msgid "Clear all cache?"
 msgstr ""
 
@@ -590,15 +646,19 @@ msgstr ""
 msgid "Clear browser cache (Ctrl+F5)"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:256
+#: includes/settings/views/ffc-tab-general.php:435
 msgid "Clear Cache"
+msgstr ""
+
+#: includes/admin/views/ffc-admin-activity-log.php:51
+msgid "Clear Filters"
 msgstr ""
 
 #: includes/settings/views/ffc-tab-documentation.php:612
 msgid "Clear WordPress cache"
 msgstr ""
 
-#: includes/class-ffc-email-handler.php:239
+#: includes/integrations/class-ffc-email-handler.php:239
 msgid "Click the button above to view and download your certificate"
 msgstr ""
 
@@ -607,7 +667,7 @@ msgstr ""
 msgid "Click to migrate up to 100 records. %s records remaining."
 msgstr ""
 
-#: includes/class-ffc-admin.php:109
+#: includes/admin/class-ffc-admin-assets-manager.php:286
 msgid "codes generated"
 msgstr ""
 
@@ -623,7 +683,7 @@ msgstr ""
 msgid "Common ports: 587 (TLS), 465 (SSL), 25 (unencrypted)"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:107
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:38
 msgid "Common variables include {{auth_code}}, {{submission_date}}, and {{ticket}}."
 msgstr ""
 
@@ -639,19 +699,19 @@ msgstr ""
 msgid "Configure external IP geolocation services for backend validation. These services detect user location by IP address."
 msgstr ""
 
-#: includes/class-ffc-frontend.php:91 includes/class-ffc-admin.php:100
+#: includes/admin/class-ffc-admin-assets-manager.php:277 includes/frontend/class-ffc-frontend.php:89
 msgid "Connection error."
 msgstr ""
 
-#: includes/class-ffc-csv-exporter.php:62
+#: includes/admin/class-ffc-csv-exporter.php:62
 msgid "Consent Date"
 msgstr ""
 
-#: includes/class-ffc-csv-exporter.php:61
+#: includes/admin/class-ffc-csv-exporter.php:61
 msgid "Consent Given"
 msgstr ""
 
-#: includes/class-ffc-admin.php:447
+#: includes/admin/class-ffc-admin-submission-edit-page.php:281
 msgid "Consent given:"
 msgstr ""
 
@@ -659,7 +719,11 @@ msgstr ""
 msgid "Container for sections"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:427
+#: includes/admin/views/ffc-admin-activity-log.php:88
+msgid "Context"
+msgstr ""
+
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:368
 msgid "Control when users can access this form based on date range and daily hours."
 msgstr ""
 
@@ -667,19 +731,19 @@ msgstr ""
 msgid "Cooldown (sec)"
 msgstr ""
 
-#: includes/class-ffc-admin.php:572
+#: includes/admin/class-ffc-admin-assets-manager.php:239
 msgid "Copied!"
 msgstr ""
 
-#: includes/class-ffc-magic-link-helper.php:193
+#: includes/generators/class-ffc-magic-link-helper.php:193
 msgid "Copy"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:95
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:26
 msgid "Copy this Shortcode:"
 msgstr ""
 
-#: includes/class-ffc-magic-link-helper.php:192
+#: includes/generators/class-ffc-magic-link-helper.php:192
 msgid "Copy to clipboard"
 msgstr ""
 
@@ -687,27 +751,27 @@ msgstr ""
 msgid "Countdown timer"
 msgstr ""
 
-#: includes/class-ffc-verification-handler.php:332
+#: includes/frontend/class-ffc-verification-handler.php:267
 msgid "Course"
 msgstr ""
 
-#: includes/class-ffc-verification-handler.php:320
+#: includes/frontend/class-ffc-verification-handler.php:255
 msgid "CPF"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:183
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:118
 msgid "CPF / ID"
 msgstr ""
 
-#: includes/class-ffc-migration-manager.php:71
+#: includes/migrations/class-ffc-migration-registry.php:59
 msgid "CPF or RF number"
 msgstr ""
 
-#: includes/class-ffc-verification-handler.php:319 includes/class-ffc-admin.php:501
+#: includes/admin/class-ffc-admin-submission-edit-page.php:344 includes/frontend/class-ffc-verification-handler.php:254
 msgid "CPF/RF"
 msgstr ""
 
-#: includes/class-ffc-form-processor.php:356
+#: includes/frontend/class-ffc-form-processor.php:356
 msgid "CPF/RF must be exactly 7 or 11 digits."
 msgstr ""
 
@@ -715,8 +779,12 @@ msgstr ""
 msgid "Create a field in Form Builder (e.g., field name:"
 msgstr ""
 
-#: includes/class-ffc-page-manager.php:151
+#: includes/core/class-ffc-page-manager.php:151
 msgid "Create Verification Page"
+msgstr ""
+
+#: includes/migrations/class-ffc-migration-manager.php:321
+msgid "CRITICAL: This is IRREVERSIBLE! Type \"CONFIRMAR EXCLUSÃO\" to proceed."
 msgstr ""
 
 #: includes/settings/views/ffc-tab-documentation.php:399
@@ -735,11 +803,11 @@ msgstr ""
 msgid "Custom size (150x150 pixels)"
 msgstr ""
 
-#: includes/class-ffc-admin.php:404
+#: includes/admin/class-ffc-admin-submission-edit-page.php:241
 msgid "Custom size (150x150px)"
 msgstr ""
 
-#: includes/class-ffc-admin.php:412
+#: includes/admin/class-ffc-admin-submission-edit-page.php:245
 msgid "Custom size without margin"
 msgstr ""
 
@@ -747,35 +815,47 @@ msgstr ""
 msgid "Custom SMTP"
 msgstr ""
 
-#: includes/class-ffc-rate-limiter.php:170
+#: includes/security/class-ffc-rate-limiter.php:170
 msgid "Daily verification limit reached. Please try again tomorrow."
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:101
+#: includes/settings/views/ffc-tab-general.php:280
 msgid "Danger Zone"
 msgstr ""
 
 #. %s: Dashboard page slug
-#: includes/settings/views/ffc-tab-user-access.php:219
+#: includes/settings/views/ffc-tab-user-access.php:217
 #, php-format
 msgid "Dashboard page will be created at: %s (activate the plugin to create it)"
 msgstr ""
 
 #. %s: Dashboard page URL
-#: includes/settings/views/ffc-tab-user-access.php:213
+#: includes/settings/views/ffc-tab-user-access.php:211
 #, php-format
 msgid "Dashboard page: %s"
 msgstr ""
 
-#: includes/class-ffc-submissions-list-table.php:35
+#: includes/admin/class-ffc-submissions-list-table.php:35
 msgid "Data"
 msgstr ""
 
-#: includes/class-ffc-settings.php:242
+#: includes/admin/class-ffc-admin-activity-log-page.php:137
+msgid "Data Accessed"
+msgstr ""
+
+#: includes/migrations/class-ffc-migration-registry.php:141
+msgid "Data Cleanup"
+msgstr ""
+
+#: includes/migrations/class-ffc-migration-status-calculator.php:236
+msgid "Data cleanup completed"
+msgstr ""
+
+#: includes/admin/class-ffc-settings-save-handler.php:265
 msgid "Data deleted and counter reset successfully."
 msgstr ""
 
-#: includes/class-ffc-settings.php:243
+#: includes/admin/class-ffc-settings-save-handler.php:266
 msgid "Data deleted successfully."
 msgstr ""
 
@@ -783,7 +863,7 @@ msgstr ""
 msgid "Data Encryption:"
 msgstr ""
 
-#: includes/settings/class-ffc-tab-migrations.php:17
+#: includes/settings/tabs/class-ffc-tab-migrations.php:17
 msgid "Data Migrations"
 msgstr ""
 
@@ -791,20 +871,15 @@ msgstr ""
 msgid "Data Migrations:"
 msgstr ""
 
-#: includes/class-ffc-migration-manager.php:1052
-#, php-format
-msgid "Database error: %s"
-msgstr ""
-
 #: includes/settings/views/ffc-tab-migrations.php:24
 msgid "Database Migrations"
 msgstr ""
 
-#: includes/class-ffc-submissions-list-table.php:36 includes/class-ffc-verification-handler.php:325 includes/class-ffc-form-editor.php:708
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:559 includes/admin/class-ffc-submissions-list-table.php:36 includes/frontend/class-ffc-verification-handler.php:260
 msgid "Date"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:410
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:351
 msgid "Date & Time"
 msgstr ""
 
@@ -820,15 +895,19 @@ msgstr ""
 msgid "Date Format:"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:431
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:372
 msgid "Date Range"
 msgstr ""
 
-#: includes/class-ffc-utils.php:668
+#: includes/admin/views/ffc-admin-activity-log.php:83
+msgid "Date/Time"
+msgstr ""
+
+#: templates/submission-success.php:28
 msgid "Date:"
 msgstr ""
 
-#: includes/class-ffc-admin.php:452
+#: includes/admin/class-ffc-admin-submission-edit-page.php:286
 #, php-format
 msgid "Date: %s"
 msgstr ""
@@ -837,15 +916,23 @@ msgstr ""
 msgid "days"
 msgstr ""
 
+#: includes/admin/views/ffc-admin-activity-log.php:32
+msgid "Debug"
+msgstr ""
+
 #: includes/settings/views/ffc-tab-geolocation.php:258
 msgid "Debug Mode"
+msgstr ""
+
+#: includes/settings/views/ffc-tab-general.php:128
+msgid "Debug Settings"
 msgstr ""
 
 #: includes/settings/views/ffc-tab-qrcode.php:68
 msgid "Default Error Correction Level"
 msgstr ""
 
-#: includes/class-ffc-admin.php:396
+#: includes/admin/class-ffc-admin-submission-edit-page.php:237
 msgid "Default QR Code (200x200px)"
 msgstr ""
 
@@ -877,23 +964,23 @@ msgstr ""
 msgid "Define what happens when geolocation services fail or are denied by the user."
 msgstr ""
 
-#: includes/class-ffc-submissions-list-table.php:103
+#: includes/admin/class-ffc-submissions-list-table.php:103
 msgid "Delete"
 msgstr ""
 
-#: includes/class-ffc-submissions-list-table.php:179
+#: includes/admin/class-ffc-submissions-list-table.php:179
 msgid "Delete Permanently"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:112
+#: includes/settings/views/ffc-tab-general.php:291
 msgid "Delete Submissions"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:310
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:247
 msgid "Denylist (Blocked)"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:267
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:204
 msgid "Denylist (CPF/RF)"
 msgstr ""
 
@@ -901,7 +988,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: includes/class-ffc-frontend.php:146
+#: includes/frontend/class-ffc-frontend.php:144
 msgid "Detecting your location..."
 msgstr ""
 
@@ -917,7 +1004,7 @@ msgstr ""
 msgid "Disabled"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:473 includes/class-ffc-form-editor.php:549
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:414 includes/admin/class-ffc-form-editor-metabox-renderer.php:490
 msgid "Display Mode"
 msgstr ""
 
@@ -933,15 +1020,15 @@ msgstr ""
 msgid "Displays the public verification page."
 msgstr ""
 
-#: includes/shortcodes/class-ffc-shortcodes.php:55
+#: includes/shortcodes/class-ffc-shortcodes.php:55 includes/frontend/class-ffc-shortcodes.php:55
 msgid "Do not fill this field if you are human:"
 msgstr ""
 
-#: includes/settings/class-ffc-tab-documentation.php:17
+#: includes/settings/tabs/class-ffc-tab-documentation.php:17
 msgid "Documentation"
 msgstr ""
 
-#: includes/settings/class-ffc-tab-documentation.php:31
+#: includes/settings/tabs/class-ffc-tab-documentation.php:31
 msgid "Documentation view file not found."
 msgstr ""
 
@@ -949,27 +1036,27 @@ msgstr ""
 msgid "Domains"
 msgstr ""
 
-#: includes/class-ffc-frontend.php:99 includes/class-ffc-admin.php:115
+#: includes/admin/class-ffc-admin-assets-manager.php:292 includes/frontend/class-ffc-frontend.php:97
 msgid "Download Again"
 msgstr ""
 
-#: includes/class-ffc-verification-handler.php:300
+#: templates/certificate-preview.php:93
 msgid "Download Certificate (PDF)"
 msgstr ""
 
-#: includes/class-ffc-cpt.php:76
+#: includes/admin/class-ffc-cpt.php:76
 msgid "Duplicate"
 msgstr ""
 
-#: includes/class-ffc-cpt.php:76
+#: includes/admin/class-ffc-cpt.php:76
 msgid "Duplicate this form"
 msgstr ""
 
-#: includes/class-ffc-verification-handler.php:333
+#: includes/frontend/class-ffc-verification-handler.php:268
 msgid "Duration"
 msgstr ""
 
-#: includes/class-ffc-csv-exporter.php:57
+#: includes/admin/class-ffc-csv-exporter.php:57
 msgid "E-mail"
 msgstr ""
 
@@ -981,36 +1068,36 @@ msgstr ""
 msgid "Each migration processes 100 records at a time. For large databases, you may need to click \"Run Migration\" multiple times until it reaches 100%."
 msgstr ""
 
-#: includes/class-ffc-submissions-list-table.php:83
+#: includes/admin/class-ffc-submissions-list-table.php:83
 msgid "Edit"
 msgstr ""
 
-#: includes/class-ffc-csv-exporter.php:69
+#: includes/admin/class-ffc-csv-exporter.php:69
 msgid "Edit Date"
 msgstr ""
 
-#: includes/class-ffc-cpt.php:33
+#: includes/admin/class-ffc-cpt.php:33
 msgid "Edit Form"
 msgstr ""
 
-#: includes/class-ffc-admin.php:292
+#: includes/admin/class-ffc-admin-submission-edit-page.php:79
 #, php-format
 msgid "Edit Submission #%s"
 msgstr ""
 
-#: includes/class-ffc-csv-exporter.php:70
+#: includes/admin/class-ffc-csv-exporter.php:70
 msgid "Edited By"
 msgstr ""
 
-#: includes/class-ffc-submissions-list-table.php:34 includes/class-ffc-verification-handler.php:323 includes/class-ffc-admin.php:489 includes/class-ffc-form-editor.php:182 includes/class-ffc-form-editor.php:706
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:117 includes/admin/class-ffc-form-editor-metabox-renderer.php:557 includes/admin/class-ffc-submissions-list-table.php:34 includes/admin/class-ffc-admin-submission-edit-page.php:332 includes/frontend/class-ffc-verification-handler.php:258
 msgid "Email"
 msgstr ""
 
-#: includes/class-ffc-migration-manager.php:64
+#: includes/migrations/class-ffc-migration-registry.php:52
 msgid "Email address"
 msgstr ""
 
-#: includes/class-ffc-form-processor.php:383
+#: includes/frontend/class-ffc-form-processor.php:383
 msgid "Email address is required."
 msgstr ""
 
@@ -1018,12 +1105,16 @@ msgstr ""
 msgid "Email address to send from"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:361
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:300
 msgid "Email Body (HTML)"
 msgstr ""
 
 #: includes/settings/views/ffc-tab-smtp.php:18
 msgid "Email Configuration"
+msgstr ""
+
+#: includes/settings/views/ffc-tab-general.php:153
+msgid "Email Handler"
 msgstr ""
 
 #: includes/settings/views/ffc-tab-documentation.php:403
@@ -1046,7 +1137,11 @@ msgstr ""
 msgid "Enable"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:174
+#: includes/settings/views/ffc-tab-general.php:105
+msgid "Enable Activity Log"
+msgstr ""
+
+#: includes/settings/views/ffc-tab-general.php:353
 msgid "Enable Cache"
 msgstr ""
 
@@ -1054,7 +1149,7 @@ msgstr ""
 msgid "Enable cascade: if primary fails, try the other service"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:421
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:362
 msgid "Enable Date/Time Restrictions"
 msgstr ""
 
@@ -1062,15 +1157,55 @@ msgstr ""
 msgid "Enable Debug"
 msgstr ""
 
+#: includes/settings/views/ffc-tab-general.php:264
+msgid "Enable debug logging for activity log system"
+msgstr ""
+
+#: includes/settings/views/ffc-tab-general.php:249
+msgid "Enable debug logging for database migrations"
+msgstr ""
+
+#: includes/settings/views/ffc-tab-general.php:158
+msgid "Enable debug logging for email sending"
+msgstr ""
+
+#: includes/settings/views/ffc-tab-general.php:188
+msgid "Enable debug logging for encryption operations"
+msgstr ""
+
+#: includes/settings/views/ffc-tab-general.php:173
+msgid "Enable debug logging for form submission processing"
+msgstr ""
+
+#: includes/settings/views/ffc-tab-general.php:204
+msgid "Enable debug logging for geofence validation"
+msgstr ""
+
+#: includes/settings/views/ffc-tab-general.php:143
+msgid "Enable debug logging for PDF generation"
+msgstr ""
+
+#: includes/settings/views/ffc-tab-general.php:234
+msgid "Enable debug logging for REST API operations"
+msgstr ""
+
+#: includes/settings/views/ffc-tab-general.php:130
+msgid "Enable debug logging for specific areas. Debug logs are written to the PHP error log."
+msgstr ""
+
+#: includes/settings/views/ffc-tab-general.php:219
+msgid "Enable debug logging for user management"
+msgstr ""
+
 #: includes/settings/views/ffc-tab-geolocation.php:260
 msgid "Enable debug mode for testing and troubleshooting geolocation features."
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:179
+#: includes/settings/views/ffc-tab-general.php:358
 msgid "Enable form caching"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:497
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:438
 msgid "Enable Geolocation"
 msgstr ""
 
@@ -1094,27 +1229,51 @@ msgstr ""
 msgid "Enabled"
 msgstr ""
 
-#: includes/class-ffc-migration-manager.php:126
-msgid "Encrypt email, CPF/RF, IP address and JSON data with AES-256 encryption for LGPD compliance"
+#: includes/migrations/class-ffc-migration-registry.php:113
+msgid "Encrypt email, data, and user_ip for LGPD compliance"
 msgstr ""
 
-#: includes/class-ffc-migration-manager.php:125
+#: includes/migrations/class-ffc-migration-registry.php:112
 msgid "Encrypt Sensitive Data"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-smtp.php:103
+#: includes/migrations/strategies/class-ffc-encryption-migration-strategy.php:207
+msgid "Encrypted %d submissions"
+msgstr ""
+
+#: includes/settings/views/ffc-tab-smtp.php:103 includes/settings/views/ffc-tab-general.php:183
 msgid "Encryption"
+msgstr ""
+
+#: includes/migrations/class-ffc-migration-manager.php:255 includes/migrations/class-ffc-migration-manager.php:397
+msgid "Encryption completion date not found."
 msgstr ""
 
 #: includes/settings/views/ffc-tab-documentation.php:456
 msgid "Encryption for sensitive data (LGPD compliant)"
 msgstr ""
 
-#: includes/class-ffc-migration-manager.php:794
+#: includes/migrations/strategies/class-ffc-encryption-migration-strategy.php:232
 msgid "Encryption keys not configured. WordPress SECURE_AUTH_KEY and LOGGED_IN_KEY are required."
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:435
+#: includes/migrations/class-ffc-migration-manager.php:245
+msgid "Encryption migration must be 100% complete before cleanup."
+msgstr ""
+
+#: includes/migrations/class-ffc-migration-manager.php:387
+msgid "Encryption migration must be 100% complete."
+msgstr ""
+
+#: includes/migrations/strategies/class-ffc-encryption-migration-strategy.php:260
+msgid "Encryption Migration Strategy"
+msgstr ""
+
+#: includes/migrations/strategies/class-ffc-cleanup-migration-strategy.php:189
+msgid "Encryption must be configured before cleanup."
+msgstr ""
+
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:376
 msgid "End:"
 msgstr ""
 
@@ -1130,11 +1289,11 @@ msgstr ""
 msgid "Ensure that the listed IDs are allowed or blocked from retrieving certificates."
 msgstr ""
 
-#: includes/shortcodes/class-ffc-shortcodes.php:241
+#: includes/shortcodes/class-ffc-shortcodes.php:241 includes/frontend/class-ffc-shortcodes.php:207
 msgid "Enter password"
 msgstr ""
 
-#: includes/shortcodes/class-ffc-shortcodes.php:135
+#: templates/verification-page.php:27 includes/shortcodes/class-ffc-shortcodes.php:135
 msgid "Enter the authentication code to verify the certificate authenticity."
 msgstr ""
 
@@ -1142,8 +1301,12 @@ msgstr ""
 msgid "Enter your ipinfo.io API key"
 msgstr ""
 
-#: includes/shortcodes/class-ffc-shortcodes.php:262
+#: includes/shortcodes/class-ffc-shortcodes.php:262 includes/frontend/class-ffc-shortcodes.php:228
 msgid "Enter your unique ticket code"
+msgstr ""
+
+#: includes/admin/views/ffc-admin-activity-log.php:31
+msgid "Error"
 msgstr ""
 
 #: includes/settings/views/ffc-tab-documentation.php:177
@@ -1154,55 +1317,55 @@ msgstr ""
 msgid "Error decrypting"
 msgstr ""
 
-#: includes/class-ffc-admin.php:110
+#: includes/admin/class-ffc-admin-assets-manager.php:287
 msgid "Error generating codes."
 msgstr ""
 
-#: includes/class-ffc-frontend.php:96
+#: includes/frontend/class-ffc-frontend.php:94
 msgid "Error generating PDF (html2canvas). Please try again."
 msgstr ""
 
-#: includes/class-ffc-admin.php:113
+#: includes/admin/class-ffc-admin-assets-manager.php:290
 msgid "Error generating PDF. Please try again."
 msgstr ""
 
-#: includes/class-ffc-admin-ajax.php:123
+#: includes/admin/class-ffc-admin-ajax.php:123
 msgid "Error generating unique codes. Please try a smaller quantity."
 msgstr ""
 
-#: includes/shortcodes/class-ffc-dashboard-shortcode.php:235
+#: includes/shortcodes/class-ffc-dashboard-shortcode.php:224
 msgid "Error loading data"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:567
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:508
 msgid "Error Message"
 msgstr ""
 
-#: includes/class-ffc-admin.php:102
+#: includes/admin/class-ffc-admin-assets-manager.php:279
 msgid "Error reading file."
 msgstr ""
 
-#: includes/class-ffc-submission-handler.php:195
+#: includes/submissions/class-ffc-submission-handler.php:195
 msgid "Error saving submission to the database."
 msgstr ""
 
-#: includes/class-ffc-admin.php:99
+#: includes/admin/class-ffc-admin-assets-manager.php:276
 msgid "Error: "
 msgstr ""
 
-#: includes/class-ffc-frontend.php:95
+#: includes/frontend/class-ffc-frontend.php:93
 msgid "Error: PDF libraries (html2canvas/jspdf) failed to load."
 msgstr ""
 
-#: includes/class-ffc-admin.php:112
+#: includes/admin/class-ffc-admin-assets-manager.php:289
 msgid "Error: PDF libraries failed to load."
 msgstr ""
 
-#: includes/class-ffc-utils.php:600
+#: includes/core/class-ffc-utils.php:600
 msgid "Error: Please answer the security question."
 msgstr ""
 
-#: includes/class-ffc-utils.php:605
+#: includes/core/class-ffc-utils.php:605
 msgid "Error: The math answer is incorrect."
 msgstr ""
 
@@ -1210,11 +1373,11 @@ msgstr ""
 msgid "Estimated Cache Size:"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-user-access.php:111
+#: includes/settings/views/ffc-tab-user-access.php:109
 msgid "Even if an admin has a blocked role, they can still access wp-admin."
 msgstr ""
 
-#: includes/class-ffc-verification-handler.php:232
+#: templates/certificate-preview.php:39
 msgid "Event:"
 msgstr ""
 
@@ -1222,15 +1385,15 @@ msgstr ""
 msgid "Every certificate gets a unique 12-character code (e.g., A1B2-C3D4-E5F6)"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:700
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:551
 msgid "ex: course_name"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:727
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:578
 msgid "Ex: Option 1, Option 2, Option 3"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:294
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:231
 msgid "Ex: PASS2025"
 msgstr ""
 
@@ -1254,11 +1417,11 @@ msgstr ""
 msgid "Example:"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:467
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:408
 msgid "Example: Start 01/01 + End 10/01 + Time 12:00-23:00 = Open 12:00-23:00 every day from Jan 1-10"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:458
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:399
 msgid "Example: Start 01/01 12:00 + End 10/01 23:00 = Open from 12:00 on Jan 1st until 23:00 on Jan 10th"
 msgstr ""
 
@@ -1266,19 +1429,19 @@ msgstr ""
 msgid "Exit View Mode"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:187
+#: includes/settings/views/ffc-tab-general.php:366
 msgid "Expiration Time"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:232
+#: includes/settings/views/ffc-tab-general.php:411
 msgid "Expiration:"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:160
+#: includes/settings/views/ffc-tab-general.php:339
 msgid "External cache active (Redis/Memcached)"
 msgstr ""
 
-#: includes/class-ffc-settings.php:246
+#: includes/admin/class-ffc-settings-save-handler.php:269
 msgid "Failed to delete data."
 msgstr ""
 
@@ -1290,23 +1453,39 @@ msgstr ""
 msgid "FFC Certificates"
 msgstr ""
 
-#: includes/class-ffc-cpt.php:29
+#: includes/admin/class-ffc-cpt.php:29
 msgid "FFC Form"
 msgstr ""
 
-#: includes/user-dashboard/class-ffc-user-manager.php:177
+#: includes/user-dashboard/class-ffc-user-manager.php:182
 msgid "FFC User"
 msgstr ""
 
-#: includes/class-ffc-migration-manager.php:786
+#: includes/migrations/strategies/class-ffc-encryption-migration-strategy.php:224
 msgid "FFC_Encryption class not found. Please ensure class-ffc-encryption.php is loaded."
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:688
+#: includes/migrations/strategies/class-ffc-cleanup-migration-strategy.php:181
+msgid "FFC_Encryption class required for cleanup. Encrypt data first."
+msgstr ""
+
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:539
 msgid "Field"
 msgstr ""
 
-#: includes/class-ffc-admin.php:101
+#: includes/migrations/strategies/class-ffc-field-migration-strategy.php:131
+msgid "Field definition not found"
+msgstr ""
+
+#: includes/migrations/strategies/class-ffc-field-migration-strategy.php:241
+msgid "Field definition not found in registry"
+msgstr ""
+
+#: includes/migrations/strategies/class-ffc-field-migration-strategy.php:253
+msgid "Field Migration Strategy"
+msgstr ""
+
+#: includes/admin/class-ffc-admin-assets-manager.php:278
 msgid "File imported successfully!"
 msgstr ""
 
@@ -1314,7 +1493,11 @@ msgstr ""
 msgid "Files removed after X days. Set to 0 to disable."
 msgstr ""
 
-#: includes/class-ffc-admin.php:184
+#: includes/admin/views/ffc-admin-activity-log.php:47
+msgid "Filter"
+msgstr ""
+
+#: includes/admin/class-ffc-admin.php:153
 msgid "Filtered CSV"
 msgstr ""
 
@@ -1330,11 +1513,11 @@ msgstr ""
 msgid "For additional support, check the plugin repository documentation or contact support."
 msgstr ""
 
-#: includes/class-ffc-submissions-list-table.php:33 includes/class-ffc-csv-exporter.php:55
+#: includes/admin/class-ffc-submissions-list-table.php:33 includes/admin/class-ffc-csv-exporter.php:55
 msgid "Form"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:156
+#: includes/settings/views/ffc-tab-general.php:335
 msgid "Form Cache"
 msgstr ""
 
@@ -1342,7 +1525,7 @@ msgstr ""
 msgid "Form Cache:"
 msgstr ""
 
-#: includes/class-ffc-form-processor.php:338
+#: includes/frontend/class-ffc-form-processor.php:338
 msgid "Form configuration not found."
 msgstr ""
 
@@ -1350,7 +1533,7 @@ msgstr ""
 msgid "Form Configuration:"
 msgstr ""
 
-#: includes/shortcodes/class-ffc-shortcodes.php:188
+#: includes/shortcodes/class-ffc-shortcodes.php:188 includes/frontend/class-ffc-shortcodes.php:154
 msgid "Form has no fields."
 msgstr ""
 
@@ -1362,19 +1545,23 @@ msgstr ""
 msgid "Form not found"
 msgstr ""
 
-#: includes/class-ffc-pdf-generator.php:560 includes/shortcodes/class-ffc-shortcodes.php:176
+#: includes/shortcodes/class-ffc-shortcodes.php:176 includes/generators/class-ffc-pdf-generator.php:561 includes/frontend/class-ffc-shortcodes.php:142
 msgid "Form not found."
+msgstr ""
+
+#: includes/settings/views/ffc-tab-general.php:168
+msgid "Form Processor"
 msgstr ""
 
 #: includes/api/class-ffc-rest-controller.php:194
 msgid "Form repository not available"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:235
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:172
 msgid "Form Restrictions"
 msgstr ""
 
-#: includes/class-ffc-utils.php:667
+#: templates/submission-success.php:24
 msgid "Form:"
 msgstr ""
 
@@ -1386,7 +1573,7 @@ msgstr ""
 msgid "Format: *@domain.com"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:524
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:465
 msgid "Format: latitude, longitude, radius(km) - One per line. Example: -23.5505, -46.6333, 5"
 msgstr ""
 
@@ -1395,11 +1582,11 @@ msgid "Formatting not showing (bold, italic)"
 msgstr ""
 
 #. Name of the plugin
-#: includes/class-ffc-cpt.php:28
+#: includes/admin/class-ffc-cpt.php:28
 msgid "Free Form Certificate"
 msgstr ""
 
-#: includes/class-ffc-page-manager.php:146
+#: includes/core/class-ffc-page-manager.php:146
 msgid "Free Form Certificate:"
 msgstr ""
 
@@ -1411,7 +1598,7 @@ msgstr ""
 msgid "From Name"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:442
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:383
 msgid "From:"
 msgstr ""
 
@@ -1423,7 +1610,7 @@ msgstr ""
 msgid "Full HTML editor to design your own certificate layout"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:181
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:116
 msgid "Full Name"
 msgstr ""
 
@@ -1431,11 +1618,11 @@ msgstr ""
 msgid "Full name of the participant"
 msgstr ""
 
-#: includes/settings/class-ffc-tab-general.php:20
+#: includes/settings/tabs/class-ffc-tab-general.php:20
 msgid "General"
 msgstr ""
 
-#: includes/settings/class-ffc-tab-general.php:54
+#: includes/settings/tabs/class-ffc-tab-general.php:54
 msgid "General settings view file not found."
 msgstr ""
 
@@ -1443,27 +1630,35 @@ msgstr ""
 msgid "Generate a CSV list with the submissions already sent."
 msgstr ""
 
-#: includes/class-ffc-migration-manager.php:115
-msgid "Generate magic tokens for old submissions that don't have them"
-msgstr ""
-
-#: includes/class-ffc-form-editor.php:324
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:261
 msgid "Generate Tickets"
 msgstr ""
 
-#: includes/class-ffc-frontend.php:93
+#: includes/migrations/class-ffc-migration-registry.php:103
+msgid "Generate unique magic tokens for secure certificate access"
+msgstr ""
+
+#: includes/migrations/strategies/class-ffc-magic-token-migration-strategy.php:113
+msgid "Generated %d magic tokens"
+msgstr ""
+
+#: includes/frontend/class-ffc-frontend.php:91
 msgid "Generating certificate in the background, please wait 10 seconds and check your downloads folder..."
 msgstr ""
 
-#: includes/class-ffc-frontend.php:98 includes/class-ffc-admin.php:98
+#: includes/admin/class-ffc-admin-assets-manager.php:275 includes/frontend/class-ffc-frontend.php:96
 msgid "Generating..."
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:413 includes/settings/class-ffc-tab-geolocation.php:17
+#: includes/settings/views/ffc-tab-general.php:199
+msgid "Geofence"
+msgstr ""
+
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:354 includes/settings/tabs/class-ffc-tab-geolocation.php:17
 msgid "Geolocation"
 msgstr ""
 
-#: includes/settings/class-ffc-tab-geolocation.php:67
+#: includes/settings/tabs/class-ffc-tab-geolocation.php:67
 msgid "Geolocation settings saved successfully!"
 msgstr ""
 
@@ -1475,7 +1670,7 @@ msgstr ""
 msgid "Global Rate Limit"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:511
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:452
 msgid "GPS (Browser geolocation)"
 msgstr ""
 
@@ -1483,7 +1678,7 @@ msgstr ""
 msgid "GPS (Browser):"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:539
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:480
 msgid "GPS + IP Logic"
 msgstr ""
 
@@ -1491,15 +1686,15 @@ msgstr ""
 msgid "GPS coordinates are processed client-side only. IP geolocation results are cached temporarily."
 msgstr ""
 
-#: includes/class-ffc-verification-handler.php:335
+#: includes/frontend/class-ffc-verification-handler.php:270
 msgid "Grade"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:228
+#: includes/settings/views/ffc-tab-general.php:407
 msgid "Group:"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:315
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:252
 msgid "Has priority over Allowlist. Accepts same formats."
 msgstr ""
 
@@ -1507,11 +1702,11 @@ msgstr ""
 msgid "Headers/titles"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:712
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:563
 msgid "Hidden Field"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:478 includes/class-ffc-form-editor.php:554
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:419 includes/admin/class-ffc-form-editor-metabox-renderer.php:495
 msgid "Hide form completely"
 msgstr ""
 
@@ -1523,7 +1718,7 @@ msgstr ""
 msgid "High (30%)"
 msgstr ""
 
-#: includes/class-ffc-admin.php:420
+#: includes/admin/class-ffc-admin-submission-edit-page.php:249
 msgid "High error correction (30%)"
 msgstr ""
 
@@ -1535,7 +1730,7 @@ msgstr ""
 msgid "Honeypot Fields:"
 msgstr ""
 
-#: includes/class-ffc-verification-handler.php:334
+#: includes/frontend/class-ffc-verification-handler.php:269
 msgid "Hours"
 msgstr ""
 
@@ -1555,25 +1750,25 @@ msgstr ""
 msgid "How many times should I run it?"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:480
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:421
 msgid "How to display the form when date/time is invalid."
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:556
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:497
 msgid "How to display the form when user is outside allowed areas."
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:81
+#: includes/admin/class-ffc-form-editor.php:126
 msgid "How to Use / Shortcode"
 msgstr ""
 
 #. %s: Privacy Policy page link
-#: includes/shortcodes/class-ffc-shortcodes.php:281
+#: includes/shortcodes/class-ffc-shortcodes.php:281 includes/frontend/class-ffc-shortcodes.php:247
 #, php-format
 msgid "I have read and agree to the %s and authorize the storage of my personal data for certificate issuance."
 msgstr ""
 
-#: includes/class-ffc-submissions-list-table.php:32 includes/class-ffc-csv-exporter.php:54
+#: includes/admin/class-ffc-submissions-list-table.php:32 includes/admin/class-ffc-csv-exporter.php:54
 msgid "ID"
 msgstr ""
 
@@ -1581,7 +1776,7 @@ msgstr ""
 msgid "ID/CPF/RF entered by user"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-user-access.php:186
+#: includes/settings/views/ffc-tab-user-access.php:184
 msgid "If unchecked, the WordPress admin bar will be hidden for blocked roles."
 msgstr ""
 
@@ -1601,7 +1796,7 @@ msgstr ""
 msgid "Images (logos, signatures, decorations)"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:133
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:66
 msgid "Import HTML"
 msgstr ""
 
@@ -1613,19 +1808,27 @@ msgstr ""
 msgid "Improves performance by caching QR Codes. Increases database size (~4KB per submission)."
 msgstr ""
 
-#: includes/class-ffc-verification-handler.php:498
+#: includes/settings/views/ffc-tab-general.php:115
+msgid "Includes user ID, IP address, and timestamp for LGPD compliance."
+msgstr ""
+
+#: includes/frontend/class-ffc-verification-handler.php:433
 msgid "Incorrect answer to math question."
 msgstr ""
 
-#: includes/class-ffc-form-processor.php:69
+#: includes/frontend/class-ffc-form-processor.php:69
 msgid "Incorrect password."
 msgstr ""
 
-#: includes/settings/views/ffc-tab-user-access.php:195
+#: includes/admin/views/ffc-admin-activity-log.php:29
+msgid "Info"
+msgstr ""
+
+#: includes/settings/views/ffc-tab-user-access.php:193
 msgid "Information"
 msgstr ""
 
-#: includes/class-ffc-admin.php:705
+#: includes/admin/class-ffc-admin.php:249
 msgid "Insufficient permissions"
 msgstr ""
 
@@ -1633,63 +1836,59 @@ msgstr ""
 msgid "Interface"
 msgstr ""
 
-#: includes/class-ffc-form-processor.php:362
+#: includes/frontend/class-ffc-form-processor.php:362
 msgid "Invalid CPF. Please check the number and try again."
 msgstr ""
 
-#: includes/class-ffc-settings.php:435
+#: includes/admin/class-ffc-settings.php:355
 msgid "Invalid date format"
 msgstr ""
 
-#: includes/class-ffc-form-processor.php:330
+#: includes/frontend/class-ffc-form-processor.php:330
 msgid "Invalid Form ID."
 msgstr ""
 
-#: includes/class-ffc-admin-ajax.php:108
+#: includes/admin/class-ffc-admin-ajax.php:108
 msgid "Invalid form ID."
 msgstr ""
 
-#: includes/class-ffc-ip-geolocation.php:41
+#: includes/integrations/class-ffc-ip-geolocation.php:41
 msgid "Invalid IP address for geolocation."
 msgstr ""
 
-#: includes/class-ffc-admin.php:716
+#: includes/admin/class-ffc-admin.php:260
 msgid "Invalid migration key"
 msgstr ""
 
-#: includes/class-ffc-form-processor.php:139
+#: includes/frontend/class-ffc-form-processor.php:139
 msgid "Invalid or already used ticket."
 msgstr ""
 
-#: includes/class-ffc-cpt.php:105
+#: includes/admin/class-ffc-cpt.php:105
 msgid "Invalid post."
 msgstr ""
 
-#: includes/class-ffc-ip-geolocation.php:120
+#: includes/integrations/class-ffc-ip-geolocation.php:120
 msgid "Invalid response from ip-api.com"
 msgstr ""
 
-#: includes/class-ffc-ip-geolocation.php:173
+#: includes/integrations/class-ffc-ip-geolocation.php:173
 msgid "Invalid response from ipinfo.io"
 msgstr ""
 
-#: includes/class-ffc-form-processor.php:369
+#: includes/frontend/class-ffc-form-processor.php:369
 msgid "Invalid RF. Must contain only numbers."
 msgstr ""
 
-#: includes/class-ffc-admin.php:623
-msgid "Invalid submission ID."
-msgstr ""
-
-#: includes/class-ffc-verification-handler.php:485
+#: includes/frontend/class-ffc-verification-handler.php:420
 msgid "Invalid submission."
 msgstr ""
 
-#: includes/class-ffc-admin-ajax.php:49
+#: includes/admin/class-ffc-admin-ajax.php:49
 msgid "Invalid template ID."
 msgstr ""
 
-#: includes/class-ffc-frontend.php:97 includes/class-ffc-verification-handler.php:429
+#: includes/frontend/class-ffc-frontend.php:95 includes/frontend/class-ffc-verification-handler.php:364
 msgid "Invalid token."
 msgstr ""
 
@@ -1697,7 +1896,11 @@ msgstr ""
 msgid "Invisible spam protection"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:515
+#: includes/admin/views/ffc-admin-activity-log.php:87
+msgid "IP Address"
+msgstr ""
+
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:456
 msgid "IP Address (backend validation)"
 msgstr ""
 
@@ -1713,15 +1916,15 @@ msgstr ""
 msgid "IP Geolocation API"
 msgstr ""
 
-#: includes/class-ffc-ip-geolocation.php:31
+#: includes/integrations/class-ffc-ip-geolocation.php:31
 msgid "IP Geolocation API is disabled."
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:528
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:469
 msgid "IP Geolocation Areas"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:535
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:476
 msgid "IP geolocation is less precise (1-50km). Use larger radius. Leave empty to use same areas as GPS."
 msgstr ""
 
@@ -1733,7 +1936,7 @@ msgstr ""
 msgid "IP Rate Limit"
 msgstr ""
 
-#: includes/class-ffc-admin.php:458
+#: includes/admin/class-ffc-admin-submission-edit-page.php:292
 #, php-format
 msgid "IP: %s"
 msgstr ""
@@ -1750,7 +1953,7 @@ msgstr ""
 msgid "Is it safe?"
 msgstr ""
 
-#: includes/class-ffc-verification-handler.php:237
+#: templates/certificate-preview.php:44
 msgid "Issued on:"
 msgstr ""
 
@@ -1758,15 +1961,15 @@ msgstr ""
 msgid "Italic text:"
 msgstr ""
 
-#: includes/class-ffc-admin.php:221
+#: includes/admin/class-ffc-admin.php:190 includes/admin/class-ffc-admin-notice-manager.php:34
 msgid "Item moved to trash."
 msgstr ""
 
-#: includes/class-ffc-admin.php:227
+#: includes/admin/class-ffc-admin.php:196 includes/admin/class-ffc-admin-notice-manager.php:42
 msgid "Item permanently deleted."
 msgstr ""
 
-#: includes/class-ffc-admin.php:224
+#: includes/admin/class-ffc-admin.php:193 includes/admin/class-ffc-admin-notice-manager.php:38
 msgid "Item restored."
 msgstr ""
 
@@ -1774,11 +1977,7 @@ msgstr ""
 msgid "January 4, 2026 (Month Day, Year)"
 msgstr ""
 
-#: includes/class-ffc-migration-manager.php:158
-msgid "JSON Data Cleanup"
-msgstr ""
-
-#: includes/class-ffc-form-editor.php:695
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:546
 msgid "Label"
 msgstr ""
 
@@ -1786,19 +1985,23 @@ msgstr ""
 msgid "Layout broken in PDF"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:445
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:386
 msgid "Leave empty for 24/7 access. Default: 00:00 to 23:59"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:436
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:377
 msgid "Leave empty for no date restriction. Format: YYYY-MM-DD"
 msgstr ""
 
-#: includes/class-ffc-admin.php:442
+#: includes/admin/views/ffc-admin-activity-log.php:84
+msgid "Level"
+msgstr ""
+
+#: includes/admin/class-ffc-admin-submission-edit-page.php:276
 msgid "LGPD Consent Status"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:503
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:444
 msgid "Limit form access to users within specific geographic areas."
 msgstr ""
 
@@ -1806,8 +2009,8 @@ msgstr ""
 msgid "Line break"
 msgstr ""
 
-#: includes/class-ffc-migration-manager.php:148
-msgid "Link existing submissions to WordPress users based on CPF/RF and email"
+#: includes/migrations/class-ffc-migration-registry.php:131
+msgid "Link Submissions to Users"
 msgstr ""
 
 #: includes/settings/views/ffc-tab-documentation.php:219
@@ -1838,10 +2041,6 @@ msgstr ""
 msgid "Link to page with certificate validation"
 msgstr ""
 
-#: includes/class-ffc-migration-manager.php:147
-msgid "Link Users"
-msgstr ""
-
 #: includes/settings/views/ffc-tab-documentation.php:392
 msgid "Links that don't pass validation on the website. Shared by email and quickly verifying the certificate's."
 msgstr ""
@@ -1850,7 +2049,7 @@ msgstr ""
 msgid "Lists (bullet or numbered)"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:148
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:81
 msgid "Load"
 msgstr ""
 
@@ -1862,23 +2061,23 @@ msgstr ""
 msgid "Loading profile..."
 msgstr ""
 
-#: includes/class-ffc-admin.php:105 includes/shortcodes/class-ffc-dashboard-shortcode.php:234
+#: includes/shortcodes/class-ffc-dashboard-shortcode.php:223 includes/admin/class-ffc-admin-assets-manager.php:282
 msgid "Loading..."
 msgstr ""
 
-#: includes/class-ffc-frontend.php:150
+#: includes/frontend/class-ffc-frontend.php:148
 msgid "Location information is unavailable."
 msgstr ""
 
-#: includes/class-ffc-frontend.php:149
+#: includes/frontend/class-ffc-frontend.php:147
 msgid "Location permission denied. Please enable location services."
 msgstr ""
 
-#: includes/class-ffc-frontend.php:151
+#: includes/frontend/class-ffc-frontend.php:149
 msgid "Location request timed out."
 msgstr ""
 
-#: includes/class-ffc-geofence.php:286
+#: includes/security/class-ffc-geofence.php:289
 msgid "Location verification failed."
 msgstr ""
 
@@ -1914,6 +2113,46 @@ msgstr ""
 msgid "Logs"
 msgstr ""
 
+#: includes/settings/views/ffc-tab-general.php:267
+msgid "Logs activity log operations and database queries."
+msgstr ""
+
+#: includes/settings/views/ffc-tab-general.php:207
+msgid "Logs date/time restrictions, GPS validation, IP geolocation, and access denied events."
+msgstr ""
+
+#: includes/settings/views/ffc-tab-general.php:161
+msgid "Logs email preparation, SMTP connection, and sending status."
+msgstr ""
+
+#: includes/settings/views/ffc-tab-general.php:191
+msgid "Logs encryption/decryption operations and key management."
+msgstr ""
+
+#: includes/settings/views/ffc-tab-general.php:176
+msgid "Logs form data validation, processing steps, and submission creation."
+msgstr ""
+
+#: includes/settings/views/ffc-tab-general.php:146
+msgid "Logs JSON data parsing, placeholder replacements, and PDF data preparation."
+msgstr ""
+
+#: includes/settings/views/ffc-tab-general.php:252
+msgid "Logs migration execution, user linking, and data transformation operations."
+msgstr ""
+
+#: includes/settings/views/ffc-tab-general.php:237
+msgid "Logs REST API requests, responses, and errors."
+msgstr ""
+
+#: includes/settings/views/ffc-tab-general.php:113
+msgid "Logs submission creation, data access, settings changes, and security events."
+msgstr ""
+
+#: includes/settings/views/ffc-tab-general.php:222
+msgid "Logs user creation failures, decryption errors, and critical user management operations."
+msgstr ""
+
 #: includes/settings/views/ffc-tab-qrcode.php:73
 msgid "Low (7% correction)"
 msgstr ""
@@ -1922,7 +2161,7 @@ msgstr ""
 msgid "Low (7%)"
 msgstr ""
 
-#: includes/class-ffc-admin.php:354
+#: includes/admin/class-ffc-admin-submission-edit-page.php:191
 msgid "Magic Link Token"
 msgstr ""
 
@@ -1930,8 +2169,16 @@ msgstr ""
 msgid "Magic Links:"
 msgstr ""
 
-#: includes/class-ffc-migration-manager.php:114
+#: includes/migrations/strategies/class-ffc-magic-token-migration-strategy.php:154
+msgid "Magic Token Generation Strategy"
+msgstr ""
+
+#: includes/migrations/class-ffc-migration-registry.php:102
 msgid "Magic Tokens"
+msgstr ""
+
+#: includes/migrations/strategies/class-ffc-magic-token-migration-strategy.php:141
+msgid "magic_token column does not exist. Please update the database schema first."
 msgstr ""
 
 #: includes/settings/views/ffc-tab-qrcode.php:144
@@ -1942,7 +2189,7 @@ msgstr ""
 msgid "Manage database structure migrations to improve performance and data organization. These migrations move data from JSON storage to dedicated database columns for faster queries and better reliability."
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:159
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:92
 msgid "Mandatory Tags:"
 msgstr ""
 
@@ -1994,23 +2241,23 @@ msgstr ""
 msgid "Message"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-user-access.php:159
+#: includes/settings/views/ffc-tab-user-access.php:157
 msgid "Message shown to users after being redirected (appears on the dashboard page)."
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:487
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:428
 msgid "Message shown when form is accessed outside allowed date/time."
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:570
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:511
 msgid "Message shown when location detection fails (GPS denied, etc)."
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:563
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:504
 msgid "Message shown when user is outside allowed geographic areas."
 msgstr ""
 
-#: includes/class-ffc-migration-manager.php:98
+#: includes/migrations/class-ffc-migration-registry.php:88
 #, php-format
 msgid "Migrate %s from JSON data to dedicated %s column"
 msgstr ""
@@ -2019,44 +2266,41 @@ msgstr ""
 msgid "Migrated"
 msgstr ""
 
-#: includes/class-ffc-admin.php:237
+#: includes/migrations/strategies/class-ffc-field-migration-strategy.php:199
+#, php-format
+msgid "Migrated %d %s values"
+msgstr ""
+
+#: includes/admin/class-ffc-admin.php:206 includes/admin/class-ffc-admin-notice-manager.php:55
 msgid "Migration"
-msgstr ""
-
-#: includes/class-ffc-migration-manager.php:516
-msgid "Migration callback not found."
-msgstr ""
-
-#: includes/class-ffc-migration-manager.php:1248
-msgid "Migration class file not found"
 msgstr ""
 
 #: includes/settings/views/ffc-tab-migrations.php:158
 msgid "Migration Complete"
 msgstr ""
 
-#: includes/class-ffc-migration-user-link.php:233
+#: includes/migrations/class-ffc-migration-user-link.php:232
 msgid "Migration completed: %d users linked, %d errors"
 msgstr ""
 
-#: includes/class-ffc-admin.php:242
+#: includes/admin/class-ffc-admin.php:211 includes/admin/class-ffc-admin-notice-manager.php:61
 msgid "Migration Error: "
 msgstr ""
 
-#: includes/class-ffc-settings.php:402
+#: includes/admin/class-ffc-settings.php:322
 msgid "Migration executed: %d records processed."
 msgstr ""
 
-#: includes/class-ffc-migration-manager.php:225
+#: includes/migrations/class-ffc-migration-status-calculator.php:101
 msgid "Migration not found"
-msgstr ""
-
-#: includes/class-ffc-migration-manager.php:496
-msgid "Migration not found."
 msgstr ""
 
 #: includes/settings/views/ffc-tab-documentation.php:420
 msgid "Migration of all data from the plugin's old infrastructure."
+msgstr ""
+
+#: includes/settings/views/ffc-tab-general.php:244
+msgid "Migrations"
 msgstr ""
 
 #: includes/settings/views/ffc-tab-migrations.php:33
@@ -2071,24 +2315,36 @@ msgstr ""
 msgid "Migrations improve database performance by moving frequently queried data from JSON format to dedicated database columns. This makes searches and filtering much faster."
 msgstr ""
 
-#: includes/settings/class-ffc-tab-migrations.php:30
+#: includes/settings/tabs/class-ffc-tab-migrations.php:30
 msgid "Migrations view file not found."
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:198
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:133
 msgid "Minimal fields (Tag):"
+msgstr ""
+
+#: includes/migrations/strategies/class-ffc-field-migration-strategy.php:52 includes/migrations/strategies/class-ffc-field-migration-strategy.php:216
+msgid "Missing column configuration"
 msgstr ""
 
 #: includes/settings/views/ffc-tab-smtp.php:43
 msgid "Mode"
 msgstr ""
 
-#: includes/class-ffc-submissions-list-table.php:182
+#: includes/admin/class-ffc-submissions-list-table.php:182
 msgid "Move to Trash"
 msgstr ""
 
 #: includes/settings/views/ffc-tab-documentation.php:427
 msgid "Multi-language Support:"
+msgstr ""
+
+#: includes/migrations/class-ffc-migration-manager.php:265
+msgid "Must wait 15 days after encryption completion. Days remaining: %d"
+msgstr ""
+
+#: includes/migrations/class-ffc-migration-manager.php:407
+msgid "Must wait 30 days after encryption completion. Days remaining: %d"
 msgstr ""
 
 #: includes/shortcodes/class-ffc-dashboard-shortcode.php:59
@@ -2103,11 +2359,11 @@ msgstr ""
 msgid "My Profile"
 msgstr ""
 
-#: includes/class-ffc-verification-handler.php:206
+#: includes/frontend/class-ffc-verification-handler.php:207
 msgid "N/A"
 msgstr ""
 
-#: includes/class-ffc-verification-handler.php:322
+#: includes/frontend/class-ffc-verification-handler.php:257
 msgid "Name"
 msgstr ""
 
@@ -2123,36 +2379,44 @@ msgstr ""
 msgid "Need More Help?"
 msgstr ""
 
-#: includes/class-ffc-cpt.php:32
+#: includes/settings/views/ffc-tab-general.php:192
+msgid "Never enables actual data logging, only operation status."
+msgstr ""
+
+#: includes/admin/class-ffc-cpt.php:32
 msgid "New Form"
 msgstr ""
 
-#: includes/class-ffc-email-handler.php:273
+#: includes/integrations/class-ffc-email-handler.php:273
 #, php-format
 msgid "New Issuance: %s"
 msgstr ""
 
-#: includes/class-ffc-csv-exporter.php:127 includes/class-ffc-form-editor.php:351 includes/shortcodes/class-ffc-dashboard-shortcode.php:239
+#: includes/shortcodes/class-ffc-dashboard-shortcode.php:228 includes/admin/class-ffc-form-editor-metabox-renderer.php:290 includes/admin/class-ffc-csv-exporter.php:127
 msgid "No"
 msgstr ""
 
-#: includes/shortcodes/class-ffc-dashboard-shortcode.php:236
+#: includes/admin/views/ffc-admin-activity-log.php:77
+msgid "No activity logs found."
+msgstr ""
+
+#: includes/shortcodes/class-ffc-dashboard-shortcode.php:225
 msgid "No certificates found"
 msgstr ""
 
-#: includes/class-ffc-admin.php:467
+#: includes/admin/class-ffc-admin-submission-edit-page.php:301
 msgid "No consent recorded:"
 msgstr ""
 
-#: includes/class-ffc-cpt.php:38
+#: includes/admin/class-ffc-cpt.php:38
 msgid "No forms found in Trash."
 msgstr ""
 
-#: includes/class-ffc-cpt.php:37
+#: includes/admin/class-ffc-cpt.php:37
 msgid "No forms found."
 msgstr ""
 
-#: includes/class-ffc-magic-link-helper.php:180
+#: includes/generators/class-ffc-magic-link-helper.php:180
 msgid "No magic token"
 msgstr ""
 
@@ -2160,20 +2424,37 @@ msgstr ""
 msgid "No migrations available at this time."
 msgstr ""
 
-#: includes/class-ffc-csv-exporter.php:200
+#: includes/admin/class-ffc-csv-exporter.php:200
 msgid "No records available for export."
 msgstr ""
 
-#: includes/class-ffc-submissions-list-table.php:246
+#: includes/migrations/class-ffc-migration-status-calculator.php:133
+#, php-format
+msgid "No strategy found for migration: %s"
+msgstr ""
+
+#: includes/admin/class-ffc-submissions-list-table.php:246
 msgid "No submissions found."
 msgstr ""
 
-#: includes/class-ffc-migration-manager.php:365
+#: includes/migrations/strategies/class-ffc-cleanup-migration-strategy.php:56
 msgid "No submissions older than 15 days with encrypted data"
 msgstr ""
 
-#: includes/class-ffc-migration-user-link.php:50
+#: includes/migrations/strategies/class-ffc-cleanup-migration-strategy.php:117
+msgid "No submissions to cleanup"
+msgstr ""
+
+#: includes/migrations/strategies/class-ffc-encryption-migration-strategy.php:109
+msgid "No submissions to encrypt"
+msgstr ""
+
+#: includes/migrations/class-ffc-migration-user-link.php:50
 msgid "No submissions to migrate."
+msgstr ""
+
+#: includes/migrations/strategies/class-ffc-field-migration-strategy.php:157 includes/migrations/strategies/class-ffc-magic-token-migration-strategy.php:84
+msgid "No submissions to process"
 msgstr ""
 
 #: includes/settings/views/ffc-tab-documentation.php:170
@@ -2184,19 +2465,19 @@ msgstr ""
 msgid "Not found"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:282
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:219
 msgid "Note: If no restriction is selected, form is Open (no restrictions)."
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:368
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:307
 msgid "Note: When this option is enabled, the email will only be sent when the user submits the form. This will add them to a waiting list and emails will be sent progressively."
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:707
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:558
 msgid "Number"
 msgstr ""
 
-#: includes/class-ffc-admin.php:471
+#: includes/admin/class-ffc-admin-submission-edit-page.php:305
 msgid "Older submissions do not have explicit consent flag but may have been collected under privacy policy."
 msgstr ""
 
@@ -2204,23 +2485,27 @@ msgstr ""
 msgid "One per line"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:304
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:241
 msgid "One per line..."
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:258
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:195
 msgid "Only approved CPF/RF can submit"
 msgstr ""
 
-#: includes/class-ffc-submissions-list-table.php:132 includes/class-ffc-submissions-list-table.php:141 includes/class-ffc-submissions-list-table.php:164
+#: includes/settings/views/ffc-tab-general.php:131
+msgid "Only enable in development or when troubleshooting issues."
+msgstr ""
+
+#: includes/admin/class-ffc-submissions-list-table.php:132 includes/admin/class-ffc-submissions-list-table.php:141 includes/admin/class-ffc-submissions-list-table.php:164
 msgid "Only mandatory fields"
 msgstr ""
 
-#: includes/class-ffc-submissions-list-table.php:125
+#: includes/admin/class-ffc-submissions-list-table.php:125
 msgid "Opens PDF in new tab"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:725
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:576
 msgid "Options (separate with commas):"
 msgstr ""
 
@@ -2228,7 +2513,7 @@ msgstr ""
 msgid "Options:"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:542
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:483
 msgid "OR - Allow if GPS OR IP is valid (recommended)"
 msgstr ""
 
@@ -2236,7 +2521,7 @@ msgstr ""
 msgid "Or inline style:"
 msgstr ""
 
-#: includes/class-ffc-admin.php:341
+#: includes/admin/class-ffc-admin-submission-edit-page.php:178
 msgid "Original submission timestamp (read-only)."
 msgstr ""
 
@@ -2244,31 +2529,31 @@ msgstr ""
 msgid "Paragraph with spacing"
 msgstr ""
 
-#: includes/class-ffc-admin.php:482
+#: includes/admin/class-ffc-admin-submission-edit-page.php:325
 msgid "Participant Data"
 msgstr ""
 
-#: includes/class-ffc-verification-handler.php:242
+#: templates/certificate-preview.php:49
 msgid "Participant Data:"
 msgstr ""
 
-#: includes/shortcodes/class-ffc-shortcodes.php:232 includes/settings/views/ffc-tab-smtp.php:96
+#: includes/shortcodes/class-ffc-shortcodes.php:232 includes/frontend/class-ffc-shortcodes.php:198 includes/settings/views/ffc-tab-smtp.php:96
 msgid "Password"
 msgstr ""
 
-#: includes/class-ffc-form-processor.php:61
+#: includes/frontend/class-ffc-form-processor.php:61
 msgid "Password is required."
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:288
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:225
 msgid "Password Value"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:100
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:31
 msgid "Paste this code into any Page or Post to display the form."
 msgstr ""
 
-#: includes/class-ffc-submissions-list-table.php:126
+#: includes/admin/class-ffc-submissions-list-table.php:126
 msgid "PDF"
 msgstr ""
 
@@ -2276,19 +2561,23 @@ msgstr ""
 msgid "PDF Customization:"
 msgstr ""
 
+#: includes/settings/views/ffc-tab-general.php:138
+msgid "PDF Generator"
+msgstr ""
+
 #: includes/settings/views/ffc-tab-migrations.php:126
 msgid "Pending"
 msgstr ""
 
-#: includes/class-ffc-submissions-list-table.php:103
+#: includes/admin/class-ffc-submissions-list-table.php:103
 msgid "Permanently delete?"
 msgstr ""
 
-#: includes/class-ffc-admin-ajax.php:43 includes/class-ffc-admin-ajax.php:97
+#: includes/admin/class-ffc-admin-ajax.php:43 includes/admin/class-ffc-admin-ajax.php:97
 msgid "Permission denied."
 msgstr ""
 
-#: includes/class-ffc-verification-handler.php:327
+#: includes/frontend/class-ffc-verification-handler.php:262
 msgid "Phone"
 msgstr ""
 
@@ -2300,15 +2589,15 @@ msgstr ""
 msgid "Please confirm the uninstallation to proceed."
 msgstr ""
 
-#: includes/class-ffc-frontend.php:92
+#: includes/frontend/class-ffc-frontend.php:90
 msgid "Please enter the code."
 msgstr ""
 
-#: includes/class-ffc-admin.php:103
+#: includes/admin/class-ffc-admin-assets-manager.php:280
 msgid "Please select a template."
 msgstr ""
 
-#: includes/class-ffc-frontend.php:100 includes/class-ffc-admin.php:114
+#: includes/admin/class-ffc-admin-assets-manager.php:291 includes/frontend/class-ffc-frontend.php:98
 msgid "Please wait, this may take a few seconds..."
 msgstr ""
 
@@ -2316,21 +2605,21 @@ msgstr ""
 msgid "Popular SMTP Providers"
 msgstr ""
 
-#: includes/class-ffc-cpt.php:26
+#: includes/admin/class-ffc-cpt.php:26
 msgctxt "Post Type General Name"
 msgid "Forms"
 msgstr ""
 
-#: includes/class-ffc-cpt.php:27
+#: includes/admin/class-ffc-cpt.php:27
 msgctxt "Post Type Singular Name"
 msgid "Form"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:207
+#: includes/settings/views/ffc-tab-general.php:386
 msgid "Pre-load cache daily"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-user-access.php:60
+#: includes/settings/views/ffc-tab-user-access.php:58
 msgid "Prevent selected roles from accessing /wp-admin"
 msgstr ""
 
@@ -2350,7 +2639,7 @@ msgstr ""
 msgid "Primary Service"
 msgstr ""
 
-#: includes/shortcodes/class-ffc-shortcodes.php:282
+#: includes/shortcodes/class-ffc-shortcodes.php:282 includes/frontend/class-ffc-shortcodes.php:248
 msgid "Privacy Policy"
 msgstr ""
 
@@ -2362,11 +2651,11 @@ msgstr ""
 msgid "Problem"
 msgstr ""
 
-#: includes/class-ffc-frontend.php:89 includes/class-ffc-admin.php:117
+#: includes/admin/class-ffc-admin-assets-manager.php:294 includes/frontend/class-ffc-frontend.php:87
 msgid "Processing..."
 msgstr ""
 
-#: includes/class-ffc-verification-handler.php:324
+#: includes/frontend/class-ffc-verification-handler.php:259
 msgid "Program"
 msgstr ""
 
@@ -2378,23 +2667,23 @@ msgstr ""
 msgid "Progress"
 msgstr ""
 
-#: includes/class-ffc-admin.php:517
+#: includes/admin/class-ffc-admin-submission-edit-page.php:360
 msgid "Protected authentication code."
 msgstr ""
 
-#: includes/class-ffc-admin.php:544
+#: includes/admin/class-ffc-admin-submission-edit-page.php:408
 msgid "Protected internal field."
 msgstr ""
 
-#: includes/class-ffc-submissions-list-table.php:232
+#: includes/admin/class-ffc-submissions-list-table.php:232
 msgid "Published"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:236
+#: includes/settings/views/ffc-tab-general.php:415
 msgid "Published Forms:"
 msgstr ""
 
-#: includes/settings/class-ffc-tab-qrcode.php:17
+#: includes/settings/tabs/class-ffc-tab-qrcode.php:17
 msgid "QR Code"
 msgstr ""
 
@@ -2406,11 +2695,11 @@ msgstr ""
 msgid "QR Code image (see section 3 for options)"
 msgstr ""
 
-#: includes/class-ffc-admin.php:385
+#: includes/admin/class-ffc-admin-submission-edit-page.php:229
 msgid "QR Code Placeholder Usage"
 msgstr ""
 
-#: includes/settings/class-ffc-tab-qrcode.php:30
+#: includes/settings/tabs/class-ffc-tab-qrcode.php:30
 msgid "QR Code settings view file not found."
 msgstr ""
 
@@ -2422,7 +2711,7 @@ msgstr ""
 msgid "QR Code Validation:"
 msgstr ""
 
-#: includes/class-ffc-admin.php:425
+#: includes/admin/class-ffc-admin-submission-edit-page.php:253
 msgid "QR Codes automatically link to this certificate verification page. Configure defaults in Settings → QR Code."
 msgstr ""
 
@@ -2430,7 +2719,7 @@ msgstr ""
 msgid "QR Codes will be regenerated automatically when needed. This action is safe and reversible."
 msgstr ""
 
-#: includes/class-ffc-admin-ajax.php:104
+#: includes/admin/class-ffc-admin-ajax.php:104
 msgid "Quantity must be between 1 and 1000."
 msgstr ""
 
@@ -2446,7 +2735,7 @@ msgstr ""
 msgid "Quick Navigation"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:711
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:562
 msgid "Radio Box"
 msgstr ""
 
@@ -2454,7 +2743,7 @@ msgstr ""
 msgid "Range:"
 msgstr ""
 
-#: includes/settings/class-ffc-tab-rate-limit.php:12
+#: includes/settings/tabs/class-ffc-tab-rate-limit.php:12
 msgid "Rate Limit"
 msgstr ""
 
@@ -2462,11 +2751,11 @@ msgstr ""
 msgid "Rate Limiting:"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-user-access.php:84
+#: includes/settings/views/ffc-tab-user-access.php:82
 msgid "recommended"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:181
+#: includes/settings/views/ffc-tab-general.php:360
 msgid "Recommended for sites with many forms or high traffic."
 msgstr ""
 
@@ -2478,32 +2767,32 @@ msgstr ""
 msgid "Recommended: 100-200px for certificates"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-user-access.php:150
+#: includes/settings/views/ffc-tab-user-access.php:148
 msgid "Redirect Message"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-user-access.php:120
+#: includes/settings/views/ffc-tab-user-access.php:118
 msgid "Redirect Settings"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-user-access.php:125
+#: includes/settings/views/ffc-tab-user-access.php:123
 msgid "Redirect URL"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:690
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:541
 msgid "Remove"
 msgstr ""
 
-#: includes/class-ffc-migration-manager.php:159
-msgid "Remove migrated fields from JSON data column (run this LAST)"
+#: includes/migrations/class-ffc-migration-registry.php:142
+msgid "Remove old migration data and cleanup database"
 msgstr ""
 
-#: includes/class-ffc-admin.php:111
+#: includes/admin/class-ffc-admin-assets-manager.php:288
 msgid "Remove this field?"
 msgstr ""
 
-#: includes/class-ffc-migration-manager.php:137
-msgid "Remove unencrypted data from old columns for submissions older than 15 days (OPTIONAL - for LGPD compliance)"
+#: includes/migrations/class-ffc-migration-registry.php:122
+msgid "Remove unencrypted copies of sensitive data older than 15 days"
 msgstr ""
 
 #: includes/settings/views/ffc-tab-documentation.php:51
@@ -2518,36 +2807,35 @@ msgstr ""
 msgid "Require users to have a single-use ticket to generate the certificate (it is consumed after use)."
 msgstr ""
 
-#: includes/class-ffc-migration-manager.php:505
-#, php-format
-msgid "Required column %s does not exist."
-msgstr ""
-
 #: includes/settings/views/ffc-tab-geolocation.php:91
 msgid "Required only if using ipinfo.io service. Free tier: 50,000 requests/month."
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:718
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:569
 msgid "Required?"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:278
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:215
 msgid "Requires valid ticket (consumed after use)"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:133
+#: includes/settings/views/ffc-tab-general.php:312
 msgid "Reset ID counter to 1"
 msgstr ""
 
-#: includes/class-ffc-submissions-list-table.php:102 includes/class-ffc-submissions-list-table.php:178
+#: includes/settings/views/ffc-tab-general.php:229
+msgid "REST API"
+msgstr ""
+
+#: includes/admin/class-ffc-submissions-list-table.php:102 includes/admin/class-ffc-submissions-list-table.php:178
 msgid "Restore"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:425
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:366
 msgid "Restrict form access by date and time"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:501
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:442
 msgid "Restrict form access by geographic location"
 msgstr ""
 
@@ -2559,11 +2847,11 @@ msgstr ""
 msgid "Retention"
 msgstr ""
 
-#: includes/class-ffc-verification-handler.php:321
+#: includes/frontend/class-ffc-verification-handler.php:256
 msgid "RF"
 msgstr ""
 
-#: includes/class-ffc-verification-handler.php:326
+#: includes/frontend/class-ffc-verification-handler.php:261
 msgid "RG"
 msgstr ""
 
@@ -2576,7 +2864,7 @@ msgstr ""
 msgid "Run Migration"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:209
+#: includes/settings/views/ffc-tab-general.php:388
 msgid "Runs a daily cron job to keep the cache always updated."
 msgstr ""
 
@@ -2584,7 +2872,7 @@ msgstr ""
 msgid "Saturday, January 4, 2026"
 msgstr ""
 
-#: includes/class-ffc-admin.php:552 includes/settings/views/ffc-tab-rate-limit.php:130
+#: includes/admin/class-ffc-admin-submission-edit-page.php:98 includes/settings/views/ffc-tab-rate-limit.php:130
 msgid "Save Changes"
 msgstr ""
 
@@ -2592,7 +2880,7 @@ msgstr ""
 msgid "Save Geolocation Settings"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-user-access.php:229
+#: includes/settings/views/ffc-tab-user-access.php:227
 msgid "Save Settings"
 msgstr ""
 
@@ -2600,35 +2888,39 @@ msgstr ""
 msgid "Scan to instantly verify certificate authenticity"
 msgstr ""
 
-#: includes/class-ffc-admin.php:197
+#: includes/admin/class-ffc-admin.php:166 includes/admin/views/ffc-admin-activity-log.php:69
 msgid "Search"
 msgstr ""
 
-#: includes/class-ffc-cpt.php:36
+#: includes/admin/class-ffc-cpt.php:36
 msgid "Search Forms"
+msgstr ""
+
+#: includes/admin/views/ffc-admin-activity-log.php:68
+msgid "Search logs..."
 msgstr ""
 
 #: includes/settings/views/ffc-tab-geolocation.php:126
 msgid "seconds"
 msgstr ""
 
-#: includes/class-ffc-settings.php:377 includes/class-ffc-csv-exporter.php:237
+#: includes/admin/class-ffc-settings.php:297 includes/admin/class-ffc-csv-exporter.php:237
 msgid "Security check failed."
 msgstr ""
 
-#: includes/class-ffc-form-processor.php:289
+#: includes/frontend/class-ffc-form-processor.php:289
 msgid "Security check failed. Please refresh the page."
 msgstr ""
 
-#: includes/class-ffc-admin-ajax.php:38 includes/class-ffc-admin-ajax.php:92
+#: includes/admin/class-ffc-admin-ajax.php:38 includes/admin/class-ffc-admin-ajax.php:92
 msgid "Security check failed. Please reload the page."
 msgstr ""
 
-#: includes/class-ffc-utils.php:595
+#: includes/core/class-ffc-utils.php:595
 msgid "Security Error: Request blocked (Honeypot)."
 msgstr ""
 
-#: includes/class-ffc-utils.php:561 includes/class-ffc-form-processor.php:323 includes/shortcodes/class-ffc-shortcodes.php:41
+#: includes/shortcodes/class-ffc-shortcodes.php:41 includes/core/class-ffc-utils.php:561 includes/frontend/class-ffc-form-processor.php:323 includes/frontend/class-ffc-shortcodes.php:41
 msgid "Security: How much is %d + %d?"
 msgstr ""
 
@@ -2636,15 +2928,15 @@ msgstr ""
 msgid "See documentation"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:710
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:561
 msgid "Select (Combobox)"
 msgstr ""
 
-#: includes/class-ffc-admin.php:107
+#: includes/admin/class-ffc-admin-assets-manager.php:284
 msgid "Select Background Image"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:143
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:76
 msgid "Select Server Template..."
 msgstr ""
 
@@ -2652,23 +2944,23 @@ msgstr ""
 msgid "Select which IP geolocation service to use. ip-api.com is free without API key."
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:238
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:175
 msgid "Select which restrictions to apply (can combine multiple):"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-user-access.php:90
+#: includes/settings/views/ffc-tab-user-access.php:88
 msgid "Select which roles should be blocked from accessing wp-admin."
 msgstr ""
 
-#: includes/shortcodes/class-ffc-shortcodes.php:337
+#: includes/shortcodes/class-ffc-shortcodes.php:337 includes/frontend/class-ffc-shortcodes.php:303
 msgid "Select..."
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:348
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:287
 msgid "Send Email to User?"
 msgstr ""
 
-#: includes/class-ffc-admin.php:463
+#: includes/admin/class-ffc-admin-submission-edit-page.php:297
 msgid "Sensitive data (email, CPF/RF, IP) is encrypted in the database."
 msgstr ""
 
@@ -2676,19 +2968,27 @@ msgstr ""
 msgid "Service Cascade"
 msgstr ""
 
-#: includes/class-ffc-settings.php:95 includes/class-ffc-settings.php:96
+#: includes/admin/class-ffc-settings.php:109 includes/admin/class-ffc-settings.php:110
 msgid "Settings"
+msgstr ""
+
+#: includes/admin/class-ffc-admin-activity-log-page.php:107
+msgid "Settings > General > Activity Log Settings"
+msgstr ""
+
+#: includes/admin/class-ffc-admin-activity-log-page.php:139
+msgid "Settings Changed"
 msgstr ""
 
 #: includes/settings/views/ffc-tab-documentation.php:609
 msgid "Settings not saving between tabs"
 msgstr ""
 
-#: includes/class-ffc-settings.php:212
+#: includes/admin/class-ffc-settings-save-handler.php:75
 msgid "Settings saved."
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:248
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:185
 msgid "Shared password for all users"
 msgstr ""
 
@@ -2696,15 +2996,15 @@ msgstr ""
 msgid "Shortcode"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-user-access.php:173
+#: includes/settings/views/ffc-tab-user-access.php:171
 msgid "Show Admin Bar"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-user-access.php:183
+#: includes/settings/views/ffc-tab-user-access.php:181
 msgid "Show admin bar on frontend for blocked roles"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:476 includes/class-ffc-form-editor.php:552
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:417 includes/admin/class-ffc-form-editor-metabox-renderer.php:493
 msgid "Show blocked message (Recommended)"
 msgstr ""
 
@@ -2712,7 +3012,7 @@ msgstr ""
 msgid "Show remaining attempts"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:477 includes/class-ffc-form-editor.php:553
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:418 includes/admin/class-ffc-form-editor-metabox-renderer.php:494
 msgid "Show title + description + message"
 msgstr ""
 
@@ -2728,7 +3028,7 @@ msgstr ""
 msgid "Signature with fixed height, proportional width"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:247
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:184
 msgid "Single Password"
 msgstr ""
 
@@ -2736,7 +3036,7 @@ msgstr ""
 msgid "Single Password:"
 msgstr ""
 
-#: includes/settings/class-ffc-tab-smtp.php:17
+#: includes/settings/tabs/class-ffc-tab-smtp.php:17
 msgid "SMTP"
 msgstr ""
 
@@ -2752,7 +3052,7 @@ msgstr ""
 msgid "SMTP Server Configuration"
 msgstr ""
 
-#: includes/settings/class-ffc-tab-smtp.php:30
+#: includes/settings/tabs/class-ffc-tab-smtp.php:54
 msgid "SMTP settings view file not found."
 msgstr ""
 
@@ -2760,23 +3060,23 @@ msgstr ""
 msgid "Solution"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:457
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:398
 msgid "Start time applies to start date, end time applies to end date. Form is open continuously between those timestamps."
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:433
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:374
 msgid "Start:"
 msgstr ""
 
-#: includes/class-ffc-verification-handler.php:330
+#: includes/frontend/class-ffc-verification-handler.php:265
 msgid "State"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-rate-limit.php:113 includes/settings/views/ffc-tab-general.php:215
+#: includes/settings/views/ffc-tab-rate-limit.php:113 includes/settings/views/ffc-tab-general.php:394
 msgid "Statistics"
 msgstr ""
 
-#: includes/class-ffc-admin.php:346 includes/class-ffc-csv-exporter.php:63
+#: includes/admin/class-ffc-csv-exporter.php:63 includes/admin/class-ffc-admin-submission-edit-page.php:183
 msgid "Status"
 msgstr ""
 
@@ -2800,84 +3100,87 @@ msgstr ""
 msgid "Style"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:357
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:296
 msgid "Subject"
 msgstr ""
 
-#: includes/class-ffc-admin.php:363
+#: includes/admin/class-ffc-admin-activity-log-page.php:134
+msgid "Submission Created"
+msgstr ""
+
+#: includes/admin/class-ffc-admin-submission-edit-page.php:200
 msgid "Submission created before magic links"
 msgstr ""
 
-#: includes/class-ffc-admin.php:338 includes/class-ffc-csv-exporter.php:56
+#: includes/admin/class-ffc-csv-exporter.php:56 includes/admin/class-ffc-admin-submission-edit-page.php:175
 msgid "Submission Date"
 msgstr ""
 
-#: includes/class-ffc-email-handler.php:275
+#: includes/admin/class-ffc-admin-activity-log-page.php:136
+msgid "Submission Deleted"
+msgstr ""
+
+#: includes/integrations/class-ffc-email-handler.php:275
 msgid "Submission Details:"
 msgstr ""
 
-#: includes/class-ffc-admin.php:330
+#: includes/admin/class-ffc-admin-submission-edit-page.php:167
 msgid "Submission ID"
 msgstr ""
 
-#: includes/class-ffc-migration-user-link.php:148
+#: includes/migrations/class-ffc-migration-user-link.php:148
 #, php-format
 msgid "Submission ID %d: Email \"%s\" is used by multiple CPF/RF (conflict detected)"
 msgstr ""
 
-#: includes/class-ffc-migration-user-link.php:110
+#: includes/migrations/class-ffc-migration-user-link.php:110
 msgid "Submission ID %d: Email encrypted is empty"
 msgstr ""
 
-#: includes/class-ffc-migration-user-link.php:174
+#: includes/migrations/class-ffc-migration-user-link.php:174
 #, php-format
 msgid "Submission ID %d: Failed to create user - %s"
 msgstr ""
 
-#: includes/class-ffc-migration-user-link.php:128
+#: includes/migrations/class-ffc-migration-user-link.php:128
 #, php-format
 msgid "Submission ID %d: Failed to decrypt email - %s"
 msgstr ""
 
-#: includes/class-ffc-migration-user-link.php:120
+#: includes/migrations/class-ffc-migration-user-link.php:120
 msgid "Submission ID %d: Invalid email after decryption"
 msgstr ""
 
-#: includes/class-ffc-admin.php:257 includes/class-ffc-pdf-generator.php:41
+#: includes/admin/class-ffc-admin-submission-edit-page.php:67 includes/generators/class-ffc-pdf-generator.php:41
 msgid "Submission not found."
 msgstr ""
 
-#: includes/class-ffc-admin.php:349
+#: includes/admin/class-ffc-admin-submission-edit-page.php:186
 msgid "Submission status (publish, trash, etc)."
 msgstr ""
 
-#: includes/class-ffc-admin.php:233
+#: includes/admin/class-ffc-admin-activity-log-page.php:135
+msgid "Submission Updated"
+msgstr ""
+
+#: includes/admin/class-ffc-admin.php:202 includes/admin/class-ffc-admin-notice-manager.php:50
 msgid "Submission updated successfully."
 msgstr ""
 
-#: includes/class-ffc-admin.php:55 includes/class-ffc-admin.php:56 includes/class-ffc-admin.php:178
+#: includes/admin/class-ffc-admin.php:68 includes/admin/class-ffc-admin.php:69 includes/admin/class-ffc-admin.php:147
 msgid "Submissions"
 msgstr ""
 
-#: includes/class-ffc-frontend.php:90 includes/shortcodes/class-ffc-shortcodes.php:294
+#: includes/shortcodes/class-ffc-shortcodes.php:294 includes/frontend/class-ffc-frontend.php:88 includes/frontend/class-ffc-shortcodes.php:260
 msgid "Submit"
 msgstr ""
 
-#: includes/class-ffc-form-processor.php:502
+#: includes/frontend/class-ffc-form-processor.php:502
 msgid "Success!"
 msgstr ""
 
-#: includes/class-ffc-utils.php:656
+#: includes/core/class-ffc-utils.php:656
 msgid "Success! Your certificate has been generated."
-msgstr ""
-
-#: includes/class-ffc-migration-manager.php:1075
-msgid "Successfully cleaned %d records. Old data set to NULL."
-msgstr ""
-
-#: includes/class-ffc-migration-manager.php:1180
-#, php-format
-msgid "Successfully dropped %d columns: %s"
 msgstr ""
 
 #: includes/settings/views/ffc-tab-documentation.php:234
@@ -2888,7 +3191,11 @@ msgstr ""
 msgid "Supports Portuguese and English languages"
 msgstr ""
 
-#: includes/class-ffc-admin.php:324
+#: includes/admin/views/ffc-admin-activity-log.php:123
+msgid "System / Anonymous"
+msgstr ""
+
+#: includes/admin/class-ffc-admin-submission-edit-page.php:161
 msgid "System Information"
 msgstr ""
 
@@ -2908,11 +3215,11 @@ msgstr ""
 msgid "Tax IDs (CPFs)"
 msgstr ""
 
-#: includes/class-ffc-admin.php:106
+#: includes/admin/class-ffc-admin-assets-manager.php:283
 msgid "Template loaded successfully!"
 msgstr ""
 
-#: includes/class-ffc-admin-ajax.php:56
+#: includes/admin/class-ffc-admin-ajax.php:56
 msgid "Template not found."
 msgstr ""
 
@@ -2920,7 +3227,7 @@ msgstr ""
 msgid "Test with simple content first"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:705
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:556
 msgid "Text"
 msgstr ""
 
@@ -2932,15 +3239,15 @@ msgstr ""
 msgid "Text color"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:709
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:560
 msgid "Textarea"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-user-access.php:197
+#: includes/settings/views/ffc-tab-user-access.php:195
 msgid "The \"FFC User\" role is automatically assigned to users who submit forms with CPF/RF."
 msgstr ""
 
-#: includes/settings/views/ffc-tab-documentation.php:424 includes/settings/views/ffc-tab-general.php:158
+#: includes/settings/views/ffc-tab-documentation.php:424 includes/settings/views/ffc-tab-general.php:337
 msgid "The cache stores form settings to improve performance."
 msgstr ""
 
@@ -2948,7 +3255,7 @@ msgstr ""
 msgid "The form will have a global password for submission."
 msgstr ""
 
-#: includes/class-ffc-frontend.php:94
+#: includes/frontend/class-ffc-frontend.php:92
 msgid "The ID must have exactly 7 digits (RF) or 11 digits (CPF)."
 msgstr ""
 
@@ -2960,43 +3267,43 @@ msgstr ""
 msgid "The Validation URL can be customized with various attributes:"
 msgstr ""
 
-#: includes/class-ffc-page-manager.php:147
+#: includes/core/class-ffc-page-manager.php:147
 msgid "The verification page is missing. Magic links and PDF downloads won't work!"
 msgstr ""
 
-#: includes/class-ffc-admin.php:505
+#: includes/admin/class-ffc-admin-submission-edit-page.php:348
 msgid "This CPF/RF is encrypted in the database."
 msgstr ""
 
-#: includes/class-ffc-admin.php:493
+#: includes/admin/class-ffc-admin-submission-edit-page.php:336
 msgid "This email is encrypted in the database."
 msgstr ""
 
-#: includes/class-ffc-frontend.php:156 includes/class-ffc-geofence.php:121 includes/class-ffc-geofence.php:152
+#: includes/security/class-ffc-geofence.php:121 includes/security/class-ffc-geofence.php:152 includes/frontend/class-ffc-frontend.php:154
 msgid "This form is no longer available."
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:392
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:333
 msgid "This form is not available at this time."
 msgstr ""
 
-#: includes/class-ffc-geofence.php:243 includes/class-ffc-form-editor.php:402
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:343 includes/security/class-ffc-geofence.php:243
 msgid "This form is not available in your location."
 msgstr ""
 
-#: includes/class-ffc-frontend.php:155 includes/class-ffc-geofence.php:108 includes/class-ffc-geofence.php:140
+#: includes/security/class-ffc-geofence.php:108 includes/security/class-ffc-geofence.php:140 includes/frontend/class-ffc-frontend.php:153
 msgid "This form is not yet available."
 msgstr ""
 
-#: includes/class-ffc-frontend.php:157 includes/class-ffc-geofence.php:170
+#: includes/security/class-ffc-geofence.php:170 includes/frontend/class-ffc-frontend.php:155
 msgid "This form is only available during specific hours."
 msgstr ""
 
-#: includes/class-ffc-admin.php:374
+#: includes/admin/class-ffc-admin-submission-edit-page.php:211
 msgid "This IP is encrypted in the database."
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:295
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:232
 msgid "This password will be required from all users."
 msgstr ""
 
@@ -3004,20 +3311,20 @@ msgstr ""
 msgid "This plugin allows you to create certificate issuance forms, generate PDFs automatically, and verify authenticity with QR codes."
 msgstr ""
 
-#: includes/class-ffc-admin.php:303
+#: includes/admin/class-ffc-admin-submission-edit-page.php:133
 #, php-format
 msgid "This record was manually edited on <strong>%s</strong>"
 msgstr ""
 
-#: includes/class-ffc-admin.php:468
+#: includes/admin/class-ffc-admin-submission-edit-page.php:302
 msgid "This submission was created before LGPD consent feature (v2.10.0)."
 msgstr ""
 
-#: includes/class-ffc-admin.php:104
+#: includes/admin/class-ffc-admin-assets-manager.php:281
 msgid "This will replace current content. Continue?"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:277
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:214
 msgid "Ticket (Unique Codes)"
 msgstr ""
 
@@ -3025,51 +3332,51 @@ msgstr ""
 msgid "Ticket (Unique Codes):"
 msgstr ""
 
-#: includes/shortcodes/class-ffc-shortcodes.php:251
+#: includes/shortcodes/class-ffc-shortcodes.php:251 includes/frontend/class-ffc-shortcodes.php:217
 msgid "Ticket Code"
 msgstr ""
 
-#: includes/class-ffc-form-processor.php:126
+#: includes/frontend/class-ffc-form-processor.php:126
 msgid "Ticket code is required."
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:320
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:257
 msgid "Ticket Generator"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:330
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:267
 msgid "Tickets are consumed (removed) after successful use."
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:463
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:404
 msgid "Time applies to each day individually"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:449
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:390
 msgid "Time Behavior"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:440
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:381
 msgid "Time Range"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:466
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:407
 msgid "Time range applies to every day in the date range. Form respects daily hours."
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:454
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:395
 msgid "Time spans across dates"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:196
+#: includes/settings/views/ffc-tab-general.php:375
 msgid "Time the data remains in cache before being updated."
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:242
+#: includes/settings/views/ffc-tab-general.php:421
 msgid "Tip: Install Redis or Memcached for better performance."
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:104
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:35
 msgid "Tips:"
 msgstr ""
 
@@ -3081,29 +3388,41 @@ msgstr ""
 msgid "TLS is recommended for port 587, SSL for port 465"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:444
+#: includes/admin/class-ffc-admin-activity-log-page.php:105
+msgid "To enable activity logging, go to:"
+msgstr ""
+
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:385
 msgid "To:"
 msgstr ""
 
-#: includes/class-ffc-csv-exporter.php:60
+#: includes/admin/class-ffc-csv-exporter.php:60
 msgid "Token"
 msgstr ""
 
-#: includes/class-ffc-verification-handler.php:437
+#: includes/frontend/class-ffc-verification-handler.php:372
 msgid "Too many attempts. Please try again in 1 minute."
 msgstr ""
 
-#: includes/class-ffc-verification-handler.php:424 includes/class-ffc-verification-handler.php:491
+#: includes/frontend/class-ffc-verification-handler.php:359 includes/frontend/class-ffc-verification-handler.php:426
 msgid "Too many verification attempts. Please try again later."
 msgstr ""
 
-#: includes/class-ffc-rate-limiter.php:153
+#: includes/security/class-ffc-rate-limiter.php:153
 #, php-format
 msgid "Too many verification attempts. Please wait %s."
 msgstr ""
 
+#: includes/admin/views/ffc-admin-activity-log.php:198
+msgid "Top Actions:"
+msgstr ""
+
 #: includes/settings/views/ffc-tab-rate-limit.php:123
 msgid "Top blocked IPs:"
+msgstr ""
+
+#: includes/admin/views/ffc-admin-activity-log.php:182
+msgid "Total Activities:"
 msgstr ""
 
 #: includes/settings/views/ffc-tab-migrations.php:108
@@ -3114,19 +3433,23 @@ msgstr ""
 msgid "Total Submissions:"
 msgstr ""
 
-#: includes/class-ffc-submissions-list-table.php:91 includes/class-ffc-submissions-list-table.php:239
+#: includes/settings/views/ffc-tab-general.php:110
+msgid "Track activities for audit trail"
+msgstr ""
+
+#: includes/admin/class-ffc-submissions-list-table.php:91 includes/admin/class-ffc-submissions-list-table.php:239
 msgid "Trash"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:703
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:554
 msgid "Type"
 msgstr ""
 
-#: includes/class-ffc-frontend.php:148 includes/class-ffc-geofence.php:221
+#: includes/security/class-ffc-geofence.php:221 includes/frontend/class-ffc-frontend.php:146
 msgid "Unable to determine your location."
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:403
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:344
 msgid "Unable to determine your location. Please enable location services."
 msgstr ""
 
@@ -3142,27 +3465,27 @@ msgstr ""
 msgid "Unique Authentication Codes:"
 msgstr ""
 
-#: includes/class-ffc-admin.php:333
+#: includes/admin/class-ffc-admin-submission-edit-page.php:170
 msgid "Unique submission identifier."
 msgstr ""
 
-#: includes/class-ffc-admin.php:359
+#: includes/admin/class-ffc-admin-submission-edit-page.php:196
 msgid "Unique token for certificate access (read-only)."
 msgstr ""
 
-#: includes/class-ffc-admin.php:277
+#: includes/admin/class-ffc-admin-submission-edit-page.php:154
 msgid "Unknown"
 msgstr ""
 
-#: includes/class-ffc-admin.php:241
+#: includes/admin/class-ffc-admin.php:210 includes/admin/class-ffc-admin-notice-manager.php:60
 msgid "Unknown error"
 msgstr ""
 
-#: includes/class-ffc-ip-geolocation.php:124
+#: includes/integrations/class-ffc-ip-geolocation.php:124
 msgid "Unknown error from ip-api.com"
 msgstr ""
 
-#: includes/class-ffc-ip-geolocation.php:178
+#: includes/integrations/class-ffc-ip-geolocation.php:178
 msgid "Unknown error from ipinfo.io"
 msgstr ""
 
@@ -3170,12 +3493,8 @@ msgstr ""
 msgid "Unknown Form"
 msgstr ""
 
-#: includes/class-ffc-ip-geolocation.php:94
+#: includes/integrations/class-ffc-ip-geolocation.php:94
 msgid "Unknown geolocation service."
-msgstr ""
-
-#: includes/class-ffc-migration-manager.php:445
-msgid "Unknown migration type"
 msgstr ""
 
 #: includes/settings/views/ffc-tab-documentation.php:611
@@ -3190,7 +3509,7 @@ msgstr ""
 msgid "Usage:"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:106
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:37
 msgid "Use <b>{{field_name}}</b> in the PDF Layout to insert user data."
 msgstr ""
 
@@ -3214,7 +3533,7 @@ msgstr ""
 msgid "Use app-specific password"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:532
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:473
 msgid "Use different (more permissive) areas for IP validation"
 msgstr ""
 
@@ -3246,7 +3565,7 @@ msgstr ""
 msgid "Use these variables in your PDF template (HTML editor). They will be automatically replaced with user data:"
 msgstr ""
 
-#: includes/class-ffc-admin.php:108
+#: includes/admin/class-ffc-admin-assets-manager.php:285
 msgid "Use this image"
 msgstr ""
 
@@ -3258,36 +3577,48 @@ msgstr ""
 msgid "Use:"
 msgstr ""
 
-#: includes/settings/class-ffc-tab-user-access.php:17
+#: includes/admin/views/ffc-admin-activity-log.php:86
+msgid "User"
+msgstr ""
+
+#: includes/admin/views/ffc-admin-activity-log.php:120
+msgid "User #%d (deleted)"
+msgstr ""
+
+#: includes/settings/tabs/class-ffc-tab-user-access.php:17
 msgid "User Access"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-user-access.php:38
-msgid "User Access Settings"
-msgstr ""
-
-#: includes/class-ffc-settings.php:227 includes/settings/class-ffc-tab-user-access.php:68
+#: includes/admin/class-ffc-settings-save-handler.php:244 includes/settings/tabs/class-ffc-tab-user-access.php:85
 msgid "User Access settings saved successfully."
 msgstr ""
 
-#: includes/settings/class-ffc-tab-user-access.php:33
+#: includes/settings/tabs/class-ffc-tab-user-access.php:50
 msgid "User Access settings view file not found."
 msgstr ""
 
-#: includes/class-ffc-submission-handler.php:137
+#: includes/submissions/class-ffc-submission-handler.php:137
 msgid "User agreed to Privacy Policy and data storage"
+msgstr ""
+
+#: includes/migrations/class-ffc-migration-manager.php:275
+msgid "User confirmation required. Type \"CONFIRMAR EXCLUSÃO\" to proceed."
 msgstr ""
 
 #: includes/settings/views/ffc-tab-documentation.php:98
 msgid "User email address"
 msgstr ""
 
-#: includes/class-ffc-admin.php:448
+#: includes/admin/class-ffc-admin-submission-edit-page.php:282
 msgid "User explicitly agreed to data storage and privacy policy."
 msgstr ""
 
-#: includes/class-ffc-admin.php:370 includes/class-ffc-csv-exporter.php:58
+#: includes/admin/class-ffc-csv-exporter.php:58 includes/admin/class-ffc-admin-submission-edit-page.php:207
 msgid "User IP"
+msgstr ""
+
+#: includes/settings/views/ffc-tab-general.php:214
+msgid "User Manager"
 msgstr ""
 
 #: includes/settings/views/ffc-tab-smtp.php:89
@@ -3295,7 +3626,7 @@ msgid "Username"
 msgstr ""
 
 #. %s: Shortcode
-#: includes/settings/views/ffc-tab-user-access.php:203
+#: includes/settings/views/ffc-tab-user-access.php:201
 #, php-format
 msgid "Users can access their certificates via the dashboard page using the %s shortcode."
 msgstr ""
@@ -3312,15 +3643,15 @@ msgstr ""
 msgid "Uses WordPress default mail function. Simple but may have deliverability issues."
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:162
+#: includes/settings/views/ffc-tab-general.php:341
 msgid "Using default WordPress cache (database)"
 msgstr ""
 
-#: includes/class-ffc-verification-handler.php:220
+#: templates/certificate-preview.php:27
 msgid "Valid Certificate"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:507
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:448
 msgid "Validation Methods"
 msgstr ""
 
@@ -3332,7 +3663,7 @@ msgstr ""
 msgid "Variable"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:699
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:550
 msgid "Variable Name (Tag)"
 msgstr ""
 
@@ -3340,20 +3671,24 @@ msgstr ""
 msgid "Variable not replaced"
 msgstr ""
 
-#: includes/class-ffc-frontend.php:88 includes/shortcodes/class-ffc-shortcodes.php:149
+#: templates/verification-page.php:41 includes/shortcodes/class-ffc-shortcodes.php:149 includes/frontend/class-ffc-frontend.php:86
 msgid "Verify"
 msgstr ""
 
-#: includes/shortcodes/class-ffc-shortcodes.php:134
+#: templates/verification-page.php:26 includes/shortcodes/class-ffc-shortcodes.php:134
 msgid "Verify Certificate"
 msgstr ""
 
-#: includes/shortcodes/class-ffc-shortcodes.php:90 includes/shortcodes/class-ffc-shortcodes.php:128
+#: templates/verification-page.php:20 includes/shortcodes/class-ffc-shortcodes.php:90 includes/shortcodes/class-ffc-shortcodes.php:128 includes/frontend/class-ffc-shortcodes.php:90
 msgid "Verifying certificate..."
 msgstr ""
 
-#: includes/class-ffc-frontend.php:87 includes/class-ffc-admin.php:116
+#: includes/admin/class-ffc-admin-assets-manager.php:293 includes/frontend/class-ffc-frontend.php:85
 msgid "Verifying..."
+msgstr ""
+
+#: includes/settings/views/ffc-tab-general.php:119
+msgid "View Activity Logs"
 msgstr ""
 
 #: includes/admin/class-ffc-admin-user-columns.php:88
@@ -3364,36 +3699,43 @@ msgstr ""
 msgid "View dashboard as this user"
 msgstr ""
 
-#: includes/class-ffc-cpt.php:34
+#: includes/admin/views/ffc-admin-activity-log.php:138
+msgid "View Details"
+msgstr ""
+
+#: includes/admin/class-ffc-admin-activity-log-page.php:89
+msgid "View file not found."
+msgstr ""
+
+#: includes/admin/class-ffc-cpt.php:34
 msgid "View Form"
 msgstr ""
 
-#: includes/shortcodes/class-ffc-dashboard-shortcode.php:237
+#: includes/shortcodes/class-ffc-dashboard-shortcode.php:226
 msgid "View PDF"
 msgstr ""
 
-#: includes/class-ffc-migration-manager.php:1113
-#, php-format
-msgid "Waiting period active. %d days remaining. Available on: %s"
-msgstr ""
-
-#: includes/settings/views/ffc-tab-general.php:253
+#: includes/settings/views/ffc-tab-general.php:432
 msgid "Warm Cache Now"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:878
+#: includes/admin/views/ffc-admin-activity-log.php:30
+msgid "Warning"
+msgstr ""
+
+#: includes/admin/class-ffc-form-editor-save-handler.php:131
 msgid "Warning! Missing required tags in PDF Layout:"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:102
+#: includes/settings/views/ffc-tab-general.php:281
 msgid "Warning: These actions cannot be undone."
 msgstr ""
 
-#: includes/class-ffc-csv-exporter.php:68
+#: includes/admin/class-ffc-csv-exporter.php:68
 msgid "Was Edited"
 msgstr ""
 
-#: includes/class-ffc-email-handler.php:87 includes/class-ffc-pdf-generator.php:500
+#: includes/integrations/class-ffc-email-handler.php:87 includes/generators/class-ffc-pdf-generator.php:501
 msgid "We certify that the holder of the data below has completed the event."
 msgstr ""
 
@@ -3417,12 +3759,16 @@ msgstr ""
 msgid "When Both GPS & IP Fail"
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:545
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:486
 msgid "When both GPS and IP are enabled, how to combine the results."
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:138
+#: includes/settings/views/ffc-tab-general.php:317
 msgid "When checked, next submission will start from ID #1. Only works if table becomes empty."
+msgstr ""
+
+#: includes/settings/views/ffc-tab-general.php:98
+msgid "When enabled, actions like submission creation, data access, and settings changes are logged."
 msgstr ""
 
 #: includes/settings/views/ffc-tab-geolocation.php:73
@@ -3433,7 +3779,7 @@ msgstr ""
 msgid "When enabled, the plugin will NOT send any emails (certificates, notifications, password resets, etc.). Use this for testing or if you want to completely disable email functionality."
 msgstr ""
 
-#: includes/settings/views/ffc-tab-user-access.php:63
+#: includes/settings/views/ffc-tab-user-access.php:61
 msgid "When enabled, users with selected roles will be redirected when trying to access the WordPress admin panel."
 msgstr ""
 
@@ -3450,7 +3796,7 @@ msgid "When IP API Fails"
 msgstr ""
 
 #. %s: Dashboard page URL
-#: includes/settings/views/ffc-tab-user-access.php:139
+#: includes/settings/views/ffc-tab-user-access.php:137
 #, php-format
 msgid "Where to redirect blocked users. Default: %s"
 msgstr ""
@@ -3475,15 +3821,15 @@ msgstr ""
 msgid "WP Default (PHPMail)"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-user-access.php:45
+#: includes/settings/views/ffc-tab-user-access.php:43
 msgid "WP-Admin Access Control"
 msgstr ""
 
-#: includes/shortcodes/class-ffc-shortcodes.php:144
+#: templates/verification-page.php:36 includes/shortcodes/class-ffc-shortcodes.php:144
 msgid "XXXX-XXXX-XXXX"
 msgstr ""
 
-#: includes/class-ffc-csv-exporter.php:127 includes/class-ffc-csv-exporter.php:157 includes/class-ffc-form-editor.php:352 includes/shortcodes/class-ffc-dashboard-shortcode.php:238
+#: includes/shortcodes/class-ffc-dashboard-shortcode.php:227 includes/admin/class-ffc-form-editor-metabox-renderer.php:291 includes/admin/class-ffc-csv-exporter.php:127 includes/admin/class-ffc-csv-exporter.php:157
 msgid "Yes"
 msgstr ""
 
@@ -3497,15 +3843,15 @@ msgstr ""
 msgid "You (%1$s) are viewing the dashboard as: %2$s"
 msgstr ""
 
-#: includes/class-ffc-frontend.php:152
+#: includes/frontend/class-ffc-frontend.php:150
 msgid "You are outside the allowed area for this form."
 msgstr ""
 
-#: includes/class-ffc-admin.php:388
+#: includes/admin/class-ffc-admin-submission-edit-page.php:232
 msgid "You can add dynamic QR Codes to your certificate template using these placeholders:"
 msgstr ""
 
-#: includes/class-ffc-email-handler.php:253
+#: includes/integrations/class-ffc-email-handler.php:253
 msgid "You can also verify this certificate manually at"
 msgstr ""
 
@@ -3513,15 +3859,15 @@ msgstr ""
 msgid "You can use HTML and inline CSS to style your certificate:"
 msgstr ""
 
-#: includes/class-ffc-cpt.php:91
+#: includes/admin/class-ffc-cpt.php:91
 msgid "You do not have permission to duplicate this post."
 msgstr ""
 
-#: includes/class-ffc-csv-exporter.php:241
+#: includes/admin/class-ffc-csv-exporter.php:241
 msgid "You do not have permission to export data."
 msgstr ""
 
-#: includes/class-ffc-form-processor.php:388
+#: includes/frontend/class-ffc-form-processor.php:388
 msgid "You must agree to the Privacy Policy to continue."
 msgstr ""
 
@@ -3537,44 +3883,36 @@ msgstr ""
 msgid "You must be logged in to view your dashboard."
 msgstr ""
 
-#: includes/class-ffc-migration-manager.php:1099
-msgid "You must execute data cleanup before dropping columns."
-msgstr ""
-
-#: includes/class-ffc-migration-manager.php:1124
-msgid "You must type \"CONFIRMAR EXCLUSÃO\" to proceed."
-msgstr ""
-
-#: includes/shortcodes/class-ffc-dashboard-shortcode.php:192 includes/settings/views/ffc-tab-user-access.php:21 includes/user-dashboard/class-ffc-access-control.php:94
+#: includes/shortcodes/class-ffc-dashboard-shortcode.php:192 includes/user-dashboard/class-ffc-access-control.php:94 includes/settings/views/ffc-tab-user-access.php:21
 msgid "You were redirected from the admin panel. Use this dashboard to access your certificates."
 msgstr ""
 
-#: includes/class-ffc-frontend.php:147
+#: includes/frontend/class-ffc-frontend.php:145
 msgid "Your browser does not support geolocation."
 msgstr ""
 
-#: includes/class-ffc-form-editor.php:343
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php:282
 msgid "Your Certificate"
 msgstr ""
 
-#: includes/class-ffc-email-handler.php:224
+#: includes/integrations/class-ffc-email-handler.php:224
 msgid "Your Certificate has been Issued!"
 msgstr ""
 
-#: includes/class-ffc-email-handler.php:206
+#: includes/integrations/class-ffc-email-handler.php:206
 #, php-format
 msgid "Your Certificate: %s"
 msgstr ""
 
-#: includes/class-ffc-form-processor.php:90
+#: includes/frontend/class-ffc-form-processor.php:90
 msgid "Your CPF/RF is blocked."
 msgstr ""
 
-#: includes/class-ffc-form-processor.php:111
+#: includes/frontend/class-ffc-form-processor.php:111
 msgid "Your CPF/RF is not authorized."
 msgstr ""
 
-#: includes/shortcodes/class-ffc-shortcodes.php:290
+#: includes/shortcodes/class-ffc-shortcodes.php:290 includes/frontend/class-ffc-shortcodes.php:256
 msgid "Your data will be stored securely and encrypted. You can request deletion at any time."
 msgstr ""
 
@@ -3590,22 +3928,22 @@ msgstr ""
 msgid "Your SMTP username (usually your email)"
 msgstr ""
 
-#: includes/class-ffc-verification-handler.php:331
+#: includes/frontend/class-ffc-verification-handler.php:266
 msgid "ZIP Code"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:143
+#: includes/settings/views/ffc-tab-general.php:322
 msgid "⚠️ Are you absolutely sure?\\n\\nThis action CANNOT be undone!\\n\\nAll selected data will be permanently deleted."
 msgstr ""
 
-#: includes/class-ffc-admin.php:300
+#: includes/admin/class-ffc-admin-submission-edit-page.php:130
 msgid "⚠️ Warning:"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:116
+#: includes/settings/views/ffc-tab-general.php:295
 msgid "🗑️ Delete All Submissions (All Forms)"
 msgstr ""
 
-#: includes/settings/views/ffc-tab-general.php:144
+#: includes/settings/views/ffc-tab-general.php:323
 msgid "🗑️ Delete Data Permanently"
 msgstr ""
