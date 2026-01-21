@@ -64,7 +64,8 @@ class FFC_Cleanup_Migration_Strategy implements FFC_Migration_Strategy {
             AND (email_encrypted IS NOT NULL OR data_encrypted IS NOT NULL)
             AND email IS NULL
             AND data IS NULL
-            AND user_ip IS NULL"
+            AND user_ip IS NULL
+            AND cpf_rf IS NULL"
         );
 
         $pending = $total_eligible - $cleaned;
@@ -102,7 +103,7 @@ class FFC_Cleanup_Migration_Strategy implements FFC_Migration_Strategy {
             "SELECT id FROM {$this->table_name}
             WHERE submission_date <= DATE_SUB(NOW(), INTERVAL 15 DAY)
             AND (email_encrypted IS NOT NULL OR data_encrypted IS NOT NULL)
-            AND (email IS NOT NULL OR data IS NOT NULL OR user_ip IS NOT NULL)
+            AND (email IS NOT NULL OR data IS NOT NULL OR user_ip IS NOT NULL OR cpf_rf IS NOT NULL)
             ORDER BY id ASC
             LIMIT %d OFFSET %d",
             $batch_size,
@@ -152,7 +153,7 @@ class FFC_Cleanup_Migration_Strategy implements FFC_Migration_Strategy {
             "SELECT COUNT(*) FROM {$this->table_name}
             WHERE submission_date <= DATE_SUB(NOW(), INTERVAL 15 DAY)
             AND (email_encrypted IS NOT NULL OR data_encrypted IS NOT NULL)
-            AND (email IS NOT NULL OR data IS NOT NULL OR user_ip IS NOT NULL)"
+            AND (email IS NOT NULL OR data IS NOT NULL OR user_ip IS NOT NULL OR cpf_rf IS NOT NULL)"
         );
 
         $has_more = $remaining > 0;
