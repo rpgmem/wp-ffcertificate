@@ -457,6 +457,7 @@ class FFC_Geofence {
             'geo' => array(
                 'enabled' => !$bypass_geo && $config['geo_enabled'] == '1',
                 'gpsEnabled' => !$bypass_geo && $config['geo_gps_enabled'] == '1',
+                'ipEnabled' => !$bypass_geo && $config['geo_ip_enabled'] == '1',
                 'areas' => self::parse_areas($config['geo_areas'] ?? ''),
                 'gpsIpLogic' => $config['geo_gps_ip_logic'] ?? 'or', // 'and' or 'or'
                 'messageBlocked' => $config['msg_geo_blocked'] ?? '',

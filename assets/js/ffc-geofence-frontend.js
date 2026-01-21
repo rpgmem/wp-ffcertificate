@@ -73,8 +73,20 @@
 
             // PRIORITY 2: Validate Geolocation (if enabled)
             // Only validate if geo is enabled (not bypassed)
-            if (config.geo && config.geo.enabled && config.geo.gpsEnabled) {
-                this.validateGeolocation(formWrapper, config.geo);
+            if (config.geo && config.geo.enabled) {
+                // Check if GPS validation is required
+                if (config.geo.gpsEnabled) {
+                    this.validateGeolocation(formWrapper, config.geo);
+                } else if (config.geo.ipEnabled) {
+                    // IP-only validation happens on backend, show form
+                    // (Backend already validated before sending this config)
+                    this.showForm(formWrapper);
+                    this.debug('IP-only validation (backend), showing form');
+                } else {
+                    // Geo enabled but neither GPS nor IP enabled - show form
+                    this.showForm(formWrapper);
+                    this.debug('No GPS/IP method enabled, showing form');
+                }
             } else {
                 // No geolocation check needed, show form now
                 this.showForm(formWrapper);
