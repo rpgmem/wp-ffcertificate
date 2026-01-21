@@ -9,7 +9,7 @@
  * - Query helpers for admin dashboard
  * - Automatic table creation on activation
  * - Cleanup of old logs
- * - 6 actively used convenience methods (v3.1.1: removed 18 unused methods)
+ * - 8 actively used convenience methods (v3.1.3: added trashed/restored)
  * - LGPD-specific logging methods (v2.10.0)
  * - Optional context encryption (v2.10.0)
  * - Toggle on/off via Settings > General (v3.1.1)
@@ -17,7 +17,7 @@
  * - Bulk operation support with temporary logging suspension (v3.1.2)
  *
  * @since 2.9.1
- * @version 3.1.2
+ * @version 3.1.3
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -438,6 +438,40 @@ class FFC_Activity_Log {
         return self::log( 'submission_deleted', self::LEVEL_WARNING, array(
             'submission_id' => $submission_id
         ), $admin_user_id );
+    }
+
+    /**
+     * ✅ USED: Log submission trashed
+     * Called by: FFC_Submission_Handler
+     *
+     * @param int $submission_id Submission ID
+     * @return bool Success
+     */
+    public static function log_submission_trashed( $submission_id ) {
+        return self::log(
+            'submission_trashed',
+            self::LEVEL_INFO,
+            array( 'submission_id' => $submission_id ),
+            get_current_user_id(),
+            $submission_id
+        );
+    }
+
+    /**
+     * ✅ USED: Log submission restored
+     * Called by: FFC_Submission_Handler
+     *
+     * @param int $submission_id Submission ID
+     * @return bool Success
+     */
+    public static function log_submission_restored( $submission_id ) {
+        return self::log(
+            'submission_restored',
+            self::LEVEL_INFO,
+            array( 'submission_id' => $submission_id ),
+            get_current_user_id(),
+            $submission_id
+        );
     }
 
     /**
