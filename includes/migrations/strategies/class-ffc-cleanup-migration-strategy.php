@@ -8,7 +8,7 @@
  * for data consistency.
  *
  * @since 3.1.0 (Extracted from FFC_Migration_Manager)
- * @version 1.4.0 - Process in batches via AJAX for memory efficiency. Frontend loops automatically.
+ * @version 1.5.0 - Optimized: normalize empty strings BEFORE cleanup, use NULLIF, batch UPDATE queries
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -98,6 +98,15 @@ class FFC_Cleanup_Migration_Strategy implements FFC_Migration_Strategy {
 
         $batch_size = isset( $migration_config['batch_size'] ) ? intval( $migration_config['batch_size'] ) : 100;
 
+        // STEP 0: On first batch, normalize empty strings to NULL BEFORE cleanup
+        // This prevents issues with columns that have empty strings instead of NULL
+        if ( $batch_number === 0 ) {
+            $normalized = $this->normalize_empty_strings_to_null();
+            if ( $normalized !== false && $normalized > 0 ) {
+                error_log( sprintf( 'FFC Cleanup: Normalized %d empty strings to NULL', $normalized ) );
+            }
+        }
+
         // STEP 1: Get submissions eligible for cleanup (15+ days old, encrypted, still have plain data)
         // Always use OFFSET 0 because cleaned records won't appear in next query
         $submissions = $wpdb->get_results( $wpdb->prepare(
@@ -111,9 +120,6 @@ class FFC_Cleanup_Migration_Strategy implements FFC_Migration_Strategy {
         ) );
 
         if ( empty( $submissions ) ) {
-            // No more submissions, run normalization one time at the end
-            $this->normalize_empty_strings_to_null();
-
             return array(
                 'success' => true,
                 'processed' => 0,
@@ -122,34 +128,22 @@ class FFC_Cleanup_Migration_Strategy implements FFC_Migration_Strategy {
             );
         }
 
-        $cleaned = 0;
-        $errors = array();
+        // STEP 2: Clean submissions in batch using single UPDATE query
+        $ids = array_map( function( $s ) { return intval( $s->id ); }, $submissions );
+        $ids_placeholder = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
 
-        foreach ( $submissions as $submission ) {
-            // Nullify unencrypted columns
-            $result = $wpdb->update(
-                $this->table_name,
-                array(
-                    'email'   => null,
-                    'cpf_rf'  => null,
-                    'user_ip' => null,
-                    'data'    => null
-                ),
-                array( 'id' => $submission->id ),
-                array( '%s', '%s', '%s', '%s' ),
-                array( '%d' )
-            );
+        $result = $wpdb->query( $wpdb->prepare(
+            "UPDATE {$this->table_name}
+            SET
+                email = NULL,
+                cpf_rf = NULL,
+                user_ip = NULL,
+                data = NULL
+            WHERE id IN ($ids_placeholder)",
+            $ids
+        ) );
 
-            if ( $result !== false ) {
-                $cleaned++;
-            } else {
-                $errors[] = sprintf(
-                    'Failed to cleanup submission ID %d: %s',
-                    $submission->id,
-                    $wpdb->last_error
-                );
-            }
-        }
+        $cleaned = ( $result !== false ) ? count( $ids ) : 0;
 
         // Count remaining
         $remaining = $wpdb->get_var(
@@ -161,51 +155,50 @@ class FFC_Cleanup_Migration_Strategy implements FFC_Migration_Strategy {
 
         $has_more = $remaining > 0;
 
-        // If this is the last batch, normalize empty strings
-        if ( ! $has_more ) {
-            $this->normalize_empty_strings_to_null();
-        }
-
         return array(
-            'success' => count( $errors ) === 0,
+            'success' => ( $result !== false ),
             'processed' => $cleaned,
             'has_more' => $has_more,
             'message' => sprintf( __( 'Cleaned %d submissions', 'ffc' ), $cleaned ),
-            'errors' => $errors
+            'errors' => ( $result === false ) ? array( $wpdb->last_error ) : array()
         );
     }
 
     /**
      * Normalize all empty strings to NULL for data consistency
+     * Uses NULLIF for cleaner, more efficient SQL
      *
-     * @return void
+     * @return int Number of rows affected
      */
     private function normalize_empty_strings_to_null() {
         global $wpdb;
 
-        // STEP 2: Normalize ALL empty strings to NULL (data consistency)
+        // Normalize ALL empty strings to NULL (data consistency)
         // This ensures all empty values across ALL columns are truly NULL, not empty strings
-        $wpdb->query(
+        // Using NULLIF is more concise and performant than CASE WHEN
+        return $wpdb->query(
             "UPDATE {$this->table_name}
-            SET data = CASE WHEN data = '' THEN NULL ELSE data END,
-                user_ip = CASE WHEN user_ip = '' THEN NULL ELSE user_ip END,
-                email = CASE WHEN email = '' THEN NULL ELSE email END,
-                magic_token = CASE WHEN magic_token = '' THEN NULL ELSE magic_token END,
-                cpf_rf = CASE WHEN cpf_rf = '' THEN NULL ELSE cpf_rf END,
-                auth_code = CASE WHEN auth_code = '' THEN NULL ELSE auth_code END,
-                email_encrypted = CASE WHEN email_encrypted = '' THEN NULL ELSE email_encrypted END,
-                email_hash = CASE WHEN email_hash = '' THEN NULL ELSE email_hash END,
-                cpf_rf_encrypted = CASE WHEN cpf_rf_encrypted = '' THEN NULL ELSE cpf_rf_encrypted END,
-                cpf_rf_hash = CASE WHEN cpf_rf_hash = '' THEN NULL ELSE cpf_rf_hash END,
-                user_ip_encrypted = CASE WHEN user_ip_encrypted = '' THEN NULL ELSE user_ip_encrypted END,
-                data_encrypted = CASE WHEN data_encrypted = '' THEN NULL ELSE data_encrypted END,
-                consent_ip = CASE WHEN consent_ip = '' THEN NULL ELSE consent_ip END,
-                consent_text = CASE WHEN consent_text = '' THEN NULL ELSE consent_text END,
-                qr_code_cache = CASE WHEN qr_code_cache = '' THEN NULL ELSE qr_code_cache END
-            WHERE data = '' OR user_ip = '' OR email = '' OR magic_token = '' OR
-                  cpf_rf = '' OR auth_code = '' OR email_encrypted = '' OR email_hash = '' OR
-                  cpf_rf_encrypted = '' OR cpf_rf_hash = '' OR user_ip_encrypted = '' OR
-                  data_encrypted = '' OR consent_ip = '' OR consent_text = '' OR qr_code_cache = ''"
+            SET
+                data = NULLIF(data, ''),
+                user_ip = NULLIF(user_ip, ''),
+                email = NULLIF(email, ''),
+                magic_token = NULLIF(magic_token, ''),
+                cpf_rf = NULLIF(cpf_rf, ''),
+                auth_code = NULLIF(auth_code, ''),
+                email_encrypted = NULLIF(email_encrypted, ''),
+                email_hash = NULLIF(email_hash, ''),
+                cpf_rf_encrypted = NULLIF(cpf_rf_encrypted, ''),
+                cpf_rf_hash = NULLIF(cpf_rf_hash, ''),
+                user_ip_encrypted = NULLIF(user_ip_encrypted, ''),
+                data_encrypted = NULLIF(data_encrypted, ''),
+                consent_ip = NULLIF(consent_ip, ''),
+                consent_text = NULLIF(consent_text, ''),
+                qr_code_cache = NULLIF(qr_code_cache, '')
+            WHERE
+                data = '' OR user_ip = '' OR email = '' OR magic_token = '' OR
+                cpf_rf = '' OR auth_code = '' OR email_encrypted = '' OR email_hash = '' OR
+                cpf_rf_encrypted = '' OR cpf_rf_hash = '' OR user_ip_encrypted = '' OR
+                data_encrypted = '' OR consent_ip = '' OR consent_text = '' OR qr_code_cache = ''"
         );
     }
 
