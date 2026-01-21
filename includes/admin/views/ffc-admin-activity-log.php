@@ -207,32 +207,3 @@ $base_url = admin_url( 'edit.php?post_type=ffc_form&page=ffc-activity-log' );
         <?php endif; ?>
     </div>
 </div>
-
-<style>
-/* Badge styles */
-.ffc-badge {
-    display: inline-block;
-    padding: 3px 8px;
-    font-size: 11px;
-    font-weight: 600;
-    border-radius: 3px;
-    text-transform: uppercase;
-    line-height: 1;
-}
-.ffc-badge-info {
-    background: #d5e8f7;
-    color: #135e96;
-}
-.ffc-badge-warning {
-    background: #fcf3cf;
-    color: #856404;
-}
-.ffc-badge-error {
-    background: #f8d7da;
-    color: #721c24;
-}
-.ffc-badge-debug {
-    background: #e2e3e5;
-    color: #383d41;
-}
-</style>
