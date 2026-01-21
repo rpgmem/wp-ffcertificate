@@ -13,9 +13,11 @@
  * - LGPD-specific logging methods (v2.10.0)
  * - Optional context encryption (v2.10.0)
  * - Toggle on/off via Settings > General (v3.1.1)
+ * - Column caching to avoid repeated DESCRIBE queries (v3.1.2)
+ * - Bulk operation support with temporary logging suspension (v3.1.2)
  *
  * @since 2.9.1
- * @version 3.1.1
+ * @version 3.1.2
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class FFC_Activity_Log {
-    
+
     /**
      * Log levels
      */
@@ -31,7 +33,20 @@ class FFC_Activity_Log {
     const LEVEL_WARNING = 'warning';
     const LEVEL_ERROR = 'error';
     const LEVEL_DEBUG = 'debug';
-    
+
+    /**
+     * Cache for table columns (performance optimization)
+     * Prevents repeated DESCRIBE queries on each log
+     * @var array|null
+     */
+    private static $table_columns_cache = null;
+
+    /**
+     * Flag to temporarily disable logging (for bulk operations)
+     * @var bool
+     */
+    private static $logging_disabled = false;
+
     /**
      * Log an activity
      * 
@@ -44,7 +59,12 @@ class FFC_Activity_Log {
      */
     public static function log( $action, $level = self::LEVEL_INFO, $context = array(), $user_id = 0, $submission_id = 0 ) {
         global $wpdb;
-        
+
+        // Check if logging is temporarily disabled (bulk operations)
+        if ( self::$logging_disabled ) {
+            return false;
+        }
+
         // Check if logging is enabled in settings
         $settings = get_option( 'ffc_settings', array() );
         if ( ! isset( $settings['enable_activity_log'] ) || $settings['enable_activity_log'] != 1 ) {
@@ -88,14 +108,14 @@ class FFC_Activity_Log {
         
         // ✅ v2.10.0: Add new fields if columns exist
         $table_name = $wpdb->prefix . 'ffc_activity_log';
-        
-        // Check if new columns exist
-        $columns = $wpdb->get_col( "DESCRIBE {$table_name}", 0 );
-        
+
+        // Get columns (cached to avoid repeated DESCRIBE queries)
+        $columns = self::get_table_columns( $table_name );
+
         if ( in_array( 'submission_id', $columns ) ) {
             $log_data['submission_id'] = absint( $submission_id );
         }
-        
+
         if ( in_array( 'context_encrypted', $columns ) && $context_encrypted !== null ) {
             $log_data['context_encrypted'] = $context_encrypted;
         }
@@ -501,5 +521,54 @@ class FFC_Activity_Log {
         }
         
         return $logs;
+    }
+
+    /**
+     * Get table columns with caching
+     * Prevents repeated DESCRIBE queries (performance optimization)
+     *
+     * @param string $table_name Table name
+     * @return array Column names
+     */
+    private static function get_table_columns( $table_name ) {
+        global $wpdb;
+
+        // Return cached value if available
+        if ( self::$table_columns_cache !== null ) {
+            return self::$table_columns_cache;
+        }
+
+        // Query columns and cache result
+        self::$table_columns_cache = $wpdb->get_col( "DESCRIBE {$table_name}", 0 );
+
+        return self::$table_columns_cache;
+    }
+
+    /**
+     * Temporarily disable logging (for bulk operations)
+     * Improves performance when performing many operations
+     *
+     * @return void
+     */
+    public static function disable_logging() {
+        self::$logging_disabled = true;
+    }
+
+    /**
+     * Re-enable logging after bulk operations
+     *
+     * @return void
+     */
+    public static function enable_logging() {
+        self::$logging_disabled = false;
+    }
+
+    /**
+     * Clear column cache (call after table structure changes)
+     *
+     * @return void
+     */
+    public static function clear_column_cache() {
+        self::$table_columns_cache = null;
     }
 }

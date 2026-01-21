@@ -1,8 +1,9 @@
 <?php
 /**
- * FFC_Submission_Handler v3.0.0
+ * FFC_Submission_Handler v3.0.1
  * Complete refactored version with Repository Pattern
- * 
+ *
+ * @since 3.0.1 Optimized bulk operations (single query + suspended logging)
  * @since 3.0.0 Repository Pattern integration
  * @since 2.10.0 Encryption & LGPD support
  */
@@ -333,11 +334,107 @@ class FFC_Submission_Handler {
      */
     public function delete_submission($id) {
         $result = $this->repository->delete($id);
-        
+
         if ($result && class_exists('FFC_Activity_Log')) {
             FFC_Activity_Log::log_submission_deleted($id);
         }
-        
+
+        return $result;
+    }
+
+    /**
+     * Bulk trash submissions (optimized)
+     * @uses Repository::bulkUpdateStatus()
+     *
+     * @param array $ids Array of submission IDs
+     * @return int|false Number of rows affected or false on error
+     */
+    public function bulk_trash_submissions($ids) {
+        if (empty($ids)) {
+            return 0;
+        }
+
+        // Disable logging during bulk operation
+        if (class_exists('FFC_Activity_Log')) {
+            FFC_Activity_Log::disable_logging();
+        }
+
+        $result = $this->repository->bulkUpdateStatus($ids, 'trash');
+
+        // Re-enable logging
+        if (class_exists('FFC_Activity_Log')) {
+            FFC_Activity_Log::enable_logging();
+
+            // Log single bulk operation
+            FFC_Activity_Log::log('bulk_trash', FFC_Activity_Log::LEVEL_INFO, array(
+                'count' => count($ids)
+            ));
+        }
+
+        return $result;
+    }
+
+    /**
+     * Bulk restore submissions (optimized)
+     * @uses Repository::bulkUpdateStatus()
+     *
+     * @param array $ids Array of submission IDs
+     * @return int|false Number of rows affected or false on error
+     */
+    public function bulk_restore_submissions($ids) {
+        if (empty($ids)) {
+            return 0;
+        }
+
+        // Disable logging during bulk operation
+        if (class_exists('FFC_Activity_Log')) {
+            FFC_Activity_Log::disable_logging();
+        }
+
+        $result = $this->repository->bulkUpdateStatus($ids, 'publish');
+
+        // Re-enable logging
+        if (class_exists('FFC_Activity_Log')) {
+            FFC_Activity_Log::enable_logging();
+
+            // Log single bulk operation
+            FFC_Activity_Log::log('bulk_restore', FFC_Activity_Log::LEVEL_INFO, array(
+                'count' => count($ids)
+            ));
+        }
+
+        return $result;
+    }
+
+    /**
+     * Bulk delete submissions permanently (optimized)
+     * @uses Repository::bulkDelete()
+     *
+     * @param array $ids Array of submission IDs
+     * @return int|false Number of rows deleted or false on error
+     */
+    public function bulk_delete_submissions($ids) {
+        if (empty($ids)) {
+            return 0;
+        }
+
+        // Disable logging during bulk operation (CRITICAL for performance)
+        if (class_exists('FFC_Activity_Log')) {
+            FFC_Activity_Log::disable_logging();
+        }
+
+        $result = $this->repository->bulkDelete($ids);
+
+        // Re-enable logging
+        if (class_exists('FFC_Activity_Log')) {
+            FFC_Activity_Log::enable_logging();
+
+            // Log single bulk operation instead of N individual logs
+            FFC_Activity_Log::log('bulk_delete', FFC_Activity_Log::LEVEL_WARNING, array(
+                'count' => count($ids)
+            ));
+        }
+
         return $result;
     }
     

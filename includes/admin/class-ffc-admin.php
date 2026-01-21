@@ -113,16 +113,21 @@ class FFC_Admin {
         if ( isset($_GET['action']) && isset($_GET['submission']) && is_array($_GET['submission']) ) {
             $bulk_action = $_GET['action'];
             if ( $bulk_action === '-1' && isset($_GET['action2']) ) $bulk_action = $_GET['action2'];
-            
+
             $allowed_bulk = array( 'bulk_trash', 'bulk_restore', 'bulk_delete' );
             if ( in_array( $bulk_action, $allowed_bulk ) ) {
-                check_admin_referer('bulk-submissions'); 
+                check_admin_referer('bulk-submissions');
                 $ids = array_map('absint', $_GET['submission']);
-                foreach ( $ids as $id ) {
-                    if ( $bulk_action === 'bulk_trash' ) $this->submission_handler->trash_submission( $id );
-                    if ( $bulk_action === 'bulk_restore' ) $this->submission_handler->restore_submission( $id );
-                    if ( $bulk_action === 'bulk_delete' ) $this->submission_handler->delete_submission( $id );
+
+                // Use optimized bulk methods (single query + single log)
+                if ( $bulk_action === 'bulk_trash' ) {
+                    $this->submission_handler->bulk_trash_submissions( $ids );
+                } elseif ( $bulk_action === 'bulk_restore' ) {
+                    $this->submission_handler->bulk_restore_submissions( $ids );
+                } elseif ( $bulk_action === 'bulk_delete' ) {
+                    $this->submission_handler->bulk_delete_submissions( $ids );
                 }
+
                 $this->redirect_with_msg('bulk_done');
             }
         }
