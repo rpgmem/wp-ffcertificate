@@ -8,7 +8,7 @@
  * for data consistency.
  *
  * @since 3.1.0 (Extracted from FFC_Migration_Manager)
- * @version 1.3.0 - Added internal loop to process ALL records in one click
+ * @version 1.4.0 - Process in batches via AJAX for memory efficiency. Frontend loops automatically.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -97,63 +97,94 @@ class FFC_Cleanup_Migration_Strategy implements FFC_Migration_Strategy {
         global $wpdb;
 
         $batch_size = isset( $migration_config['batch_size'] ) ? intval( $migration_config['batch_size'] ) : 100;
-        $total_cleaned = 0;
-        $all_errors = array();
 
-        // STEP 1: Loop until all submissions are cleaned
-        // Process in batches to avoid memory issues, but continue until done
-        while ( true ) {
-            // Get next batch of submissions eligible for cleanup
-            // Always use OFFSET 0 because cleaned records won't appear in next query
-            $submissions = $wpdb->get_results( $wpdb->prepare(
-                "SELECT id FROM {$this->table_name}
-                WHERE submission_date <= DATE_SUB(NOW(), INTERVAL 15 DAY)
-                AND (email_encrypted IS NOT NULL OR data_encrypted IS NOT NULL)
-                AND (email IS NOT NULL OR data IS NOT NULL OR user_ip IS NOT NULL OR cpf_rf IS NOT NULL)
-                ORDER BY id ASC
-                LIMIT %d",
-                $batch_size
-            ) );
+        // STEP 1: Get submissions eligible for cleanup (15+ days old, encrypted, still have plain data)
+        // Always use OFFSET 0 because cleaned records won't appear in next query
+        $submissions = $wpdb->get_results( $wpdb->prepare(
+            "SELECT id FROM {$this->table_name}
+            WHERE submission_date <= DATE_SUB(NOW(), INTERVAL 15 DAY)
+            AND (email_encrypted IS NOT NULL OR data_encrypted IS NOT NULL)
+            AND (email IS NOT NULL OR data IS NOT NULL OR user_ip IS NOT NULL OR cpf_rf IS NOT NULL)
+            ORDER BY id ASC
+            LIMIT %d",
+            $batch_size
+        ) );
 
-            // No more submissions to process
-            if ( empty( $submissions ) ) {
-                break;
-            }
+        if ( empty( $submissions ) ) {
+            // No more submissions, run normalization one time at the end
+            $this->normalize_empty_strings_to_null();
 
-            // Process this batch
-            foreach ( $submissions as $submission ) {
-                // Nullify unencrypted columns
-                $result = $wpdb->update(
-                    $this->table_name,
-                    array(
-                        'email'   => null,
-                        'cpf_rf'  => null,
-                        'user_ip' => null,
-                        'data'    => null
-                    ),
-                    array( 'id' => $submission->id ),
-                    array( '%s', '%s', '%s', '%s' ),
-                    array( '%d' )
-                );
-
-                if ( $result !== false ) {
-                    $total_cleaned++;
-                } else {
-                    $all_errors[] = sprintf(
-                        'Failed to cleanup submission ID %d: %s',
-                        $submission->id,
-                        $wpdb->last_error
-                    );
-                }
-            }
-
-            // Optional: Add a small delay to avoid overwhelming the database
-            // usleep(100000); // 0.1 second
+            return array(
+                'success' => true,
+                'processed' => 0,
+                'has_more' => false,
+                'message' => __( 'No submissions to cleanup', 'ffc' )
+            );
         }
+
+        $cleaned = 0;
+        $errors = array();
+
+        foreach ( $submissions as $submission ) {
+            // Nullify unencrypted columns
+            $result = $wpdb->update(
+                $this->table_name,
+                array(
+                    'email'   => null,
+                    'cpf_rf'  => null,
+                    'user_ip' => null,
+                    'data'    => null
+                ),
+                array( 'id' => $submission->id ),
+                array( '%s', '%s', '%s', '%s' ),
+                array( '%d' )
+            );
+
+            if ( $result !== false ) {
+                $cleaned++;
+            } else {
+                $errors[] = sprintf(
+                    'Failed to cleanup submission ID %d: %s',
+                    $submission->id,
+                    $wpdb->last_error
+                );
+            }
+        }
+
+        // Count remaining
+        $remaining = $wpdb->get_var(
+            "SELECT COUNT(*) FROM {$this->table_name}
+            WHERE submission_date <= DATE_SUB(NOW(), INTERVAL 15 DAY)
+            AND (email_encrypted IS NOT NULL OR data_encrypted IS NOT NULL)
+            AND (email IS NOT NULL OR data IS NOT NULL OR user_ip IS NOT NULL OR cpf_rf IS NOT NULL)"
+        );
+
+        $has_more = $remaining > 0;
+
+        // If this is the last batch, normalize empty strings
+        if ( ! $has_more ) {
+            $this->normalize_empty_strings_to_null();
+        }
+
+        return array(
+            'success' => count( $errors ) === 0,
+            'processed' => $cleaned,
+            'has_more' => $has_more,
+            'message' => sprintf( __( 'Cleaned %d submissions', 'ffc' ), $cleaned ),
+            'errors' => $errors
+        );
+    }
+
+    /**
+     * Normalize all empty strings to NULL for data consistency
+     *
+     * @return void
+     */
+    private function normalize_empty_strings_to_null() {
+        global $wpdb;
 
         // STEP 2: Normalize ALL empty strings to NULL (data consistency)
         // This ensures all empty values across ALL columns are truly NULL, not empty strings
-        // Only runs after cleanup to avoid normalizing data that will be deleted anyway
         $wpdb->query(
             "UPDATE {$this->table_name}
             SET data = CASE WHEN data = '' THEN NULL ELSE data END,
@@ -175,14 +206,6 @@ class FFC_Cleanup_Migration_Strategy implements FFC_Migration_Strategy {
                   cpf_rf = '' OR auth_code = '' OR email_encrypted = '' OR email_hash = '' OR
                   cpf_rf_encrypted = '' OR cpf_rf_hash = '' OR user_ip_encrypted = '' OR
                   data_encrypted = '' OR consent_ip = '' OR consent_text = '' OR qr_code_cache = ''"
-        );
-
-        return array(
-            'success' => count( $all_errors ) === 0,
-            'processed' => $total_cleaned,
-            'has_more' => false,  // Always false since we process everything
-            'message' => sprintf( __( 'Cleaned %d submissions', 'ffc' ), $total_cleaned ),
-            'errors' => $all_errors
         );
     }
 
