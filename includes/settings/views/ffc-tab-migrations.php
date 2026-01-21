@@ -162,19 +162,19 @@ $migrations = $migration_manager->get_migrations();
                         ✓ <?php esc_html_e( 'All records have been successfully migrated.', 'ffc' ); ?>
                     </p>
                 <?php else : ?>
-                    <a href="<?php echo esc_url( $migrate_url ); ?>" 
+                    <a href="<?php echo esc_url( $migrate_url ); ?>"
                        class="button button-primary"
-                       onclick="return confirm('<?php echo esc_js( sprintf( __( 'Run %s migration?\n\nThis will process up to 100 records. Safe to run multiple times until complete.', 'ffc' ), $migration['name'] ) ); ?>')">
+                       onclick="return confirm('<?php echo esc_js( sprintf( __( 'Run %s migration?\n\nThis will automatically process ALL records in batches of 100 until complete.', 'ffc' ), $migration['name'] ) ); ?>')">
                         <span class="dashicons dashicons-update"></span>
                         <?php esc_html_e( 'Run Migration', 'ffc' ); ?>
                     </a>
-                    
+
                     <p class="description">
-                        <?php 
-                        printf( 
-                            esc_html__( 'Click to migrate up to 100 records. %s records remaining.', 'ffc' ),
+                        <?php
+                        printf(
+                            esc_html__( 'Click once to process all records automatically. %s records remaining.', 'ffc' ),
                             '<strong>' . esc_html( $pending ) . '</strong>'
-                        ); 
+                        );
                         ?>
                     </p>
                 <?php endif; ?>
@@ -198,11 +198,96 @@ $migrations = $migration_manager->get_migrations();
         <p><?php esc_html_e( 'Yes! Migrations only copy data to new columns - your original data remains intact. They are safe to run multiple times.', 'ffc' ); ?></p>
         
         <p><strong><?php esc_html_e( 'How many times should I run it?', 'ffc' ); ?></strong></p>
-        <p><?php esc_html_e( 'Each migration processes 100 records at a time. For large databases, you may need to click "Run Migration" multiple times until it reaches 100%.', 'ffc' ); ?></p>
+        <p><?php esc_html_e( 'Just click "Run Migration" once! The process will automatically continue processing batches of 100 records until complete. You can watch the progress bar update in real-time.', 'ffc' ); ?></p>
         
         <p><strong><?php esc_html_e( 'Can I undo a migration?', 'ffc' ); ?></strong></p>
         <p><?php esc_html_e( 'Migrations cannot be undone, but they don\'t delete any data. If you experience issues, your original data remains in the JSON column and can be accessed.', 'ffc' ); ?></p>
     </div>
-    
+
 </div>
 </div><!-- .ffc-settings-wrap -->
+
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+    // Intercept migration button clicks to run automatically via AJAX
+    $('.ffc-migration-actions a.button-primary').on('click', function(e) {
+        e.preventDefault();
+
+        var $btn = $(this);
+        var migrationUrl = $btn.attr('href');
+        var $card = $btn.closest('.ffc-migration-card');
+        var $description = $btn.next('.description');
+        var originalBtnHtml = $btn.html();
+        var totalProcessed = 0;
+
+        if (!confirm($btn.attr('onclick').match(/confirm\('([^']+)'/)[1])) {
+            return false;
+        }
+
+        // Disable button and show processing
+        $btn.prop('disabled', true).html('<span class="dashicons dashicons-update dashicons-spin"></span> <?php esc_html_e( 'Processing...', 'ffc' ); ?>');
+
+        function runBatch() {
+            $.ajax({
+                url: migrationUrl,
+                type: 'GET',
+                dataType: 'html',
+                success: function(response) {
+                    // Parse the response to check if has_more
+                    // We'll extract the migration card and check its state
+                    var $newCard = $(response).find('.ffc-migration-card').filter(function() {
+                        return $(this).find('h3').text() === $card.find('h3').text();
+                    });
+
+                    if ($newCard.length) {
+                        // Update progress bar
+                        var $newProgress = $newCard.find('.ffc-progress-bar-fill');
+                        var newPercent = $newProgress.attr('style').match(/width:\s*(\d+\.?\d*)%/);
+                        if (newPercent) {
+                            $card.find('.ffc-progress-bar-fill').attr('style', 'width: ' + newPercent[1] + '%');
+                            $card.find('.ffc-progress-bar-label').text(newPercent[1] + '% <?php esc_html_e( 'Complete', 'ffc' ); ?>');
+                        }
+
+                        // Update counters
+                        var $newStats = $newCard.find('.ffc-migration-stats');
+                        $card.find('.ffc-migration-stats').html($newStats.html());
+
+                        totalProcessed += 100; // Approximate
+                        $description.html('<?php esc_html_e( 'Processed ', 'ffc' ); ?><strong>' + totalProcessed + '</strong> <?php esc_html_e( 'records...', 'ffc' ); ?>');
+
+                        // Check if complete (button is disabled or has "Complete" text)
+                        var isComplete = $newCard.find('.button[disabled]').length > 0;
+
+                        if (isComplete) {
+                            // Migration complete!
+                            $btn.html('<span class="dashicons dashicons-yes-alt"></span> <?php esc_html_e( 'Migration Complete', 'ffc' ); ?>');
+                            $description.html('✓ <?php esc_html_e( 'All records have been successfully migrated.', 'ffc' ); ?>');
+
+                            // Reload page after 2 seconds to show final state
+                            setTimeout(function() {
+                                location.reload();
+                            }, 2000);
+                        } else {
+                            // Continue processing next batch
+                            setTimeout(runBatch, 500); // Small delay between batches
+                        }
+                    } else {
+                        // Error parsing response, reload page
+                        location.reload();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Migration error:', error);
+                    $btn.prop('disabled', false).html(originalBtnHtml);
+                    $description.html('✗ <?php esc_html_e( 'Error occurred. Please try again.', 'ffc' ); ?>');
+                }
+            });
+        }
+
+        // Start first batch
+        runBatch();
+
+        return false;
+    });
+});
+</script>
