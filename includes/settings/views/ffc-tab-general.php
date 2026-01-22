@@ -95,6 +95,7 @@ $custom_format = $get_option('date_format_custom', '');
         <h3>📋 <?php esc_html_e('Activity Log Settings', 'ffc'); ?></h3>
         <p class="description">
             <?php esc_html_e('Activity Log tracks important actions in your system for audit and compliance purposes (LGPD).', 'ffc'); ?> <br>
+            <?php esc_html_e('This option has a significant impact on website speed and stability, so use it wisely.', 'ffc'); ?> <br>
             <span class="ffc-text-warning">⚠️ <?php esc_html_e('If this option is disabled, debug logging will also be disabled.', 'ffc'); ?></span><br>
             <span class="ffc-text-info">ℹ️ <?php esc_html_e('When enabled, actions like submission creation, data access, and settings changes are logged.', 'ffc'); ?></span>
         </p>
