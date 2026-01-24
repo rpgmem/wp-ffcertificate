@@ -660,3 +660,13 @@
     margin-left: 20px;
     margin-top: 5px;
 }
+
+/* List style */
+.ffc-list-disc {
+    list-style: disc;
+}
+
+/* Text colors */
+.ffc-text-error {
+    color: #d63638;
+}
