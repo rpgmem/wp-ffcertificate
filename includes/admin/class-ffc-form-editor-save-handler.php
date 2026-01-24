@@ -255,7 +255,7 @@ class FFC_Form_Editor_Save_Handler {
             ?>
             <div class="notice notice-error is-dismissible">
                 <p><strong><?php esc_html_e( 'Geolocation Configuration Error:', 'ffc' ); ?></strong></p>
-                <ul style="list-style: disc; margin-left: 20px;">
+                <ul class="ffc-list-disc ffc-ml-20">
                     <?php foreach ( $geofence_errors as $error ) : ?>
                         <li><?php echo esc_html( $error ); ?></li>
                     <?php endforeach; ?>

@@ -30,7 +30,7 @@ $get_option = function($key, $default = '') {
                     <td>
                         <label>
                             <input type="checkbox" name="ffc_settings[disable_all_emails]" id="disable_all_emails" value="1" <?php checked('1', $get_option('disable_all_emails')); ?>>
-                            <strong style="color: #d63638;"><?php esc_html_e('Disable ALL emails from this plugin globally', 'ffc'); ?></strong>
+                            <strong class="ffc-text-error"><?php esc_html_e('Disable ALL emails from this plugin globally', 'ffc'); ?></strong>
                         </label>
                         <p class="description">
                             <?php _e('When enabled, the plugin will NOT send any emails (certificates, notifications, password resets, etc.). Use this for testing or if you want to completely disable email functionality.', 'ffc'); ?>
