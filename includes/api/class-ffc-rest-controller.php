@@ -1,12 +1,12 @@
 <?php
 /**
  * FFC REST API Controller
- * 
+ *
  * Base controller for all REST API endpoints
  * Namespace: /wp-json/ffc/v1/
- * 
+ *
+ * @version 1.1.0 - Refactored: Fixed repository paths, extracted decrypt method, moved mask_email to Utils
  * @since 3.0.0
- * @version 1.0.0
  */
 
 if (!defined('ABSPATH')) exit;
@@ -53,9 +53,9 @@ class FFC_REST_Controller {
             'ffc-form-repository.php',
             'ffc-submission-repository.php'
         );
-        
+
         foreach ($repo_files as $file) {
-            $path = FFC_PLUGIN_DIR . 'includes/class-ffc-' . $file;
+            $path = FFC_PLUGIN_DIR . 'includes/repositories/' . $file;
             if (file_exists($path)) {
                 require_once $path;
             }
@@ -568,19 +568,9 @@ class FFC_REST_Controller {
             if (!empty($submission['data'])) {
                 $data = json_decode($submission['data'], true);
             }
-            
+
             // Decrypt if encrypted
-            if (!empty($submission['data_encrypted']) && class_exists('FFC_Encryption')) {
-                try {
-                    $decrypted = FFC_Encryption::decrypt($submission['data_encrypted']);
-                    $decrypted_data = json_decode($decrypted, true);
-                    if (is_array($decrypted_data)) {
-                        $data = array_merge($data, $decrypted_data);
-                    }
-                } catch (Exception $e) {
-                    FFC_Debug::log_rest_api('Get Submission: Decryption failed', $e->getMessage());
-                }
-            }
+            $data = $this->decrypt_submission_data($submission, $data);
             
             // Get form details
             $form = get_post($submission['form_id']);
@@ -657,20 +647,9 @@ class FFC_REST_Controller {
             if (!empty($submission['data'])) {
                 $data = json_decode($submission['data'], true);
             }
-            
+
             // Decrypt data if encrypted
-            if (!empty($submission['data_encrypted']) && class_exists('FFC_Encryption')) {
-                try {
-                    $decrypted = FFC_Encryption::decrypt($submission['data_encrypted']);
-                    $decrypted_data = json_decode($decrypted, true);
-                    if (is_array($decrypted_data)) {
-                        $data = array_merge($data, $decrypted_data);
-                    }
-                } catch (Exception $e) {
-                    // Log error but continue with non-encrypted data
-                    FFC_Debug::log_rest_api('Verify: Decryption failed', $e->getMessage());
-                }
-            }
+            $data = $this->decrypt_submission_data($submission, $data);
             
             // Get form details
             $form = get_post($submission['form_id']);
@@ -802,7 +781,7 @@ class FFC_REST_Controller {
                 if (!empty($submission['email_encrypted'])) {
                     try {
                         $email_plain = FFC_Encryption::decrypt($submission['email_encrypted']);
-                        $email_display = $this->mask_email($email_plain);
+                        $email_display = FFC_Utils::mask_email($email_plain);
                     } catch (Exception $e) {
                         $email_display = __('Error decrypting', 'ffc');
                     }
@@ -931,29 +910,38 @@ class FFC_REST_Controller {
     }
 
     /**
-     * Mask email for display
+     * Decrypt submission data if encrypted
      *
-     * Example: joao@gmail.com → j***@gmail.com
+     * Merges decrypted data with existing data array.
      *
-     * @param string $email Email address
-     * @return string Masked email
+     * @since 3.2.0
+     * @param array $submission Submission data array
+     * @param array $data Existing data array to merge into
+     * @return array Merged data array with decrypted values
      */
-    private function mask_email($email) {
-        if (!is_email($email)) {
-            return $email;
+    private function decrypt_submission_data($submission, $data = array()) {
+        if (empty($submission['data_encrypted'])) {
+            return $data;
         }
 
-        $parts = explode('@', $email);
-        if (count($parts) !== 2) {
-            return $email;
+        if (!class_exists('FFC_Encryption')) {
+            return $data;
         }
 
-        $local = $parts[0];
-        $domain = $parts[1];
+        try {
+            $decrypted = FFC_Encryption::decrypt($submission['data_encrypted']);
+            $decrypted_data = json_decode($decrypted, true);
 
-        // Show first character + *** + @domain
-        $masked_local = substr($local, 0, 1) . '***';
+            if (is_array($decrypted_data)) {
+                return array_merge($data, $decrypted_data);
+            }
+        } catch (Exception $e) {
+            // Log error but continue with non-encrypted data
+            if (class_exists('FFC_Debug')) {
+                FFC_Debug::log_rest_api('Decryption failed', $e->getMessage());
+            }
+        }
 
-        return $masked_local . '@' . $domain;
+        return $data;
     }
 }

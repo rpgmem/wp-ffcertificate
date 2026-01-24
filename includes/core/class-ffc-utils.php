@@ -2,7 +2,8 @@
 /**
  * FFC_Utils
  * Utility class shared between Frontend and Admin.
- * 
+ *
+ * v3.2.0: Added mask_email() for privacy masking
  * v2.9.1: Added CPF validation, document formatting, and helper functions
  * v2.9.11: Added validate_security_fields() and recursive_sanitize()
  */
@@ -226,10 +227,39 @@ class FFC_Utils {
         // Return original if not CPF or RF
         return $value;
     }
-    
+
+    /**
+     * Mask email address for privacy
+     *
+     * Shows first character of local part + *** + @domain
+     * Example: joao@gmail.com → j***@gmail.com
+     *
+     * @since 3.2.0
+     * @param string $email Email address to mask
+     * @return string Masked email or original if invalid
+     */
+    public static function mask_email( $email ) {
+        if ( empty( $email ) || ! is_email( $email ) ) {
+            return $email;
+        }
+
+        $parts = explode( '@', $email );
+        if ( count( $parts ) !== 2 ) {
+            return $email;
+        }
+
+        $local = $parts[0];
+        $domain = $parts[1];
+
+        // Show first character + *** + @domain
+        $masked_local = substr( $local, 0, 1 ) . '***';
+
+        return $masked_local . '@' . $domain;
+    }
+
     /**
      * Format authentication code
-     * 
+     *
      * @param string $code Auth code to format
      * @return string Formatted code (XXXX-XXXX-XXXX)
      */
