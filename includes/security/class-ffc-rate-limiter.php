@@ -269,12 +269,12 @@ class FFC_Rate_Limiter {
         if (in_array($ip, $bl['ips'])) return array('allowed' => false, 'reason' => 'ip_blacklisted', 'message' => 'IP bloqueado.');
         
         if ($email) {
-            if (in_array($email, $bl['emails'])) return array('allowed' => false, 'reason' => 'email_blacklisted', 'message' => 'Email bloqueado.');
+            if (in_array($email, $bl['emails'])) return array('allowed' => false, 'reason' => 'email_blacklisted', 'message' => __( 'Email blocked.', 'ffc' ));
             $d = substr(strrchr($email, '@'), 1);
-            if (in_array('*@' . $d, $bl['email_domains'])) return array('allowed' => false, 'reason' => 'domain_blacklisted', 'message' => 'Domínio bloqueado.');
+            if (in_array('*@' . $d, $bl['email_domains'])) return array('allowed' => false, 'reason' => 'domain_blacklisted', 'message' => __( 'Domain blocked.', 'ffc' ));
         }
-        
-        if ($cpf && in_array(preg_replace('/[^0-9]/', '', $cpf), $bl['cpfs'])) return array('allowed' => false, 'reason' => 'cpf_blacklisted', 'message' => 'CPF bloqueado.');
+
+        if ($cpf && in_array(preg_replace('/[^0-9]/', '', $cpf), $bl['cpfs'])) return array('allowed' => false, 'reason' => 'cpf_blacklisted', 'message' => __( 'CPF blocked.', 'ffc' ));
         
         return array('allowed' => true);
     }
