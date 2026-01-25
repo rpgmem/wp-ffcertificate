@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * FFC_Admin_Notice_Manager
  *
@@ -7,6 +9,7 @@
  *
  * @since 3.1.1 (Extracted from FFC_Admin)
  * @version 1.0.0
+ * v3.3.0: Added strict types and type hints
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,7 +23,7 @@ class FFC_Admin_Notice_Manager {
      *
      * Shows success/error messages after admin actions.
      */
-    public function display_notices() {
+    public function display_notices(): void {
         if ( ! isset( $_GET['msg'] ) ) {
             return;
         }
@@ -75,7 +78,7 @@ class FFC_Admin_Notice_Manager {
      *
      * @param string $msg Message type to display
      */
-    public function redirect_with_message( $msg ) {
+    public function redirect_with_message( string $msg ): void {
         $url = remove_query_arg(
             array( 'action', 'action2', 'submission_id', 'submission', '_wpnonce' ),
             $_SERVER['REQUEST_URI']
