@@ -2,9 +2,12 @@
 /**
  * Abstract Repository
  * Base class for all repositories
- * 
+ *
  * @since 3.0.0
+ * @version 3.3.0 - Added strict types and type hints for better code safety
  */
+
+declare(strict_types=1);
 
 if (!defined('ABSPATH')) exit;
 
@@ -22,13 +25,16 @@ abstract class FFC_Abstract_Repository {
         $this->cache_group = $this->get_cache_group();
     }
     
-    abstract protected function get_table_name();
-    abstract protected function get_cache_group();
+    abstract protected function get_table_name(): string;
+    abstract protected function get_cache_group(): string;
     
     /**
      * Find by ID
+     *
+     * @param int $id
+     * @return array|null|false
      */
-    public function findById($id) {
+    public function findById( int $id ) {
         $cache_key = "id_{$id}";
         $cached = $this->get_cache($cache_key);
         
@@ -50,8 +56,15 @@ abstract class FFC_Abstract_Repository {
     
     /**
      * Find all with conditions
+     *
+     * @param array $conditions
+     * @param string $order_by
+     * @param string $order
+     * @param int|null $limit
+     * @param int $offset
+     * @return array
      */
-    public function findAll($conditions = [], $order_by = 'id', $order = 'DESC', $limit = null, $offset = 0) {
+    public function findAll( array $conditions = [], string $order_by = 'id', string $order = 'DESC', ?int $limit = null, int $offset = 0 ): array {
         $where = $this->build_where_clause($conditions);
         $sql = "SELECT * FROM {$this->table} {$where} ORDER BY {$order_by} {$order}";
         
@@ -64,16 +77,22 @@ abstract class FFC_Abstract_Repository {
     
     /**
      * Count rows
+     *
+     * @param array $conditions
+     * @return int
      */
-    public function count($conditions = []) {
+    public function count( array $conditions = [] ): int {
         $where = $this->build_where_clause($conditions);
         return (int) $this->wpdb->get_var("SELECT COUNT(*) FROM {$this->table} {$where}");
     }
     
     /**
      * Insert
+     *
+     * @param array $data
+     * @return int|false Insert ID on success, false on failure
      */
-    public function insert($data) {
+    public function insert( array $data ) {
         $result = $this->wpdb->insert($this->table, $data);
         
         if ($result) {
@@ -86,8 +105,12 @@ abstract class FFC_Abstract_Repository {
     
     /**
      * Update
+     *
+     * @param int $id
+     * @param array $data
+     * @return int|false Number of rows updated, or false on error
      */
-    public function update($id, $data) {
+    public function update( int $id, array $data ) {
         $result = $this->wpdb->update(
             $this->table,
             $data,
@@ -103,8 +126,11 @@ abstract class FFC_Abstract_Repository {
     
     /**
      * Delete
+     *
+     * @param int $id
+     * @return int|false Number of rows deleted, or false on error
      */
-    public function delete($id) {
+    public function delete( int $id ) {
         $result = $this->wpdb->delete($this->table, ['id' => $id]);
         
         if ($result) {
@@ -116,8 +142,11 @@ abstract class FFC_Abstract_Repository {
     
     /**
      * Build WHERE clause
+     *
+     * @param array $conditions
+     * @return string
      */
-    protected function build_where_clause($conditions) {
+    protected function build_where_clause( array $conditions ): string {
         if (empty($conditions)) {
             return '';
         }
@@ -137,16 +166,28 @@ abstract class FFC_Abstract_Repository {
     
     /**
      * Cache methods
+     *
+     * @param string $key
+     * @return mixed
      */
-    protected function get_cache($key) {
+    protected function get_cache( string $key ) {
         return wp_cache_get($key, $this->cache_group);
     }
     
-    protected function set_cache($key, $value) {
-        wp_cache_set($key, $value, $this->cache_group, $this->cache_expiration);
+    /**
+     * @param string $key
+     * @param mixed $value
+     * @return bool
+     */
+    protected function set_cache( string $key, $value ): bool {
+        return wp_cache_set($key, $value, $this->cache_group, $this->cache_expiration);
     }
     
-    protected function clear_cache($key = null) {
+    /**
+     * @param string|null $key
+     * @return void
+     */
+    protected function clear_cache( ?string $key = null ): void {
         if ($key) {
             wp_cache_delete($key, $this->cache_group);
         } else {
