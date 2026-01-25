@@ -476,21 +476,25 @@ class FFC_Form_Processor {
         if ( $is_reprint ) {
             // Reprint - use existing submission ID (convert to int from wpdb string)
             $submission_id = (int) $reprint_result['id'];
+            $real_submission_date = $reprint_result['date'];
         } else {
             // New submission - save to database
-            $submission_id = $this->submission_handler->process_submission( 
-                $form_id, 
-                $form_post->post_title, 
-                $submission_data, 
-                $user_email, 
-                $fields_config, 
-                $form_config 
+            $submission_id = $this->submission_handler->process_submission(
+                $form_id,
+                $form_post->post_title,
+                $submission_data,
+                $user_email,
+                $fields_config,
+                $form_config
             );
-            
+
             if ( is_wp_error( $submission_id ) ) {
                 wp_send_json_error( array( 'message' => $submission_id->get_error_message() ) );
             }
-            
+
+            // Get the submission date from the newly created submission
+            $real_submission_date = current_time( 'mysql' );
+
             // Remove used ticket if applicable
             if ( $restriction_result['is_ticket'] && ! empty( $val_ticket ) ) {
                 $this->consume_ticket( $form_id, $val_ticket );
