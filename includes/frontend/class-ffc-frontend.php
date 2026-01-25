@@ -1,15 +1,23 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * FFC_Frontend
+ *
+ * @version 3.3.0 - Added strict types and type hints
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
 class FFC_Frontend {
-    
+
     private $shortcodes;
     private $form_processor;
     private $verification_handler;
 
-    public function __construct( $submission_handler, $email_handler ) {
+    public function __construct( FFC_Submission_Handler $submission_handler, FFC_Email_Handler $email_handler ) {
         // Load classes only if not already loaded
         if (!class_exists('FFC_Verification_Handler')) {
             require_once FFC_PLUGIN_DIR . 'includes/frontend/class-ffc-verification-handler.php';
@@ -32,7 +40,7 @@ class FFC_Frontend {
         $this->register_hooks();
     }
 
-    private function register_hooks() {
+    private function register_hooks(): void {
         add_action( 'wp_enqueue_scripts', array( $this, 'frontend_assets' ) );
         
         add_shortcode( 'ffc_form', array( $this->shortcodes, 'render_form' ) );
@@ -48,7 +56,7 @@ class FFC_Frontend {
         add_action( 'wp_ajax_nopriv_ffc_verify_magic_token', array( $this->verification_handler, 'handle_magic_verification_ajax' ) );
     }
 
-    public function frontend_assets() {
+    public function frontend_assets(): void {
         global $post;
         
         if ( ! is_a( $post, 'WP_Post' ) ) {
@@ -137,7 +145,7 @@ class FFC_Frontend {
      * Localize geofence configuration for frontend
      * @since 3.0.0
      */
-    private function localize_geofence_config() {
+    private function localize_geofence_config(): void {
         global $post;
 
         if (!is_a($post, 'WP_Post')) {

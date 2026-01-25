@@ -1,11 +1,14 @@
 <?php
+declare(strict_types=1);
+
 /**
  * FFC_Shortcodes
  * Handles shortcode rendering for forms and verification pages.
- * 
+ *
  * v2.8.0: Added magic link detection and certificate preview
  * v2.9.0: Added hash-based token support (#token=)
  * v2.9.2: OPTIMIZED to use FFC_Utils functions
+ * v3.3.0: Added strict types and type hints
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,19 +16,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class FFC_Shortcodes {
-    
+
     private $form_processor;
     private $verification_handler;
     private $submission_handler;
 
     /**
      * Constructor
-     * 
+     *
      * @param FFC_Form_Processor $form_processor
      * @param FFC_Verification_Handler $verification_handler
-     * @param FFC_Submission_Handler $submission_handler Added in v2.8.0
+     * @param FFC_Submission_Handler|null $submission_handler Added in v2.8.0
      */
-    public function __construct( $form_processor, $verification_handler, $submission_handler = null ) {
+    public function __construct( FFC_Form_Processor $form_processor, FFC_Verification_Handler $verification_handler, ?FFC_Submission_Handler $submission_handler = null ) {
         $this->form_processor = $form_processor;
         $this->verification_handler = $verification_handler;
         $this->submission_handler = $submission_handler;
@@ -34,7 +37,7 @@ class FFC_Shortcodes {
     /**
      * Generate new captcha data (math question + hash)
      */
-    public function get_new_captcha_data() {
+    public function get_new_captcha_data(): array {
         $n1 = rand( 1, 9 );
         $n2 = rand( 1, 9 );
         return array(
@@ -46,7 +49,7 @@ class FFC_Shortcodes {
     /**
      * Generate HTML for security fields (honeypot + captcha)
      */
-    public function generate_security_fields() {
+    public function generate_security_fields(): string {
         $captcha = $this->get_new_captcha_data();
         ob_start();
         ?>
@@ -70,12 +73,12 @@ class FFC_Shortcodes {
 
     /**
      * Render certificate preview for magic link access
-     * 
+     *
      * @since 2.8.0 Magic Links feature
      * @param string $token Magic token
      * @return string HTML output
      */
-    private function render_magic_link_preview( $token ) {
+    private function render_magic_link_preview( string $token ): string {
         // ✅ OPTIMIZED v2.9.2: Log magic link access
         FFC_Utils::debug_log( 'Magic link shortcode rendered', array(
             'token' => substr( $token, 0, 8 ) . '...',
@@ -98,11 +101,11 @@ class FFC_Shortcodes {
     /**
      * Shortcode: [ffc_verification]
      * Displays certificate verification form (or magic link preview)
-     * 
+     *
      * v2.8.0: Detects ?token= parameter and renders preview instead of form
      * v2.9.0: Also supports #token= (hash format) via JavaScript detection
      */
-    public function render_verification_page( $atts ) {
+    public function render_verification_page( array $atts ): string {
         // Check for magic token in URL query string (?token=)
         $magic_token = isset( $_GET['token'] ) ? sanitize_text_field( $_GET['token'] ) : '';
         
@@ -129,7 +132,7 @@ class FFC_Shortcodes {
      * Shortcode: [ffc_form id="123"]
      * Displays certificate issuance form
      */
-    public function render_form( $atts ) {
+    public function render_form( array $atts ): string {
         $atts = shortcode_atts( array( 'id' => 0 ), $atts, 'ffc_form' );
         $form_id = absint( $atts['id'] );
         
@@ -268,7 +271,7 @@ class FFC_Shortcodes {
     /**
      * Render individual form field
      */
-    private function render_field( $field ) {
+    private function render_field( array $field ): string {
         $type = isset($field['type']) ? $field['type'] : 'text';
         $name = isset($field['name']) ? $field['name'] : '';
         $label = isset($field['label']) ? $field['label'] : '';

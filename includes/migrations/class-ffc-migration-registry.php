@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * FFC_Migration_Registry
  *
@@ -6,7 +8,7 @@
  * Separates configuration from execution logic.
  *
  * @since 3.1.0 (Extracted from FFC_Migration_Manager v3.1.0 refactor)
- * @version 1.0.0
+ * @version 3.3.0 - Added strict types and type hints
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -42,7 +44,7 @@ class FFC_Migration_Registry {
      *
      * @return void
      */
-    private function define_migratable_fields() {
+    private function define_migratable_fields(): void {
         $this->field_definitions = array(
             'email' => array(
                 'json_keys'         => array( 'email', 'user_email', 'e-mail', 'ffc_email' ),
@@ -76,7 +78,7 @@ class FFC_Migration_Registry {
      *
      * @return void
      */
-    private function register_migrations() {
+    private function register_migrations(): void {
         $this->migrations = array();
 
         // Generate migrations automatically for each field
@@ -155,7 +157,7 @@ class FFC_Migration_Registry {
      *
      * @return array
      */
-    public function get_all_migrations() {
+    public function get_all_migrations(): array {
         return $this->migrations;
     }
 
@@ -165,7 +167,7 @@ class FFC_Migration_Registry {
      * @param string $migration_key Migration identifier
      * @return array|null Migration definition or null if not found
      */
-    public function get_migration( $migration_key ) {
+    public function get_migration( string $migration_key ) {
         return isset( $this->migrations[ $migration_key ] ) ? $this->migrations[ $migration_key ] : null;
     }
 
@@ -175,7 +177,7 @@ class FFC_Migration_Registry {
      * @param string $field_key Field identifier
      * @return array|null Field definition or null if not found
      */
-    public function get_field_definition( $field_key ) {
+    public function get_field_definition( string $field_key ) {
         return isset( $this->field_definitions[ $field_key ] ) ? $this->field_definitions[ $field_key ] : null;
     }
 
@@ -184,7 +186,7 @@ class FFC_Migration_Registry {
      *
      * @return array
      */
-    public function get_all_field_definitions() {
+    public function get_all_field_definitions(): array {
         return $this->field_definitions;
     }
 
@@ -194,7 +196,7 @@ class FFC_Migration_Registry {
      * @param string $migration_key Migration identifier
      * @return bool
      */
-    public function exists( $migration_key ) {
+    public function exists( string $migration_key ): bool {
         return isset( $this->migrations[ $migration_key ] );
     }
 
@@ -205,7 +207,7 @@ class FFC_Migration_Registry {
      * @param string $migration_key Migration identifier
      * @return bool
      */
-    public function is_available( $migration_key ) {
+    public function is_available( string $migration_key ): bool {
         if ( ! $this->exists( $migration_key ) ) {
             return false;
         }

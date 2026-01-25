@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * FFC_Geofence
  *
@@ -6,6 +8,7 @@
  * Handles date/time and geolocation restrictions for forms
  *
  * @package FFC
+ * @version 3.3.0 - Added strict types and type hints
  * @since 3.0.0
  */
 
@@ -20,7 +23,7 @@ class FFC_Geofence {
      * @param array $options Validation options
      * @return array ['allowed' => bool, 'reason' => string, 'message' => string]
      */
-    public static function can_access_form($form_id, $options = array()) {
+    public static function can_access_form(int $form_id, array $options = array()): array {
         $defaults = array(
             'check_datetime' => true,
             'check_geo' => false, // GPS validation is frontend-only by default
@@ -86,7 +89,7 @@ class FFC_Geofence {
      * @param array $config Form geofence configuration
      * @return array ['valid' => bool, 'message' => string, 'details' => array]
      */
-    public static function validate_datetime($config) {
+    public static function validate_datetime(array $config): array {
         $now = current_time('timestamp');
         $current_date = date('Y-m-d', $now);
         $current_time = date('H:i', $now);
@@ -193,7 +196,7 @@ class FFC_Geofence {
      * @param array|null $user_location Manual location override
      * @return array ['valid' => bool, 'message' => string, 'details' => array]
      */
-    public static function validate_geolocation($config, $user_location = null) {
+    public static function validate_geolocation(array $config, ?array $user_location = null): array {
         // Parse areas
         $areas = self::parse_areas($config['geo_areas'] ?? '');
 
@@ -263,7 +266,7 @@ class FFC_Geofence {
      * @param WP_Error $error Error from IP API
      * @return array Validation result
      */
-    private static function handle_ip_fallback($config, $error) {
+    private static function handle_ip_fallback(array $config, $error): array {
         $global_settings = get_option('ffc_geolocation_settings', array());
         $fallback = $global_settings['api_fallback'] ?? 'gps_only';
 
@@ -307,7 +310,7 @@ class FFC_Geofence {
      * @param int $form_id Form ID
      * @return array|null Configuration array or null if none
      */
-    public static function get_form_config($form_id) {
+    public static function get_form_config(int $form_id) {
         $config = get_post_meta($form_id, '_ffc_geofence_config', true);
 
         if (empty($config) || !is_array($config)) {
@@ -332,7 +335,7 @@ class FFC_Geofence {
      * @param string $areas_text Raw textarea content
      * @return array Array of areas with 'lat', 'lng', 'radius'
      */
-    public static function parse_areas($areas_text) {
+    public static function parse_areas(string $areas_text): array {
         if (empty($areas_text)) {
             return array();
         }
@@ -376,7 +379,7 @@ class FFC_Geofence {
      *
      * @return bool True if current user is admin and bypass is enabled
      */
-    public static function should_bypass_datetime() {
+    public static function should_bypass_datetime(): bool {
         if (!is_user_logged_in() || !current_user_can('manage_options')) {
             return false;
         }
@@ -390,7 +393,7 @@ class FFC_Geofence {
      *
      * @return bool True if current user is admin and bypass is enabled
      */
-    public static function should_bypass_geo() {
+    public static function should_bypass_geo(): bool {
         if (!is_user_logged_in() || !current_user_can('manage_options')) {
             return false;
         }
@@ -405,7 +408,7 @@ class FFC_Geofence {
      * @param int $form_id Form ID
      * @return array|null Configuration for frontend or null if no restrictions
      */
-    public static function get_frontend_config($form_id) {
+    public static function get_frontend_config(int $form_id) {
         $config = self::get_form_config($form_id);
 
         if (empty($config)) {
@@ -487,7 +490,7 @@ class FFC_Geofence {
      * @param string $reason Denial reason
      * @param array $details Additional details
      */
-    private static function log_access_denied($form_id, $reason, $details = array()) {
+    private static function log_access_denied(int $form_id, string $reason, array $details = array()): void {
         if (!class_exists('FFC_Activity_Log')) {
             return;
         }

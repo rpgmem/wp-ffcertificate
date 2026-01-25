@@ -228,13 +228,17 @@ class FFC_Settings {
             if ($msg === 'cache_warmed') {
                 $count = isset($_GET['count']) ? intval($_GET['count']) : 0;
                 echo '<div class="notice notice-success is-dismissible">';
-                echo '<p>✅ Cache aquecido! ' . $count . ' formulário(s) pré-carregado(s).</p>';
+                echo '<p>' . sprintf(
+                    /* translators: %d: number of forms pre-loaded */
+                    __( '✅ Cache warmed! %d form(s) pre-loaded.', 'ffc' ),
+                    $count
+                ) . '</p>';
                 echo '</div>';
             }
-            
+
             if ($msg === 'cache_cleared') {
                 echo '<div class="notice notice-success is-dismissible">';
-                echo '<p>✅ Cache limpo com sucesso!</p>';
+                echo '<p>' . __( '✅ Cache cleared successfully!', 'ffc' ) . '</p>';
                 echo '</div>';
             }
         }

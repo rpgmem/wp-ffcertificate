@@ -5,7 +5,10 @@
  *
  * @package FFC
  * @since 3.1.0
+ * @version 3.3.0 - Added strict types and type hints for better code safety
  */
+
+declare(strict_types=1);
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
@@ -32,7 +35,7 @@ class FFC_Debug {
      * @param string $area Debug area constant
      * @return bool True if debug is enabled for this area
      */
-    public static function is_enabled( $area ) {
+    public static function is_enabled( string $area ): bool {
         $settings = get_option( 'ffc_settings', array() );
         return isset( $settings[ $area ] ) && $settings[ $area ] == 1;
     }
@@ -43,8 +46,9 @@ class FFC_Debug {
      * @param string $area Debug area constant
      * @param string $message Message to log
      * @param mixed $data Optional data to include (will be converted to string)
+     * @return void
      */
-    public static function log( $area, $message, $data = null ) {
+    public static function log( string $area, string $message, $data = null ): void {
         if ( ! self::is_enabled( $area ) ) {
             return;
         }
@@ -67,8 +71,9 @@ class FFC_Debug {
      *
      * @param string $message Message to log
      * @param mixed $data Optional data to include
+     * @return void
      */
-    public static function log_pdf( $message, $data = null ) {
+    public static function log_pdf( string $message, $data = null ): void {
         self::log( self::AREA_PDF_GENERATOR, $message, $data );
     }
 
@@ -77,8 +82,9 @@ class FFC_Debug {
      *
      * @param string $message Message to log
      * @param mixed $data Optional data to include
+     * @return void
      */
-    public static function log_email( $message, $data = null ) {
+    public static function log_email( string $message, $data = null ): void {
         self::log( self::AREA_EMAIL_HANDLER, $message, $data );
     }
 
@@ -87,8 +93,9 @@ class FFC_Debug {
      *
      * @param string $message Message to log
      * @param mixed $data Optional data to include
+     * @return void
      */
-    public static function log_form( $message, $data = null ) {
+    public static function log_form( string $message, $data = null ): void {
         self::log( self::AREA_FORM_PROCESSOR, $message, $data );
     }
 
@@ -97,8 +104,9 @@ class FFC_Debug {
      *
      * @param string $message Message to log
      * @param mixed $data Optional data to include (NEVER log actual encrypted data)
+     * @return void
      */
-    public static function log_encryption( $message, $data = null ) {
+    public static function log_encryption( string $message, $data = null ): void {
         self::log( self::AREA_ENCRYPTION, $message, $data );
     }
 
@@ -107,8 +115,9 @@ class FFC_Debug {
      *
      * @param string $message Message to log
      * @param mixed $data Optional data to include
+     * @return void
      */
-    public static function log_geofence( $message, $data = null ) {
+    public static function log_geofence( string $message, $data = null ): void {
         self::log( self::AREA_GEOFENCE, $message, $data );
     }
 
@@ -117,8 +126,9 @@ class FFC_Debug {
      *
      * @param string $message Message to log
      * @param mixed $data Optional data to include
+     * @return void
      */
-    public static function log_user_manager( $message, $data = null ) {
+    public static function log_user_manager( string $message, $data = null ): void {
         self::log( self::AREA_USER_MANAGER, $message, $data );
     }
 
@@ -127,8 +137,9 @@ class FFC_Debug {
      *
      * @param string $message Message to log
      * @param mixed $data Optional data to include
+     * @return void
      */
-    public static function log_rest_api( $message, $data = null ) {
+    public static function log_rest_api( string $message, $data = null ): void {
         self::log( self::AREA_REST_API, $message, $data );
     }
 
@@ -137,8 +148,9 @@ class FFC_Debug {
      *
      * @param string $message Message to log
      * @param mixed $data Optional data to include
+     * @return void
      */
-    public static function log_migrations( $message, $data = null ) {
+    public static function log_migrations( string $message, $data = null ): void {
         self::log( self::AREA_MIGRATIONS, $message, $data );
     }
 
@@ -147,8 +159,9 @@ class FFC_Debug {
      *
      * @param string $message Message to log
      * @param mixed $data Optional data to include
+     * @return void
      */
-    public static function log_activity_log( $message, $data = null ) {
+    public static function log_activity_log( string $message, $data = null ): void {
         self::log( self::AREA_ACTIVITY_LOG, $message, $data );
     }
 }

@@ -68,7 +68,7 @@ class FFC_Admin_User_Columns {
         $user_access_settings = get_option('ffc_user_access_settings', array());
         $dashboard_url = isset($user_access_settings['redirect_url']) && !empty($user_access_settings['redirect_url'])
             ? $user_access_settings['redirect_url']
-            : home_url('/dashboard'); // Fallback se não configurado
+            : home_url('/dashboard'); // Fallback if not configured
 
         // Create view-as link with nonce
         $view_as_url = add_query_arg(array(

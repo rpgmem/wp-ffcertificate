@@ -6,8 +6,11 @@
  * Handles cleaning and validating field values during migration.
  *
  * @since 3.1.0 (Extracted from FFC_Migration_Manager v3.1.0 refactor)
+ * @version 3.3.0 - Added strict types and type hints for better code safety
  * @version 1.0.0
  */
+
+declare(strict_types=1);
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
@@ -22,7 +25,7 @@ class FFC_Data_Sanitizer {
      * @param array $field_config Field configuration with sanitize_callback
      * @return mixed Sanitized value
      */
-    public static function sanitize_field_value( $value, $field_config ) {
+    public static function sanitize_field_value( $value, array $field_config ) {
         if ( empty( $value ) ) {
             return '';
         }
@@ -46,7 +49,7 @@ class FFC_Data_Sanitizer {
      * @param string|array $data JSON data or array
      * @return array Cleaned data array
      */
-    public static function clean_json_data( $data ) {
+    public static function clean_json_data( $data ): array {
         if ( is_string( $data ) ) {
             $data = json_decode( $data, true );
         }
@@ -70,7 +73,7 @@ class FFC_Data_Sanitizer {
      * @param array $possible_keys Array of possible field names
      * @return mixed Field value or empty string if not found
      */
-    public static function extract_field_from_json( $data, $possible_keys ) {
+    public static function extract_field_from_json( array $data, array $possible_keys ) {
         if ( ! is_array( $data ) || ! is_array( $possible_keys ) ) {
             return '';
         }
@@ -90,7 +93,7 @@ class FFC_Data_Sanitizer {
      * @param string $identifier CPF or RF number
      * @return bool True if valid format
      */
-    public static function is_valid_identifier( $identifier ) {
+    public static function is_valid_identifier( string $identifier ): bool {
         if ( empty( $identifier ) ) {
             return false;
         }
@@ -108,7 +111,7 @@ class FFC_Data_Sanitizer {
      * @param string $email Email address
      * @return bool True if valid email
      */
-    public static function is_valid_email( $email ) {
+    public static function is_valid_email( string $email ): bool {
         return is_email( $email );
     }
 
@@ -119,7 +122,7 @@ class FFC_Data_Sanitizer {
      * @param string $auth_code Authentication code
      * @return string Normalized code
      */
-    public static function normalize_auth_code( $auth_code ) {
+    public static function normalize_auth_code( string $auth_code ): string {
         if ( empty( $auth_code ) ) {
             return '';
         }

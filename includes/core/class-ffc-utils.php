@@ -3,10 +3,13 @@
  * FFC_Utils
  * Utility class shared between Frontend and Admin.
  *
+ * v3.3.0: Added strict types and type hints for better code safety
  * v3.2.0: Added mask_email() for privacy masking
  * v2.9.1: Added CPF validation, document formatting, and helper functions
  * v2.9.11: Added validate_security_fields() and recursive_sanitize()
  */
+
+declare(strict_types=1);
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
@@ -16,26 +19,26 @@ class FFC_Utils {
 
     /**
      * Get submissions table name with current prefix
-     * 
+     *
      * Centralizes table name generation for consistency across all classes.
      * Works correctly with WordPress Multisite (different prefixes per site).
-     * 
+     *
      * @since 2.9.16
      * @return string Full table name with WordPress prefix
      */
-    public static function get_submissions_table() {
+    public static function get_submissions_table(): string {
     global $wpdb;
-    // Retorna o nome real da tabela, SEM chamar a própria função de novo
-    return $wpdb->prefix . 'ffc_submissions'; 
+    // Returns the real table name, WITHOUT calling this function again
+    return $wpdb->prefix . 'ffc_submissions';
     }
     
     /**
      * Returns the list of allowed HTML tags and attributes.
      * Centralized here so Frontend, Email, and PDF Generator use the same validation rules.
-     * 
+     *
      * @return array Allowed HTML tags with their attributes
      */
-    public static function get_allowed_html_tags() {
+    public static function get_allowed_html_tags(): array {
         $allowed = array(
             'b'      => array(),
             'strong' => array(),
@@ -115,13 +118,13 @@ class FFC_Utils {
     
     /**
      * Validate CPF (Brazilian tax ID)
-     * 
+     *
      * Uses the official CPF validation algorithm
-     * 
+     *
      * @param string $cpf CPF to validate (with or without formatting)
      * @return bool True if valid, false otherwise
      */
-    public static function validate_cpf( $cpf ) {
+    public static function validate_cpf( string $cpf ): bool {
         // Remove non-numeric characters
         $cpf = preg_replace( '/\D/', '', $cpf );
         
@@ -151,11 +154,11 @@ class FFC_Utils {
     
     /**
      * Format CPF with mask
-     * 
+     *
      * @param string $cpf CPF to format
      * @return string Formatted CPF (XXX.XXX.XXX-XX)
      */
-    public static function format_cpf( $cpf ) {
+    public static function format_cpf( string $cpf ): string {
         $cpf = preg_replace( '/\D/', '', $cpf );
         
         if ( strlen( $cpf ) === 11 ) {
@@ -167,22 +170,22 @@ class FFC_Utils {
     
     /**
      * Validate RF (7-digit registration)
-     * 
+     *
      * @param string $rf RF to validate
      * @return bool True if valid, false otherwise
      */
-    public static function validate_rf( $rf ) {
+    public static function validate_rf( string $rf ): bool {
         $rf = preg_replace( '/\D/', '', $rf );
         return strlen( $rf ) === 7 && is_numeric( $rf );
     }
     
     /**
      * Format RF with mask
-     * 
+     *
      * @param string $rf RF to format
      * @return string Formatted RF (XXX.XXX-X)
      */
-    public static function format_rf( $rf ) {
+    public static function format_rf( string $rf ): string {
         $rf = preg_replace( '/\D/', '', $rf );
         
         if ( strlen( $rf ) === 7 ) {
@@ -194,20 +197,20 @@ class FFC_Utils {
     
     /**
      * Mask CPF/RF for privacy
-     * 
+     *
      * Masks document while keeping first and last digits visible.
      * Useful for displaying in admin lists, emails, or public pages
      * where privacy is required but some identification is needed.
-     * 
+     *
      * Examples:
      * - CPF (11 digits): 12345678909 → 123.***.***-09
      * - RF (7 digits): 1234567 → 123.***-7
-     * 
+     *
      * @since 2.9.17
      * @param string $value CPF or RF to mask
      * @return string Masked document or original if invalid length
      */
-    public static function mask_cpf( $value ) {
+    public static function mask_cpf( string $value ): string {
         if ( empty( $value ) ) {
             return '';
         }
@@ -238,7 +241,7 @@ class FFC_Utils {
      * @param string $email Email address to mask
      * @return string Masked email or original if invalid
      */
-    public static function mask_email( $email ) {
+    public static function mask_email( string $email ): string {
         if ( empty( $email ) || ! is_email( $email ) ) {
             return $email;
         }
@@ -263,7 +266,7 @@ class FFC_Utils {
      * @param string $code Auth code to format
      * @return string Formatted code (XXXX-XXXX-XXXX)
      */
-    public static function format_auth_code( $code ) {
+    public static function format_auth_code( string $code ): string {
         $code = strtoupper( preg_replace( '/[^A-Z0-9]/i', '', $code ) );
         
         if ( strlen( $code ) === 12 ) {
@@ -275,14 +278,14 @@ class FFC_Utils {
     
     /**
      * Format any document based on type
-     * 
+     *
      * Auto-detects document type based on length
-     * 
+     *
      * @param string $value Document value
      * @param string $type Document type (cpf, rf, auth_code, or 'auto')
      * @return string Formatted document
      */
-    public static function format_document( $value, $type = 'auto' ) {
+    public static function format_document( string $value, string $type = 'auto' ): string {
         $clean = preg_replace( '/\D/', '', $value );
         $len = strlen( $clean );
         
@@ -312,12 +315,12 @@ class FFC_Utils {
     
     /**
      * Get user IP address with proxy support
-     * 
+     *
      * Checks multiple headers to get real IP even behind proxies/CDNs
-     * 
+     *
      * @return string IP address
      */
-    public static function get_user_ip() {
+    public static function get_user_ip(): string {
         $ip_keys = array(
             'HTTP_CLIENT_IP',
             'HTTP_X_FORWARDED_FOR',
@@ -346,10 +349,10 @@ class FFC_Utils {
     
     /**
      * Check if running in local development environment
-     * 
+     *
      * @return bool True if local, false otherwise
      */
-    public static function is_local_environment() {
+    public static function is_local_environment(): bool {
         $server_name = isset( $_SERVER['SERVER_NAME'] ) ? $_SERVER['SERVER_NAME'] : '';
         
         // Common localhost addresses
@@ -371,11 +374,11 @@ class FFC_Utils {
     
     /**
      * Sanitize filename for safe download
-     * 
+     *
      * @param string $filename Original filename
      * @return string Sanitized filename
      */
-    public static function sanitize_filename( $filename ) {
+    public static function sanitize_filename( string $filename ): string {
         // Remove extension temporarily
         $extension = pathinfo( $filename, PATHINFO_EXTENSION );
         $name = pathinfo( $filename, PATHINFO_FILENAME );
@@ -402,12 +405,12 @@ class FFC_Utils {
     
     /**
      * Convert bytes to human-readable format
-     * 
+     *
      * @param int $bytes Number of bytes
      * @param int $precision Decimal precision
      * @return string Formatted size (e.g., "1.5 MB")
      */
-    public static function format_bytes( $bytes, $precision = 2 ) {
+    public static function format_bytes( int $bytes, int $precision = 2 ): string {
         $units = array( 'B', 'KB', 'MB', 'GB', 'TB' );
         
         $bytes = max( $bytes, 0 );
@@ -421,12 +424,12 @@ class FFC_Utils {
     
     /**
      * Generate random string
-     * 
+     *
      * @param int $length Length of random string
      * @param string $chars Characters to use (default: alphanumeric)
      * @return string Random string
      */
-    public static function generate_random_string( $length = 12, $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' ) {
+    public static function generate_random_string( int $length = 12, string $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' ): string {
         $string = '';
         $chars_length = strlen( $chars );
         
@@ -439,11 +442,11 @@ class FFC_Utils {
 
     /**
      * Generate authentication code in format XXXX-XXXX-XXXX
-     * 
+     *
      * @since 3.0.0
      * @return string Auth code (e.g., "A1B2-C3D4-E5F6")
      */
-    public static function generate_auth_code() {
+    public static function generate_auth_code(): string {
         return strtoupper(
             self::generate_random_string(4) . '-' . 
             self::generate_random_string(4) . '-' . 
@@ -454,12 +457,12 @@ class FFC_Utils {
     
     /**
      * Check if email is valid and not disposable
-     * 
+     *
      * @param string $email Email to validate
      * @param bool $check_disposable Check against disposable email list
      * @return bool True if valid, false otherwise
      */
-    public static function validate_email( $email, $check_disposable = false ) {
+    public static function validate_email( string $email, bool $check_disposable = false ): bool {
         if ( ! is_email( $email ) ) {
             return false;
         }
@@ -478,10 +481,10 @@ class FFC_Utils {
     
     /**
      * Get list of common disposable email domains
-     * 
+     *
      * @return array List of domains
      */
-    private static function get_disposable_email_domains() {
+    private static function get_disposable_email_domains(): array {
         return array(
             'tempmail.com',
             '10minutemail.com',
@@ -500,13 +503,13 @@ class FFC_Utils {
     
     /**
      * Truncate string to specific length
-     * 
+     *
      * @param string $text Text to truncate
      * @param int $length Maximum length
      * @param string $suffix Suffix to add (default: '...')
      * @return string Truncated text
      */
-    public static function truncate( $text, $length = 100, $suffix = '...' ) {
+    public static function truncate( string $text, int $length = 100, string $suffix = '...' ): string {
         if ( strlen( $text ) <= $length ) {
             return $text;
         }
@@ -516,54 +519,55 @@ class FFC_Utils {
     
     /**
      * Check if current user can manage plugin
-     * 
+     *
      * @return bool True if can manage, false otherwise
      */
-    public static function current_user_can_manage() {
+    public static function current_user_can_manage(): bool {
         return current_user_can( 'manage_options' );
     }
     
     /**
      * Clean authentication code (remove special chars, uppercase)
-     * 
+     *
      * Used throughout the plugin for consistent auth code cleaning
-     * 
+     *
      * @param string $code Auth code to clean
      * @return string Cleaned code (uppercase alphanumeric only)
      */
-    public static function clean_auth_code( $code ) {
+    public static function clean_auth_code( string $code ): string {
         return strtoupper( preg_replace( '/[^a-zA-Z0-9]/', '', $code ) );
     }
     
     /**
      * Clean identifier (CPF, RF, ticket) - uppercase alphanumeric only
-     * 
+     *
      * Used for consistent cleaning of all identifier types
-     * 
+     *
      * @param string $value Identifier to clean
      * @return string Cleaned identifier (uppercase alphanumeric only)
      */
-    public static function clean_identifier( $value ) {
+    public static function clean_identifier( string $value ): string {
         return strtoupper( preg_replace( '/[^a-zA-Z0-9]/', '', $value ) );
     }
     
     /**
      * Validate IP address
-     * 
+     *
      * @param string $ip IP to validate
      * @return bool True if valid, false otherwise
      */
-    public static function is_valid_ip( $ip ) {
+    public static function is_valid_ip( string $ip ): bool {
         return filter_var( $ip, FILTER_VALIDATE_IP ) !== false;
     }
     
     /**
      * Log debug message (only if WP_DEBUG is enabled)
-     * 
+     *
      * @param string $message Message to log
      * @param mixed $data Optional data to log
+     * @return void
      */
-    public static function debug_log( $message, $data = null ) {
+    public static function debug_log( string $message, $data = null ): void {
         if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
             return;
         }
@@ -579,10 +583,10 @@ class FFC_Utils {
     
     /**
      * Generate simple math captcha
-     * 
+     *
      * @return array Array with 'label' and 'hash'
      */
-    public static function generate_simple_captcha() {
+    public static function generate_simple_captcha(): array {
         $n1 = rand( 1, 9 );
         $n2 = rand( 1, 9 );
         $answer = $n1 + $n2;
@@ -596,12 +600,12 @@ class FFC_Utils {
     
     /**
      * Verify simple captcha answer
-     * 
+     *
      * @param string $answer User's answer
      * @param string $hash Expected hash
      * @return bool True if correct, false otherwise
      */
-    public static function verify_simple_captcha( $answer, $hash ) {
+    public static function verify_simple_captcha( string $answer, string $hash ): bool {
         if ( empty( $answer ) || empty( $hash ) ) {
             return false;
         }
@@ -612,14 +616,14 @@ class FFC_Utils {
 
     /**
      * Validate security fields (honeypot + captcha)
-     * 
+     *
      * Moved from class-ffc-form-processor.php for centralization
-     * 
+     *
      * @since 2.9.11 - Consolidated validation
      * @param array $data Form data containing security fields
-     * @return true|string True if valid, error message string if invalid
+     * @return bool|string True if valid, error message string if invalid
      */
-    public static function validate_security_fields( $data ) {
+    public static function validate_security_fields( array $data ) {
         // Check honeypot
         if ( ! empty( $data['ffc_honeypot_trap'] ) ) {
             return __( 'Security Error: Request blocked (Honeypot).', 'ffc' );
@@ -640,9 +644,9 @@ class FFC_Utils {
 
     /**
      * Recursively sanitize data (arrays or strings)
-     * 
+     *
      * Moved from class-ffc-form-processor.php for centralization
-     * 
+     *
      * @since 2.9.11 - Consolidated sanitization
      * @param mixed $data Data to sanitize (array or string)
      * @return mixed Sanitized data
@@ -660,7 +664,7 @@ class FFC_Utils {
 
     /**
      * Generate success HTML response for frontend form submission
-     * 
+     *
      * @since 2.9.16
      * @param array  $submission_data Submission data
      * @param int    $form_id Form ID
@@ -668,7 +672,7 @@ class FFC_Utils {
      * @param string $success_message Success message
      * @return string HTML content
      */
-    public static function generate_success_html( $submission_data, $form_id, $submission_date, $success_message = '' ) {
+    public static function generate_success_html( array $submission_data, int $form_id, string $submission_date, string $success_message = '' ): string {
         // Get form configuration
         $form_config = get_post_meta( $form_id, '_ffc_form_config', true );
         if ( ! is_array( $form_config ) ) {

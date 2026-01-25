@@ -32,7 +32,7 @@ class FFC_Tab_Rate_Limit extends FFC_Settings_Tab {
         if ($_POST && isset($_POST['ffc_save_rate_limit'])) {
             check_admin_referer('ffc_rate_limit_nonce');
             $this->save_settings();
-            echo '<div class="notice notice-success"><p>Configurações salvas!</p></div>';
+            echo '<div class="notice notice-success"><p>' . __( 'Settings saved!', 'ffc' ) . '</p></div>';
         }
         
         $settings = $this->get_settings();
