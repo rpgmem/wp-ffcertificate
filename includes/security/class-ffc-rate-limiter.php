@@ -1,12 +1,24 @@
 <?php
 /**
- * FFC_Rate_Limiter v2.10.0
- * Advanced rate limiting system
+ * FFC_Rate_Limiter v3.2.0
+ * Advanced rate limiting system with WordPress Object Cache API
+ *
+ * v3.2.0: Migrated from transients to WordPress Object Cache API
+ *         - Automatically uses Redis/Memcached if available (via LiteSpeed Cache, etc.)
+ *         - Falls back to transients if no object cache plugin is installed
+ *         - Significant performance improvement for high-traffic sites
  */
 
 if (!defined('ABSPATH')) exit;
 
 class FFC_Rate_Limiter {
+
+    /**
+     * Cache group for WordPress Object Cache API
+     *
+     * @since 3.2.0
+     */
+    const CACHE_GROUP = 'ffc_rate_limit';
     
     private static function get_settings() {
         $defaults = array(
@@ -58,18 +70,20 @@ class FFC_Rate_Limiter {
     public static function check_ip_limit($ip, $form_id = null) {
         $s = self::get_settings()['ip'];
         $hk = 'ffc_rate_ip_' . md5($ip . $form_id) . '_hour';
-        $hc = get_transient($hk) ?: 0;
+        // v3.2.0: Use Object Cache API (auto Redis/Memcached if available)
+        $hc = wp_cache_get($hk, self::CACHE_GROUP);
+        $hc = $hc !== false ? $hc : 0;
         if ($hc >= $s['max_per_hour']) return array('allowed' => false, 'reason' => 'ip_hour_limit', 'message' => self::format_message($s['message'], array('time' => '1 hora')), 'wait_seconds' => 3600);
-        
+
         $dc = self::get_count_from_db('ip', $ip, 'day', $form_id);
         if ($dc >= $s['max_per_day']) return array('allowed' => false, 'reason' => 'ip_day_limit', 'message' => self::format_message($s['message'], array('time' => '24 horas')), 'wait_seconds' => 86400);
-        
-        $last = get_transient('ffc_rate_ip_' . md5($ip . $form_id) . '_last');
+
+        $last = wp_cache_get('ffc_rate_ip_' . md5($ip . $form_id) . '_last', self::CACHE_GROUP);
         if ($last && (time() - $last) < $s['cooldown_seconds']) {
             $w = $s['cooldown_seconds'] - (time() - $last);
             return array('allowed' => false, 'reason' => 'ip_cooldown', 'message' => "Aguarde {$w} segundos.", 'wait_seconds' => $w);
         }
-        
+
         return array('allowed' => true);
     }
     
@@ -115,12 +129,14 @@ class FFC_Rate_Limiter {
     public static function check_global_limit() {
         $s = self::get_settings()['global'];
         $mk = 'ffc_rate_global_minute_' . floor(time() / 60);
-        $mc = get_transient($mk) ?: 0;
+        // v3.2.0: Use Object Cache API
+        $mc = wp_cache_get($mk, self::CACHE_GROUP);
+        $mc = $mc !== false ? $mc : 0;
         if ($mc >= $s['max_per_minute']) return array('allowed' => false, 'reason' => 'global_minute_limit', 'message' => $s['message'], 'wait_seconds' => 60);
-        
+
         $hc = self::get_count_from_db('global', 'system', 'hour', null);
         if ($hc >= $s['max_per_hour']) return array('allowed' => false, 'reason' => 'global_hour_limit', 'message' => $s['message'], 'wait_seconds' => 3600);
-        
+
         return array('allowed' => true);
     }
     
@@ -139,41 +155,42 @@ class FFC_Rate_Limiter {
         $max_per_day = 30;
         
         $hour_key = 'ffc_verify_ip_' . md5($ip) . '_hour_' . date('YmdH');
-        $hour_count = get_transient($hour_key);
-        
+        // v3.2.0: Use Object Cache API
+        $hour_count = wp_cache_get($hour_key, self::CACHE_GROUP);
+
         if ($hour_count === false) {
             $hour_count = 0;
         }
-        
+
         if ($hour_count >= $max_per_hour) {
             $wait_seconds = 3600 - (time() % 3600);
-            
+
             return array(
                 'allowed' => false,
                 'message' => sprintf(__('Too many verification attempts. Please wait %s.', 'ffc'), self::format_wait_time($wait_seconds)),
                 'wait_seconds' => $wait_seconds
             );
         }
-        
+
         $day_key = 'ffc_verify_ip_' . md5($ip) . '_day_' . date('Ymd');
-        $day_count = get_transient($day_key);
-        
+        $day_count = wp_cache_get($day_key, self::CACHE_GROUP);
+
         if ($day_count === false) {
             $day_count = 0;
         }
-        
+
         if ($day_count >= $max_per_day) {
             $wait_seconds = 86400 - (time() % 86400);
-            
+
             return array(
                 'allowed' => false,
                 'message' => __('Daily verification limit reached. Please try again tomorrow.', 'ffc'),
                 'wait_seconds' => $wait_seconds
             );
         }
-        
-        set_transient($hour_key, $hour_count + 1, 3600);
-        set_transient($day_key, $day_count + 1, 86400);
+
+        wp_cache_set($hour_key, $hour_count + 1, self::CACHE_GROUP, 3600);
+        wp_cache_set($day_key, $day_count + 1, self::CACHE_GROUP, 86400);
         
         if (!empty($settings['logging']['enabled'])) {
             self::log_attempt('ip', $ip, 'allowed', 'verification_attempt', null);
@@ -197,18 +214,25 @@ class FFC_Rate_Limiter {
     }
     public static function record_attempt($type, $identifier, $form_id = null) {
         $s = self::get_settings();
-        
+
         if ($type === 'ip') {
             $hk = 'ffc_rate_ip_' . md5($identifier . $form_id) . '_hour';
-            set_transient($hk, (get_transient($hk) ?: 0) + 1, 3600);
-            set_transient('ffc_rate_ip_' . md5($identifier . $form_id) . '_last', time(), $s['ip']['cooldown_seconds']);
+            // v3.2.0: Use Object Cache API for better performance
+            $current = wp_cache_get($hk, self::CACHE_GROUP);
+            $current = $current !== false ? $current : 0;
+            wp_cache_set($hk, $current + 1, self::CACHE_GROUP, 3600);
+
+            $last_key = 'ffc_rate_ip_' . md5($identifier . $form_id) . '_last';
+            wp_cache_set($last_key, time(), self::CACHE_GROUP, $s['ip']['cooldown_seconds']);
         }
-        
+
         if ($type === 'global') {
             $mk = 'ffc_rate_global_minute_' . floor(time() / 60);
-            set_transient($mk, (get_transient($mk) ?: 0) + 1, 60);
+            $current = wp_cache_get($mk, self::CACHE_GROUP);
+            $current = $current !== false ? $current : 0;
+            wp_cache_set($mk, $current + 1, self::CACHE_GROUP, 60);
         }
-        
+
         self::increment_counter($type, $identifier, 'day', $form_id);
         if (in_array($type, array('email', 'cpf'))) {
             self::increment_counter($type, $identifier, 'month', $form_id);
