@@ -1,8 +1,12 @@
 <?php
+declare(strict_types=1);
+
 /**
  * FFC_Submission_List v3.0.0
  * Uses Repository Pattern
  * Fixed: PDF button now uses token directly from item
+ *
+ * @version 3.3.0: Added strict types and type hints
  */
 
 if (!defined('ABSPATH')) exit;
@@ -16,7 +20,7 @@ class FFC_Submission_List extends WP_List_Table {
     private $submission_handler;
     private $repository;
     
-    public function __construct($handler) {
+    public function __construct( object $handler ) {
         parent::__construct([
             'singular' => 'submission',
             'plural' => 'submissions',
@@ -76,7 +80,7 @@ class FFC_Submission_List extends WP_List_Table {
         }
     }
     
-    private function render_actions($item) {
+    private function render_actions( array $item ): string {
         $base_url = admin_url('edit.php?post_type=ffc_form&page=ffc-submissions');
         $edit_url = add_query_arg(['action' => 'edit', 'submission_id' => $item['id']], $base_url);
         
@@ -106,7 +110,7 @@ class FFC_Submission_List extends WP_List_Table {
         return $actions;
     }
 
-    private function render_pdf_button($item) {
+    private function render_pdf_button( array $item ): string {
         // Use token directly from item (more efficient, avoids extra DB query)
         if (!empty($item['magic_token'])) {
             $magic_link = FFC_Magic_Link_Helper::generate_magic_link($item['magic_token']);
@@ -127,7 +131,7 @@ class FFC_Submission_List extends WP_List_Table {
         );
     }
 
-    private function format_data_preview($data_json) {
+    private function format_data_preview( ?string $data_json ): string {
         if ($data_json === null || $data_json === 'null' || $data_json === '') {
             return '<em class="ffc-empty-data">' . __('Only mandatory fields', 'ffc') . '</em>';
         }

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * FFC_Form_Editor_Metabox_Renderer
  *
@@ -6,7 +8,7 @@
  * Extracted from FFC_Form_Editor class to follow Single Responsibility Principle.
  *
  * @since 3.1.1 (Extracted from FFC_Form_Editor)
- * @version 1.0.0
+ * @version 3.3.0: Added strict types and type hints
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,7 +22,7 @@ class FFC_Form_Editor_Metabox_Renderer {
      *
      * @param WP_Post $post The post object
      */
-    public function render_shortcode_metabox( $post ) {
+    public function render_shortcode_metabox( object $post ): void {
         ?>
         <div class="ffc-shortcode-box">
             <p><strong><?php _e( 'Copy this Shortcode:', 'ffc' ); ?></strong></p>
@@ -45,7 +47,7 @@ class FFC_Form_Editor_Metabox_Renderer {
      *
      * @param WP_Post $post The post object
      */
-    public function render_box_layout( $post ) {
+    public function render_box_layout( object $post ): void {
         $config = get_post_meta( $post->ID, '_ffc_form_config', true );
         $layout = isset( $config['pdf_layout'] ) ? $config['pdf_layout'] : '';
         $bg_image = isset( $config['bg_image'] ) ? $config['bg_image'] : '';
@@ -107,7 +109,7 @@ class FFC_Form_Editor_Metabox_Renderer {
      *
      * @param WP_Post $post The post object
      */
-    public function render_box_builder( $post ) {
+    public function render_box_builder( object $post ): void {
         $fields = get_post_meta( $post->ID, '_ffc_form_fields', true );
 
         // Default fields for brand new forms
@@ -151,7 +153,7 @@ class FFC_Form_Editor_Metabox_Renderer {
      *
      * @param WP_Post $post The post object
      */
-    public function render_box_restriction( $post ) {
+    public function render_box_restriction( object $post ): void {
         $config = get_post_meta( $post->ID, '_ffc_form_config', true );
 
         // Get restrictions (new structure)
@@ -276,7 +278,7 @@ class FFC_Form_Editor_Metabox_Renderer {
      *
      * @param WP_Post $post The post object
      */
-    public function render_box_email( $post ) {
+    public function render_box_email( object $post ): void {
         $config = get_post_meta( $post->ID, '_ffc_form_config', true );
         $send_email = isset($config['send_user_email']) ? $config['send_user_email'] : '0';
         $subject    = isset($config['email_subject']) ? $config['email_subject'] : __( 'Your Certificate', 'ffc' );
@@ -318,7 +320,7 @@ class FFC_Form_Editor_Metabox_Renderer {
      * @since 3.0.0
      * @param WP_Post $post The post object
      */
-    public function render_box_geofence( $post ) {
+    public function render_box_geofence( object $post ): void {
         $config = get_post_meta( $post->ID, '_ffc_geofence_config', true );
         if ( !is_array($config) ) $config = array();
 
@@ -523,7 +525,7 @@ class FFC_Form_Editor_Metabox_Renderer {
      * @param int|string $index Field index
      * @param array $field Field data
      */
-    public function render_field_row( $index, $field ) {
+    public function render_field_row( $index, array $field ): void {
         $type  = isset( $field['type'] ) ? $field['type'] : 'text';
         $label = isset( $field['label'] ) ? $field['label'] : '';
         $name  = isset( $field['name'] ) ? $field['name'] : '';

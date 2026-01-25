@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * FFC_Settings_Save_Handler
  * Handles saving and validation of all settings types
@@ -13,7 +15,7 @@
  *
  * @package FFC
  * @since 3.1.1
- * @version 3.1.1
+ * @version 3.3.0: Added strict types and type hints
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -37,7 +39,7 @@ class FFC_Settings_Save_Handler {
      * Handle all settings submissions
      * Main entry point called by FFC_Settings
      */
-    public function handle_all_submissions() {
+    public function handle_all_submissions(): void {
         // Handle General/SMTP/QR Settings
         if ( isset( $_POST['ffc_settings_nonce'] ) && wp_verify_nonce( $_POST['ffc_settings_nonce'], 'ffc_settings_action' ) ) {
             $this->save_general_and_specific_settings();
@@ -59,7 +61,7 @@ class FFC_Settings_Save_Handler {
      *
      * @return void
      */
-    private function save_general_and_specific_settings() {
+    private function save_general_and_specific_settings(): void {
         $current = get_option( 'ffc_settings', array() );
         $new     = isset( $_POST['ffc_settings'] ) ? $_POST['ffc_settings'] : array();
 
@@ -82,7 +84,7 @@ class FFC_Settings_Save_Handler {
      * @param array $new New settings from POST
      * @return array Updated settings
      */
-    private function save_general_settings( $clean, $new ) {
+    private function save_general_settings( array $clean, array $new ): array {
         // Cleanup Days
         if ( isset( $new['cleanup_days'] ) ) {
             $clean['cleanup_days'] = absint( $new['cleanup_days'] );
@@ -133,7 +135,7 @@ class FFC_Settings_Save_Handler {
      * @param array $new New settings from POST
      * @return array Updated settings
      */
-    private function save_smtp_settings( $clean, $new ) {
+    private function save_smtp_settings( array $clean, array $new ): array {
         if ( isset( $new['smtp_mode'] ) ) {
             $clean['smtp_mode'] = sanitize_key( $new['smtp_mode'] );
         }
@@ -176,7 +178,7 @@ class FFC_Settings_Save_Handler {
      * @param array $new New settings from POST
      * @return array Updated settings
      */
-    private function save_qrcode_settings( $clean, $new ) {
+    private function save_qrcode_settings( array $clean, array $new ): array {
         // QR Cache (checkbox - only set if on QR tab)
         if ( isset( $_POST['_ffc_tab'] ) && $_POST['_ffc_tab'] === 'qr_code' ) {
             $clean['qr_cache_enabled'] = isset( $new['qr_cache_enabled'] ) ? 1 : 0;
@@ -204,7 +206,7 @@ class FFC_Settings_Save_Handler {
      * @param array $new New settings from POST
      * @return array Updated settings
      */
-    private function save_date_format_settings( $clean, $new ) {
+    private function save_date_format_settings( array $clean, array $new ): array {
         if ( isset( $new['date_format'] ) ) {
             $clean['date_format'] = sanitize_text_field( $new['date_format'] );
         }
@@ -221,7 +223,7 @@ class FFC_Settings_Save_Handler {
      *
      * @return void
      */
-    private function save_user_access_settings() {
+    private function save_user_access_settings(): void {
         $settings = array(
             'block_wp_admin' => isset( $_POST['block_wp_admin'] ),
             'blocked_roles' => isset( $_POST['blocked_roles'] ) && is_array( $_POST['blocked_roles'] )
@@ -251,7 +253,7 @@ class FFC_Settings_Save_Handler {
      *
      * @return void
      */
-    private function handle_danger_zone() {
+    private function handle_danger_zone(): void {
         $target = isset( $_POST['delete_target'] ) ? $_POST['delete_target'] : 'all';
         $reset_counter = isset( $_POST['reset_counter'] ) && $_POST['reset_counter'] == '1';
 

@@ -1,7 +1,11 @@
 <?php
+declare(strict_types=1);
+
 /**
  * FFC_Form_Editor
  * Handles the advanced UI for the Form Builder, including AJAX and layout management.
+ *
+ * @version 3.3.0: Added strict types and type hints
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -35,7 +39,7 @@ class FFC_Form_Editor {
     /**
      * Enqueue scripts and styles for form editor
      */
-    public function enqueue_scripts($hook) {
+    public function enqueue_scripts( string $hook ): void {
         // Only load on form edit page
         if ( ! in_array( $hook, array( 'post.php', 'post-new.php' ) ) ) {
             return;
@@ -68,7 +72,7 @@ class FFC_Form_Editor {
      *
      * ✅ v3.1.1: Delegates rendering to FFC_Form_Editor_Metabox_Renderer
      */
-    public function add_custom_metaboxes() {
+    public function add_custom_metaboxes(): void {
         // Remove any potential duplicates
         remove_meta_box( 'ffc_form_builder', 'ffc_form', 'normal' );
         remove_meta_box( 'ffc_form_config', 'ffc_form', 'normal' );
@@ -134,7 +138,7 @@ class FFC_Form_Editor {
     /**
      * AJAX: Generates a list of unique ticket codes
      */
-    public function ajax_generate_random_codes() {
+    public function ajax_generate_random_codes(): void {
         check_ajax_referer( 'ffc_admin_pdf_nonce', 'nonce' );
         
         if ( ! current_user_can( 'edit_posts' ) ) wp_send_json_error();
@@ -151,7 +155,7 @@ class FFC_Form_Editor {
     /**
      * AJAX: Loads a local HTML template from the plugin directory
      */
-    public function ajax_load_template() {
+    public function ajax_load_template(): void {
         check_ajax_referer( 'ffc_admin_pdf_nonce', 'nonce' );
         
         if ( ! current_user_can( 'edit_posts' ) ) wp_send_json_error();

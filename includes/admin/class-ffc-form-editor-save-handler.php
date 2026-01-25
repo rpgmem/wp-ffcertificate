@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * FFC_Form_Editor_Save_Handler
  *
@@ -6,7 +8,7 @@
  * Extracted from FFC_Form_Editor class to follow Single Responsibility Principle.
  *
  * @since 3.1.1 (Extracted from FFC_Form_Editor)
- * @version 1.0.0
+ * @version 3.3.0: Added strict types and type hints
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,7 +22,7 @@ class FFC_Form_Editor_Save_Handler {
      *
      * @param int $post_id The post ID
      */
-    public function save_form_data( $post_id ) {
+    public function save_form_data( int $post_id ): void {
         if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
         if ( ! isset( $_POST['ffc_form_nonce'] ) || ! wp_verify_nonce( $_POST['ffc_form_nonce'], 'ffc_save_form_data' ) ) return;
         if ( ! current_user_can( 'edit_post', $post_id ) ) return;
@@ -132,7 +134,7 @@ class FFC_Form_Editor_Save_Handler {
      * @param array $config Geofence configuration
      * @return array Array of validation errors (empty if valid)
      */
-    private function validate_geofence_config( $config ) {
+    private function validate_geofence_config( array $config ): array {
         $errors = array();
 
         // Check if GPS is enabled but areas are empty
@@ -167,7 +169,7 @@ class FFC_Form_Editor_Save_Handler {
      * @param string $type Type of area (GPS or IP) for error messages
      * @return array Array of validation errors
      */
-    private function validate_areas_format( $areas_text, $type ) {
+    private function validate_areas_format( string $areas_text, string $type ): array {
         $errors = array();
         $lines = array_filter( array_map( 'trim', explode( "\n", $areas_text ) ) );
         $line_number = 0;
@@ -236,7 +238,7 @@ class FFC_Form_Editor_Save_Handler {
     /**
      * Displays validation warnings after saving
      */
-    public function display_save_errors() {
+    public function display_save_errors(): void {
         // Display PDF layout errors
         $error_tags = get_transient( 'ffc_save_error_' . get_current_user_id() );
         if ( $error_tags ) {

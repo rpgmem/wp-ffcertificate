@@ -1,10 +1,12 @@
 <?php
+declare(strict_types=1);
+
 /**
  * FFC_Admin_Activity_Log_Page
  * Displays activity logs with filtering and pagination
  *
  * @since 3.1.1
- * @version 3.1.1
+ * @version 3.3.0: Added strict types and type hints
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,7 +23,7 @@ class FFC_Admin_Activity_Log_Page {
     /**
      * Register admin menu
      */
-    public function register_menu() {
+    public function register_menu(): void {
         add_submenu_page(
             'edit.php?post_type=ffc_form',
             __( 'Activity Log', 'ffc' ),
@@ -35,7 +37,7 @@ class FFC_Admin_Activity_Log_Page {
     /**
      * Render activity log page
      */
-    public function render_page() {
+    public function render_page(): void {
         // Check if Activity Log is enabled
         $settings = get_option( 'ffc_settings', array() );
         $is_enabled = isset( $settings['enable_activity_log'] ) && $settings['enable_activity_log'] == 1;
@@ -93,7 +95,7 @@ class FFC_Admin_Activity_Log_Page {
     /**
      * Render disabled notice
      */
-    private function render_disabled_notice() {
+    private function render_disabled_notice(): void {
         ?>
         <div class="wrap">
             <h1><?php esc_html_e( 'Activity Log', 'ffc' ); ?></h1>
@@ -115,7 +117,7 @@ class FFC_Admin_Activity_Log_Page {
     /**
      * Get unique actions from database
      */
-    private function get_unique_actions() {
+    private function get_unique_actions(): array {
         global $wpdb;
         $table_name = $wpdb->prefix . 'ffc_activity_log';
 
@@ -129,7 +131,7 @@ class FFC_Admin_Activity_Log_Page {
     /**
      * Get human-readable action name
      */
-    public static function get_action_label( $action ) {
+    public static function get_action_label( string $action ): string {
         $labels = array(
             'submission_created' => __( 'Submission Created', 'ffc' ),
             'submission_updated' => __( 'Submission Updated', 'ffc' ),
@@ -145,7 +147,7 @@ class FFC_Admin_Activity_Log_Page {
     /**
      * Get level badge HTML
      */
-    public static function get_level_badge( $level ) {
+    public static function get_level_badge( string $level ): string {
         $classes = array(
             'info' => 'ffc-badge-info',
             'warning' => 'ffc-badge-warning',

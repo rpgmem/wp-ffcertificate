@@ -1,8 +1,11 @@
 <?php
+declare(strict_types=1);
+
 /**
  * FFC_CSV_Exporter
  * Handles CSV export functionality with dynamic columns and filtering.
  * 
+ * v3.3.0: Added strict types and type hints
  * v3.0.3: REFACTORED - Uses Repository Pattern instead of direct SQL
  * v3.0.2: FIXED - Use magic_token column, conditional columns for edit info
  * v3.0.1: COMPLETE - All columns including token, consent, edit history, status, auth_code
@@ -32,7 +35,7 @@ class FFC_CSV_Exporter {
     /**
      * Get all unique dynamic field keys from submissions
      */
-    private function get_dynamic_columns( $rows ) {
+    private function get_dynamic_columns( array $rows ): array {
         $all_keys = array();
         
         foreach( $rows as $r ) { 
@@ -49,7 +52,7 @@ class FFC_CSV_Exporter {
      * Generate translatable headers for fixed columns
      * v3.0.2: Made edit columns conditional
      */
-    private function get_fixed_headers( $include_edit_columns = false ) {
+    private function get_fixed_headers( bool $include_edit_columns = false ): array {
         $headers = array(
             __( 'ID', 'ffc' ),
             __( 'Form', 'ffc' ),
@@ -76,7 +79,7 @@ class FFC_CSV_Exporter {
     /**
      * Generate translatable headers for dynamic columns
      */
-    private function get_dynamic_headers( $dynamic_keys ) {
+    private function get_dynamic_headers( array $dynamic_keys ): array {
         $dynamic_headers = array();
         
         foreach ( $dynamic_keys as $key ) {
@@ -95,7 +98,7 @@ class FFC_CSV_Exporter {
      * v3.0.1: Added all requested columns with conditional display
      * v3.0.0: FIXED - Added return statement and dynamic columns processing
      */
-    private function format_csv_row( $row, $dynamic_keys, $include_edit_columns = false ) {
+    private function format_csv_row( array $row, array $dynamic_keys, bool $include_edit_columns = false ): array {
         $form_title = get_the_title( $row['form_id'] );
         $form_display = $form_title ? $form_title : __( '(Deleted)', 'ffc' );
         
@@ -187,7 +190,7 @@ class FFC_CSV_Exporter {
      * 
      * v3.0.3: REFACTORED - Uses Repository instead of direct SQL
      */
-    public function export_csv( $form_id = null, $status = 'publish' ) {
+    public function export_csv( ?int $form_id = null, string $status = 'publish' ): void {
         FFC_Utils::debug_log( 'CSV export started', array(
             'form_id' => $form_id,
             'status' => $status
@@ -231,7 +234,7 @@ class FFC_CSV_Exporter {
     /**
      * Handle export request from admin
      */
-    public function handle_export_request() {
+    public function handle_export_request(): void {
         if ( ! isset( $_POST['ffc_export_csv_action'] ) || 
              ! wp_verify_nonce( $_POST['ffc_export_csv_action'], 'ffc_export_csv_nonce' ) ) {
             wp_die( __( 'Security check failed.', 'ffc' ) );
@@ -250,7 +253,7 @@ class FFC_CSV_Exporter {
     /**
      * Backward compatibility method
      */
-    public function export_to_csv( $form_id = null ) {
-        return $this->export_csv( $form_id, 'publish' );
+    public function export_to_csv( ?int $form_id = null ): void {
+        $this->export_csv( $form_id, 'publish' );
     }
 }
