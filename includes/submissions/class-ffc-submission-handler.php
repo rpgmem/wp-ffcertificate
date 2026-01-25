@@ -258,8 +258,8 @@ class FFC_Submission_Handler {
         if ($result !== false && class_exists('FFC_Activity_Log')) {
             FFC_Activity_Log::log_submission_updated($id, get_current_user_id());
         }
-        
-        return $result;
+
+        return (bool) $result;  // Convert int|false to bool
     }
     
     /**
