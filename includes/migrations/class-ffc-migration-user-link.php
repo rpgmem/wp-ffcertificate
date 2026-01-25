@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * FFC_Migration_User_Link
  *
@@ -12,7 +14,7 @@
  * 3. If no: Create new user + link
  * 4. Conflict handling: Log error + Skip (2 CPFs, same email)
  *
- * @version 3.2.0 - Added optional email notification via FFC_Email_Handler
+ * @version 3.3.0 - Added strict types and type hints
  * @since 3.1.0
  */
 
@@ -25,7 +27,7 @@ class FFC_Migration_User_Link {
      *
      * @return array Result with success status, processed count, and errors
      */
-    public static function run() {
+    public static function run(): array {
         global $wpdb;
         $table = FFC_Utils::get_submissions_table();
 
@@ -255,7 +257,7 @@ class FFC_Migration_User_Link {
      * @param array $submission Submission data row (includes data_encrypted)
      * @return void
      */
-    private static function set_user_display_name($user_id, $submission) {
+    private static function set_user_display_name(int $user_id, array $submission): void {
         // Try to decrypt and extract name from submission data
         if (empty($submission['data_encrypted'])) {
             return;
@@ -304,7 +306,7 @@ class FFC_Migration_User_Link {
      * @param string $table Table name
      * @return bool True if column added or already exists
      */
-    private static function add_user_id_column($table) {
+    private static function add_user_id_column(string $table): bool {
         global $wpdb;
 
         // Check if column already exists

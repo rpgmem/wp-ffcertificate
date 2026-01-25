@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * FFC_Migration_Status_Calculator
  *
@@ -11,7 +13,7 @@
  * reducing complexity from 223 lines of conditionals to ~50 lines of delegation.
  *
  * @since 3.1.0 (Migration Manager refactor - Phase 2)
- * @version 1.0.0
+ * @version 3.3.0 - Added strict types and type hints
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -40,7 +42,7 @@ class FFC_Migration_Status_Calculator {
      *
      * @param FFC_Migration_Registry $registry Migration registry instance
      */
-    public function __construct( $registry ) {
+    public function __construct( FFC_Migration_Registry $registry ) {
         global $wpdb;
         $this->registry = $registry;
         $this->table_name = FFC_Utils::get_submissions_table();
@@ -57,7 +59,7 @@ class FFC_Migration_Status_Calculator {
      *
      * @return void
      */
-    private function initialize_strategies() {
+    private function initialize_strategies(): void {
         // Field migration strategy (handles email, cpf_rf, auth_code)
         $field_strategy = new FFC_Field_Migration_Strategy( $this->registry );
 
@@ -96,7 +98,7 @@ class FFC_Migration_Status_Calculator {
      * @param string $migration_key Migration identifier
      * @return array|WP_Error Status array or error
      */
-    public function calculate( $migration_key ) {
+    public function calculate( string $migration_key ) {
         // Validate migration exists
         if ( ! $this->registry->exists( $migration_key ) ) {
             return new WP_Error( 'invalid_migration', __( 'Migration not found', 'ffc' ) );
@@ -127,7 +129,7 @@ class FFC_Migration_Status_Calculator {
      * @param string $migration_key Migration identifier
      * @return FFC_Migration_Strategy|WP_Error Strategy instance or error
      */
-    private function get_strategy_for_migration( $migration_key ) {
+    private function get_strategy_for_migration( string $migration_key ) {
         if ( ! isset( $this->strategies[ $migration_key ] ) ) {
             return new WP_Error(
                 'strategy_not_found',
@@ -145,7 +147,7 @@ class FFC_Migration_Status_Calculator {
      *
      * @return array Status information
      */
-    private function calculate_data_cleanup_status() {
+    private function calculate_data_cleanup_status(): array {
         $completed = get_option( 'ffc_migration_data_cleanup_completed', false );
 
         return array(
@@ -165,7 +167,7 @@ class FFC_Migration_Status_Calculator {
      * @param string $migration_key Migration identifier
      * @return bool|WP_Error True if can run, WP_Error if cannot
      */
-    public function can_run( $migration_key ) {
+    public function can_run( string $migration_key ) {
         // Handle data_cleanup special case
         if ( $migration_key === 'data_cleanup' ) {
             return true; // Option-based, always can run
@@ -194,7 +196,7 @@ class FFC_Migration_Status_Calculator {
      * @param int $batch_number Batch number to process
      * @return array|WP_Error Execution result
      */
-    public function execute( $migration_key, $batch_number = 0 ) {
+    public function execute( string $migration_key, int $batch_number = 0 ) {
         // Check if can run
         $can_run = $this->can_run( $migration_key );
 
@@ -226,7 +228,7 @@ class FFC_Migration_Status_Calculator {
      *
      * @return array Execution result
      */
-    private function execute_data_cleanup() {
+    private function execute_data_cleanup(): array {
         // Mark as complete
         update_option( 'ffc_migration_data_cleanup_completed', true );
 
@@ -245,7 +247,7 @@ class FFC_Migration_Status_Calculator {
      *
      * @return array Strategy instances
      */
-    public function get_strategies() {
+    public function get_strategies(): array {
         return $this->strategies;
     }
 }
