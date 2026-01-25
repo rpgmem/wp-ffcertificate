@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * FFC_Admin_Submission_Edit_Page
  *
@@ -6,7 +8,7 @@
  * Extracted from FFC_Admin class to follow Single Responsibility Principle.
  *
  * @since 3.1.1 (Extracted from FFC_Admin)
- * @version 1.0.0
+ * @version 3.3.0: Added strict types and type hints
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -48,7 +50,7 @@ class FFC_Admin_Submission_Edit_Page {
      *
      * @param FFC_Submission_Handler $handler Submission handler instance
      */
-    public function __construct( $handler ) {
+    public function __construct( object $handler ) {
         $this->submission_handler = $handler;
     }
 
@@ -59,7 +61,7 @@ class FFC_Admin_Submission_Edit_Page {
      *
      * @param int $submission_id Submission ID to edit
      */
-    public function render( $submission_id ) {
+    public function render( int $submission_id ): void {
         // Get submission data
         $sub = $this->submission_handler->get_submission( $submission_id );
 
@@ -108,7 +110,7 @@ class FFC_Admin_Submission_Edit_Page {
      *
      * Shows if submission was previously edited.
      */
-    private function render_edit_warning() {
+    private function render_edit_warning(): void {
         $was_edited = ! empty( $this->sub_array['edited_at'] );
 
         if ( ! $was_edited ) {
@@ -147,7 +149,7 @@ class FFC_Admin_Submission_Edit_Page {
      *
      * Displays ID, date, status, magic token, user IP.
      */
-    private function render_system_info_section() {
+    private function render_system_info_section(): void {
         $magic_token = isset( $this->sub_array['magic_token'] ) ? $this->sub_array['magic_token'] : '';
         $formatted_date = isset( $this->sub_array['submission_date'] )
             ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $this->sub_array['submission_date'] ) )
@@ -219,7 +221,7 @@ class FFC_Admin_Submission_Edit_Page {
     /**
      * Render QR Code usage information section
      */
-    private function render_qr_code_section() {
+    private function render_qr_code_section(): void {
         ?>
         <!-- SEÇÃO: QR CODE USAGE -->
         <tr>
@@ -261,7 +263,7 @@ class FFC_Admin_Submission_Edit_Page {
     /**
      * Render LGPD consent status section
      */
-    private function render_consent_section() {
+    private function render_consent_section(): void {
         $consent_given = isset( $this->sub_array['consent_given'] ) ? (int) $this->sub_array['consent_given'] : 0;
         $consent_date = isset( $this->sub_array['consent_date'] ) ? $this->sub_array['consent_date'] : '';
         $consent_ip = isset( $this->sub_array['consent_ip'] ) ? $this->sub_array['consent_ip'] : '';
@@ -316,7 +318,7 @@ class FFC_Admin_Submission_Edit_Page {
      *
      * Displays email (editable), CPF/RF, auth code (read-only).
      */
-    private function render_participant_data_section() {
+    private function render_participant_data_section(): void {
         ?>
         <!-- SEÇÃO: DADOS DO PARTICIPANTE -->
         <tr>
@@ -369,7 +371,7 @@ class FFC_Admin_Submission_Edit_Page {
      *
      * Renders all custom fields from the form submission.
      */
-    private function render_dynamic_fields() {
+    private function render_dynamic_fields(): void {
         // Protected fields (read-only within JSON)
         $protected_json_fields = array( 'auth_code', 'fill_date', 'ticket' );
 
@@ -418,7 +420,7 @@ class FFC_Admin_Submission_Edit_Page {
      *
      * Processes submission edit form POST request.
      */
-    public function handle_save() {
+    public function handle_save(): void {
         if ( ! isset( $_POST['ffc_save_edit'] ) ) {
             return;
         }

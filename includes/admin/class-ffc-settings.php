@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * FFC_Settings
  *
@@ -15,7 +17,7 @@
  *
  * @package FFC
  * @since 1.0.0
- * @version 3.1.1 - Extracted save logic to Save Handler
+ * @version 3.3.0: Added strict types and type hints
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -50,7 +52,7 @@ class FFC_Settings {
     /**
      * Load all tab classes
      */
-    private function load_tabs() {
+    private function load_tabs(): void {
         // Require abstract base class
         require_once FFC_PLUGIN_DIR . 'includes/settings/views/abstract-ffc-settings-tab.php';
 
@@ -103,7 +105,7 @@ class FFC_Settings {
         $this->tabs = apply_filters( 'ffc_settings_tabs', $this->tabs );
     }
     
-    public function add_settings_page() {
+    public function add_settings_page(): void {
         add_submenu_page(
             'edit.php?post_type=ffc_form',
             __( 'Settings', 'ffc' ),
@@ -117,7 +119,7 @@ class FFC_Settings {
     /**
      * Get default settings
      */
-    public function get_default_settings() { 
+    public function get_default_settings(): array { 
         return array(
             'cleanup_days'           => 365,
             'smtp_mode'              => 'wp',
@@ -142,8 +144,11 @@ class FFC_Settings {
     
     /**
      * Get option value
+     * 
+     * @param string $key Option key
+     * @return mixed Option value (string|int|array|bool|'')
      */
-    public function get_option( $key ) { 
+    public function get_option( string $key ) { 
         $settings = get_option( 'ffc_settings', array() );
         $defaults = $this->get_default_settings();
         
@@ -163,7 +168,7 @@ class FFC_Settings {
      *
      * @deprecated 3.1.1 Settings saving now handled by FFC_Settings_Save_Handler
      */
-    public function handle_settings_submission() {
+    public function handle_settings_submission(): void {
         // ✅ v3.1.1: All settings saving logic extracted to FFC_Settings_Save_Handler
         // This maintains backward compatibility while delegating to specialized handler
         $this->save_handler->handle_all_submissions();
@@ -172,7 +177,7 @@ class FFC_Settings {
     /**
      * Handle QR Code cache clearing
      */
-    public function handle_clear_qr_cache() {
+    public function handle_clear_qr_cache(): void {
         if ( ! isset( $_GET['ffc_clear_qr_cache'] ) || ! isset( $_GET['_wpnonce'] ) ) {
             return;
         }
@@ -199,7 +204,7 @@ class FFC_Settings {
     /**
      * Display settings page with modular tabs
      */
-    public function display_settings_page() {
+    public function display_settings_page(): void {
         // Handle messages
         if ( isset( $_GET['msg'] ) ) {
             $msg = $_GET['msg'];
@@ -289,7 +294,7 @@ class FFC_Settings {
     /**
      * Handle migration execution from settings page
      */
-    public function handle_migration_execution() {
+    public function handle_migration_execution(): void {
         if ( ! isset( $_GET['ffc_run_migration'] ) ) {
             return;
         }
@@ -338,7 +343,7 @@ class FFC_Settings {
      * 
      * @since 2.10.0
      */
-    public function ajax_preview_date_format() {
+    public function ajax_preview_date_format(): void {
         check_ajax_referer( 'ffc_preview_date', 'nonce' );
         
         $format = isset( $_POST['format'] ) ? sanitize_text_field( $_POST['format'] ) : 'F j, Y';
@@ -360,44 +365,44 @@ class FFC_Settings {
         }
     }
 
-    public function handle_cache_actions() {
-    // Warm Cache
-    if (isset($_GET['action']) && $_GET['action'] === 'warm_cache') {
-        check_admin_referer('ffc_warm_cache');
-        
-        if (!class_exists('FFC_Form_Cache')) {
-            require_once FFC_PLUGIN_DIR . 'includes/submissions/class-ffc-form-cache.php';
+    public function handle_cache_actions(): void {
+        // Warm Cache
+        if (isset($_GET['action']) && $_GET['action'] === 'warm_cache') {
+            check_admin_referer('ffc_warm_cache');
+            
+            if (!class_exists('FFC_Form_Cache')) {
+                require_once FFC_PLUGIN_DIR . 'includes/submissions/class-ffc-form-cache.php';
+            }
+            
+            $warmed = FFC_Form_Cache::warm_all_forms();
+            
+            wp_redirect(add_query_arg(array(
+                'post_type' => 'ffc_form',
+                'page' => 'ffc-settings',
+                'tab' => 'general',
+                'msg' => 'cache_warmed',
+                'count' => $warmed
+            ), admin_url('edit.php')));
+            exit;
         }
         
-        $warmed = FFC_Form_Cache::warm_all_forms();
-        
-        wp_redirect(add_query_arg(array(
-            'post_type' => 'ffc_form',
-            'page' => 'ffc-settings',
-            'tab' => 'general',
-            'msg' => 'cache_warmed',
-            'count' => $warmed
-        ), admin_url('edit.php')));
-        exit;
-    }
-    
-    // Clear Cache
-    if (isset($_GET['action']) && $_GET['action'] === 'clear_cache') {
-        check_admin_referer('ffc_clear_cache');
-        
-        if (!class_exists('FFC_Form_Cache')) {
-            require_once FFC_PLUGIN_DIR . 'includes/submissions/class-ffc-form-cache.php';
+        // Clear Cache
+        if (isset($_GET['action']) && $_GET['action'] === 'clear_cache') {
+            check_admin_referer('ffc_clear_cache');
+            
+            if (!class_exists('FFC_Form_Cache')) {
+                require_once FFC_PLUGIN_DIR . 'includes/submissions/class-ffc-form-cache.php';
+            }
+            
+            FFC_Form_Cache::clear_all_cache();
+            
+            wp_redirect(add_query_arg(array(
+                'post_type' => 'ffc_form',
+                'page' => 'ffc-settings',
+                'tab' => 'general',
+                'msg' => 'cache_cleared'
+            ), admin_url('edit.php')));
+            exit;
         }
-        
-        FFC_Form_Cache::clear_all_cache();
-        
-        wp_redirect(add_query_arg(array(
-            'post_type' => 'ffc_form',
-            'page' => 'ffc-settings',
-            'tab' => 'general',
-            'msg' => 'cache_cleared'
-        ), admin_url('edit.php')));
-        exit;
     }
-}
 }

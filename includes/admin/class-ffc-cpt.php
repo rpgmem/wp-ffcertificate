@@ -1,9 +1,12 @@
 <?php
+declare(strict_types=1);
+
 /**
  * FFC_CPT
  * Manages the Custom Post Type for forms, including registration and duplication logic.
- * 
+ *
  * v2.9.2: OPTIMIZED to use FFC_Utils functions
+ * v3.3.0: Added strict types and type hints
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,11 +20,11 @@ class FFC_CPT {
         add_filter( 'post_row_actions', array( $this, 'add_duplicate_link' ), 10, 2 );
         add_action( 'admin_action_ffc_duplicate_form', array( $this, 'handle_form_duplication' ) );
     }
-    
+
     /**
      * Registers the 'ffc_form' Custom Post Type
      */
-    public function register_form_cpt() {
+    public function register_form_cpt(): void {
         $labels = array(
             'name'                  => _x( 'Forms', 'Post Type General Name', 'ffc' ),
             'singular_name'         => _x( 'Form', 'Post Type Singular Name', 'ffc' ),
@@ -40,7 +43,7 @@ class FFC_CPT {
 
         $args = array(
             'labels'             => $labels,
-            'public'             => false, 
+            'public'             => false,
             'show_ui'            => true,
             'show_in_menu'       => true,
             'query_var'          => true,
@@ -58,30 +61,30 @@ class FFC_CPT {
     /**
      * Adds a "Duplicate" link to the post row actions
      */
-    public function add_duplicate_link( $actions, $post ) {
+    public function add_duplicate_link( array $actions, object $post ): array {
         if ( $post->post_type !== 'ffc_form' ) {
             return $actions;
         }
-        
+
         // ✅ OPTIMIZED v2.9.2: Check permissions before adding link
         if ( ! FFC_Utils::current_user_can_manage() ) {
             return $actions;
         }
-        
+
         $url = wp_nonce_url(
             admin_url( 'admin.php?action=ffc_duplicate_form&post=' . $post->ID ),
             'ffc_duplicate_form_nonce'
         );
-        
+
         $actions['duplicate'] = '<a href="' . esc_url( $url ) . '" title="' . esc_attr__( 'Duplicate this form', 'ffc' ) . '">' . __( 'Duplicate', 'ffc' ) . '</a>';
-        
+
         return $actions;
     }
 
     /**
      * Handles the duplication process when the action is triggered
      */
-    public function handle_form_duplication() {
+    public function handle_form_duplication(): void {
         // ✅ OPTIMIZED v2.9.2: Use FFC_Utils for permission check
         if ( ! FFC_Utils::current_user_can_manage() ) {
             FFC_Utils::debug_log( 'Unauthorized form duplication attempt', array(
@@ -92,11 +95,11 @@ class FFC_CPT {
         }
 
         $post_id = ( isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0 );
-        
+
         check_admin_referer( 'ffc_duplicate_form_nonce' );
 
         $post = get_post( $post_id );
-        
+
         if ( ! $post || $post->post_type !== 'ffc_form' ) {
             FFC_Utils::debug_log( 'Invalid form duplication request', array(
                 'post_id' => $post_id,
@@ -138,12 +141,12 @@ class FFC_CPT {
             update_post_meta( $new_post_id, '_ffc_form_fields', $fields );
             $metadata_copied[] = 'fields';
         }
-        
+
         if ( $config ) {
             update_post_meta( $new_post_id, '_ffc_form_config', $config );
             $metadata_copied[] = 'config';
         }
-        
+
         if ( $bg_image ) {
             update_post_meta( $new_post_id, '_ffc_form_bg', $bg_image );
             $metadata_copied[] = 'bg_image';

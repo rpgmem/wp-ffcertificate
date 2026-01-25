@@ -1,7 +1,10 @@
 <?php
+declare(strict_types=1);
+
 /**
  * FFC_Admin
  * v2.10.0: ENCRYPTION - Shows LGPD consent status, data auto-decrypted by Submission Handler
+ * v3.3.0: Added strict types and type hints
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,7 +23,7 @@ class FFC_Admin {
     private $edit_page;          // ✅ v3.1.1: Submission Edit Page
     private $activity_log_page;  // ✅ v3.1.1: Activity Log Page
 
-    public function __construct( $handler, $exporter, $email_handler = null ) {
+    public function __construct( object $handler, object $exporter, ?object $email_handler = null ) {
         $this->submission_handler = $handler;
         $this->csv_exporter = $exporter;
         $this->email_handler = $email_handler;
@@ -62,7 +65,7 @@ class FFC_Admin {
         add_action( 'admin_init', array( $this, 'handle_migration_action' ) );  // ✅ v2.9.13: Unified handler
     }
 
-    public function register_admin_menu() {
+    public function register_admin_menu(): void {
         add_submenu_page(
             'edit.php?post_type=ffc_form',
             __( 'Submissions', 'ffc' ),
@@ -82,7 +85,7 @@ class FFC_Admin {
      * @deprecated 3.1.1 Asset management now handled by FFC_Admin_Assets_Manager
      * @param string $hook Hook suffix
      */
-    public function admin_assets( $hook ) {
+    public function admin_assets( string $hook ): void {
         // ✅ v3.1.1: This method is now managed by FFC_Admin_Assets_Manager
         // The Assets Manager is registered in the constructor and handles all asset loading.
         // This method is kept for backward compatibility in case it's called directly,
@@ -91,15 +94,15 @@ class FFC_Admin {
         // See: class-ffc-admin-assets-manager.php
     }
 
-    public function handle_submission_actions() {
+    public function handle_submission_actions(): void {
         if ( ! isset( $_GET['page'] ) || $_GET['page'] !== 'ffc-submissions' ) return;
-        
+
         if ( isset( $_GET['submission_id'] ) && isset( $_GET['action'] ) ) {
             $id     = absint( $_GET['submission_id'] );
             $action = sanitize_key( $_GET['action'] );
             $nonce  = isset($_GET['_wpnonce']) ? $_GET['_wpnonce'] : '';
             $manipulation_actions = array( 'trash', 'restore', 'delete' );
-            
+
             if ( in_array( $action, $manipulation_actions ) ) {
                 if ( wp_verify_nonce( $nonce, 'ffc_action_' . $id ) ) {
                     if ( $action === 'trash' ) $this->submission_handler->trash_submission( $id );
@@ -133,7 +136,7 @@ class FFC_Admin {
         }
     }
 
-    public function display_submissions_page() {
+    public function display_submissions_page(): void {
         $action = isset( $_GET['action'] ) ? $_GET['action'] : 'list';
         if ( $action === 'edit' ) {
             $this->render_edit_page();
@@ -141,13 +144,13 @@ class FFC_Admin {
             $this->render_list_page();
         }
     }
-    
-    private function render_list_page() {
+
+    private function render_list_page(): void {
         require_once FFC_PLUGIN_DIR . 'includes/admin/class-ffc-submissions-list-table.php';
         $table = new FFC_Submission_List( $this->submission_handler );
         $this->display_admin_notices();
         $table->prepare_items();
-        ?> 
+        ?>
         <div class="wrap">
             <h1 class="wp-heading-inline"><?php _e( 'Submissions', 'ffc' ); ?></h1>
             <div class="ffc-admin-top-actions">
@@ -161,50 +164,50 @@ class FFC_Admin {
                     <?php endif; ?>
                     <?php wp_nonce_field('ffc_export_csv_nonce','ffc_export_csv_action'); ?>
                 </form>
-            </div>    
+            </div>
             <hr class="wp-header-end">
             <form method="GET">
                 <input type="hidden" name="post_type" value="ffc_form">
                 <input type="hidden" name="page" value="ffc-submissions">
-                <?php 
-                $table->views(); 
-                $table->search_box( __( 'Search', 'ffc' ), 's' ); 
+                <?php
+                $table->views();
+                $table->search_box( __( 'Search', 'ffc' ), 's' );
                 ?>
                 <div class="ffc-table-responsive">
                     <?php $table->display(); ?>
                 </div>
             </form>
-        </div> 
+        </div>
         <?php
     }
 
-    private function redirect_with_msg($msg) {
+    private function redirect_with_msg( string $msg ): void {
         $url = remove_query_arg(array('action', 'action2', 'submission_id', 'submission', '_wpnonce'), $_SERVER['REQUEST_URI']);
         wp_redirect( add_query_arg('msg', $msg, $url) );
         exit;
     }
 
-    private function display_admin_notices() {
+    private function display_admin_notices(): void {
         if (!isset($_GET['msg'])) return;
         $msg = $_GET['msg'];
         $text = '';
         $type = 'updated';
 
         switch ($msg) {
-            case 'trash':     
-                $text = __('Item moved to trash.', 'ffc'); 
+            case 'trash':
+                $text = __('Item moved to trash.', 'ffc');
                 break;
-            case 'restore':   
-                $text = __('Item restored.', 'ffc'); 
+            case 'restore':
+                $text = __('Item restored.', 'ffc');
                 break;
-            case 'delete':    
-                $text = __('Item permanently deleted.', 'ffc'); 
+            case 'delete':
+                $text = __('Item permanently deleted.', 'ffc');
                 break;
-            case 'bulk_done': 
-                $text = __('Bulk action completed.', 'ffc'); 
+            case 'bulk_done':
+                $text = __('Bulk action completed.', 'ffc');
                 break;
-            case 'updated':   
-                $text = __('Submission updated successfully.', 'ffc'); 
+            case 'updated':
+                $text = __('Submission updated successfully.', 'ffc');
                 break;
             case 'migration_success':
                 $migrated = isset($_GET['migrated']) ? intval($_GET['migrated']) : 0;
@@ -222,19 +225,19 @@ class FFC_Admin {
             echo "<div class='$type notice is-dismissible'><p>" . esc_html($text) . "</p></div>";
         }
     }
-    
-    
-    private function render_edit_page() {
+
+
+    private function render_edit_page(): void {
         // ✅ v3.1.1: Extracted to FFC_Admin_Submission_Edit_Page
         $submission_id = isset( $_GET['submission_id'] ) ? absint( $_GET['submission_id'] ) : 0;
         $this->edit_page->render( $submission_id );
     }
 
-    public function handle_submission_edit_save() {
+    public function handle_submission_edit_save(): void {
         // ✅ v3.1.1: Extracted to FFC_Admin_Submission_Edit_Page
         $this->edit_page->handle_save();
     }
-    public function handle_csv_export_request() {
+    public function handle_csv_export_request(): void {
         if ( isset( $_POST['ffc_action'] ) && $_POST['ffc_action'] === 'export_csv_smart' ) {
             $this->csv_exporter->handle_export_request();
         }
@@ -242,32 +245,32 @@ class FFC_Admin {
 
     /**
      * Handle migration action (unified handler for all migrations)
-     * 
+     *
      * @since 2.9.13
      */
-    public function handle_migration_action() {
+    public function handle_migration_action(): void {
         if ( ! isset( $_GET['ffc_migration'] ) ) {
             return;
         }
-        
+
         if ( ! current_user_can( 'manage_options' ) ) {
             wp_die( __( 'Insufficient permissions', 'ffc' ) );
         }
-        
+
         $migration_key = sanitize_key( $_GET['ffc_migration'] );
-        
+
         // Verify nonce
         check_admin_referer( 'ffc_migration_' . $migration_key );
-        
+
         // Get migration info
         $migration = $this->migration_manager->get_migration( $migration_key );
         if ( ! $migration ) {
             wp_die( __( 'Invalid migration key', 'ffc' ) );
         }
-        
+
         // Run migration
         $result = $this->migration_manager->run_migration( $migration_key );
-        
+
         if ( is_wp_error( $result ) ) {
             $redirect_url = add_query_arg(
                 array(
@@ -280,7 +283,7 @@ class FFC_Admin {
             );
         } else {
             $migrated = isset( $result['migrated'] ) ? $result['migrated'] : 0;
-            
+
             $redirect_url = add_query_arg(
                 array(
                     'post_type' => 'ffc_form',
@@ -292,46 +295,46 @@ class FFC_Admin {
                 admin_url( 'edit.php' )
             );
         }
-        
+
         wp_redirect( $redirect_url );
         exit;
     }
 
     /**
      * Configure TinyMCE to protect placeholders from being processed
-     * 
+     *
      * This prevents TinyMCE from escaping characters inside placeholders.
-     * For example: {{validation_url link:m>v}} stays as is, 
+     * For example: {{validation_url link:m>v}} stays as is,
      * instead of being converted to {{validation_url link:m&gt;v}}
-     * 
+     *
      * @since 2.9.3
      * @param array $init TinyMCE initialization settings
      * @return array Modified settings
      */
-    public function configure_tinymce_placeholders( $init ) {
+    public function configure_tinymce_placeholders( array $init ): array {
         // ⭐ DEBUG: Uncomment to verify this is being called
         // error_log('FFC: TinyMCE filter called!');
         // error_log('FFC: Init keys: ' . implode(', ', array_keys($init)));
-        
+
         // ✅ STRATEGY 1: noneditable_regexp
         // Protect all content between {{ and }}
         // TinyMCE will NOT process the content inside
         $init['noneditable_regexp'] = '/{{[^}]+}}/g';
-        
+
         // ✅ STRATEGY 2: noneditable_class
         // Mark placeholders with a class that TinyMCE won't edit
         $init['noneditable_class'] = 'ffc-placeholder';
-        
+
         // ✅ STRATEGY 3: entity_encoding
         // Try to prevent entity encoding
         $init['entity_encoding'] = 'raw';
-        
+
         // ✅ STRATEGY 4: valid_elements
         // Ensure our placeholders are considered valid
         if ( ! isset( $init['extended_valid_elements'] ) ) {
             $init['extended_valid_elements'] = '';
         }
-        
+
         // ✅ STRATEGY 5: protect patterns
         // Additional protection for specific patterns
         if ( ! isset( $init['protect'] ) ) {
@@ -340,7 +343,7 @@ class FFC_Admin {
         if ( is_array( $init['protect'] ) ) {
             $init['protect'][] = '/{{[^}]+}}/g';
         }
-        
+
         // ✅ Visual styling (optional)
         // Uncomment to add custom CSS for placeholder highlighting
         // if ( ! isset( $init['content_css'] ) ) {
@@ -349,11 +352,11 @@ class FFC_Admin {
         //     $init['content_css'] .= ',';
         // }
         // $init['content_css'] .= plugins_url( 'assets/css/ffc-editor-placeholders.css', FFC_PLUGIN_FILE );
-        
+
         // ⭐ DEBUG: Uncomment to see final config
         // error_log('FFC: noneditable_regexp = ' . $init['noneditable_regexp']);
         // error_log('FFC: entity_encoding = ' . $init['entity_encoding']);
-        
+
         return $init;
     }
 }

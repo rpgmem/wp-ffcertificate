@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * FFC_Admin_Assets_Manager
  *
@@ -6,7 +8,7 @@
  * Extracted from FFC_Admin class to follow Single Responsibility Principle.
  *
  * @since 3.1.1 (Extracted from FFC_Admin)
- * @version 1.0.0
+ * @version 3.3.0: Added strict types and type hints
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -32,7 +34,7 @@ class FFC_Admin_Assets_Manager {
     /**
      * Register assets hooks
      */
-    public function register() {
+    public function register(): void {
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
     }
 
@@ -42,7 +44,7 @@ class FFC_Admin_Assets_Manager {
      *
      * @param string $hook Hook suffix for the current admin page
      */
-    public function enqueue_admin_assets( $hook ) {
+    public function enqueue_admin_assets( string $hook ): void {
         global $post_type;
 
         $this->hook = $hook;
@@ -68,7 +70,7 @@ class FFC_Admin_Assets_Manager {
      *
      * @return bool True if FFC page, false otherwise
      */
-    private function is_ffc_page() {
+    private function is_ffc_page(): bool {
         $is_ffc_post_type = ( $this->post_type === 'ffc_form' );
         $is_ffc_menu = ( isset( $_GET['page'] ) && strpos( $_GET['page'], 'ffc-' ) !== false );
 
@@ -80,7 +82,7 @@ class FFC_Admin_Assets_Manager {
      *
      * @since 3.1.0
      */
-    private function enqueue_core_module() {
+    private function enqueue_core_module(): void {
         wp_enqueue_script(
             'ffc-core',
             FFC_PLUGIN_URL . 'assets/js/ffc-core.js',
@@ -102,7 +104,7 @@ class FFC_Admin_Assets_Manager {
      * 6. Conditional: ffc-admin-settings (only on settings page)
      * 7. Conditional: ffc-admin-submission-edit (only on edit page)
      */
-    private function enqueue_css_assets() {
+    private function enqueue_css_assets(): void {
         // 1. Base styles (PDF core)
         wp_enqueue_style(
             'ffc-pdf-core',
@@ -155,7 +157,7 @@ class FFC_Admin_Assets_Manager {
      *
      * @since 3.1.0 - Modular architecture
      */
-    private function enqueue_javascript_modules() {
+    private function enqueue_javascript_modules(): void {
         // 1. Field Builder module
         wp_enqueue_script(
             'ffc-admin-field-builder',
@@ -193,7 +195,7 @@ class FFC_Admin_Assets_Manager {
      * - Settings CSS (only on settings page)
      * - Submission Edit CSS + JS (only on edit page)
      */
-    private function enqueue_conditional_assets() {
+    private function enqueue_conditional_assets(): void {
         // Settings page styles
         if ( $this->is_settings_page() ) {
             wp_enqueue_style(
@@ -213,7 +215,7 @@ class FFC_Admin_Assets_Manager {
     /**
      * Enqueue submission edit page specific assets
      */
-    private function enqueue_submission_edit_assets() {
+    private function enqueue_submission_edit_assets(): void {
         // Edit page CSS
         wp_enqueue_style(
             'ffc-admin-submission-edit',
@@ -246,7 +248,7 @@ class FFC_Admin_Assets_Manager {
      *
      * @return bool
      */
-    private function is_settings_page() {
+    private function is_settings_page(): bool {
         return isset( $_GET['page'] ) && $_GET['page'] === 'ffc-settings';
     }
 
@@ -255,7 +257,7 @@ class FFC_Admin_Assets_Manager {
      *
      * @return bool
      */
-    private function is_submission_edit_page() {
+    private function is_submission_edit_page(): bool {
         return isset( $_GET['page'] )
             && $_GET['page'] === 'ffc-submissions'
             && isset( $_GET['action'] )
@@ -267,7 +269,7 @@ class FFC_Admin_Assets_Manager {
      *
      * @return array Localization data
      */
-    private function get_localization_data() {
+    private function get_localization_data(): array {
         return array(
             'ajax_url' => admin_url( 'admin-ajax.php' ),
             'nonce'    => wp_create_nonce( 'ffc_admin_pdf_nonce' ),
