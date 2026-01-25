@@ -258,8 +258,8 @@ class FFC_Submission_Handler {
         if ($result !== false && class_exists('FFC_Activity_Log')) {
             FFC_Activity_Log::log_submission_updated($id, get_current_user_id());
         }
-        
-        return $result;
+
+        return (bool) $result;  // Convert int|false to bool
     }
     
     /**
@@ -566,16 +566,26 @@ class FFC_Submission_Handler {
      */
     public function ensure_magic_token(int $submission_id): string {
         $submission = $this->repository->findById($submission_id);
-        
-        if (!$submission || !empty($submission['magic_token'])) {
-            return true;
+
+        // If submission not found, return empty string
+        if (!$submission) {
+            return '';
         }
-        
+
+        // If token already exists, return it
+        if (!empty($submission['magic_token'])) {
+            return $submission['magic_token'];
+        }
+
+        // Generate new token
         $magic_token = $this->generate_magic_token();
-        
-        return $this->repository->update($submission_id, [
+
+        // Save to database
+        $this->repository->update($submission_id, [
             'magic_token' => $magic_token
         ]);
+
+        return $magic_token;
     }
     
     /**
