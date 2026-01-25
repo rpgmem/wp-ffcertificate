@@ -238,9 +238,15 @@ class FFC_Form_Processor {
         if ( $existing_submission ) {
             // Ensure data is not null before json_decode (strict types requirement)
             $data_json = $existing_submission->data ?? '';
-            $decoded_data = json_decode( $data_json, true );
-            if( !is_array($decoded_data) ) {
-                $decoded_data = json_decode( stripslashes( $data_json ), true );
+
+            // Only decode if we have actual data (not null, not empty string)
+            if (!empty($data_json) && is_string($data_json)) {
+                $decoded_data = json_decode( $data_json, true );
+                if( !is_array($decoded_data) ) {
+                    $decoded_data = json_decode( stripslashes( $data_json ), true );
+                }
+            } else {
+                $decoded_data = null;
             }
 
             // If still not an array, initialize empty
