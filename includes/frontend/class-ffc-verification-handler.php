@@ -353,7 +353,7 @@ class FFC_Verification_Handler {
         // No nonce check - magic token is the authentication
         // No captcha - token proves legitimacy
 
-        $token = isset( $_POST['token'] ) ? preg_replace('/[^a-f0-9]/i', '', $_POST['token']) : '';
+        $token = isset( $_POST['token'] ) ? sanitize_text_field( $_POST['token'] ) : '';
         $user_ip = FFC_Utils::get_user_ip();
 
         $rate_check = FFC_Rate_Limiter::check_verification( $user_ip );
@@ -363,7 +363,7 @@ class FFC_Verification_Handler {
             ) );
         }
 
-        if ( empty( $token ) || strlen($token) !== 32 ) {
+        if ( empty( $token ) ) {
             wp_send_json_error( array( 'message' => __( 'Invalid token.', 'ffc' ) ) );
         }
 
