@@ -44,9 +44,9 @@ class FFC_PDF_Generator {
         // Convert to array
         $sub_array = (array) $submission;
         
-        // ✅ v2.9.15: RECONSTRUIR dados completos (colunas + JSON)
-        
-        // Passo 1: Campos obrigatórios das colunas
+        // ✅ v2.9.15: REBUILD complete data (columns + JSON)
+
+        // Step 1: Required fields from columns
         $data = array(
             'email' => $sub_array['email'],  // ✅ Da coluna
         );
@@ -61,7 +61,7 @@ class FFC_PDF_Generator {
             $data['cpf_rf'] = $sub_array['cpf_rf'];  // ✅ Da coluna
         }
         
-        // Passo 2: Campos extras do JSON
+        // Step 2: Extra fields from JSON
         $extra_data = json_decode( $sub_array['data'], true );
         if ( ! is_array( $extra_data ) ) {
             $extra_data = json_decode( stripslashes( $sub_array['data'] ), true );
@@ -71,12 +71,12 @@ class FFC_PDF_Generator {
         FFC_Debug::log_pdf( 'JSON: extra_data', $extra_data );
         FFC_Debug::log_pdf( 'JSON: is_array', is_array( $extra_data ) ? 'YES' : 'NO' );
 
-        // Passo 3: Merge (extras NÃO sobrescrevem obrigatórios)
+        // Step 3: Merge (extras do NOT overwrite required fields)
         if ( is_array( $extra_data ) && ! empty( $extra_data ) ) {
-            $data = array_merge( $extra_data, $data );  // ✅ Ordem importante: colunas têm prioridade
+            $data = array_merge( $extra_data, $data );  // ✅ Important order: columns have priority
         }
 
-        // ✅ Agora $data tem TUDO: colunas + JSON
+        // ✅ Now $data has EVERYTHING: columns + JSON
         FFC_Debug::log_pdf( 'MERGE: count', count( $extra_data ) );
         FFC_Debug::log_pdf( 'MERGE: AFTER', $data );
         
@@ -211,12 +211,12 @@ class FFC_PDF_Generator {
             $date_format = $settings['date_format_custom'];
         }
 
-        // {{submission_date}} - Data de criação da submissão no BD (para evitar problemas em reimpressões)
+        // {{submission_date}} - Submission creation date in DB (to avoid issues with reprinting)
         if ( ! empty( $submission_date ) ) {
             $layout = str_replace( '{{submission_date}}', date_i18n( $date_format, strtotime( $submission_date ) ), $layout );
         }
 
-        // {{print_date}} - Data/hora atual de geração/impressão do PDF
+        // {{print_date}} - Current date/time of PDF generation/printing
         $layout = str_replace( '{{print_date}}', date_i18n( $date_format, current_time( 'timestamp' ) ), $layout );
 
         $layout = str_replace( '{{form_title}}', $form_title, $layout );

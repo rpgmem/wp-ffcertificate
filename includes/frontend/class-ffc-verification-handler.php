@@ -149,14 +149,14 @@ class FFC_Verification_Handler {
             );
         }
 
-        // v2.9.16: RECONSTRUIR dados completos (colunas + JSON)
-        // v2.10.0: NOTE - Descriptografia automática
-        // Os dados já vêm descriptografados do Submission Handler.
-        // O método get_submission_by_token() chama decrypt_submission_data()
-        // internamente, então os campos email, cpf_rf, user_ip, data já
-        // estão em texto puro aqui. Não é necessário descriptografar novamente.
+        // v2.9.16: REBUILD complete data (columns + JSON)
+        // v2.10.0: NOTE - Automatic decryption
+        // Data already comes decrypted from Submission Handler.
+        // The get_submission_by_token() method calls decrypt_submission_data()
+        // internally, so the fields email, cpf_rf, user_ip, data are already
+        // in plain text here. No need to decrypt again.
 
-        // Passo 1: Campos obrigatórios das colunas
+        // Step 1: Required fields from columns
         $data = array();
         
         if ( ! empty( $submission['email'] ) ) {
@@ -177,7 +177,7 @@ class FFC_Verification_Handler {
             $extra_data = json_decode( stripslashes( $submission['data'] ), true );
         }
         
-        // Passo 3: Merge (colunas têm prioridade sobre JSON)
+        // Step 3: Merge (columns have priority over JSON)
         if ( is_array( $extra_data ) && ! empty( $extra_data ) ) {
             $data = array_merge( $extra_data, $data );
         }

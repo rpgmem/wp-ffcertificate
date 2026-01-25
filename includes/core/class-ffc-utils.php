@@ -25,7 +25,7 @@ class FFC_Utils {
      */
     public static function get_submissions_table() {
     global $wpdb;
-    // Retorna o nome real da tabela, SEM chamar a própria função de novo
+    // Returns the real table name, WITHOUT calling this function again
     return $wpdb->prefix . 'ffc_submissions'; 
     }
     

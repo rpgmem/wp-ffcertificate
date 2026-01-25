@@ -54,7 +54,7 @@ $migrations = $migration_manager->get_migrations();
             $status = $migration_manager->get_migration_status( $key );
             
             if ( is_wp_error( $status ) ) {
-                // ✅ v2.9.16: Se há erro, assumir que não há dados (banco vazio)
+                // ✅ v2.9.16: If there's an error, assume no data exists (empty database)
                 $percent = 100;
                 $is_complete = true;
                 $pending = 0;

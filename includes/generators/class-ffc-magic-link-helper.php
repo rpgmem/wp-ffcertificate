@@ -69,13 +69,13 @@ class FFC_Magic_Link_Helper {
     }
     
     $token = $handler->ensure_magic_token( $submission_id );
-    
-    // Se o token não é válido, gerar um novo
+
+    // If token is not valid, generate a new one
     if ( ! self::is_valid_token( $token ) ) {
-        $token = bin2hex( random_bytes( 16 ) );  // Gera 32 caracteres hex
-        // Assumindo que o handler salva o token; se não, adicione: $handler->save_magic_token( $submission_id, $token );
+        $token = bin2hex( random_bytes( 16 ) );  // Generates 32 hex characters
+        // Assuming handler saves the token; if not, add: $handler->save_magic_token( $submission_id, $token );
     }
-    
+
     return $token;
     }
     

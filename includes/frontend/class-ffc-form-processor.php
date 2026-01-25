@@ -238,8 +238,8 @@ class FFC_Form_Processor {
                 $decoded_data = json_decode( stripslashes( $existing_submission->data ), true );
             }
             
-            // ✅ v2.9.16: RECONSTRUIR dados completos (colunas + JSON)
-            // Garantir que campos obrigatórios das colunas sejam incluídos
+            // ✅ v2.9.16: REBUILD complete data (columns + JSON)
+            // Ensure required column fields are included
             if ( ! isset( $decoded_data['email'] ) && ! empty( $existing_submission->email ) ) {
                 $decoded_data['email'] = $existing_submission->email;
             }
