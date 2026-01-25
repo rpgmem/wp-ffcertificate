@@ -755,6 +755,12 @@ class FFC_REST_Controller {
             }
 
             global $wpdb;
+
+            // Safety check for FFC_Utils
+            if (!class_exists('FFC_Utils')) {
+                return new WP_Error('missing_class', 'FFC_Utils class not found', array('status' => 500));
+            }
+
             $table = FFC_Utils::get_submissions_table();
 
             // Get date format from settings
@@ -813,7 +819,7 @@ class FFC_REST_Controller {
                     'form_title' => $submission['form_title'] ?? __('Unknown Form', 'ffc'),
                     'submission_date' => $date_formatted,
                     'submission_date_raw' => $submission['submission_date'],
-                    'consent_given' => (bool) $submission['consent_given'],
+                    'consent_given' => isset($submission['consent_given']) ? (bool) $submission['consent_given'] : true,
                     'email' => $email_display,
                     'auth_code' => $auth_code_formatted,
                     'magic_link' => $magic_link,
@@ -827,6 +833,15 @@ class FFC_REST_Controller {
             ));
 
         } catch (Exception $e) {
+            // Log the error for debugging
+            if (class_exists('FFC_Utils')) {
+                FFC_Utils::debug_log('get_user_certificates error', array(
+                    'message' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'trace' => $e->getTraceAsString()
+                ));
+            }
             return new WP_Error(
                 'get_certificates_error',
                 $e->getMessage(),
