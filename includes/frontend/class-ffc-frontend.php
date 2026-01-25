@@ -163,10 +163,11 @@ class FFC_Frontend {
         $global_settings = get_option('ffc_geolocation_settings', array());
 
         foreach ($matches[1] as $form_id) {
-            $config = FFC_Geofence::get_frontend_config($form_id);
+            $form_id_int = (int) $form_id;
+            $config = FFC_Geofence::get_frontend_config($form_id_int);
 
             if ($config !== null) {
-                $geofence_configs[$form_id] = $config;
+                $geofence_configs[$form_id_int] = $config;
             }
         }
 
