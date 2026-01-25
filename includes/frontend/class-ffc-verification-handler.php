@@ -1,12 +1,15 @@
 <?php
+declare(strict_types=1);
+
 /**
  * FFC_Verification_Handler
  * Handles certificate verification and authenticity checks.
- * 
+ *
  * v2.8.0: Added magic link verification with rate limiting
  * v2.9.0: Added QR Code support in verification
  * v2.9.2: Unified PDF generation with FFC_PDF_Generator, removed prepare_pdf_data()
  * v2.10.0: ENCRYPTION - Auto-decryption via Submission Handler + Access logging
+ * v3.3.0: Added strict types and type hints
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -14,30 +17,30 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class FFC_Verification_Handler {
-    
+
     private $submission_handler;
     private $email_handler;
 
     /**
      * Constructor
-     * 
-     * @param FFC_Submission_Handler $submission_handler Submission handler dependency
-     * @param FFC_Email_Handler $email_handler Email handler for PDF generation
+     *
+     * @param FFC_Submission_Handler|null $submission_handler Submission handler dependency
+     * @param FFC_Email_Handler|null $email_handler Email handler for PDF generation
      */
-    public function __construct( $submission_handler = null, $email_handler = null ) {
+    public function __construct( ?FFC_Submission_Handler $submission_handler = null, ?FFC_Email_Handler $email_handler = null ) {
         $this->submission_handler = $submission_handler;
         $this->email_handler = $email_handler;
     }
 
     /**
      * Search for certificate by authentication code
-     * 
+     *
      * v2.9.15: RECONSTRUÇÃO - Combina colunas + JSON
      */
     /**
      * Search for certificate - uses Repository
      */
-    private function search_certificate($auth_code) {
+    private function search_certificate( string $auth_code ): array {
         $repository = new FFC_Submission_Repository();
         $clean_code = FFC_Utils::clean_auth_code($auth_code);
         
@@ -93,15 +96,15 @@ class FFC_Verification_Handler {
 
     /**
      * Verify certificate by magic token
-     * 
+     *
      * This method bypasses captcha/honeypot validation and is used
      * when accessing certificates via magic links.
-     * 
+     *
      * @since 2.8.0 Magic Links feature
      * @param string $token Magic token (32 hex characters)
      * @return array Result array with 'found', 'submission', 'data', 'magic_token'
      */
-    public function verify_by_magic_token( $token ) {
+    public function verify_by_magic_token( string $token ): array {
         if ( ! FFC_Magic_Link_Helper::is_valid_token( $token ) ) {
         return array(
         'found' => false,
@@ -202,7 +205,7 @@ class FFC_Verification_Handler {
      * ✅ v2.9.7 ENHANCED: Shows more fields with better formatting
      * ✅ v3.1.0: Refactored to use template file
      */
-    private function format_verification_response( $submission, $data, $show_download_button = false ) {
+    private function format_verification_response( object $submission, array $data, bool $show_download_button = false ): string {
         $form = get_post( $submission->form_id );
         $form_title = $form ? $form->post_title : __( 'N/A', 'ffc' );
         $date_generated = date_i18n(
@@ -244,11 +247,11 @@ class FFC_Verification_Handler {
 
     /**
      * Get human-readable field label
-     * 
+     *
      * @param string $field_key Field key
      * @return string Formatted label
      */
-    private function get_field_label( $field_key ) {
+    private function get_field_label( string $field_key ): string {
     // Custom labels for known fields
     $labels = array(
         'cpf_rf'   => __( 'CPF/RF', 'ffc' ),
@@ -280,12 +283,12 @@ class FFC_Verification_Handler {
 
     /**
      * Format field value for display
-     * 
+     *
      * @param string $field_key Field key
      * @param mixed $value Field value
      * @return string Formatted value
      */
-    private function format_field_value( $field_key, $value ) {
+    private function format_field_value( string $field_key, $value ): string {
     // Handle arrays
     if ( is_array( $value ) ) {
         return implode( ', ', $value );
@@ -305,7 +308,7 @@ class FFC_Verification_Handler {
      * Verify certificate (used by shortcode fallback - non-AJAX)
      * Returns array with 'success' (bool), 'html' (string), 'message' (string)
      */
-    public function verify_certificate( $auth_code ) {
+    public function verify_certificate( string $auth_code ): array {
         $result = $this->search_certificate( $auth_code );
         if ( $result['found'] && isset( $result['submission']['id'] ) ) {
         // ✅ v2.10.0: Log access for LGPD compliance
@@ -340,13 +343,13 @@ class FFC_Verification_Handler {
 
     /**
      * Handle magic link verification via AJAX
-     * 
+     *
      * This endpoint bypasses security checks (captcha/honeypot) as the
      * magic token itself provides authentication.
-     * 
+     *
      * @since 2.8.0 Magic Links feature
      */
-    public function handle_magic_verification_ajax() {
+    public function handle_magic_verification_ajax(): void {
         // No nonce check - magic token is the authentication
         // No captcha - token proves legitimacy
         
@@ -407,7 +410,7 @@ class FFC_Verification_Handler {
     /**
      * Handle certificate verification via AJAX (manual - with captcha)
      */
-    public function handle_verification_ajax() {
+    public function handle_verification_ajax(): void {
         check_ajax_referer( 'ffc_frontend_nonce', 'nonce' );
         
         // Validate security

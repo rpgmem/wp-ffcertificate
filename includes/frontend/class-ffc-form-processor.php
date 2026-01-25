@@ -1,12 +1,15 @@
 <?php
+declare(strict_types=1);
+
 /**
  * FFC_Form_Processor
  * Handles form submission processing, validation, and restriction checks.
- * 
+ *
  * v2.9.2: Unified PDF generation with FFC_PDF_Generator
  * v2.9.11: Using FFC_Utils for validation and sanitization
  * v2.9.13: Optimized detect_reprint() to use cpf_rf column with fallback
  * v2.10.0: LGPD - Validates consent checkbox (mandatory)
+ * v3.3.0: Added strict types and type hints
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -14,17 +17,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class FFC_Form_Processor {
-    
+
     private $submission_handler;
     private $email_handler;
 
     /**
      * Constructor
      */
-    public function __construct( $submission_handler, $email_handler ) {
+    public function __construct( FFC_Submission_Handler $submission_handler, FFC_Email_Handler $email_handler ) {
         $this->submission_handler = $submission_handler;
         $this->email_handler = $email_handler;
-        
+
         // Register AJAX hooks
         add_action('wp_ajax_ffc_submit_form', [$this, 'handle_submission_ajax']);
         add_action('wp_ajax_nopriv_ffc_submit_form', [$this, 'handle_submission_ajax']);
@@ -32,17 +35,17 @@ class FFC_Form_Processor {
 
     /**
      * ✅ v2.10.0: Check if submission passes restriction rules
-     * 
+     *
      * NEW: Modular checkbox-based restrictions (password, allowlist, denylist, ticket)
      * Validation order: Password → Denylist (priority) → Allowlist → Ticket (consumed)
-     * 
+     *
      * @param array $form_config Form configuration
      * @param string $val_cpf CPF/RF from form (already cleaned)
      * @param string $val_ticket Ticket from form
      * @param int $form_id Form ID (needed for ticket consumption)
      * @return array ['allowed' => bool, 'message' => string, 'is_ticket' => bool]
      */
-    private function check_restrictions( $form_config, $val_cpf, $val_ticket, $form_id ) {
+    private function check_restrictions( array $form_config, string $val_cpf, string $val_ticket, int $form_id ): array {
         $restrictions = isset($form_config['restrictions']) ? $form_config['restrictions'] : array();
         
         // Clean CPF/RF (remove any mask)
@@ -165,12 +168,12 @@ class FFC_Form_Processor {
 
     /**
      * Check for existing submission (reprint detection)
-     * 
+     *
      * v2.9.13: OPTIMIZED - Uses dedicated cpf_rf column with fallback to JSON
-     * 
+     *
      * Returns array with 'is_reprint' (bool), 'data' (array), 'id' (int), 'email' (string), 'date' (string)
      */
-    private function detect_reprint( $form_id, $val_cpf, $val_ticket ) {
+    private function detect_reprint( int $form_id, string $val_cpf, string $val_ticket ): array {
         global $wpdb;
         $table_name = FFC_Utils::get_submissions_table();
         $existing_submission = null;
@@ -271,7 +274,7 @@ class FFC_Form_Processor {
     /**
      * Remove used ticket from form configuration
      */
-    private function consume_ticket( $form_id, $ticket ) {
+    private function consume_ticket( int $form_id, string $ticket ): void {
         $current_config = get_post_meta( $form_id, '_ffc_form_config', true );
         $current_raw_codes = isset( $current_config['generated_codes_list'] ) ? $current_config['generated_codes_list'] : '';
         $current_list = array_filter( array_map( 'trim', explode( "\n", $current_raw_codes ) ) );
@@ -283,7 +286,7 @@ class FFC_Form_Processor {
     /**
      * Handle form submission via AJAX
      */
-    public function handle_submission_ajax() {
+    public function handle_submission_ajax(): void {
         // Verify nonce
         if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'ffc_frontend_nonce')) {
             wp_send_json_error(['message' => __('Security check failed. Please refresh the page.', 'ffc')]);
