@@ -1,14 +1,18 @@
 <?php
+declare(strict_types=1);
+
 /**
- * FFC_Rate_Limit_Activator v3.0.0
+ * FFC_Rate_Limit_Activator v3.3.0
  * Creates database tables - dbDelta compatible
+ *
+ * v3.3.0 - Added strict types and type hints
  */
 
 if (!defined('ABSPATH')) exit;
 
 class FFC_Rate_Limit_Activator {
     
-    public static function create_tables() {
+    public static function create_tables(): bool {
         global $wpdb;
         
         $charset_collate = $wpdb->get_charset_collate();
@@ -80,7 +84,7 @@ class FFC_Rate_Limit_Activator {
         return true;
     }
     
-    public static function tables_exist() {
+    public static function tables_exist(): bool {
         global $wpdb;
         
         $table_limits = $wpdb->prefix . 'ffc_rate_limits';
@@ -92,7 +96,7 @@ class FFC_Rate_Limit_Activator {
         return $limits_exists && $logs_exists;
     }
     
-    public static function drop_tables() {
+    public static function drop_tables(): bool {
         global $wpdb;
         
         $table_limits = $wpdb->prefix . 'ffc_rate_limits';
