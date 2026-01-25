@@ -309,28 +309,28 @@ class FFC_Submission_Handler {
      */
     public function trash_submission(int $id): bool {
         $result = $this->repository->updateStatus($id, 'trash');
-        
+
         if ($result && class_exists('FFC_Activity_Log')) {
             FFC_Activity_Log::log_submission_trashed($id);
         }
-        
-        return $result;
+
+        return (bool) $result;  // Convert int|false to bool
     }
-    
+
     /**
      * Restore submission
      * @uses Repository::updateStatus()
      */
     public function restore_submission(int $id): bool {
         $result = $this->repository->updateStatus($id, 'publish');
-        
+
         if ($result && class_exists('FFC_Activity_Log')) {
             FFC_Activity_Log::log_submission_restored($id);
         }
-        
-        return $result;
+
+        return (bool) $result;  // Convert int|false to bool
     }
-    
+
     /**
      * Permanently delete submission
      * @uses Repository::delete()
@@ -342,7 +342,7 @@ class FFC_Submission_Handler {
             FFC_Activity_Log::log_submission_deleted($id);
         }
 
-        return $result;
+        return (bool) $result;  // Convert int|false to bool
     }
 
     /**
