@@ -23,8 +23,11 @@
  * - High testability and maintainability
  *
  * @since 2.9.13
+ * @version 3.3.0 - Added strict types and type hints for better code safety
  * @version 3.1.0 (Refactored)
  */
+
+declare(strict_types=1);
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
@@ -75,7 +78,7 @@ class FFC_Migration_Manager {
      *
      * @return void
      */
-    private function load_dependencies() {
+    private function load_dependencies(): void {
         $base_path = dirname( __FILE__ );
 
         // Core components
@@ -103,7 +106,7 @@ class FFC_Migration_Manager {
      *
      * @return array Array of migration definitions
      */
-    public function get_migrations() {
+    public function get_migrations(): array {
         return $this->registry->get_all_migrations();
     }
 
@@ -115,7 +118,7 @@ class FFC_Migration_Manager {
      * @param string $migration_key Migration identifier
      * @return bool True if available
      */
-    public function is_migration_available( $migration_key ) {
+    public function is_migration_available( string $migration_key ): bool {
         return $this->registry->is_available( $migration_key );
     }
 
@@ -130,7 +133,7 @@ class FFC_Migration_Manager {
      * @param string $migration_key Migration identifier
      * @return array|WP_Error Status array or error
      */
-    public function get_migration_status( $migration_key ) {
+    public function get_migration_status( string $migration_key ) {
         return $this->status_calculator->calculate( $migration_key );
     }
 
@@ -142,7 +145,7 @@ class FFC_Migration_Manager {
      * @param string $migration_key Migration identifier
      * @return array|null Migration definition or null
      */
-    public function get_migration( $migration_key ) {
+    public function get_migration( string $migration_key ): ?array {
         return $this->registry->get_migration( $migration_key );
     }
 
@@ -154,7 +157,7 @@ class FFC_Migration_Manager {
      * @param string $migration_key Migration identifier
      * @return bool|WP_Error True if can run, WP_Error if cannot
      */
-    public function can_run_migration( $migration_key ) {
+    public function can_run_migration( string $migration_key ) {
         return $this->status_calculator->can_run( $migration_key );
     }
 
@@ -167,7 +170,7 @@ class FFC_Migration_Manager {
      * @param int $batch_number Batch number to process (0-indexed)
      * @return array|WP_Error Execution result
      */
-    public function run_migration( $migration_key, $batch_number = 0 ) {
+    public function run_migration( string $migration_key, int $batch_number = 0 ) {
         return $this->status_calculator->execute( $migration_key, $batch_number );
     }
 
@@ -180,7 +183,7 @@ class FFC_Migration_Manager {
      * @param int $limit Batch size
      * @return array|WP_Error Execution result
      */
-    public function migrate_encryption( $offset = 0, $limit = 50 ) {
+    public function migrate_encryption( int $offset = 0, int $limit = 50 ) {
         // Calculate batch number from offset and limit
         $batch_number = ( $limit > 0 ) ? floor( $offset / $limit ) + 1 : 1;
 
@@ -205,7 +208,7 @@ class FFC_Migration_Manager {
      * @param int $limit Batch size
      * @return array Execution result
      */
-    public function cleanup_unencrypted_data( $offset = 0, $limit = 100 ) {
+    public function cleanup_unencrypted_data( int $offset = 0, int $limit = 100 ): array {
         // Calculate batch number from offset and limit
         $batch_number = ( $limit > 0 ) ? floor( $offset / $limit ) + 1 : 1;
 
@@ -418,7 +421,7 @@ class FFC_Migration_Manager {
      *
      * @return int Days remaining (0 if can drop now)
      */
-    public function get_drop_days_remaining() {
+    public function get_drop_days_remaining(): int {
         $encryption_completed_date = get_option( 'ffc_encryption_migration_completed_date' );
 
         if ( ! $encryption_completed_date ) {
