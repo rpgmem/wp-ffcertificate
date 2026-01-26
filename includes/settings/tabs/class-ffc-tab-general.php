@@ -40,7 +40,7 @@ class TabGeneral extends SettingsTab {
         ) );
         
         // ✅ Create settings object for view compatibility
-        $this->settings = new stdClass();
+        $this->settings = new \stdClass();
         $this->settings->get_option = function( $key, $default = '' ) {
             return self::get_option( $key, $default );
         };
