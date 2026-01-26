@@ -52,7 +52,7 @@ class FormEditorSaveHandler {
         // 2. Save Configurations
         if ( isset( $_POST['ffc_config'] ) ) {
             $config = $_POST['ffc_config'];
-            $allowed_html = method_exists('FFC_Utils', 'get_allowed_html_tags') ? \FFC_Utils::get_allowed_html_tags() : wp_kses_allowed_html('post');
+            $allowed_html = method_exists('FFC_Utils', 'get_allowed_html_tags') ? \FreeFormCertificate\Core\Utils::get_allowed_html_tags() : wp_kses_allowed_html('post');
 
             $clean_config = array();
             $clean_config['pdf_layout'] = wp_kses( $config['pdf_layout'], $allowed_html );

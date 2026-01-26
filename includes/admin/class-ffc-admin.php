@@ -5,11 +5,19 @@ declare(strict_types=1);
  * Admin
  * v2.10.0: ENCRYPTION - Shows LGPD consent status, data auto-decrypted by Submission Handler
  *
+ * @version 4.0.0 - Removed alias usage (Phase 4 Hotfix 7)
  * @version 3.3.0 - Added strict types and type hints
  * @version 3.2.0 - Migrated to namespace (Phase 2)
  */
 
 namespace FreeFormCertificate\Admin;
+
+use FreeFormCertificate\Admin\FormEditor;
+use FreeFormCertificate\Admin\Settings;
+use FreeFormCertificate\Migrations\MigrationManager;
+use FreeFormCertificate\Admin\AdminAssetsManager;
+use FreeFormCertificate\Admin\AdminSubmissionEditPage;
+use FreeFormCertificate\Admin\AdminActivityLogPage;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
@@ -33,27 +41,21 @@ class Admin {
         $this->email_handler = $email_handler;
 
         // Autoloader handles class loading
-        $this->form_editor   = new \FFC_Form_Editor();
-        $this->settings_page = new \FFC_Settings( $handler );
+        $this->form_editor   = new FormEditor();
+        $this->settings_page = new Settings( $handler );
 
         // ✅ v2.9.13: Initialize Migration Manager
-        if ( ! class_exists( 'FFC_Migration_Manager' ) ) {
-            require_once FFC_PLUGIN_DIR . 'includes/migrations/class-ffc-migration-manager.php';
-        }
-        $this->migration_manager = new \FFC_Migration_Manager();
+        $this->migration_manager = new MigrationManager();
 
         // ✅ v3.1.1: Initialize Assets Manager (extracted from FFC_Admin)
-        require_once plugin_dir_path( __FILE__ ) . 'class-ffc-admin-assets-manager.php';
-        $this->assets_manager = new \FFC_Admin_Assets_Manager();
+        $this->assets_manager = new AdminAssetsManager();
         $this->assets_manager->register();
 
         // ✅ v3.1.1: Initialize Submission Edit Page (extracted from FFC_Admin)
-        require_once plugin_dir_path( __FILE__ ) . 'class-ffc-admin-submission-edit-page.php';
-        $this->edit_page = new \FFC_Admin_Submission_Edit_Page( $handler );
+        $this->edit_page = new AdminSubmissionEditPage( $handler );
 
         // ✅ v3.1.1: Initialize Activity Log Page
-        require_once plugin_dir_path( __FILE__ ) . 'class-ffc-admin-activity-log-page.php';
-        $this->activity_log_page = new \FFC_Admin_Activity_Log_Page();
+        $this->activity_log_page = new AdminActivityLogPage();
 
         add_action( 'admin_menu', array( $this, 'register_admin_menu' ) );
 
@@ -149,7 +151,7 @@ class Admin {
 
     private function render_list_page(): void {
         require_once FFC_PLUGIN_DIR . 'includes/admin/class-ffc-submissions-list-table.php';
-        $table = new \FFC_Submission_List( $this->submission_handler );
+        $table = new \FreeFormCertificate\Admin\SubmissionsList( $this->submission_handler );
         $this->display_admin_notices();
         $table->prepare_items();
         ?>

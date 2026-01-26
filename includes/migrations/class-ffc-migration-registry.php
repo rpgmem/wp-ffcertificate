@@ -59,14 +59,14 @@ class MigrationRegistry {
             'cpf_rf' => array(
                 'json_keys'         => array( 'cpf_rf', 'cpf', 'rf', 'documento' ),
                 'column_name'       => 'cpf_rf',
-                'sanitize_callback' => array( '\FFC_Utils', 'clean_identifier' ),
+                'sanitize_callback' => array( '\FreeFormCertificate\Core\Utils', 'clean_identifier' ),
                 'icon'              => '🆔',
                 'description'       => __( 'CPF or RF number', 'ffc' )
             ),
             'auth_code' => array(
                 'json_keys'         => array( 'auth_code', 'codigo_autenticacao', 'verification_code' ),
                 'column_name'       => 'auth_code',
-                'sanitize_callback' => array( '\FFC_Utils', 'clean_auth_code' ),
+                'sanitize_callback' => array( '\FreeFormCertificate\Core\Utils', 'clean_auth_code' ),
                 'icon'              => '🔐',
                 'description'       => __( 'Authentication code', 'ffc' )
             )

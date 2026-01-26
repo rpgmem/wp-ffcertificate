@@ -111,7 +111,7 @@ class CsvExporter {
         // Decrypt email
         $email = '';
         if ( !empty( $row['email_encrypted'] ) ) {
-            $email = \FFC_Encryption::decrypt( $row['email_encrypted'] );
+            $email = \FreeFormCertificate\Core\Encryption::decrypt( $row['email_encrypted'] );
         } elseif ( !empty( $row['email'] ) ) {
             $email = $row['email']; // Fallback for non-encrypted data
         }
@@ -119,7 +119,7 @@ class CsvExporter {
         // Decrypt IP
         $user_ip = '';
         if ( !empty( $row['user_ip_encrypted'] ) ) {
-            $user_ip = \FFC_Encryption::decrypt( $row['user_ip_encrypted'] );
+            $user_ip = \FreeFormCertificate\Core\Encryption::decrypt( $row['user_ip_encrypted'] );
         } elseif ( !empty( $row['user_ip'] ) ) {
             $user_ip = $row['user_ip']; // Fallback for non-encrypted data
         }
@@ -197,7 +197,7 @@ class CsvExporter {
      * v3.0.3: REFACTORED - Uses Repository instead of direct SQL
      */
     public function export_csv( ?int $form_id = null, string $status = 'publish' ): void {
-        \FFC_Utils::debug_log( 'CSV export started', array(
+        \FreeFormCertificate\Core\Utils::debug_log( 'CSV export started', array(
             'form_id' => $form_id,
             'status' => $status
         ) );
@@ -213,7 +213,7 @@ class CsvExporter {
         $include_edit_columns = $this->repository->hasEditInfo();
         
         $form_title = $form_id ? get_the_title( $form_id ) : 'all-certificates';
-        $filename = \FFC_Utils::sanitize_filename( $form_title ) . '-' . date( 'Y-m-d' ) . '.csv';
+        $filename = \FreeFormCertificate\Core\Utils::sanitize_filename( $form_title ) . '-' . date( 'Y-m-d' ) . '.csv';
         
         header( 'Content-Type: text/csv; charset=utf-8' );
         header( "Content-Disposition: attachment; filename={$filename}" );
@@ -246,7 +246,7 @@ class CsvExporter {
             wp_die( __( 'Security check failed.', 'ffc' ) );
         }
 
-        if ( ! \FFC_Utils::current_user_can_manage() ) {
+        if ( ! \FreeFormCertificate\Core\Utils::current_user_can_manage() ) {
             wp_die( __( 'You do not have permission to export data.', 'ffc' ) );
         }
 

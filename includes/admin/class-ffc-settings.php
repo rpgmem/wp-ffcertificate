@@ -37,7 +37,7 @@ class Settings {
         $this->submission_handler = $handler;
 
         // ✅ Autoloader handles class loading
-        $this->save_handler = new \FFC_Settings_Save_Handler( $handler );
+        $this->save_handler = new \FreeFormCertificate\Admin\SettingsSaveHandler( $handler );
 
         // Load tabs
         $this->load_tabs();
@@ -310,7 +310,7 @@ class Settings {
         
         // Load Migration Manager
         require_once FFC_PLUGIN_DIR . 'includes/migrations/class-ffc-migration-manager.php';
-        $migration_manager = new \FFC_Migration_Manager();
+        $migration_manager = new \FreeFormCertificate\Migrations\MigrationManager();
         
         // Run migration
         $result = $migration_manager->run_migration( $migration_key );
@@ -372,11 +372,11 @@ class Settings {
         if (isset($_GET['action']) && $_GET['action'] === 'warm_cache') {
             check_admin_referer('ffc_warm_cache');
             
-            if (!class_exists('\FFC_Form_Cache')) {
+            if (!class_exists('\FreeFormCertificate\Submissions\FormCache')) {
                 require_once FFC_PLUGIN_DIR . 'includes/submissions/class-ffc-form-cache.php';
             }
             
-            $warmed = \FFC_Form_Cache::warm_all_forms();
+            $warmed = \FreeFormCertificate\Submissions\FormCache::warm_all_forms();
             
             wp_redirect(add_query_arg(array(
                 'post_type' => 'ffc_form',
@@ -392,11 +392,11 @@ class Settings {
         if (isset($_GET['action']) && $_GET['action'] === 'clear_cache') {
             check_admin_referer('ffc_clear_cache');
             
-            if (!class_exists('\FFC_Form_Cache')) {
+            if (!class_exists('\FreeFormCertificate\Submissions\FormCache')) {
                 require_once FFC_PLUGIN_DIR . 'includes/submissions/class-ffc-form-cache.php';
             }
             
-            \FFC_Form_Cache::clear_all_cache();
+            \FreeFormCertificate\Submissions\FormCache::clear_all_cache();
             
             wp_redirect(add_query_arg(array(
                 'post_type' => 'ffc_form',

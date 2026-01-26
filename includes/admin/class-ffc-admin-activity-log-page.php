@@ -74,8 +74,8 @@ class AdminActivityLogPage {
             $args['search'] = $search;
         }
 
-        $logs = \FFC_Activity_Log::get_activities( $args );
-        $total_logs = \FFC_Activity_Log::count_activities( $args );
+        $logs = \FreeFormCertificate\Core\ActivityLog::get_activities( $args );
+        $total_logs = \FreeFormCertificate\Core\ActivityLog::count_activities( $args );
         $total_pages = ceil( $total_logs / $per_page );
 
         // Get unique actions for filter

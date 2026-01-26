@@ -63,7 +63,7 @@ class SubmissionsList extends \WP_List_Table {
                 
             case 'form':
                 $form_title = get_the_title((int) $item['form_id']);
-                return $form_title ? \FFC_Utils::truncate($form_title, 30) : __('(Deleted)', 'ffc');
+                return $form_title ? \FreeFormCertificate\Core\Utils::truncate($form_title, 30) : __('(Deleted)', 'ffc');
                 
             case 'email':
                 return esc_html($item['email']);
@@ -118,10 +118,10 @@ class SubmissionsList extends \WP_List_Table {
     private function render_pdf_button( array $item ): string {
         // Use token directly from item (more efficient, avoids extra DB query)
         if (!empty($item['magic_token'])) {
-            $magic_link = \FFC_Magic_Link_Helper::generate_magic_link($item['magic_token']);
+            $magic_link = \FreeFormCertificate\Generators\MagicLinkHelper::generate_magic_link($item['magic_token']);
         } else {
             // Fallback: generate token if missing (convert id to int - wpdb returns strings)
-            $magic_link = \FFC_Magic_Link_Helper::get_submission_magic_link((int) $item['id'], $this->submission_handler);
+            $magic_link = \FreeFormCertificate\Generators\MagicLinkHelper::get_submission_magic_link((int) $item['id'], $this->submission_handler);
         }
         
         if (empty($magic_link)) {
@@ -163,7 +163,7 @@ class SubmissionsList extends \WP_List_Table {
                 $value = implode(', ', $value);
             }
             
-            $value = \FFC_Utils::truncate($value, 40);
+            $value = \FreeFormCertificate\Core\Utils::truncate($value, 40);
             $label = ucfirst(str_replace('_', ' ', $key));
             $preview_items[] = '<strong>' . esc_html($label) . ':</strong> ' . esc_html($value);
             $count++;

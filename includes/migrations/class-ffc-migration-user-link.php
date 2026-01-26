@@ -32,7 +32,7 @@ class MigrationUserLink {
      */
     public static function run(): array {
         global $wpdb;
-        $table = \FFC_Utils::get_submissions_table();
+        $table = \FreeFormCertificate\Core\Utils::get_submissions_table();
 
         // 1. Add user_id column if not exists
         self::add_user_id_column($table);
@@ -119,7 +119,7 @@ class MigrationUserLink {
                     continue;
                 }
 
-                $email = \FFC_Encryption::decrypt($submission['email_encrypted']);
+                $email = \FreeFormCertificate\Core\Encryption::decrypt($submission['email_encrypted']);
 
                 if (empty($email) || !is_email($email)) {
                     $errors[] = sprintf(
@@ -192,8 +192,8 @@ class MigrationUserLink {
                 self::set_user_display_name($user_id, $submission);
 
                 // STEP 5.2: Send password reset email if enabled (default: disabled)
-                if (class_exists('\FFC_Email_Handler')) {
-                    $email_handler = new \FFC_Email_Handler();
+                if (class_exists('\FreeFormCertificate\Integrations\EmailHandler')) {
+                    $email_handler = new \FreeFormCertificate\Integrations\EmailHandler();
                     $email_handler->send_wp_user_notification($user_id, 'migration');
                 }
             }
@@ -227,7 +227,7 @@ class MigrationUserLink {
 
         // Log errors if any
         if (!empty($errors)) {
-            \FFC_Debug::log_migrations('Migration User Link - Errors', $errors);
+            \FreeFormCertificate\Core\Debug::log_migrations('Migration User Link - Errors', $errors);
 
             // Store errors in option for admin review
             update_option('ffc_migration_user_link_errors', $errors);
@@ -259,7 +259,7 @@ class MigrationUserLink {
         }
 
         try {
-            $data_json = \FFC_Encryption::decrypt($submission['data_encrypted']);
+            $data_json = \FreeFormCertificate\Core\Encryption::decrypt($submission['data_encrypted']);
             $data = json_decode($data_json, true);
 
             if (!is_array($data)) {
@@ -288,7 +288,7 @@ class MigrationUserLink {
 
         } catch (Exception $e) {
             // Silently fail - name is not critical for user creation
-            \FFC_Debug::log_migrations('Failed to extract name for user', array(
+            \FreeFormCertificate\Core\Debug::log_migrations('Failed to extract name for user', array(
                 'user_id' => $user_id,
                 'error' => $e->getMessage()
             ));

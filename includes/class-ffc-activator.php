@@ -22,8 +22,8 @@ class Activator {
         self::create_verification_page();
 
         // ✅ v2.10.0: Create Rate Limit tables
-        if (class_exists('\FFC_Rate_Limit_Activator')) {
-            \FFC_Rate_Limit_Activator::create_tables();
+        if (class_exists('\FreeFormCertificate\Security\RateLimitActivator')) {
+            \FreeFormCertificate\Security\RateLimitActivator::create_tables();
         }
 
         // ✅ v3.1.0: Register ffc_user role
@@ -38,7 +38,7 @@ class Activator {
 
     private static function create_submissions_table(): void {
         global $wpdb;
-        $table_name = \FFC_Utils::get_submissions_table();
+        $table_name = \FreeFormCertificate\Core\Utils::get_submissions_table();
         $charset_collate = $wpdb->get_charset_collate();
 
         if ($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") == $table_name) {
@@ -72,7 +72,7 @@ class Activator {
 
     private static function add_columns(): void {
         global $wpdb;
-        $table_name = \FFC_Utils::get_submissions_table();
+        $table_name = \FreeFormCertificate\Core\Utils::get_submissions_table();
 
         $columns = array(
             'user_id' => array('type' => 'BIGINT(20) UNSIGNED DEFAULT NULL', 'after' => 'form_id', 'index' => 'user_id'),
@@ -172,7 +172,7 @@ class Activator {
     }
 
     private static function run_migrations(): void {
-        if (!class_exists('\FFC_Migration_Manager')) {
+        if (!class_exists('\FreeFormCertificate\Migrations\MigrationManager')) {
             $migration_file = dirname(__FILE__) . '/class-ffc-migration-manager.php';
             if (file_exists($migration_file)) {
                 require_once $migration_file;
@@ -181,7 +181,7 @@ class Activator {
             }
         }
 
-        $migration_manager = new \FFC_Migration_Manager();
+        $migration_manager = new \FreeFormCertificate\Migrations\MigrationManager();
         $migrations = $migration_manager->get_migrations();
 
         if (!is_array($migrations) || empty($migrations)) {
@@ -220,15 +220,15 @@ class Activator {
      */
     private static function register_user_role(): void {
         // Load User Manager if not already loaded
-        if (!class_exists('\FFC_User_Manager')) {
+        if (!class_exists('\FreeFormCertificate\UserDashboard\UserManager')) {
             $user_manager_file = FFC_PLUGIN_DIR . 'includes/user-dashboard/class-ffc-user-manager.php';
             if (file_exists($user_manager_file)) {
                 require_once $user_manager_file;
             }
         }
 
-        if (class_exists('\FFC_User_Manager')) {
-            \FFC_User_Manager::register_role();
+        if (class_exists('\FreeFormCertificate\UserDashboard\UserManager')) {
+            \FreeFormCertificate\UserDashboard\UserManager::register_role();
         }
     }
 
