@@ -2,17 +2,20 @@
 declare(strict_types=1);
 
 /**
- * FFC_Dashboard_Shortcode
+ * DashboardShortcode
  *
  * Renders the user dashboard via [user_dashboard_personal] shortcode
  *
  * @since 3.1.0
  * @version 3.3.0 - Added strict types and type hints
+ * @version 3.2.0 - Migrated to namespace (Phase 2)
  */
+
+namespace FreeFormCertificate\Shortcodes;
 
 if (!defined('ABSPATH')) exit;
 
-class FFC_Dashboard_Shortcode {
+class DashboardShortcode {
 
     /**
      * Register shortcode
