@@ -2,17 +2,20 @@
 declare(strict_types=1);
 
 /**
- * FFC_Deactivator
+ * Deactivator
  * This class handles the logic when the plugin is deactivated or uninstalled.
  *
  * @version 3.3.0 - Added strict types and type hints
+ * @version 3.2.0 - Migrated to namespace (Phase 2)
  */
+
+namespace FreeFormCertificate;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class FFC_Deactivator {
+class Deactivator {
 
     /**
      * Deactivation hook logic.
@@ -39,7 +42,7 @@ class FFC_Deactivator {
         }
         
         global $wpdb;
-        $table_name = FFC_Utils::get_submissions_table();
+        $table_name = \FFC_Utils::get_submissions_table();
 
         // 1. Drop the submissions table
         $wpdb->query( "DROP TABLE IF EXISTS {$table_name}" );

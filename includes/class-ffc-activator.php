@@ -2,15 +2,18 @@
 declare(strict_types=1);
 
 /**
- * FFC_Activator v3.0.1
+ * Activator v3.0.1
  * Added: edited_at and edited_by columns
  *
  * @version 3.3.0 - Added strict types and type hints
+ * @version 3.2.0 - Migrated to namespace (Phase 2)
  */
+
+namespace FreeFormCertificate;
 
 if (!defined('ABSPATH')) exit;
 
-class FFC_Activator {
+class Activator {
 
     public static function activate(): void {
         self::create_submissions_table();
@@ -20,7 +23,7 @@ class FFC_Activator {
 
         // ✅ v2.10.0: Create Rate Limit tables
         if (class_exists('FFC_Rate_Limit_Activator')) {
-            FFC_Rate_Limit_Activator::create_tables();
+            \FFC_Rate_Limit_Activator::create_tables();
         }
 
         // ✅ v3.1.0: Register ffc_user role
@@ -35,7 +38,7 @@ class FFC_Activator {
 
     private static function create_submissions_table(): void {
         global $wpdb;
-        $table_name = FFC_Utils::get_submissions_table();
+        $table_name = \FFC_Utils::get_submissions_table();
         $charset_collate = $wpdb->get_charset_collate();
 
         if ($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") == $table_name) {
@@ -69,7 +72,7 @@ class FFC_Activator {
 
     private static function add_columns(): void {
         global $wpdb;
-        $table_name = FFC_Utils::get_submissions_table();
+        $table_name = \FFC_Utils::get_submissions_table();
 
         $columns = array(
             'user_id' => array('type' => 'BIGINT(20) UNSIGNED DEFAULT NULL', 'after' => 'form_id', 'index' => 'user_id'),
