@@ -2,7 +2,7 @@
 /*
 Plugin Name: Free Form Certificate
 Description: Allows creation of dynamic forms, saves submissions, generates a PDF certificate, and enables CSV export.
-Version: 3.1.0
+Version: 4.0.0
 Author: Alex Meusburger
 Text Domain: ffc
 Domain Path: /languages
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Centralized version management
  */
-define( 'FFC_VERSION', '3.2.0' );              // Plugin version (Namespaces Phase 1)
+define( 'FFC_VERSION', '4.0.0' );              // Plugin version (Namespaces Phase 4 - BC Aliases Removed)
 // External libraries versions
 define( 'FFC_HTML2CANVAS_VERSION', '1.4.1' );   // html2canvas - https://html2canvas.hertzen.com/
 define( 'FFC_JSPDF_VERSION', '2.5.1' );         // jsPDF - https://github.com/parallax/jsPDF
@@ -27,12 +27,16 @@ define( 'FFC_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FFC_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 /**
- * ✅ PSR-4 Autoloader (Phase 1: Namespace Migration)
+ * ✅ PSR-4 Autoloader (Phase 1-4: Namespace Migration Complete)
  *
- * Load the PSR-4 autoloader FIRST to enable namespace support.
- * This must happen before any class loading.
+ * Load the PSR-4 autoloader to enable namespace support.
+ * All classes use FreeFormCertificate\* namespace.
  *
- * @since 3.2.0
+ * ⚠️ BREAKING CHANGE (v4.0.0): Old class names (FFC_*) removed.
+ * Use namespaced classes: FreeFormCertificate\Core\Utils, etc.
+ *
+ * @since 3.2.0 (Phase 1-2)
+ * @since 4.0.0 (Phase 4 - BC aliases removed)
  */
 require_once FFC_PLUGIN_DIR . 'includes/class-ffc-autoloader.php';
 
@@ -41,38 +45,25 @@ $ffc_autoloader = new FFC_Autoloader( FFC_PLUGIN_DIR . 'includes' );
 $ffc_autoloader->register();
 
 /**
- * ✅ Backward Compatibility Aliases
- *
- * Load class aliases to maintain backward compatibility.
- * Maps old class names (FFC_*) to new namespaced classes.
- *
- * @since 3.2.0
- */
-require_once FFC_PLUGIN_DIR . 'includes/class-ffc-aliases.php';
-ffc_register_class_aliases();
-
-/**
  * ✅ Load critical classes for activation hook
- * 
+ *
  * IMPORTANT: These must be loaded BEFORE register_activation_hook
- * because FFC_Activator::activate() needs them
+ * Autoloader will handle loading via global namespace prefix (\FFC_*)
  */
-require_once FFC_PLUGIN_DIR . 'includes/core/class-ffc-utils.php';                   // 1. Utils (used by Migration Manager)
-require_once FFC_PLUGIN_DIR . 'includes/migrations/class-ffc-migration-manager.php';       // 2. Migration Manager (used by Activator)
-require_once FFC_PLUGIN_DIR . 'includes/security/class-ffc-rate-limit-activator.php';    // 3. Rate Limit Activator (used by Activator)
-require_once FFC_PLUGIN_DIR . 'includes/class-ffc-activator.php';               // 4. Activator (uses Migration Manager)
+require_once FFC_PLUGIN_DIR . 'includes/core/class-ffc-utils.php';
+require_once FFC_PLUGIN_DIR . 'includes/migrations/class-ffc-migration-manager.php';
+require_once FFC_PLUGIN_DIR . 'includes/security/class-ffc-rate-limit-activator.php';
+require_once FFC_PLUGIN_DIR . 'includes/class-ffc-activator.php';
 
 /**
  * Register activation hook
- * 
- * ✅ Now FFC_Migration_Manager exists when activate() is called
+ *
+ * Uses global namespace prefix for backward compatibility during transition
  */
-register_activation_hook( __FILE__, array( 'FFC_Activator', 'activate' ) );
+register_activation_hook( __FILE__, array( '\FFC_Activator', 'activate' ) );
 
 /**
  * Load the main plugin loader
- * 
- * Loader will load all other dependencies
  */
 require_once FFC_PLUGIN_DIR . 'includes/class-ffc-loader.php';
 
@@ -80,7 +71,7 @@ require_once FFC_PLUGIN_DIR . 'includes/class-ffc-loader.php';
  * Run the plugin
  */
 function run_free_form_certificate() {
-    $plugin = new Free_Form_Certificate_Loader();
+    $plugin = new \Free_Form_Certificate_Loader();
     $plugin->run();
 }
 
