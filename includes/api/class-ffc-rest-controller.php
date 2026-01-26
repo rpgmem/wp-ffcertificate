@@ -2,18 +2,24 @@
 declare(strict_types=1);
 
 /**
- * FFC REST API Controller
+ * RestController
  *
  * Base controller for all REST API endpoints
  * Namespace: /wp-json/ffc/v1/
  *
  * @version 3.3.0 - Added strict types and type hints
+ * @version 3.2.0 - Migrated to namespace (Phase 2)
  * @since 3.0.0
  */
 
+namespace FreeFormCertificate\API;
+
+use FreeFormCertificate\Repositories\FormRepository;
+use FreeFormCertificate\Repositories\SubmissionRepository;
+
 if (!defined('ABSPATH')) exit;
 
-class FFC_REST_Controller {
+class RestController {
 
     /**
      * API namespace
@@ -23,24 +29,16 @@ class FFC_REST_Controller {
     /**
      * Repositories
      */
-    private ?FFC_Form_Repository $form_repository = null;
-    private ?FFC_Submission_Repository $submission_repository = null;
-    
+    private ?FormRepository $form_repository = null;
+    private ?SubmissionRepository $submission_repository = null;
+
     /**
      * Constructor
      */
     public function __construct() {
-        // Load repositories if not already loaded
-        $this->load_repositories();
-        
         // Initialize repositories
-        if (class_exists('FFC_Form_Repository')) {
-            $this->form_repository = new FFC_Form_Repository();
-        }
-        
-        if (class_exists('FFC_Submission_Repository')) {
-            $this->submission_repository = new FFC_Submission_Repository();
-        }
+        $this->form_repository = new FormRepository();
+        $this->submission_repository = new SubmissionRepository();
         
         // Register REST routes
         add_action('rest_api_init', array($this, 'register_routes'));
@@ -74,25 +72,7 @@ class FFC_REST_Controller {
             }, 10, 4);
         }
     }
-    
-    /**
-     * Load repository classes
-     */
-    private function load_repositories(): void {
-        $repo_files = array(
-            'ffc-abstract-repository.php',
-            'ffc-form-repository.php',
-            'ffc-submission-repository.php'
-        );
 
-        foreach ($repo_files as $file) {
-            $path = FFC_PLUGIN_DIR . 'includes/repositories/' . $file;
-            if (file_exists($path)) {
-                require_once $path;
-            }
-        }
-    }
-    
     /**
      * Register all REST routes
      */
