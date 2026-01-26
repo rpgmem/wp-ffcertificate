@@ -15,11 +15,14 @@ declare(strict_types=1);
  *
  * @package FFC
  * @since 3.1.1
+ * @version 4.0.0 - Fixed type hint (Phase 4 Hotfix 8)
  * @version 3.3.0 - Added strict types and type hints
  * @version 3.2.0 - Migrated to namespace (Phase 2)
  */
 
 namespace FreeFormCertificate\Admin;
+
+use FreeFormCertificate\Submissions\SubmissionHandler;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
@@ -32,9 +35,9 @@ class SettingsSaveHandler {
     /**
      * Constructor
      *
-     * @param FFC_Submission_Handler $handler Submission handler for danger zone
+     * @param SubmissionHandler $handler Submission handler for danger zone
      */
-    public function __construct( FFC_Submission_Handler $handler ) {
+    public function __construct( SubmissionHandler $handler ) {
         $this->submission_handler = $handler;
     }
 
