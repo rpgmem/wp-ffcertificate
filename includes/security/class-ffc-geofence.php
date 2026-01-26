@@ -2,19 +2,22 @@
 declare(strict_types=1);
 
 /**
- * FFC_Geofence
+ * Geofence
  *
  * Main geofence validation class
  * Handles date/time and geolocation restrictions for forms
  *
  * @package FFC
  * @version 3.3.0 - Added strict types and type hints
+ * @version 3.2.0 - Migrated to namespace (Phase 2)
  * @since 3.0.0
  */
 
+namespace FreeFormCertificate\Security;
+
 if (!defined('ABSPATH')) exit;
 
-class FFC_Geofence {
+class Geofence {
 
     /**
      * Check if user can access form (complete validation)
