@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Centralized version management
  */
-define( 'FFC_VERSION', '3.1.1' );              // Plugin version
+define( 'FFC_VERSION', '3.2.0' );              // Plugin version (Namespaces Phase 1)
 // External libraries versions
 define( 'FFC_HTML2CANVAS_VERSION', '1.4.1' );   // html2canvas - https://html2canvas.hertzen.com/
 define( 'FFC_JSPDF_VERSION', '2.5.1' );         // jsPDF - https://github.com/parallax/jsPDF
@@ -25,6 +25,31 @@ define( 'FFC_MIN_PHP_VERSION', '7.4' );         // Minimum PHP
 define( 'FFC_DEBUG', false );                   // Debug mode
 define( 'FFC_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'FFC_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+
+/**
+ * ✅ PSR-4 Autoloader (Phase 1: Namespace Migration)
+ *
+ * Load the PSR-4 autoloader FIRST to enable namespace support.
+ * This must happen before any class loading.
+ *
+ * @since 3.2.0
+ */
+require_once FFC_PLUGIN_DIR . 'includes/class-ffc-autoloader.php';
+
+// Register the autoloader
+$ffc_autoloader = new FFC_Autoloader( FFC_PLUGIN_DIR . 'includes' );
+$ffc_autoloader->register();
+
+/**
+ * ✅ Backward Compatibility Aliases
+ *
+ * Load class aliases to maintain backward compatibility.
+ * Maps old class names (FFC_*) to new namespaced classes.
+ *
+ * @since 3.2.0
+ */
+require_once FFC_PLUGIN_DIR . 'includes/class-ffc-aliases.php';
+ffc_register_class_aliases();
 
 /**
  * ✅ Load critical classes for activation hook
