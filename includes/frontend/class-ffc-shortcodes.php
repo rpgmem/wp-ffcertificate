@@ -2,20 +2,25 @@
 declare(strict_types=1);
 
 /**
- * FFC_Shortcodes
+ * Shortcodes
  * Handles shortcode rendering for forms and verification pages.
  *
  * v2.8.0: Added magic link detection and certificate preview
  * v2.9.0: Added hash-based token support (#token=)
  * v2.9.2: OPTIMIZED to use FFC_Utils functions
  * v3.3.0: Added strict types and type hints
+ * v3.2.0: Migrated to namespace (Phase 2)
  */
+
+namespace FreeFormCertificate\Frontend;
+
+use FreeFormCertificate\Submissions\SubmissionHandler;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class FFC_Shortcodes {
+class Shortcodes {
 
     private $form_processor;
     private $verification_handler;
@@ -24,11 +29,11 @@ class FFC_Shortcodes {
     /**
      * Constructor
      *
-     * @param FFC_Form_Processor $form_processor
-     * @param FFC_Verification_Handler $verification_handler
-     * @param FFC_Submission_Handler|null $submission_handler Added in v2.8.0
+     * @param FormProcessor $form_processor
+     * @param VerificationHandler $verification_handler
+     * @param SubmissionHandler|null $submission_handler Added in v2.8.0
      */
-    public function __construct( FFC_Form_Processor $form_processor, FFC_Verification_Handler $verification_handler, ?FFC_Submission_Handler $submission_handler = null ) {
+    public function __construct( FormProcessor $form_processor, VerificationHandler $verification_handler, ?SubmissionHandler $submission_handler = null ) {
         $this->form_processor = $form_processor;
         $this->verification_handler = $verification_handler;
         $this->submission_handler = $submission_handler;

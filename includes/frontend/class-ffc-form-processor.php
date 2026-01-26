@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /**
- * FFC_Form_Processor
+ * FormProcessor
  * Handles form submission processing, validation, and restriction checks.
  *
  * v2.9.2: Unified PDF generation with FFC_PDF_Generator
@@ -10,13 +10,18 @@ declare(strict_types=1);
  * v2.9.13: Optimized detect_reprint() to use cpf_rf column with fallback
  * v2.10.0: LGPD - Validates consent checkbox (mandatory)
  * v3.3.0: Added strict types and type hints
+ * v3.2.0: Migrated to namespace (Phase 2)
  */
+
+namespace FreeFormCertificate\Frontend;
+
+use FreeFormCertificate\Submissions\SubmissionHandler;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class FFC_Form_Processor {
+class FormProcessor {
 
     private $submission_handler;
     private $email_handler;
@@ -24,7 +29,7 @@ class FFC_Form_Processor {
     /**
      * Constructor
      */
-    public function __construct( FFC_Submission_Handler $submission_handler, FFC_Email_Handler $email_handler ) {
+    public function __construct( SubmissionHandler $submission_handler, $email_handler ) {
         $this->submission_handler = $submission_handler;
         $this->email_handler = $email_handler;
 

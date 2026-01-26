@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /**
- * FFC_Verification_Handler
+ * VerificationHandler
  * Handles certificate verification and authenticity checks.
  *
  * v2.8.0: Added magic link verification with rate limiting
@@ -10,13 +10,19 @@ declare(strict_types=1);
  * v2.9.2: Unified PDF generation with FFC_PDF_Generator, removed prepare_pdf_data()
  * v2.10.0: ENCRYPTION - Auto-decryption via Submission Handler + Access logging
  * v3.3.0: Added strict types and type hints
+ * v3.2.0: Migrated to namespace (Phase 2)
  */
+
+namespace FreeFormCertificate\Frontend;
+
+use FreeFormCertificate\Submissions\SubmissionHandler;
+use FreeFormCertificate\Repositories\SubmissionRepository;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class FFC_Verification_Handler {
+class VerificationHandler {
 
     private $submission_handler;
     private $email_handler;
@@ -24,10 +30,10 @@ class FFC_Verification_Handler {
     /**
      * Constructor
      *
-     * @param FFC_Submission_Handler|null $submission_handler Submission handler dependency
-     * @param FFC_Email_Handler|null $email_handler Email handler for PDF generation
+     * @param SubmissionHandler|null $submission_handler Submission handler dependency
+     * @param mixed $email_handler Email handler for PDF generation
      */
-    public function __construct( ?FFC_Submission_Handler $submission_handler = null, ?FFC_Email_Handler $email_handler = null ) {
+    public function __construct( ?SubmissionHandler $submission_handler = null, $email_handler = null ) {
         $this->submission_handler = $submission_handler;
         $this->email_handler = $email_handler;
     }
@@ -41,8 +47,8 @@ class FFC_Verification_Handler {
      * Search for certificate - uses Repository
      */
     private function search_certificate( string $auth_code ): array {
-        $repository = new FFC_Submission_Repository();
-        $clean_code = FFC_Utils::clean_auth_code($auth_code);
+        $repository = new SubmissionRepository();
+        $clean_code = \FFC_Utils::clean_auth_code($auth_code);
         
         if (empty($clean_code)) {
             return [
