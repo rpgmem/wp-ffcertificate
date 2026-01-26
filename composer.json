@@ -14,11 +14,8 @@
   },
   "autoload": {
     "psr-4": {
-      "FFC\\": "includes/"
-    },
-    "classmap": [
-      "includes/"
-    ]
+      "FreeFormCertificate\\": "includes/"
+    }
   },
   "config": {
     "optimize-autoloader": true,

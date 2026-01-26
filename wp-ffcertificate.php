@@ -47,27 +47,12 @@ $ffc_autoloader = new FFC_Autoloader( FFC_PLUGIN_DIR . 'includes' );
 $ffc_autoloader->register();
 
 /**
- * ✅ Load critical classes for activation hook
- *
- * IMPORTANT: These must be loaded BEFORE register_activation_hook
- * Autoloader will handle loading via global namespace prefix (\FFC_*)
- */
-require_once FFC_PLUGIN_DIR . 'includes/core/class-ffc-utils.php';
-require_once FFC_PLUGIN_DIR . 'includes/migrations/class-ffc-migration-manager.php';
-require_once FFC_PLUGIN_DIR . 'includes/security/class-ffc-rate-limit-activator.php';
-require_once FFC_PLUGIN_DIR . 'includes/class-ffc-activator.php';
-
-/**
  * Register activation hook
  *
- * Uses global namespace prefix for backward compatibility during transition
+ * ✅ All classes loaded via PSR-4 autoloader (registered above)
+ * No manual require_once needed - autoloader handles everything
  */
-register_activation_hook( __FILE__, array( '\FFC_Activator', 'activate' ) );
-
-/**
- * Load the main plugin loader
- */
-require_once FFC_PLUGIN_DIR . 'includes/class-ffc-loader.php';
+register_activation_hook( __FILE__, array( '\FreeFormCertificate\Activator', 'activate' ) );
 
 /**
  * Run the plugin
