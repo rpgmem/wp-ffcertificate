@@ -139,25 +139,55 @@ class SubmissionRepository extends AbstractRepository {
     }
     
     /**
-     * ✅ NEW v3.0.1: Get all submissions by form_id and status for export
+     * ✅ NEW v4.0.0: Get all submissions by form_id(s) and status for export
      *
-     * @param int|null $form_id Form ID (null = all forms)
+     * @param int|array|null $form_ids Single form ID, array of IDs, or null for all forms
      * @param string|null $status Status filter (publish, trash, null = all)
      * @return array Array of submissions
      */
-    public function getForExport( ?int $form_id = null, ?string $status = 'publish' ): array {
+    public function getForExport( $form_ids = null, ?string $status = 'publish' ): array {
+        // Handle multiple form IDs with custom query
+        if ( is_array( $form_ids ) && !empty( $form_ids ) ) {
+            $form_ids_int = array_map( 'absint', $form_ids );
+            $form_ids_placeholders = implode( ', ', array_fill( 0, count( $form_ids_int ), '%d' ) );
+
+            $where = [];
+            $prepare_args = [];
+
+            // Add form_id filter
+            $where[] = "form_id IN ({$form_ids_placeholders})";
+            $prepare_args = array_merge( $prepare_args, $form_ids_int );
+
+            // Add status filter
+            if ( $status ) {
+                $where[] = "status = %s";
+                $prepare_args[] = $status;
+            }
+
+            $where_clause = 'WHERE ' . implode( ' AND ', $where );
+
+            $query = "SELECT * FROM {$this->table} {$where_clause} ORDER BY id DESC";
+
+            if ( !empty( $prepare_args ) ) {
+                $query = $this->wpdb->prepare( $query, ...$prepare_args );
+            }
+
+            return $this->wpdb->get_results( $query, ARRAY_A );
+        }
+
+        // Single form ID or no filter - use existing logic
         $conditions = [];
-        
-        if ($status) {
+
+        if ( $status ) {
             $conditions['status'] = $status;
         }
-        
-        if ($form_id) {
-            $conditions['form_id'] = $form_id;
+
+        if ( is_int( $form_ids ) ) {
+            $conditions['form_id'] = $form_ids;
         }
-        
+
         // Use inherited findAll() method with no limit
-        return $this->findAll($conditions, 'id', 'DESC', null, 0);
+        return $this->findAll( $conditions, 'id', 'DESC', null, 0 );
     }
     
     /**
@@ -204,12 +234,23 @@ class SubmissionRepository extends AbstractRepository {
             'per_page' => 20,
             'page' => 1,
             'orderby' => 'id',
-            'order' => 'DESC'
+            'order' => 'DESC',
+            'form_ids' => []
         ];
 
         $args = wp_parse_args($args, $defaults);
 
         $where = [$this->wpdb->prepare("status = %s", $args['status'])];
+
+        // ✅ NEW: Filter by form ID(s)
+        if ( !empty( $args['form_ids'] ) && is_array( $args['form_ids'] ) ) {
+            $form_ids_int = array_map( 'absint', $args['form_ids'] );
+            $form_ids_placeholders = implode( ', ', array_fill( 0, count( $form_ids_int ), '%d' ) );
+            $where[] = $this->wpdb->prepare(
+                "form_id IN ({$form_ids_placeholders})",
+                ...$form_ids_int
+            );
+        }
 
         if (!empty($args['search'])) {
             $search_term = $args['search'];

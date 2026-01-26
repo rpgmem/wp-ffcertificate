@@ -164,11 +164,27 @@ class Admin {
                 <form method="POST" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
                     <input type="hidden" name="action" value="ffc_export_csv">
                     <input type="hidden" name="ffc_action" value="export_csv_smart">
-                    <?php if(isset($_GET['filter_form_id']) && $_GET['filter_form_id'] > 0): ?>
-                        <input type="hidden" name="form_id" value="<?php echo intval($_GET['filter_form_id']); ?>">
-                        <button type="submit" class="button button-primary"><?php _e( 'Filtered CSV', 'ffc' ); ?></button>
+                    <?php
+                    // ✅ Support multiple form filters
+                    $filter_form_ids = [];
+                    if ( !empty( $_GET['filter_form_id'] ) ) {
+                        if ( is_array( $_GET['filter_form_id'] ) ) {
+                            $filter_form_ids = array_map( 'absint', $_GET['filter_form_id'] );
+                        } else {
+                            $filter_form_ids = [ absint( $_GET['filter_form_id'] ) ];
+                        }
+                    }
+
+                    if ( !empty( $filter_form_ids ) ) :
+                        foreach ( $filter_form_ids as $form_id ) :
+                    ?>
+                        <input type="hidden" name="form_ids[]" value="<?php echo esc_attr( $form_id ); ?>">
+                    <?php
+                        endforeach;
+                    ?>
+                        <button type="submit" class="button button-primary"><?php _e( 'Export Filtered CSV', 'ffc' ); ?></button>
                     <?php else: ?>
-                        <button type="submit" class="button"><?php _e( 'All CSV', 'ffc' ); ?></button>
+                        <button type="submit" class="button"><?php _e( 'Export All CSV', 'ffc' ); ?></button>
                     <?php endif; ?>
                     <?php wp_nonce_field('ffc_export_csv_nonce','ffc_export_csv_action'); ?>
                 </form>

@@ -193,35 +193,46 @@ class SubmissionsList extends \WP_List_Table {
 
     public function prepare_items() {
         $this->process_bulk_action();
-        
+
         $columns = $this->get_columns();
         $hidden = [];
         $sortable = $this->get_sortable_columns();
         $this->_column_headers = [$columns, $hidden, $sortable];
-        
+
         $per_page = 20;
         $current_page = $this->get_pagenum();
         $status = isset($_GET['status']) ? sanitize_key($_GET['status']) : 'publish';
         $search = isset($_REQUEST['s']) ? sanitize_text_field($_REQUEST['s']) : '';
         $orderby = (!empty($_GET['orderby'])) ? sanitize_key($_GET['orderby']) : 'id';
         $order = (!empty($_GET['order']) && $_GET['order'] === 'asc') ? 'ASC' : 'DESC';
-        
+
+        // ✅ NEW: Filter by form ID(s)
+        $filter_form_ids = [];
+        if ( !empty( $_GET['filter_form_id'] ) ) {
+            if ( is_array( $_GET['filter_form_id'] ) ) {
+                $filter_form_ids = array_map( 'absint', $_GET['filter_form_id'] );
+            } else {
+                $filter_form_ids = [ absint( $_GET['filter_form_id'] ) ];
+            }
+        }
+
         $result = $this->repository->findPaginated([
             'status' => $status,
             'search' => $search,
             'per_page' => $per_page,
             'page' => $current_page,
             'orderby' => $orderby,
-            'order' => $order
+            'order' => $order,
+            'form_ids' => $filter_form_ids
         ]);
-        
+
         $this->items = [];
         if (!empty($result['items'])) {
             foreach ($result['items'] as $item) {
                 $this->items[] = $this->submission_handler->decrypt_submission_data($item);
             }
         }
-        
+
         $this->set_pagination_args([
             'total_items' => $result['total'],
             'per_page' => $per_page,
@@ -253,5 +264,57 @@ class SubmissionsList extends \WP_List_Table {
 
     public function no_items() {
         esc_html_e('No submissions found.', 'ffc');
+    }
+
+    /**
+     * Display filters above the table
+     *
+     * @param string $which Position (top or bottom)
+     */
+    protected function extra_tablenav( $which ) {
+        if ( $which !== 'top' ) {
+            return;
+        }
+
+        // Get all forms
+        $forms = get_posts( [
+            'post_type' => 'ffc_form',
+            'posts_per_page' => -1,
+            'post_status' => 'publish',
+            'orderby' => 'title',
+            'order' => 'ASC'
+        ] );
+
+        if ( empty( $forms ) ) {
+            return;
+        }
+
+        $selected_form_ids = [];
+        if ( !empty( $_GET['filter_form_id'] ) ) {
+            if ( is_array( $_GET['filter_form_id'] ) ) {
+                $selected_form_ids = array_map( 'absint', $_GET['filter_form_id'] );
+            } else {
+                $selected_form_ids = [ absint( $_GET['filter_form_id'] ) ];
+            }
+        }
+
+        ?>
+        <div class="alignleft actions">
+            <label for="filter-form-id" class="screen-reader-text"><?php _e( 'Filter by form', 'ffc' ); ?></label>
+            <select name="filter_form_id[]" id="filter-form-id" multiple style="min-width: 200px; height: 100px;">
+                <?php foreach ( $forms as $form ) : ?>
+                    <option value="<?php echo esc_attr( $form->ID ); ?>" <?php echo in_array( $form->ID, $selected_form_ids ) ? 'selected' : ''; ?>>
+                        <?php echo esc_html( $form->post_title ); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            <input type="submit" class="button" value="<?php _e( 'Filter', 'ffc' ); ?>">
+            <?php if ( !empty( $selected_form_ids ) ) : ?>
+                <a href="<?php echo esc_url( remove_query_arg( 'filter_form_id' ) ); ?>" class="button">
+                    <?php _e( 'Clear Filter', 'ffc' ); ?>
+                </a>
+            <?php endif; ?>
+        </div>
+        <?php
     }
 }
