@@ -105,7 +105,7 @@ class PdfGenerator {
         $filename = $this->generate_filename( $form_title, $auth_code );
         
         // Log generation
-        if ( class_exists( 'FFC_Utils' ) && method_exists( 'FFC_Utils', 'debug_log' ) ) {
+        if ( class_exists( '\\FreeFormCertificate\\Core\\Utils' ) && method_exists( '\\FreeFormCertificate\\Core\\Utils', 'debug_log' ) ) {
             \FreeFormCertificate\Core\Utils::debug_log( 'PDF data generated', array(
                 'submission_id' => $submission_id,
                 'form_id' => $form_id,
@@ -536,7 +536,7 @@ class PdfGenerator {
      */
     private function generate_filename( string $form_title, string $auth_code = '' ): string {
         // Sanitize form title
-        if ( class_exists( 'FFC_Utils' ) && method_exists( 'FFC_Utils', 'sanitize_filename' ) ) {
+        if ( class_exists( '\\FreeFormCertificate\\Core\\Utils' ) && method_exists( '\\FreeFormCertificate\\Core\\Utils', 'sanitize_filename' ) ) {
             $safe_name = \FreeFormCertificate\Core\Utils::sanitize_filename( $form_title );
         } else {
             $safe_name = sanitize_file_name( $form_title );
@@ -597,7 +597,7 @@ class PdfGenerator {
         $filename = $this->generate_filename( $form_title, $auth_code );
         
         // Log generation
-        if ( class_exists( 'FFC_Utils' ) && method_exists( 'FFC_Utils', 'debug_log' ) ) {
+        if ( class_exists( '\\FreeFormCertificate\\Core\\Utils' ) && method_exists( '\\FreeFormCertificate\\Core\\Utils', 'debug_log' ) ) {
             \FreeFormCertificate\Core\Utils::debug_log( 'PDF data generated from form', array(
                 'form_id' => $form_id,
                 'form_title' => \FreeFormCertificate\Core\Utils::truncate( $form_title, 50 ),

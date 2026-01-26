@@ -216,7 +216,7 @@ class CleanupMigrationStrategy implements MigrationStrategyInterface {
      */
     public function can_run( string $migration_key, array $migration_config ) {
         // Check if FFC_Encryption class exists
-        if ( ! class_exists( 'FFC_Encryption' ) ) {
+        if ( ! class_exists( '\\FreeFormCertificate\\Core\\Encryption' ) ) {
             return new WP_Error(
                 'encryption_class_missing',
                 __( 'FFC_Encryption class required for cleanup. Encrypt data first.', 'ffc' )

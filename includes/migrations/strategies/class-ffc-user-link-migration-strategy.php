@@ -128,7 +128,7 @@ class UserLinkMigrationStrategy implements MigrationStrategyInterface {
      */
     public function can_run( string $migration_key, array $migration_config ) {
         // Check if encryption is configured (required for decrypting emails)
-        if ( ! class_exists( 'FFC_Encryption' ) ) {
+        if ( ! class_exists( '\\FreeFormCertificate\\Core\\Encryption' ) ) {
             return new WP_Error(
                 'encryption_not_available',
                 __( 'Encryption class not available. Cannot link users without decrypting emails.', 'ffc' )

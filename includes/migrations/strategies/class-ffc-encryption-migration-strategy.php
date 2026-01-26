@@ -183,7 +183,7 @@ class EncryptionMigrationStrategy implements MigrationStrategyInterface {
         }
 
         // Log migration batch
-        if ( class_exists( 'FFC_Activity_Log' ) ) {
+        if ( class_exists( '\\FreeFormCertificate\\Core\\ActivityLog' ) ) {
             \FreeFormCertificate\Core\ActivityLog::log(
                 'encryption_migration_batch',
                 \FreeFormCertificate\Core\ActivityLog::LEVEL_INFO,
@@ -222,7 +222,7 @@ class EncryptionMigrationStrategy implements MigrationStrategyInterface {
      */
     public function can_run( string $migration_key, array $migration_config ) {
         // Check if FFC_Encryption class exists
-        if ( ! class_exists( 'FFC_Encryption' ) ) {
+        if ( ! class_exists( '\\FreeFormCertificate\\Core\\Encryption' ) ) {
             return new WP_Error(
                 'encryption_class_missing',
                 __( 'FFC_Encryption class not found. Please ensure class-ffc-encryption.php is loaded.', 'ffc' )

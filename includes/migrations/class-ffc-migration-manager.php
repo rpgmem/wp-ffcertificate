@@ -259,7 +259,7 @@ class MigrationManager {
 
         if ( ! is_wp_error( $result ) && $result['success'] ) {
             // Log cleanup action
-            if ( class_exists( 'FFC_Activity_Log' ) ) {
+            if ( class_exists( '\\FreeFormCertificate\\Core\\ActivityLog' ) ) {
                 \FreeFormCertificate\Core\ActivityLog::log(
                     'data_cleanup_executed',
                     \FreeFormCertificate\Core\ActivityLog::LEVEL_WARNING,
@@ -320,7 +320,7 @@ class MigrationManager {
         }
 
         // Log critical action
-        if ( class_exists( 'FFC_Activity_Log' ) ) {
+        if ( class_exists( '\\FreeFormCertificate\\Core\\ActivityLog' ) ) {
             \FreeFormCertificate\Core\ActivityLog::log(
                 'columns_dropped',
                 \FreeFormCertificate\Core\ActivityLog::LEVEL_CRITICAL,

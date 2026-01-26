@@ -90,7 +90,7 @@ class ActivityLog {
         $context_json = wp_json_encode( $context );
         $context_encrypted = null;
         
-        if ( class_exists( 'FFC_Encryption' ) && \FreeFormCertificate\Core\Encryption::is_configured() ) {
+        if ( class_exists( '\\FreeFormCertificate\\Core\\Encryption' ) && \FreeFormCertificate\Core\Encryption::is_configured() ) {
             // Encrypt context for sensitive operations
             $sensitive_actions = array(
                 'submission_created',
@@ -134,7 +134,7 @@ class ActivityLog {
 
         // Also log via debug system if enabled (respects Activity Log setting)
         // Debug logging only happens when Activity Log is enabled in admin
-        if ( $result !== false && class_exists( 'FFC_Debug' ) ) {
+        if ( $result !== false && class_exists( '\\FreeFormCertificate\\Core\\Debug' ) ) {
             \FreeFormCertificate\Core\Debug::log_activity_log( $action, array(
                 'level' => strtoupper( $level ),
                 'user_id' => $user_id,
@@ -553,7 +553,7 @@ class ActivityLog {
         );
         
         // Decrypt encrypted contexts if available
-        if ( class_exists( 'FFC_Encryption' ) && \FreeFormCertificate\Core\Encryption::is_configured() ) {
+        if ( class_exists( '\\FreeFormCertificate\\Core\\Encryption' ) && \FreeFormCertificate\Core\Encryption::is_configured() ) {
             foreach ( $logs as &$log ) {
                 if ( ! empty( $log['context_encrypted'] ) ) {
                     $decrypted = \FreeFormCertificate\Core\Encryption::decrypt( $log['context_encrypted'] );

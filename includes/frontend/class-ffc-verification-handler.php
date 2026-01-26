@@ -147,7 +147,7 @@ class VerificationHandler {
         }
 
         // v2.10.0: Log access for LGPD compliance
-        if ( class_exists( 'FFC_Activity_Log' ) ) {
+        if ( class_exists( '\\FreeFormCertificate\\Core\\ActivityLog' ) ) {
             \FreeFormCertificate\Core\ActivityLog::log_data_accessed(
                 (int) $submission['id'],  // Convert to int (wpdb returns strings)
                 array(
@@ -302,11 +302,11 @@ class VerificationHandler {
     
     // Format documents (CPF, RF, RG)
     if ( in_array( $field_key, array( 'cpf', 'cpf_rf', 'rg' ) ) && ! empty( $value ) ) {
-        if ( class_exists( 'FFC_Utils' ) && method_exists( 'FFC_Utils', 'format_document' ) ) {
+        if ( class_exists( '\\FreeFormCertificate\\Core\\Utils' ) && method_exists( '\\FreeFormCertificate\\Core\\Utils', 'format_document' ) ) {
             return \FreeFormCertificate\Core\Utils::format_document( $value, 'auto' );
         }
     }
-    
+
     return $value;
 }
 
@@ -318,7 +318,7 @@ class VerificationHandler {
         $result = $this->search_certificate( $auth_code );
         if ( $result['found'] && isset( $result['submission']['id'] ) ) {
         // ✅ v2.10.0: Log access for LGPD compliance
-        if ( class_exists( 'FFC_Activity_Log' ) ) {
+        if ( class_exists( '\\FreeFormCertificate\\Core\\ActivityLog' ) ) {
             \FreeFormCertificate\Core\ActivityLog::log_data_accessed(
                 (int) $result['submission']['id'],  // Convert to int (wpdb returns strings)
                 array(
