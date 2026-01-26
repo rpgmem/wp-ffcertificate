@@ -107,9 +107,6 @@ class CleanupMigrationStrategy implements MigrationStrategyInterface {
         // This prevents issues with columns that have empty strings instead of NULL
         if ( $batch_number === 0 ) {
             $normalized = $this->normalize_empty_strings_to_null();
-            if ( $normalized !== false && $normalized > 0 ) {
-                error_log( sprintf( 'FFC Cleanup: Normalized %d empty strings to NULL', $normalized ) );
-            }
         }
 
         // STEP 1: Get submissions eligible for cleanup (15+ days old, encrypted, still have plain data)

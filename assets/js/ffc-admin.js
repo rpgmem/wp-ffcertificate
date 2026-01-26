@@ -18,7 +18,7 @@
 (function($) {
     'use strict';
 
-    console.log('[FFC Admin] Initializing v3.1.0...');
+    // console.log('[FFC Admin] Initializing v3.1.0...');
 
     // ==========================================================================
     // NOTIFICATION SYSTEM - Replace alerts with inline messages
@@ -70,7 +70,7 @@
 
     $(document).on('click', '#ffc_btn_generate_codes', function(e) {
         e.preventDefault();
-        console.log('[FFC] Generate Tickets clicked');
+        // console.log('[FFC] Generate Tickets clicked');
 
         // Read from input field instead of prompt
         var quantity = $('#ffc_qty_codes').val();
@@ -98,7 +98,7 @@
         // Use nonce from ffc_ajax (localized by class-ffc-admin.php)
         var nonce = (typeof ffc_ajax !== 'undefined') ? ffc_ajax.nonce : '';
 
-        console.log('[FFC] Using nonce for tickets:', nonce ? nonce.substring(0, 10) + '...' : 'NOT FOUND');
+        // console.log('[FFC] Using nonce for tickets:', nonce ? nonce.substring(0, 10) + '...' : 'NOT FOUND');
 
         // AJAX to generate tickets
         $.ajax({
@@ -120,7 +120,7 @@
                         var currentCodes = $codesField.val();
                         var newCodes = currentCodes ? currentCodes + '\n' + response.data.codes : response.data.codes;
                         $codesField.val(newCodes);
-                        console.log('[FFC] Codes added to field: ffc_generated_list');
+                        // console.log('[FFC] Codes added to field: ffc_generated_list');
 
                         // Inline message instead of alert
                         var successMsg = strings.ticketsGeneratedSuccess || 'tickets generated successfully!';
@@ -168,19 +168,19 @@
     // ==========================================================================
 
     $(document).ready(function() {
-        console.log('[FFC Admin] Document ready');
+        // console.log('[FFC Admin] Document ready');
 
         // Initialize form builder module if on edit page
         if ($('#ffc-fields-container').length) {
             if (window.FFC && window.FFC.Admin && window.FFC.Admin.FieldBuilder) {
                 window.FFC.Admin.FieldBuilder.init();
-                console.log('[FFC Admin] Field Builder module initialized');
+                // console.log('[FFC Admin] Field Builder module initialized');
             } else {
                 console.warn('[FFC Admin] Field Builder module not loaded');
             }
         }
 
-        console.log('[FFC Admin] Initialization complete');
+        // console.log('[FFC Admin] Initialization complete');
     });
 
     /**
@@ -218,8 +218,7 @@
             // Show menu
             $menu.addClass('ffc-visible');
 
-            // Debug
-            console.log('Migration menu opened');
+            // console.log('Migration menu opened');
         }
 
         /**
@@ -229,8 +228,7 @@
             $menu.removeClass('ffc-visible');
             $overlay.removeClass('ffc-visible');
 
-            // Debug
-            console.log('Migration menu closed');
+            // console.log('Migration menu closed');
         }
 
         /**
@@ -278,12 +276,11 @@
             e.stopPropagation();
         });
 
-        // Debug: log when loaded
-        console.log('FFC Migration Dropdown initialized', {
-            button: $btn.length,
-            menu: $menu.length,
-            overlay: $overlay.length
-        });
+        // console.log('FFC Migration Dropdown initialized', {
+        //     button: $btn.length,
+        //     menu: $menu.length,
+        //     overlay: $overlay.length
+        // });
 
         // Show/hide restriction fields based on checkboxes - Using event delegation
         function toggleRestrictionField(checkbox, fieldId) {
@@ -318,7 +315,7 @@
         });
         $('#ffc_restriction_ticket').trigger('change');
 
-        console.log('[FFC Admin] Restriction field toggles initialized');
+        // console.log('[FFC Admin] Restriction field toggles initialized');
     });
 
 })(jQuery);

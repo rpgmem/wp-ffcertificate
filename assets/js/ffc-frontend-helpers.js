@@ -125,10 +125,10 @@
             if ($inputs.length === 0) {
                 return;
             }
-            
-            console.log('[FFC Masks] Applying CPF/RF mask with validation to', $inputs.length, 'field(s)');
-            
-            $inputs.each(function() {
+
+            // console.log('[FFC Masks] Applying CPF/RF mask with validation to', $inputs.length, 'field(s)');
+
+$inputs.each(function() {
                 var $input = $(this);
                 
                 // Remove existing handlers to avoid duplicates
@@ -264,10 +264,10 @@
             if ($inputs.length === 0) {
                 return;
             }
-            
-            console.log('[FFC Masks] Applying auth code mask to', $inputs.length, 'field(s)');
-            
-            $inputs.each(function() {
+
+            // console.log('[FFC Masks] Applying auth code mask to', $inputs.length, 'field(s)');
+
+$inputs.each(function() {
                 var $input = $(this);
                 
                 // Remove existing handlers to avoid duplicates
@@ -326,10 +326,10 @@
             if ($inputs.length === 0) {
                 return;
             }
-            
-            console.log('[FFC Masks] Applying ticket mask to', $inputs.length, 'field(s)');
-            
-            $inputs.each(function() {
+
+            // console.log('[FFC Masks] Applying ticket mask to', $inputs.length, 'field(s)');
+
+$inputs.each(function() {
                 var $input = $(this);
                 
                 // Remove existing handlers to avoid duplicates
@@ -475,13 +475,13 @@
             // Update label
             if ($captchaLabel.length && newLabel) {
                 $captchaLabel.html(newLabel);
-                console.log('[FFC UI] Captcha label updated');
+                // console.log('[FFC UI] Captcha label updated');
             }
-            
+
             // Update hash
             if ($captchaHash.length && newHash) {
                 $captchaHash.val(newHash);
-                console.log('[FFC UI] Captcha hash updated');
+                // console.log('[FFC UI] Captcha hash updated');
             }
             
             // Clear and focus input
@@ -611,7 +611,7 @@
     };
     
     window.FFCRateLimit = RateLimit;
-    
-    console.log('[FFC Frontend Helpers] Module loaded v3.0.0');
-    
+
+    // console.log('[FFC Frontend Helpers] Module loaded v3.0.0');
+
 })(jQuery, window);

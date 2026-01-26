@@ -48,9 +48,9 @@
             
             var hashParams = new URLSearchParams(hash);
             token = hashParams.get('token');
-            
-            console.log('[FFC] Hash detected:', window.location.hash);
-            console.log('[FFC] Token extracted from hash:', token ? token.substring(0, 8) + '...' : 'null');
+
+            // console.log('[FFC] Hash detected:', window.location.hash);
+            // console.log('[FFC] Token extracted from hash:', token ? token.substring(0, 8) + '...' : 'null');
         }
         
         // Priority 3: Get token from query string (?token=xxx) - fallback
@@ -66,9 +66,9 @@
         }
 
         // Auto-verify with token
-        console.log('[FFC] Auto-verifying with token:', token.substring(0, 8) + '...');
-        
-        $.ajax({
+        // console.log('[FFC] Auto-verifying with token:', token.substring(0, 8) + '...');
+
+$.ajax({
             url: ffc_ajax.ajax_url,
             type: 'POST',
             data: {
@@ -104,7 +104,7 @@
                 var $downloadBtn = $container.find('.ffc-download-btn, .ffc-download-pdf-btn');
                 if ($downloadBtn.length) {
                     $downloadBtn.attr('data-pdf-data', JSON.stringify(data.pdf_data));
-                    console.log('[FFC] PDF data added to button');
+                    // console.log('[FFC] PDF data added to button');
                 }
             }
             
@@ -419,17 +419,17 @@
                 observer.maskTimeout = setTimeout(function() {
                     if (needsAuthMask) {
                         FFC.Frontend.Masks.applyAuthCode();
-                        console.log('[FFC] Auth code mask re-applied');
+                        // console.log('[FFC] Auth code mask re-applied');
                     }
 
                     if (needsCpfMask) {
                         FFC.Frontend.Masks.applyCpfRf();
-                        console.log('[FFC] CPF/RF mask re-applied');
+                        // console.log('[FFC] CPF/RF mask re-applied');
                     }
 
                     if (needsTicketMask) {
                         FFC.Frontend.Masks.applyTicket();
-                        console.log('[FFC] Ticket mask re-applied');
+                        // console.log('[FFC] Ticket mask re-applied');
                     }
                 }, 50);
             }
@@ -443,9 +443,9 @@
         
         // Start observing document body
         observer.observe(document.body, config);
-        
-        console.log('[FFC] MutationObserver initialized for dynamic masks');
-        
+
+        // console.log('[FFC] MutationObserver initialized for dynamic masks');
+
         // Return observer for cleanup if needed
         return observer;
     }
@@ -462,13 +462,13 @@
         // Apply masks using FFC.Frontend.Masks
         if (FFC.Frontend.Masks) {
             FFC.Frontend.Masks.applyAuthCode();
-            console.log('[FFC] Auth code mask applied');
+            // console.log('[FFC] Auth code mask applied');
 
             FFC.Frontend.Masks.applyCpfRf();
-            console.log('[FFC] CPF/RF mask applied');
+            // console.log('[FFC] CPF/RF mask applied');
 
             FFC.Frontend.Masks.applyTicket();
-            console.log('[FFC] Ticket mask applied');
+            // console.log('[FFC] Ticket mask applied');
 
             // Setup dynamic mask observer
             setupDynamicMaskObserver();
@@ -476,7 +476,7 @@
             console.warn('[FFC] Frontend helpers not loaded - masks disabled');
         }
     });
-    
-    console.log('[FFC Frontend] Script loaded v3.1.0 (cleaned up defensive code)');
+
+    // console.log('[FFC Frontend] Script loaded v3.1.0 (cleaned up defensive code)');
 
 })(jQuery);

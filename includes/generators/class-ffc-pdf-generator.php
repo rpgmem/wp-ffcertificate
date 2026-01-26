@@ -73,18 +73,10 @@ class PdfGenerator {
             $extra_data = json_decode( stripslashes( $sub_array['data'] ), true );
         }
 
-        \FreeFormCertificate\Core\Debug::log_pdf( 'JSON: data', $sub_array['data'] );
-        \FreeFormCertificate\Core\Debug::log_pdf( 'JSON: extra_data', $extra_data );
-        \FreeFormCertificate\Core\Debug::log_pdf( 'JSON: is_array', is_array( $extra_data ) ? 'YES' : 'NO' );
-
         // Step 3: Merge (extras do NOT overwrite required fields)
         if ( is_array( $extra_data ) && ! empty( $extra_data ) ) {
             $data = array_merge( $extra_data, $data );  // ✅ Important order: columns have priority
         }
-
-        // ✅ Now $data has EVERYTHING: columns + JSON
-        \FreeFormCertificate\Core\Debug::log_pdf( 'MERGE: count', count( $extra_data ) );
-        \FreeFormCertificate\Core\Debug::log_pdf( 'MERGE: AFTER', $data );
         
         // Enrich data with submission metadata
         $data = $this->enrich_submission_data( $data, $sub_array );
@@ -251,7 +243,6 @@ class PdfGenerator {
             // Apply allowed HTML filtering
             $safe_value = wp_kses( $value, \FreeFormCertificate\Core\Utils::get_allowed_html_tags() );
             $layout = str_replace( '{{' . $key . '}}', $safe_value, $layout );
-            \FreeFormCertificate\Core\Debug::log_pdf( 'REPLACED: {{' . $key . '}}', substr( $safe_value, 0, 30 ) );
         }
         
         // Fix relative URLs to absolute

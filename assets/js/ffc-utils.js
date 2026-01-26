@@ -173,7 +173,7 @@
             return div.innerHTML;
         }
     };
-    
-    console.log('[FFC Utils] Module loaded v3.0.0 (refactored)');
-    
+
+    // console.log('[FFC Utils] Module loaded v3.0.0 (refactored)');
+
 })(jQuery, window);
