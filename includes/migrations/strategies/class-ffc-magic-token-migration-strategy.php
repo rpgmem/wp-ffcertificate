@@ -30,7 +30,7 @@ class MagicTokenMigrationStrategy implements MigrationStrategyInterface {
      */
     public function __construct() {
         global $wpdb;
-        $this->table_name = \FFC_Utils::get_submissions_table();
+        $this->table_name = \FreeFormCertificate\Core\Utils::get_submissions_table();
     }
 
     /**

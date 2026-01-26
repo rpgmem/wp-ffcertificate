@@ -42,7 +42,7 @@ class Deactivator {
         }
         
         global $wpdb;
-        $table_name = \FFC_Utils::get_submissions_table();
+        $table_name = \FreeFormCertificate\Core\Utils::get_submissions_table();
 
         // 1. Drop the submissions table
         $wpdb->query( "DROP TABLE IF EXISTS {$table_name}" );

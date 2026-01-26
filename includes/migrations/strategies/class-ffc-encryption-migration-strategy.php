@@ -30,7 +30,7 @@ class EncryptionMigrationStrategy implements MigrationStrategyInterface {
      */
     public function __construct() {
         global $wpdb;
-        $this->table_name = \FFC_Utils::get_submissions_table();
+        $this->table_name = \FreeFormCertificate\Core\Utils::get_submissions_table();
     }
 
     /**
@@ -123,28 +123,28 @@ class EncryptionMigrationStrategy implements MigrationStrategyInterface {
                 $email_encrypted = null;
                 $email_hash = null;
                 if ( ! empty( $submission['email'] ) ) {
-                    $email_encrypted = \FFC_Encryption::encrypt( $submission['email'] );
-                    $email_hash = \FFC_Encryption::hash( $submission['email'] );
+                    $email_encrypted = \FreeFormCertificate\Core\Encryption::encrypt( $submission['email'] );
+                    $email_hash = \FreeFormCertificate\Core\Encryption::hash( $submission['email'] );
                 }
 
                 // Encrypt CPF/RF
                 $cpf_encrypted = null;
                 $cpf_hash = null;
                 if ( ! empty( $submission['cpf_rf'] ) ) {
-                    $cpf_encrypted = \FFC_Encryption::encrypt( $submission['cpf_rf'] );
-                    $cpf_hash = \FFC_Encryption::hash( $submission['cpf_rf'] );
+                    $cpf_encrypted = \FreeFormCertificate\Core\Encryption::encrypt( $submission['cpf_rf'] );
+                    $cpf_hash = \FreeFormCertificate\Core\Encryption::hash( $submission['cpf_rf'] );
                 }
 
                 // Encrypt IP
                 $ip_encrypted = null;
                 if ( ! empty( $submission['user_ip'] ) ) {
-                    $ip_encrypted = \FFC_Encryption::encrypt( $submission['user_ip'] );
+                    $ip_encrypted = \FreeFormCertificate\Core\Encryption::encrypt( $submission['user_ip'] );
                 }
 
                 // Encrypt JSON data
                 $data_encrypted = null;
                 if ( ! empty( $submission['data'] ) ) {
-                    $data_encrypted = \FFC_Encryption::encrypt( $submission['data'] );
+                    $data_encrypted = \FreeFormCertificate\Core\Encryption::encrypt( $submission['data'] );
                 }
 
                 // Update database
@@ -184,9 +184,9 @@ class EncryptionMigrationStrategy implements MigrationStrategyInterface {
 
         // Log migration batch
         if ( class_exists( 'FFC_Activity_Log' ) ) {
-            \FFC_Activity_Log::log(
+            \FreeFormCertificate\Core\ActivityLog::log(
                 'encryption_migration_batch',
-                \FFC_Activity_Log::LEVEL_INFO,
+                \FreeFormCertificate\Core\ActivityLog::LEVEL_INFO,
                 array(
                     'offset' => $offset,
                     'migrated' => $migrated,
@@ -230,7 +230,7 @@ class EncryptionMigrationStrategy implements MigrationStrategyInterface {
         }
 
         // Check if encryption is configured
-        if ( ! \FFC_Encryption::is_configured() ) {
+        if ( ! \FreeFormCertificate\Core\Encryption::is_configured() ) {
             return new WP_Error(
                 'encryption_not_configured',
                 __( 'Encryption keys not configured. WordPress SECURE_AUTH_KEY and LOGGED_IN_KEY are required.', 'ffc' )

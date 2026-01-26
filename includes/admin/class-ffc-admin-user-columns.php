@@ -107,7 +107,7 @@ class AdminUserColumns {
      */
     private static function get_user_certificate_count( int $user_id ): int {
         global $wpdb;
-        $table = \FFC_Utils::get_submissions_table();
+        $table = \FreeFormCertificate\Core\Utils::get_submissions_table();
 
         $count = $wpdb->get_var($wpdb->prepare(
             "SELECT COUNT(*) FROM {$table} WHERE user_id = %d AND status != 'trash'",

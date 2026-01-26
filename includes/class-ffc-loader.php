@@ -70,8 +70,8 @@ class Loader {
 
     private function define_activation_hooks(): void {
         // Autoloader handles class loading
-        register_activation_hook(FFC_PLUGIN_DIR . 'wp-ffcertificate.php', ['\\FFC_Activator', 'activate']);
-        register_deactivation_hook(FFC_PLUGIN_DIR . 'wp-ffcertificate.php', ['\\FFC_Deactivator', 'deactivate']);
+        register_activation_hook(FFC_PLUGIN_DIR . 'wp-ffcertificate.php', ['\\FreeFormCertificate\Activator', 'activate']);
+        register_deactivation_hook(FFC_PLUGIN_DIR . 'wp-ffcertificate.php', ['\\FreeFormCertificate\Deactivator', 'deactivate']);
     }
 
     private function define_admin_hooks(): void {

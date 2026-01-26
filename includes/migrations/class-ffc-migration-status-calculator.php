@@ -48,7 +48,7 @@ class MigrationStatusCalculator {
     public function __construct( MigrationRegistry $registry ) {
         global $wpdb;
         $this->registry = $registry;
-        $this->table_name = \FFC_Utils::get_submissions_table();
+        $this->table_name = \FreeFormCertificate\Core\Utils::get_submissions_table();
 
         // Initialize strategies
         $this->initialize_strategies();
@@ -64,19 +64,19 @@ class MigrationStatusCalculator {
      */
     private function initialize_strategies(): void {
         // Field migration strategy (handles email, cpf_rf, auth_code)
-        $field_strategy = new \FFC_Field_Migration_Strategy( $this->registry );
+        $field_strategy = new \FreeFormCertificate\Migrations\Strategies\FieldMigrationStrategy( $this->registry );
 
         $this->strategies['email']     = $field_strategy;
         $this->strategies['cpf_rf']    = $field_strategy;
         $this->strategies['auth_code'] = $field_strategy;
 
         // Special migration strategies
-        $this->strategies['magic_tokens']          = new \FFC_Magic_Token_Migration_Strategy();
-        $this->strategies['encrypt_sensitive_data'] = new \FFC_Encryption_Migration_Strategy();
-        $this->strategies['cleanup_unencrypted']   = new \FFC_Cleanup_Migration_Strategy();
+        $this->strategies['magic_tokens']          = new \FreeFormCertificate\Migrations\Strategies\MagicTokenMigrationStrategy();
+        $this->strategies['encrypt_sensitive_data'] = new \FreeFormCertificate\Migrations\Strategies\EncryptionMigrationStrategy();
+        $this->strategies['cleanup_unencrypted']   = new \FreeFormCertificate\Migrations\Strategies\CleanupMigrationStrategy();
 
         // ✅ v3.1.1: User link strategy (uses strategy pattern) - autoloader handles loading
-        $this->strategies['user_link'] = new \FFC_User_Link_Migration_Strategy();
+        $this->strategies['user_link'] = new \FreeFormCertificate\Migrations\Strategies\UserLinkMigrationStrategy();
 
         // Allow plugins to register custom strategies
         $this->strategies = apply_filters( 'ffc_migration_strategies', $this->strategies );

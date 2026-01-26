@@ -70,7 +70,7 @@ class CPT {
         }
 
         // ✅ OPTIMIZED v2.9.2: Check permissions before adding link
-        if ( ! \FFC_Utils::current_user_can_manage() ) {
+        if ( ! \FreeFormCertificate\Core\Utils::current_user_can_manage() ) {
             return $actions;
         }
 
@@ -89,10 +89,10 @@ class CPT {
      */
     public function handle_form_duplication(): void {
         // ✅ OPTIMIZED v2.9.2: Use FFC_Utils for permission check
-        if ( ! \FFC_Utils::current_user_can_manage() ) {
-            \FFC_Utils::debug_log( 'Unauthorized form duplication attempt', array(
+        if ( ! \FreeFormCertificate\Core\Utils::current_user_can_manage() ) {
+            \FreeFormCertificate\Core\Utils::debug_log( 'Unauthorized form duplication attempt', array(
                 'user_id' => get_current_user_id(),
-                'ip' => \FFC_Utils::get_user_ip()
+                'ip' => \FreeFormCertificate\Core\Utils::get_user_ip()
             ) );
             wp_die( esc_html__( 'You do not have permission to duplicate this post.', 'ffc' ) );
         }
@@ -104,14 +104,14 @@ class CPT {
         $post = get_post( $post_id );
 
         if ( ! $post || $post->post_type !== 'ffc_form' ) {
-            \FFC_Utils::debug_log( 'Invalid form duplication request', array(
+            \FreeFormCertificate\Core\Utils::debug_log( 'Invalid form duplication request', array(
                 'post_id' => $post_id,
                 'user_id' => get_current_user_id()
             ) );
             wp_die( esc_html__( 'Invalid post.', 'ffc' ) );
         }
 
-        // ✅ OPTIMIZED v2.9.2: Use \FFC_Utils::sanitize_filename() for title
+        // ✅ OPTIMIZED v2.9.2: Use \FreeFormCertificate\Core\Utils::sanitize_filename() for title
         $original_title = $post->post_title;
         $new_title = sprintf( __( '%s (Copy)', 'ffc' ), $original_title );
 
@@ -126,7 +126,7 @@ class CPT {
         $new_post_id = wp_insert_post( $new_post_args );
 
         if ( is_wp_error( $new_post_id ) ) {
-            \FFC_Utils::debug_log( 'Form duplication failed', array(
+            \FreeFormCertificate\Core\Utils::debug_log( 'Form duplication failed', array(
                 'error' => $new_post_id->get_error_message(),
                 'original_post_id' => $post_id
             ) );
@@ -156,11 +156,11 @@ class CPT {
         }
 
         // ✅ OPTIMIZED v2.9.2: Log successful duplication
-        \FFC_Utils::debug_log( 'Form duplicated successfully', array(
+        \FreeFormCertificate\Core\Utils::debug_log( 'Form duplicated successfully', array(
             'original_post_id' => $post_id,
             'new_post_id' => $new_post_id,
-            'original_title' => \FFC_Utils::truncate( $original_title, 50 ),
-            'new_title' => \FFC_Utils::truncate( $new_title, 50 ),
+            'original_title' => \FreeFormCertificate\Core\Utils::truncate( $original_title, 50 ),
+            'new_title' => \FreeFormCertificate\Core\Utils::truncate( $new_title, 50 ),
             'metadata_copied' => implode( ', ', $metadata_copied ),
             'user_id' => get_current_user_id()
         ) );

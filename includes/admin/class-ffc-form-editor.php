@@ -22,8 +22,8 @@ class FormEditor {
 
     public function __construct() {
         // ✅ Autoloader handles class loading
-        $this->metabox_renderer = new \FFC_Form_Editor_Metabox_Renderer();
-        $this->save_handler = new \FFC_Form_Editor_Save_Handler();
+        $this->metabox_renderer = new \FreeFormCertificate\Admin\FormEditorMetaboxRenderer();
+        $this->save_handler = new \FreeFormCertificate\Admin\FormEditorSaveHandler();
 
         add_action( 'add_meta_boxes', array( $this, 'add_custom_metaboxes' ), 20 );
         add_action( 'save_post', array( $this->save_handler, 'save_form_data' ) );

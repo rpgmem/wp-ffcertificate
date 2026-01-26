@@ -66,7 +66,7 @@ class MigrationManager {
      */
     public function __construct() {
         global $wpdb;
-        $this->table_name = \FFC_Utils::get_submissions_table();
+        $this->table_name = \FreeFormCertificate\Core\Utils::get_submissions_table();
 
         // Autoloader handles all class loading
         // Initialize components
@@ -260,9 +260,9 @@ class MigrationManager {
         if ( ! is_wp_error( $result ) && $result['success'] ) {
             // Log cleanup action
             if ( class_exists( 'FFC_Activity_Log' ) ) {
-                \FFC_Activity_Log::log(
+                \FreeFormCertificate\Core\ActivityLog::log(
                     'data_cleanup_executed',
-                    \FFC_Activity_Log::LEVEL_WARNING,
+                    \FreeFormCertificate\Core\ActivityLog::LEVEL_WARNING,
                     array(
                         'cleaned' => $result['processed'],
                         'user_id' => get_current_user_id()
@@ -321,9 +321,9 @@ class MigrationManager {
 
         // Log critical action
         if ( class_exists( 'FFC_Activity_Log' ) ) {
-            \FFC_Activity_Log::log(
+            \FreeFormCertificate\Core\ActivityLog::log(
                 'columns_dropped',
-                \FFC_Activity_Log::LEVEL_CRITICAL,
+                \FreeFormCertificate\Core\ActivityLog::LEVEL_CRITICAL,
                 array(
                     'dropped_columns' => $dropped,
                     'errors' => $errors,
