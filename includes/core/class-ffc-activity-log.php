@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /**
- * FFC_Activity_Log
+ * ActivityLog
  * Tracks important activities for audit and debugging
  *
  * Features:
@@ -20,14 +20,17 @@ declare(strict_types=1);
  * - Fixed: Admin settings now properly enforced (v3.1.4)
  *
  * @version 3.3.0 - Added strict types and type hints
+ * @version 3.2.0 - Migrated to namespace (Phase 2)
  * @since 2.9.1
  */
+
+namespace FreeFormCertificate\Core;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class FFC_Activity_Log {
+class ActivityLog {
 
     /**
      * Log levels
@@ -87,7 +90,7 @@ class FFC_Activity_Log {
         $context_json = wp_json_encode( $context );
         $context_encrypted = null;
         
-        if ( class_exists( 'FFC_Encryption' ) && FFC_Encryption::is_configured() ) {
+        if ( class_exists( 'FFC_Encryption' ) && \FFC_Encryption::is_configured() ) {
             // Encrypt context for sensitive operations
             $sensitive_actions = array(
                 'submission_created',
@@ -98,7 +101,7 @@ class FFC_Activity_Log {
             );
             
             if ( in_array( $action, $sensitive_actions ) ) {
-                $context_encrypted = FFC_Encryption::encrypt( $context_json );
+                $context_encrypted = \FFC_Encryption::encrypt( $context_json );
             }
         }
         
@@ -108,7 +111,7 @@ class FFC_Activity_Log {
             'level' => sanitize_key( $level ),
             'context' => $context_json,
             'user_id' => absint( $user_id ),
-            'user_ip' => FFC_Utils::get_user_ip(),
+            'user_ip' => \FFC_Utils::get_user_ip(),
             'created_at' => current_time( 'mysql' )
         );
         
@@ -132,7 +135,7 @@ class FFC_Activity_Log {
         // Also log via debug system if enabled (respects Activity Log setting)
         // Debug logging only happens when Activity Log is enabled in admin
         if ( $result !== false && class_exists( 'FFC_Debug' ) ) {
-            FFC_Debug::log_activity_log( $action, array(
+            \FFC_Debug::log_activity_log( $action, array(
                 'level' => strtoupper( $level ),
                 'user_id' => $user_id,
                 'ip' => $log_data['user_ip'],
@@ -550,10 +553,10 @@ class FFC_Activity_Log {
         );
         
         // Decrypt encrypted contexts if available
-        if ( class_exists( 'FFC_Encryption' ) && FFC_Encryption::is_configured() ) {
+        if ( class_exists( 'FFC_Encryption' ) && \FFC_Encryption::is_configured() ) {
             foreach ( $logs as &$log ) {
                 if ( ! empty( $log['context_encrypted'] ) ) {
-                    $decrypted = FFC_Encryption::decrypt( $log['context_encrypted'] );
+                    $decrypted = \FFC_Encryption::decrypt( $log['context_encrypted'] );
                     if ( $decrypted !== null ) {
                         $log['context_decrypted'] = $decrypted;
                     }

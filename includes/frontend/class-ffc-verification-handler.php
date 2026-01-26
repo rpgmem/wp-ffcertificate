@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /**
- * FFC_Verification_Handler
+ * VerificationHandler
  * Handles certificate verification and authenticity checks.
  *
  * v2.8.0: Added magic link verification with rate limiting
@@ -10,13 +10,19 @@ declare(strict_types=1);
  * v2.9.2: Unified PDF generation with FFC_PDF_Generator, removed prepare_pdf_data()
  * v2.10.0: ENCRYPTION - Auto-decryption via Submission Handler + Access logging
  * v3.3.0: Added strict types and type hints
+ * v3.2.0: Migrated to namespace (Phase 2)
  */
+
+namespace FreeFormCertificate\Frontend;
+
+use FreeFormCertificate\Submissions\SubmissionHandler;
+use FreeFormCertificate\Repositories\SubmissionRepository;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class FFC_Verification_Handler {
+class VerificationHandler {
 
     private $submission_handler;
     private $email_handler;
@@ -24,10 +30,10 @@ class FFC_Verification_Handler {
     /**
      * Constructor
      *
-     * @param FFC_Submission_Handler|null $submission_handler Submission handler dependency
-     * @param FFC_Email_Handler|null $email_handler Email handler for PDF generation
+     * @param SubmissionHandler|null $submission_handler Submission handler dependency
+     * @param mixed $email_handler Email handler for PDF generation
      */
-    public function __construct( ?FFC_Submission_Handler $submission_handler = null, ?FFC_Email_Handler $email_handler = null ) {
+    public function __construct( ?SubmissionHandler $submission_handler = null, $email_handler = null ) {
         $this->submission_handler = $submission_handler;
         $this->email_handler = $email_handler;
     }
@@ -41,8 +47,8 @@ class FFC_Verification_Handler {
      * Search for certificate - uses Repository
      */
     private function search_certificate( string $auth_code ): array {
-        $repository = new FFC_Submission_Repository();
-        $clean_code = FFC_Utils::clean_auth_code($auth_code);
+        $repository = new SubmissionRepository();
+        $clean_code = \FFC_Utils::clean_auth_code($auth_code);
         
         if (empty($clean_code)) {
             return [
@@ -105,7 +111,7 @@ class FFC_Verification_Handler {
      * @return array Result array with 'found', 'submission', 'data', 'magic_token'
      */
     public function verify_by_magic_token( string $token ): array {
-        if ( ! FFC_Magic_Link_Helper::is_valid_token( $token ) ) {
+        if ( ! \FFC_Magic_Link_Helper::is_valid_token( $token ) ) {
             return array(
                 'found' => false,
                 'submission' => null,
@@ -116,8 +122,8 @@ class FFC_Verification_Handler {
         }
 
         // Rate limiting check
-        $user_ip = FFC_Utils::get_user_ip();
-        $rate_check = FFC_Rate_Limiter::check_verification( $user_ip );
+        $user_ip = \FFC_Utils::get_user_ip();
+        $rate_check = \FFC_Rate_Limiter::check_verification( $user_ip );
         if ( ! $rate_check['allowed'] ) {
             return array(
                 'found' => false,
@@ -142,12 +148,12 @@ class FFC_Verification_Handler {
 
         // v2.10.0: Log access for LGPD compliance
         if ( class_exists( 'FFC_Activity_Log' ) ) {
-            FFC_Activity_Log::log_data_accessed(
+            \FFC_Activity_Log::log_data_accessed(
                 (int) $submission['id'],  // Convert to int (wpdb returns strings)
                 array(
                     'method' => 'magic_link',
                     'token' => substr( $token, 0, 8 ) . '...',
-                    'ip' => FFC_Utils::get_user_ip()
+                    'ip' => \FFC_Utils::get_user_ip()
                 )
             );
         }
@@ -297,7 +303,7 @@ class FFC_Verification_Handler {
     // Format documents (CPF, RF, RG)
     if ( in_array( $field_key, array( 'cpf', 'cpf_rf', 'rg' ) ) && ! empty( $value ) ) {
         if ( class_exists( 'FFC_Utils' ) && method_exists( 'FFC_Utils', 'format_document' ) ) {
-            return FFC_Utils::format_document( $value, 'auto' );
+            return \FFC_Utils::format_document( $value, 'auto' );
         }
     }
     
@@ -313,12 +319,12 @@ class FFC_Verification_Handler {
         if ( $result['found'] && isset( $result['submission']['id'] ) ) {
         // ✅ v2.10.0: Log access for LGPD compliance
         if ( class_exists( 'FFC_Activity_Log' ) ) {
-            FFC_Activity_Log::log_data_accessed(
+            \FFC_Activity_Log::log_data_accessed(
                 (int) $result['submission']['id'],  // Convert to int (wpdb returns strings)
                 array(
                     'method' => 'manual_verification',
                     'auth_code' => substr( $auth_code, 0, 4 ) . '...',
-                    'ip' => FFC_Utils::get_user_ip()
+                    'ip' => \FFC_Utils::get_user_ip()
                 )
             );
         }
@@ -354,9 +360,9 @@ class FFC_Verification_Handler {
         // No captcha - token proves legitimacy
 
         $token = isset( $_POST['token'] ) ? sanitize_text_field( $_POST['token'] ) : '';
-        $user_ip = FFC_Utils::get_user_ip();
+        $user_ip = \FFC_Utils::get_user_ip();
 
-        $rate_check = FFC_Rate_Limiter::check_verification( $user_ip );
+        $rate_check = \FFC_Rate_Limiter::check_verification( $user_ip );
         if ( ! $rate_check['allowed'] ) {
             wp_send_json_error( array(
                 'message' => __( 'Too many verification attempts. Please try again later.', 'ffc' )
@@ -383,7 +389,7 @@ class FFC_Verification_Handler {
         }
 
         // ✅ v2.9.2: Use centralized PDF generator
-        $pdf_generator = new FFC_PDF_Generator( $this->email_handler );
+        $pdf_generator = new \FFC_PDF_Generator( $this->email_handler );
         $pdf_data = $pdf_generator->generate_pdf_data(
             (int) $result['submission']->id,  // Convert to int (wpdb returns strings)
             $this->submission_handler
@@ -417,21 +423,21 @@ class FFC_Verification_Handler {
         $captcha_ans = isset($_POST['ffc_captcha_ans']) ? sanitize_text_field($_POST['ffc_captcha_ans']) : '';
         $captcha_hash = isset($_POST['ffc_captcha_hash']) ? sanitize_text_field($_POST['ffc_captcha_hash']) : '';
         $honeypot = isset($_POST['ffc_honeypot_trap']) ? sanitize_text_field($_POST['ffc_honeypot_trap']) : '';
-        $user_ip = FFC_Utils::get_user_ip();
+        $user_ip = \FFC_Utils::get_user_ip();
 
         if ( ! empty( $honeypot ) ) {
             wp_send_json_error( array( 'message' => __( 'Invalid submission.', 'ffc' ) ) );
         }
 
-        $rate_check = FFC_Rate_Limiter::check_verification( $user_ip );  
+        $rate_check = \FFC_Rate_Limiter::check_verification( $user_ip );  
         if ( ! $rate_check['allowed'] ) {
             wp_send_json_error( array( 
                 'message' => __( 'Too many verification attempts. Please try again later.', 'ffc' ) 
             ) );
         }
         
-        if ( ! FFC_Utils::verify_simple_captcha( $captcha_ans, $captcha_hash ) ) {
-            $new_captcha = FFC_Utils::generate_simple_captcha();
+        if ( ! \FFC_Utils::verify_simple_captcha( $captcha_ans, $captcha_hash ) ) {
+            $new_captcha = \FFC_Utils::generate_simple_captcha();
             wp_send_json_error( array( 
                 'message' => __( 'Incorrect answer to math question.', 'ffc' ),
                 'refresh_captcha' => true,
@@ -444,7 +450,7 @@ class FFC_Verification_Handler {
         $result = $this->search_certificate( $auth_code );
         
         if ( ! $result['found'] ) {
-            $new_captcha = FFC_Utils::generate_simple_captcha();
+            $new_captcha = \FFC_Utils::generate_simple_captcha();
             wp_send_json_error( array( 
                 'message' => '❌ ' . __( 'Certificate not found or invalid code.', 'ffc' ),
                 'refresh_captcha' => true,
@@ -456,7 +462,7 @@ class FFC_Verification_Handler {
         // Get form data for PDF
         
         // ✅ v2.9.2: Use centralized PDF generator
-        $pdf_generator = new FFC_PDF_Generator( $this->email_handler );
+        $pdf_generator = new \FFC_PDF_Generator( $this->email_handler );
         $pdf_data = $pdf_generator->generate_pdf_data(
             (int) $result['submission']->id,  // Convert to int (wpdb returns strings)
             $this->submission_handler

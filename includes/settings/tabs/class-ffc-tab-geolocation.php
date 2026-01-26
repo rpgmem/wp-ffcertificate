@@ -9,11 +9,16 @@ declare(strict_types=1);
  * @package FFC
  * @since 3.0.0
  * @version 3.3.0 - Added strict types and type hints
+ * @version 3.2.0 - Migrated to namespace (Phase 2)
  */
+
+namespace FreeFormCertificate\Settings\Tabs;
+
+use FreeFormCertificate\Settings\SettingsTab;
 
 if (!defined('ABSPATH')) exit;
 
-class FFC_Tab_Geolocation extends FFC_Settings_Tab {
+class TabGeolocation extends SettingsTab {
 
     protected function init(): void {
         $this->tab_id = 'geolocation';
@@ -112,8 +117,8 @@ class FFC_Tab_Geolocation extends FFC_Settings_Tab {
         update_option('ffc_geolocation_settings', $settings);
 
         // Log settings change
-        if (class_exists('FFC_Activity_Log')) {
-            FFC_Activity_Log::log_settings_changed('geolocation', get_current_user_id());
+        if (class_exists('\FFC_Activity_Log')) {
+            \FFC_Activity_Log::log_settings_changed('geolocation', get_current_user_id());
         }
     }
 }

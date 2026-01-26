@@ -2,23 +2,28 @@
 declare(strict_types=1);
 
 /**
- * FFC_Submission_Handler v3.3.0
+ * SubmissionHandler v3.3.0
  * Complete refactored version with Repository Pattern
  *
  * @version 3.3.0 - Added strict types and type hints
+ * @version 3.2.0 - Migrated to namespace (Phase 2)
  * @since 3.0.1 Optimized bulk operations (single query + suspended logging)
  * @since 3.0.0 Repository Pattern integration
  * @since 2.10.0 Encryption & LGPD support
  */
 
+namespace FreeFormCertificate\Submissions;
+
+use FreeFormCertificate\Repositories\SubmissionRepository;
+
 if (!defined('ABSPATH')) exit;
 
-class FFC_Submission_Handler {
-    
+class SubmissionHandler {
+
     private $repository;
-    
+
     public function __construct() {
-        $this->repository = new FFC_Submission_Repository();
+        $this->repository = new SubmissionRepository();
     }
     
     /**
@@ -33,7 +38,7 @@ class FFC_Submission_Handler {
      */
     private function generate_unique_auth_code(): string {
         do {
-            $code = FFC_Utils::generate_auth_code();
+            $code = \FFC_Utils::generate_auth_code();
             $existing = $this->repository->findByAuthCode($code);
         } while ($existing);
         
@@ -85,7 +90,7 @@ class FFC_Submission_Handler {
         }
         
         // 2. Clean mandatory fields
-        $clean_auth_code = FFC_Utils::clean_auth_code($submission_data['auth_code']);
+        $clean_auth_code = \FFC_Utils::clean_auth_code($submission_data['auth_code']);
         
         $clean_cpf_rf = null;
         if (isset($submission_data['cpf_rf']) && !empty($submission_data['cpf_rf'])) {
@@ -105,7 +110,7 @@ class FFC_Submission_Handler {
         }
         
         // 5. Get user IP
-        $user_ip = FFC_Utils::get_user_ip();
+        $user_ip = \FFC_Utils::get_user_ip();
         
         // 6. Encryption
         $email_encrypted = null;
@@ -115,23 +120,23 @@ class FFC_Submission_Handler {
         $ip_encrypted = null;
         $data_encrypted = null;
         
-        if (class_exists('FFC_Encryption') && FFC_Encryption::is_configured()) {
+        if (class_exists('\FFC_Encryption') && \FFC_Encryption::is_configured()) {
             if (!empty($user_email)) {
-                $email_encrypted = FFC_Encryption::encrypt($user_email);
-                $email_hash = FFC_Encryption::hash($user_email);
+                $email_encrypted = \FFC_Encryption::encrypt($user_email);
+                $email_hash = \FFC_Encryption::hash($user_email);
             }
             
             if (!empty($clean_cpf_rf)) {
-                $cpf_encrypted = FFC_Encryption::encrypt($clean_cpf_rf);
-                $cpf_hash = FFC_Encryption::hash($clean_cpf_rf);
+                $cpf_encrypted = \FFC_Encryption::encrypt($clean_cpf_rf);
+                $cpf_hash = \FFC_Encryption::hash($clean_cpf_rf);
             }
             
             if (!empty($user_ip)) {
-                $ip_encrypted = FFC_Encryption::encrypt($user_ip);
+                $ip_encrypted = \FFC_Encryption::encrypt($user_ip);
             }
             
             if (!empty($data_json) && $data_json !== '{}') {
-                $data_encrypted = FFC_Encryption::encrypt($data_json);
+                $data_encrypted = \FFC_Encryption::encrypt($data_json);
             }
         }
         
@@ -144,15 +149,15 @@ class FFC_Submission_Handler {
         $user_id = null;
         if (!empty($cpf_hash) && !empty($user_email)) {
             // Load User Manager if not already loaded
-            if (!class_exists('FFC_User_Manager')) {
+            if (!class_exists('\FFC_User_Manager')) {
                 $user_manager_file = FFC_PLUGIN_DIR . 'includes/user-dashboard/class-ffc-user-manager.php';
                 if (file_exists($user_manager_file)) {
                     require_once $user_manager_file;
                 }
             }
 
-            if (class_exists('FFC_User_Manager')) {
-                $user_result = FFC_User_Manager::get_or_create_user($cpf_hash, $user_email, $submission_data);
+            if (class_exists('\FFC_User_Manager')) {
+                $user_result = \FFC_User_Manager::get_or_create_user($cpf_hash, $user_email, $submission_data);
 
                 if (!is_wp_error($user_result)) {
                     $user_id = $user_result;
@@ -180,7 +185,7 @@ class FFC_Submission_Handler {
         ];
         
         // Old columns - only if encryption NOT configured
-        if (class_exists('FFC_Encryption') && FFC_Encryption::is_configured()) {
+        if (class_exists('\FFC_Encryption') && \FFC_Encryption::is_configured()) {
             $insert_data['data'] = null;
             $insert_data['user_ip'] = null;
             $insert_data['email'] = null;
@@ -200,8 +205,8 @@ class FFC_Submission_Handler {
         }
         
         // 10. Log activity
-        if (class_exists('FFC_Activity_Log')) {
-            FFC_Activity_Log::log_submission_created($submission_id, [
+        if (class_exists('\FFC_Activity_Log')) {
+            \FFC_Activity_Log::log_submission_created($submission_id, [
                 'form_id' => $form_id,
                 'has_cpf' => !empty($clean_cpf_rf),
                 'encrypted' => !empty($email_encrypted)
@@ -220,9 +225,9 @@ class FFC_Submission_Handler {
         
         // Update email if provided
         if ($new_email !== null) {
-            if (class_exists('FFC_Encryption') && FFC_Encryption::is_configured()) {
-                $update_data['email_encrypted'] = FFC_Encryption::encrypt($new_email);
-                $update_data['email_hash'] = FFC_Encryption::hash($new_email);
+            if (class_exists('\FFC_Encryption') && \FFC_Encryption::is_configured()) {
+                $update_data['email_encrypted'] = \FFC_Encryption::encrypt($new_email);
+                $update_data['email_hash'] = \FFC_Encryption::hash($new_email);
                 $update_data['email'] = null;
             } else {
                 $update_data['email'] = $new_email;
@@ -237,8 +242,8 @@ class FFC_Submission_Handler {
             
             $data_json = wp_json_encode($clean_data, JSON_UNESCAPED_UNICODE);
             
-            if (class_exists('FFC_Encryption') && FFC_Encryption::is_configured()) {
-                $update_data['data_encrypted'] = FFC_Encryption::encrypt($data_json);
+            if (class_exists('\FFC_Encryption') && \FFC_Encryption::is_configured()) {
+                $update_data['data_encrypted'] = \FFC_Encryption::encrypt($data_json);
                 $update_data['data'] = null;
             } else {
                 $update_data['data'] = $data_json;
@@ -255,8 +260,8 @@ class FFC_Submission_Handler {
             $result = $this->repository->update($id, $update_data);
         }
         
-        if ($result !== false && class_exists('FFC_Activity_Log')) {
-            FFC_Activity_Log::log_submission_updated($id, get_current_user_id());
+        if ($result !== false && class_exists('\FFC_Activity_Log')) {
+            \FFC_Activity_Log::log_submission_updated($id, get_current_user_id());
         }
 
         return (bool) $result;  // Convert int|false to bool
@@ -266,33 +271,33 @@ class FFC_Submission_Handler {
      * Decrypt submission data
      */
     public function decrypt_submission_data($submission): array {
-        if (!$submission || !class_exists('FFC_Encryption')) {
+        if (!$submission || !class_exists('\FFC_Encryption')) {
             return $submission;
         }
         
         if (!empty($submission['email_encrypted'])) {
-            $decrypted = FFC_Encryption::decrypt($submission['email_encrypted']);
+            $decrypted = \FFC_Encryption::decrypt($submission['email_encrypted']);
             if ($decrypted !== false) {
                 $submission['email'] = $decrypted;
             }
         }
         
         if (!empty($submission['cpf_rf_encrypted'])) {
-            $decrypted = FFC_Encryption::decrypt($submission['cpf_rf_encrypted']);
+            $decrypted = \FFC_Encryption::decrypt($submission['cpf_rf_encrypted']);
             if ($decrypted !== false) {
                 $submission['cpf_rf'] = $decrypted;
             }
         }
         
         if (!empty($submission['user_ip_encrypted'])) {
-            $decrypted = FFC_Encryption::decrypt($submission['user_ip_encrypted']);
+            $decrypted = \FFC_Encryption::decrypt($submission['user_ip_encrypted']);
             if ($decrypted !== false) {
                 $submission['user_ip'] = $decrypted;
             }
         }
         
         if (!empty($submission['data_encrypted'])) {
-            $decrypted = FFC_Encryption::decrypt($submission['data_encrypted']);
+            $decrypted = \FFC_Encryption::decrypt($submission['data_encrypted']);
             if ($decrypted !== false) {
                 $submission['data'] = $decrypted;
             }
@@ -308,8 +313,8 @@ class FFC_Submission_Handler {
     public function trash_submission(int $id): bool {
         $result = $this->repository->updateStatus($id, 'trash');
 
-        if ($result && class_exists('FFC_Activity_Log')) {
-            FFC_Activity_Log::log_submission_trashed($id);
+        if ($result && class_exists('\FFC_Activity_Log')) {
+            \FFC_Activity_Log::log_submission_trashed($id);
         }
 
         return (bool) $result;  // Convert int|false to bool
@@ -322,8 +327,8 @@ class FFC_Submission_Handler {
     public function restore_submission(int $id): bool {
         $result = $this->repository->updateStatus($id, 'publish');
 
-        if ($result && class_exists('FFC_Activity_Log')) {
-            FFC_Activity_Log::log_submission_restored($id);
+        if ($result && class_exists('\FFC_Activity_Log')) {
+            \FFC_Activity_Log::log_submission_restored($id);
         }
 
         return (bool) $result;  // Convert int|false to bool
@@ -336,8 +341,8 @@ class FFC_Submission_Handler {
     public function delete_submission(int $id): bool {
         $result = $this->repository->delete($id);
 
-        if ($result && class_exists('FFC_Activity_Log')) {
-            FFC_Activity_Log::log_submission_deleted($id);
+        if ($result && class_exists('\FFC_Activity_Log')) {
+            \FFC_Activity_Log::log_submission_deleted($id);
         }
 
         return (bool) $result;  // Convert int|false to bool
@@ -356,18 +361,18 @@ class FFC_Submission_Handler {
         }
 
         // Disable logging during bulk operation
-        if (class_exists('FFC_Activity_Log')) {
-            FFC_Activity_Log::disable_logging();
+        if (class_exists('\FFC_Activity_Log')) {
+            \FFC_Activity_Log::disable_logging();
         }
 
         $result = $this->repository->bulkUpdateStatus($ids, 'trash');
 
         // Re-enable logging
-        if (class_exists('FFC_Activity_Log')) {
-            FFC_Activity_Log::enable_logging();
+        if (class_exists('\FFC_Activity_Log')) {
+            \FFC_Activity_Log::enable_logging();
 
             // Log single bulk operation
-            FFC_Activity_Log::log('bulk_trash', FFC_Activity_Log::LEVEL_INFO, array(
+            \FFC_Activity_Log::log('bulk_trash', \FFC_Activity_Log::LEVEL_INFO, array(
                 'count' => count($ids)
             ));
         }
@@ -388,18 +393,18 @@ class FFC_Submission_Handler {
         }
 
         // Disable logging during bulk operation
-        if (class_exists('FFC_Activity_Log')) {
-            FFC_Activity_Log::disable_logging();
+        if (class_exists('\FFC_Activity_Log')) {
+            \FFC_Activity_Log::disable_logging();
         }
 
         $result = $this->repository->bulkUpdateStatus($ids, 'publish');
 
         // Re-enable logging
-        if (class_exists('FFC_Activity_Log')) {
-            FFC_Activity_Log::enable_logging();
+        if (class_exists('\FFC_Activity_Log')) {
+            \FFC_Activity_Log::enable_logging();
 
             // Log single bulk operation
-            FFC_Activity_Log::log('bulk_restore', FFC_Activity_Log::LEVEL_INFO, array(
+            \FFC_Activity_Log::log('bulk_restore', \FFC_Activity_Log::LEVEL_INFO, array(
                 'count' => count($ids)
             ));
         }
@@ -420,18 +425,18 @@ class FFC_Submission_Handler {
         }
 
         // Disable logging during bulk operation (CRITICAL for performance)
-        if (class_exists('FFC_Activity_Log')) {
-            FFC_Activity_Log::disable_logging();
+        if (class_exists('\FFC_Activity_Log')) {
+            \FFC_Activity_Log::disable_logging();
         }
 
         $result = $this->repository->bulkDelete($ids);
 
         // Re-enable logging
-        if (class_exists('FFC_Activity_Log')) {
-            FFC_Activity_Log::enable_logging();
+        if (class_exists('\FFC_Activity_Log')) {
+            \FFC_Activity_Log::enable_logging();
 
             // Log single bulk operation instead of N individual logs
-            FFC_Activity_Log::log('bulk_delete', FFC_Activity_Log::LEVEL_WARNING, array(
+            \FFC_Activity_Log::log('bulk_delete', \FFC_Activity_Log::LEVEL_WARNING, array(
                 'count' => count($ids)
             ));
         }
@@ -452,7 +457,7 @@ class FFC_Submission_Handler {
      */
     public function delete_all_submissions(?int $form_id = null, bool $reset_auto_increment = false): int {
         global $wpdb;
-        $table = FFC_Utils::get_submissions_table();
+        $table = \FFC_Utils::get_submissions_table();
         
         if ($form_id) {
             // Delete from specific form using repository
@@ -515,7 +520,7 @@ class FFC_Submission_Handler {
      */
     public function reset_submission_counter(): bool {
         global $wpdb;
-        $table = FFC_Utils::get_submissions_table();
+        $table = \FFC_Utils::get_submissions_table();
         
         // Get current max ID
         $max_id = $wpdb->get_var("SELECT MAX(id) FROM {$table}");
@@ -536,7 +541,7 @@ class FFC_Submission_Handler {
      */
     public function run_data_cleanup(): array {
         global $wpdb;
-        $table = FFC_Utils::get_submissions_table();
+        $table = \FFC_Utils::get_submissions_table();
         
         $cleanup_days = absint(get_option('ffc_cleanup_days', 0));
         
@@ -551,8 +556,8 @@ class FFC_Submission_Handler {
             $cutoff_date
         ));
         
-        if ($deleted && class_exists('FFC_Activity_Log')) {
-            FFC_Activity_Log::log('data_cleanup', FFC_Activity_Log::LEVEL_INFO, [
+        if ($deleted && class_exists('\FFC_Activity_Log')) {
+            \FFC_Activity_Log::log('data_cleanup', \FFC_Activity_Log::LEVEL_INFO, [
                 'deleted_count' => $deleted,
                 'cutoff_date' => $cutoff_date
             ]);
@@ -592,12 +597,12 @@ class FFC_Submission_Handler {
      * Migration: Move emails to encrypted column
      */
     public function migrate_emails_to_column() {
-        if (!class_exists('FFC_Encryption') || !FFC_Encryption::is_configured()) {
+        if (!class_exists('\FFC_Encryption') || !\FFC_Encryption::is_configured()) {
             return ['success' => false, 'message' => 'Encryption not configured'];
         }
         
         global $wpdb;
-        $table = FFC_Utils::get_submissions_table();
+        $table = \FFC_Utils::get_submissions_table();
         
         $submissions = $wpdb->get_results(
             "SELECT id, email FROM {$table} WHERE email IS NOT NULL AND email_encrypted IS NULL LIMIT 100",
@@ -609,8 +614,8 @@ class FFC_Submission_Handler {
         foreach ($submissions as $sub) {
             if (empty($sub['email'])) continue;
             
-            $encrypted = FFC_Encryption::encrypt($sub['email']);
-            $hash = FFC_Encryption::hash($sub['email']);
+            $encrypted = \FFC_Encryption::encrypt($sub['email']);
+            $hash = \FFC_Encryption::hash($sub['email']);
             
             if ($encrypted && $hash) {
                 $this->repository->update((int) $sub['id'], [

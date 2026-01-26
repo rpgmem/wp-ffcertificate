@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /**
- * FFC_QRCode_Generator
+ * QRCodeGenerator
  * Generates dynamic QR Codes for certificate verification
  *
  * Features:
@@ -12,15 +12,18 @@ declare(strict_types=1);
  * - Placeholder parsing ({{qr_code:param=value}})
  *
  * @version 3.3.0 - Added strict types and type hints
+ * @version 3.2.0 - Migrated to namespace (Phase 2)
  * @since 2.9.0
  * @since 2.9.2 OPTIMIZED to use FFC_Utils functions
  */
+
+namespace FreeFormCertificate\Generators;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class FFC_QRCode_Generator {
+class QRCodeGenerator {
     
     /**
      * Default settings
@@ -82,7 +85,7 @@ class FFC_QRCode_Generator {
         $params = $this->parse_placeholder_params( $placeholder );
         
         // ✅ OPTIMIZED v2.9.2: Add debug logging
-        FFC_Utils::debug_log( 'QR Code generation requested', array(
+        \FFC_Utils::debug_log( 'QR Code generation requested', array(
             'submission_id' => $submission_id,
             'size' => $params['size'],
             'cache_enabled' => $this->is_cache_enabled()
@@ -92,7 +95,7 @@ class FFC_QRCode_Generator {
         if ( $submission_id > 0 && $this->is_cache_enabled() ) {
             $cached = $this->get_from_cache( $submission_id );
             if ( $cached ) {
-                FFC_Utils::debug_log( 'QR Code served from cache', array(
+                \FFC_Utils::debug_log( 'QR Code served from cache', array(
                     'submission_id' => $submission_id
                 ) );
                 return $this->format_as_img_tag( $cached, $params['size'] );
@@ -104,7 +107,7 @@ class FFC_QRCode_Generator {
         
         if ( empty( $qr_base64 ) ) {
             // ✅ OPTIMIZED v2.9.2: Log generation failure
-            FFC_Utils::debug_log( 'QR Code generation failed', array(
+            \FFC_Utils::debug_log( 'QR Code generation failed', array(
                 'url' => substr( $url, 0, 50 ) . '...',
                 'submission_id' => $submission_id
             ) );
@@ -114,7 +117,7 @@ class FFC_QRCode_Generator {
         // Cache if enabled
         if ( $submission_id > 0 && $this->is_cache_enabled() ) {
             $this->save_to_cache( $submission_id, $qr_base64 );
-            FFC_Utils::debug_log( 'QR Code cached', array(
+            \FFC_Utils::debug_log( 'QR Code cached', array(
                 'submission_id' => $submission_id
             ) );
         }
@@ -223,7 +226,7 @@ class FFC_QRCode_Generator {
             
         } catch ( Exception $e ) {
             // ✅ OPTIMIZED v2.9.2: Log exceptions
-            FFC_Utils::debug_log( 'QR Code generation exception', array(
+            \FFC_Utils::debug_log( 'QR Code generation exception', array(
                 'error' => $e->getMessage(),
                 'url' => substr( $url, 0, 50 ) . '...'
             ) );
@@ -289,7 +292,7 @@ class FFC_QRCode_Generator {
      */
     private function get_from_cache( int $submission_id ) {
         global $wpdb;
-        $table_name = FFC_Utils::get_submissions_table();
+        $table_name = \FFC_Utils::get_submissions_table();
         
         // Check if column exists
         if ( ! $this->cache_column_exists() ) {
@@ -313,7 +316,7 @@ class FFC_QRCode_Generator {
      */
     private function save_to_cache( int $submission_id, string $qr_base64 ): bool {
         global $wpdb;
-        $table_name = FFC_Utils::get_submissions_table();
+        $table_name = \FFC_Utils::get_submissions_table();
         
         // Check if column exists, create if needed
         if ( ! $this->cache_column_exists() ) {
@@ -338,7 +341,7 @@ class FFC_QRCode_Generator {
      */
     private function cache_column_exists(): bool {
         global $wpdb;
-        $table_name = FFC_Utils::get_submissions_table();
+        $table_name = \FFC_Utils::get_submissions_table();
         
         $column = $wpdb->get_results( $wpdb->prepare(
             "SHOW COLUMNS FROM {$table_name} LIKE %s",
@@ -355,10 +358,10 @@ class FFC_QRCode_Generator {
      */
     private function create_cache_column(): bool {
         global $wpdb;
-        $table_name = FFC_Utils::get_submissions_table();
+        $table_name = \FFC_Utils::get_submissions_table();
         
         // ✅ OPTIMIZED v2.9.2: Log column creation
-        FFC_Utils::debug_log( 'Creating qr_code_cache column', array(
+        \FFC_Utils::debug_log( 'Creating qr_code_cache column', array(
             'table' => $table_name
         ) );
         
@@ -367,9 +370,9 @@ class FFC_QRCode_Generator {
         );
         
         if ( $result !== false ) {
-            FFC_Utils::debug_log( 'qr_code_cache column created successfully' );
+            \FFC_Utils::debug_log( 'qr_code_cache column created successfully' );
         } else {
-            FFC_Utils::debug_log( 'Failed to create qr_code_cache column', array(
+            \FFC_Utils::debug_log( 'Failed to create qr_code_cache column', array(
                 'error' => $wpdb->last_error
             ) );
         }
@@ -385,14 +388,14 @@ class FFC_QRCode_Generator {
      */
     public function clear_cache( int $submission_id = 0 ): bool {
         global $wpdb;
-        $table_name = FFC_Utils::get_submissions_table();
+        $table_name = \FFC_Utils::get_submissions_table();
         
         if ( ! $this->cache_column_exists() ) {
             return 0;
         }
         
         // ✅ OPTIMIZED v2.9.2: Log cache clearing
-        FFC_Utils::debug_log( 'Clearing QR cache', array(
+        \FFC_Utils::debug_log( 'Clearing QR cache', array(
             'submission_id' => $submission_id,
             'scope' => $submission_id ? 'single' : 'all'
         ) );
@@ -413,7 +416,7 @@ class FFC_QRCode_Generator {
             $cleared = (int) $result;
         }
         
-        FFC_Utils::debug_log( 'QR cache cleared', array(
+        \FFC_Utils::debug_log( 'QR cache cleared', array(
             'cleared_count' => $cleared
         ) );
         
@@ -432,7 +435,7 @@ class FFC_QRCode_Generator {
      */
     public function generate_magic_link_qr( int $submission_id, int $size = 200 ): string {
     global $wpdb;
-    $table_name = FFC_Utils::get_submissions_table();
+    $table_name = \FFC_Utils::get_submissions_table();
     
     // Get submission magic token
     $submission = $wpdb->get_row(
@@ -441,24 +444,24 @@ class FFC_QRCode_Generator {
     );
     
     if ( ! $submission || empty( $submission['magic_token'] ) ) {
-        FFC_Utils::debug_log( 'Magic QR: No token found', array(
+        \FFC_Utils::debug_log( 'Magic QR: No token found', array(
             'submission_id' => $submission_id
         ) );
         return '';
     }
     
     // ✅ Use helper to generate magic link
-    $magic_link = FFC_Magic_Link_Helper::generate_magic_link( $submission['magic_token'] );
+    $magic_link = \FFC_Magic_Link_Helper::generate_magic_link( $submission['magic_token'] );
     
     if ( empty( $magic_link ) ) {
-        FFC_Utils::debug_log( 'Magic QR: Link generation failed', array(
+        \FFC_Utils::debug_log( 'Magic QR: Link generation failed', array(
             'submission_id' => $submission_id,
             'token' => substr( $submission['magic_token'], 0, 8 ) . '...'
         ) );
         return '';
     }
     
-    FFC_Utils::debug_log( 'Magic QR: Generating for submission', array(
+    \FFC_Utils::debug_log( 'Magic QR: Generating for submission', array(
         'submission_id' => $submission_id,
         'url_length' => strlen( $magic_link )
     ) );
@@ -480,7 +483,7 @@ class FFC_QRCode_Generator {
      */
     public function get_cache_stats(): array {
         global $wpdb;
-        $table_name = FFC_Utils::get_submissions_table();
+        $table_name = \FFC_Utils::get_submissions_table();
         
         if ( ! $this->cache_column_exists() ) {
             return array(
@@ -495,7 +498,7 @@ class FFC_QRCode_Generator {
         $total = $wpdb->get_var( "SELECT COUNT(*) FROM {$table_name}" );
         $cached = $wpdb->get_var( "SELECT COUNT(*) FROM {$table_name} WHERE qr_code_cache IS NOT NULL" );
         
-        // ✅ OPTIMIZED v2.9.2: Use FFC_Utils::format_bytes() for cache size
+        // ✅ OPTIMIZED v2.9.2: Use \FFC_Utils::format_bytes() for cache size
         $avg_size_bytes = 4096; // 4 KB per QR Code (estimate)
         $total_bytes = $cached * $avg_size_bytes;
         
@@ -503,7 +506,7 @@ class FFC_QRCode_Generator {
             'enabled' => $this->is_cache_enabled(),
             'total_submissions' => (int) $total,
             'cached_qr_codes' => (int) $cached,
-            'cache_size' => FFC_Utils::format_bytes( $total_bytes ), // ✅ Formatted!
+            'cache_size' => \FFC_Utils::format_bytes( $total_bytes ), // ✅ Formatted!
             'cache_dir' => 'Database (qr_code_cache column)'
         );
     }

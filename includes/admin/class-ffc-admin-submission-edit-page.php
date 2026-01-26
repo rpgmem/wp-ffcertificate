@@ -2,20 +2,23 @@
 declare(strict_types=1);
 
 /**
- * FFC_Admin_Submission_Edit_Page
+ * AdminSubmissionEditPage
  *
  * Manages the submission edit page rendering and saving.
  * Extracted from FFC_Admin class to follow Single Responsibility Principle.
  *
  * @since 3.1.1 (Extracted from FFC_Admin)
- * @version 3.3.0: Added strict types and type hints
+ * @version 3.3.0 - Added strict types and type hints
+ * @version 3.2.0 - Migrated to namespace (Phase 2)
  */
+
+namespace FreeFormCertificate\Admin;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class FFC_Admin_Submission_Edit_Page {
+class AdminSubmissionEditPage {
 
     /**
      * Submission handler instance
@@ -196,7 +199,7 @@ class FFC_Admin_Submission_Edit_Page {
                     <input type="text" value="<?php echo esc_attr( $magic_token ); ?>" class="regular-text ffc-input-readonly" readonly>
                     <p class="description">
                         <?php _e( 'Unique token for certificate access (read-only).', 'ffc' ); ?>
-                        <?php echo FFC_Magic_Link_Helper::get_magic_link_html( $magic_token ); ?>
+                        <?php echo \FFC_Magic_Link_Helper::get_magic_link_html( $magic_token ); ?>
                     </p>
                 <?php else: ?>
                     <p class="description"><?php _e( 'Submission created before magic links', 'ffc' ); ?></p>
@@ -435,7 +438,7 @@ class FFC_Admin_Submission_Edit_Page {
         $clean_data = array();
 
         foreach ( $raw_data as $k => $v ) {
-            $clean_data[ sanitize_key( $k ) ] = wp_kses( $v, FFC_Utils::get_allowed_html_tags() );
+            $clean_data[ sanitize_key( $k ) ] = wp_kses( $v, \FFC_Utils::get_allowed_html_tags() );
         }
 
         $this->submission_handler->update_submission( $id, $new_email, $clean_data );

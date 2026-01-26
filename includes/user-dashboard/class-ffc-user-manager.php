@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /**
- * FFC_User_Manager
+ * UserManager
  *
  * Manages WordPress user creation and linking for FFC submissions.
  *
@@ -17,12 +17,15 @@ declare(strict_types=1);
  * - Priority: CPF/RF > Email
  *
  * @version 3.3.0 - Added strict types and type hints
+ * @version 3.2.0 - Migrated to namespace (Phase 2)
  * @since 3.1.0
  */
 
+namespace FreeFormCertificate\UserDashboard;
+
 if (!defined('ABSPATH')) exit;
 
-class FFC_User_Manager {
+class UserManager {
 
     /**
      * Get or create WordPress user based on CPF/RF and email
@@ -41,7 +44,7 @@ class FFC_User_Manager {
      */
     public static function get_or_create_user(string $cpf_rf_hash, string $email, array $submission_data = array()) {
         global $wpdb;
-        $table = FFC_Utils::get_submissions_table();
+        $table = \FFC_Utils::get_submissions_table();
 
         // STEP 1: Check if CPF/RF already has user_id in submissions
         $existing_user_id = $wpdb->get_var($wpdb->prepare(
@@ -101,8 +104,8 @@ class FFC_User_Manager {
 
         if (is_wp_error($user_id)) {
             // Use centralized debug system for critical errors
-            if (class_exists('FFC_Debug')) {
-                FFC_Debug::log_user_manager(
+            if (class_exists('\FFC_Debug')) {
+                \FFC_Debug::log_user_manager(
                     'Failed to create user',
                     array(
                         'email' => $email,
@@ -123,15 +126,15 @@ class FFC_User_Manager {
         // Send password reset email via Email Handler (respects settings)
         if (!isset($submission_data['skip_email'])) {
             // Load Email Handler if not already loaded
-            if (!class_exists('FFC_Email_Handler')) {
+            if (!class_exists('\FFC_Email_Handler')) {
                 $email_handler_file = FFC_PLUGIN_DIR . 'includes/integrations/class-ffc-email-handler.php';
                 if (file_exists($email_handler_file)) {
                     require_once $email_handler_file;
                 }
             }
 
-            if (class_exists('FFC_Email_Handler')) {
-                $email_handler = new FFC_Email_Handler();
+            if (class_exists('\FFC_Email_Handler')) {
+                $email_handler = new \FFC_Email_Handler();
                 $email_handler->send_wp_user_notification($user_id, 'submission');
             }
         }
@@ -224,7 +227,7 @@ class FFC_User_Manager {
      */
     public static function get_user_cpf_masked(int $user_id): ?string {
         global $wpdb;
-        $table = FFC_Utils::get_submissions_table();
+        $table = \FFC_Utils::get_submissions_table();
 
         // Get first submission with CPF/RF
         $cpf_encrypted = $wpdb->get_var($wpdb->prepare(
@@ -241,12 +244,12 @@ class FFC_User_Manager {
         }
 
         try {
-            $cpf_plain = FFC_Encryption::decrypt($cpf_encrypted);
+            $cpf_plain = \FFC_Encryption::decrypt($cpf_encrypted);
             return self::mask_cpf_rf($cpf_plain);
         } catch (Exception $e) {
             // Use centralized debug system for critical errors
-            if (class_exists('FFC_Debug')) {
-                FFC_Debug::log_user_manager(
+            if (class_exists('\FFC_Debug')) {
+                \FFC_Debug::log_user_manager(
                     'Failed to decrypt CPF/RF',
                     array(
                         'user_id' => $user_id,
@@ -293,7 +296,7 @@ class FFC_User_Manager {
      */
     public static function get_user_emails(int $user_id): array {
         global $wpdb;
-        $table = FFC_Utils::get_submissions_table();
+        $table = \FFC_Utils::get_submissions_table();
 
         // Get distinct encrypted emails
         $encrypted_emails = $wpdb->get_col($wpdb->prepare(
@@ -314,7 +317,7 @@ class FFC_User_Manager {
 
         foreach ($encrypted_emails as $encrypted) {
             try {
-                $email = FFC_Encryption::decrypt($encrypted);
+                $email = \FFC_Encryption::decrypt($encrypted);
                 if (is_email($email)) {
                     $emails[] = $email;
                 }

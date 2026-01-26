@@ -2,18 +2,24 @@
 declare(strict_types=1);
 
 /**
- * FFC REST API Controller
+ * RestController
  *
  * Base controller for all REST API endpoints
  * Namespace: /wp-json/ffc/v1/
  *
  * @version 3.3.0 - Added strict types and type hints
+ * @version 3.2.0 - Migrated to namespace (Phase 2)
  * @since 3.0.0
  */
 
+namespace FreeFormCertificate\API;
+
+use FreeFormCertificate\Repositories\FormRepository;
+use FreeFormCertificate\Repositories\SubmissionRepository;
+
 if (!defined('ABSPATH')) exit;
 
-class FFC_REST_Controller {
+class RestController {
 
     /**
      * API namespace
@@ -23,24 +29,16 @@ class FFC_REST_Controller {
     /**
      * Repositories
      */
-    private ?FFC_Form_Repository $form_repository = null;
-    private ?FFC_Submission_Repository $submission_repository = null;
-    
+    private ?FormRepository $form_repository = null;
+    private ?SubmissionRepository $submission_repository = null;
+
     /**
      * Constructor
      */
     public function __construct() {
-        // Load repositories if not already loaded
-        $this->load_repositories();
-        
         // Initialize repositories
-        if (class_exists('FFC_Form_Repository')) {
-            $this->form_repository = new FFC_Form_Repository();
-        }
-        
-        if (class_exists('FFC_Submission_Repository')) {
-            $this->submission_repository = new FFC_Submission_Repository();
-        }
+        $this->form_repository = new FormRepository();
+        $this->submission_repository = new SubmissionRepository();
         
         // Register REST routes
         add_action('rest_api_init', array($this, 'register_routes'));
@@ -74,25 +72,7 @@ class FFC_REST_Controller {
             }, 10, 4);
         }
     }
-    
-    /**
-     * Load repository classes
-     */
-    private function load_repositories(): void {
-        $repo_files = array(
-            'ffc-abstract-repository.php',
-            'ffc-form-repository.php',
-            'ffc-submission-repository.php'
-        );
 
-        foreach ($repo_files as $file) {
-            $path = FFC_PLUGIN_DIR . 'includes/repositories/' . $file;
-            if (file_exists($path)) {
-                require_once $path;
-            }
-        }
-    }
-    
     /**
      * Register all REST routes
      */
@@ -354,7 +334,7 @@ class FFC_REST_Controller {
             $form_fields = $this->form_repository->getFields($form_id);
             
             // Sanitize submission data using FFC_Utils
-            $submission_data = FFC_Utils::recursive_sanitize($params);
+            $submission_data = \FFC_Utils::recursive_sanitize($params);
             
             // Validate required fields
             $validation_errors = $this->validate_required_fields($submission_data, $form_fields);
@@ -372,7 +352,7 @@ class FFC_REST_Controller {
                 
                 if (strlen($cpf) === 11) {
                     // Validate CPF using FFC_Utils
-                    if (class_exists('FFC_Utils') && !FFC_Utils::validate_cpf($cpf)) {
+                    if (class_exists('\FFC_Utils') && !\FFC_Utils::validate_cpf($cpf)) {
                         return new WP_Error(
                             'invalid_cpf',
                             'Invalid CPF. Please check the number and try again.',
@@ -381,7 +361,7 @@ class FFC_REST_Controller {
                     }
                 } elseif (strlen($cpf) === 7) {
                     // Validate RF
-                    if (class_exists('FFC_Utils') && !FFC_Utils::validate_rf($cpf)) {
+                    if (class_exists('\FFC_Utils') && !\FFC_Utils::validate_rf($cpf)) {
                         return new WP_Error(
                             'invalid_rf',
                             'Invalid RF. Must contain only numbers.',
@@ -411,11 +391,11 @@ class FFC_REST_Controller {
             }
             
             // Rate limiting check
-            if (class_exists('FFC_Rate_Limiter')) {
-                $rate_limiter = new FFC_Rate_Limiter();
+            if (class_exists('\FFC_Rate_Limiter')) {
+                $rate_limiter = new \FFC_Rate_Limiter();
                 
                 // Check IP rate limit using FFC_Utils
-                $ip = FFC_Utils::get_user_ip();
+                $ip = \FFC_Utils::get_user_ip();
                 if (!$rate_limiter->check_limit('ip', $ip)) {
                     return new WP_Error(
                         'rate_limit_exceeded',
@@ -448,7 +428,7 @@ class FFC_REST_Controller {
             }
             
             // Use FFC_Submission_Handler to process submission
-            if (!class_exists('FFC_Submission_Handler')) {
+            if (!class_exists('\FFC_Submission_Handler')) {
                 return new WP_Error(
                     'handler_not_found',
                     'Submission handler not available',
@@ -456,7 +436,7 @@ class FFC_REST_Controller {
                 );
             }
             
-            $handler = new FFC_Submission_Handler();
+            $handler = new \FFC_Submission_Handler();
             
             // Process the submission
             $result = $handler->process_submission($form_id, $submission_data);
@@ -469,7 +449,7 @@ class FFC_REST_Controller {
             $response = array(
                 'success' => true,
                 'submission_id' => $result['submission_id'],
-                'auth_code' => FFC_Utils::format_auth_code($result['auth_code']),
+                'auth_code' => \FFC_Utils::format_auth_code($result['auth_code']),
                 'message' => 'Form submitted successfully',
             );
             
@@ -541,11 +521,11 @@ class FFC_REST_Controller {
                 $submissions[] = array(
                     'id' => (int) $item['id'],
                     'form_id' => (int) $item['form_id'],
-                    'auth_code' => FFC_Utils::format_auth_code($item['auth_code']),
+                    'auth_code' => \FFC_Utils::format_auth_code($item['auth_code']),
                     'submission_date' => $item['submission_date'],
                     'status' => $item['status'],
                     'email' => !empty($item['email']) ? $item['email'] : null,
-                    'cpf_rf' => !empty($item['cpf_rf']) ? FFC_Utils::mask_cpf($item['cpf_rf']) : null,
+                    'cpf_rf' => !empty($item['cpf_rf']) ? \FFC_Utils::mask_cpf($item['cpf_rf']) : null,
                     'data' => $data,
                 );
             }
@@ -618,7 +598,7 @@ class FFC_REST_Controller {
                 'id' => (int) $submission['id'],
                 'form_id' => (int) $submission['form_id'],
                 'form_title' => $form_title,
-                'auth_code' => FFC_Utils::format_auth_code($submission['auth_code']),
+                'auth_code' => \FFC_Utils::format_auth_code($submission['auth_code']),
                 'submission_date' => $submission['submission_date'],
                 'status' => $submission['status'],
                 'email' => !empty($submission['email']) ? $submission['email'] : null,
@@ -649,7 +629,7 @@ class FFC_REST_Controller {
             $auth_code = $request->get_param('auth_code');
             
             // Clean auth code using FFC_Utils
-            $auth_code = FFC_Utils::clean_auth_code($auth_code);
+            $auth_code = \FFC_Utils::clean_auth_code($auth_code);
             
             if (!$this->submission_repository) {
                 return new WP_Error(
@@ -695,7 +675,7 @@ class FFC_REST_Controller {
             // Build response (convert IDs to int for API consistency)
             $response = array(
                 'valid' => true,
-                'auth_code' => FFC_Utils::format_auth_code($auth_code),
+                'auth_code' => \FFC_Utils::format_auth_code($auth_code),
                 'certificate' => array(
                     'id' => (int) $submission['id'],
                     'form_id' => (int) $submission['form_id'],
@@ -714,7 +694,7 @@ class FFC_REST_Controller {
             
             // Add CPF/RF if available (masked for privacy)
             if (!empty($submission['cpf_rf'])) {
-                $response['certificate']['cpf_rf'] = FFC_Utils::mask_cpf($submission['cpf_rf']);
+                $response['certificate']['cpf_rf'] = \FFC_Utils::mask_cpf($submission['cpf_rf']);
             }
             
             return rest_ensure_response($response);
@@ -794,11 +774,11 @@ class FFC_REST_Controller {
             global $wpdb;
 
             // Safety check for FFC_Utils
-            if (!class_exists('FFC_Utils')) {
+            if (!class_exists('\FFC_Utils')) {
                 return new WP_Error('missing_class', 'FFC_Utils class not found', array('status' => 500));
             }
 
-            $table = FFC_Utils::get_submissions_table();
+            $table = \FFC_Utils::get_submissions_table();
 
             // Get date format from settings
             $settings = get_option('ffc_settings', array());
@@ -823,15 +803,15 @@ class FFC_REST_Controller {
                 $email_display = '';
                 if (!empty($submission['email_encrypted'])) {
                     try {
-                        $email_plain = FFC_Encryption::decrypt($submission['email_encrypted']);
+                        $email_plain = \FFC_Encryption::decrypt($submission['email_encrypted']);
                         // Check if decrypt returned valid string before masking
-                        $email_display = ($email_plain && is_string($email_plain)) ? FFC_Utils::mask_email($email_plain) : '';
+                        $email_display = ($email_plain && is_string($email_plain)) ? \FFC_Utils::mask_email($email_plain) : '';
                     } catch (Exception $e) {
                         $email_display = __('Error decrypting', 'ffc');
                     }
                 } elseif (!empty($submission['email'])) {
                     // Fallback to plain email if not encrypted
-                    $email_display = FFC_Utils::mask_email($submission['email']);
+                    $email_display = \FFC_Utils::mask_email($submission['email']);
                 }
 
                 // Get verification page URL (convert option to int)
@@ -847,7 +827,7 @@ class FFC_REST_Controller {
                 // Format auth code
                 $auth_code_formatted = '';
                 if (!empty($submission['auth_code'])) {
-                    $auth_code_formatted = FFC_Utils::format_auth_code($submission['auth_code']);
+                    $auth_code_formatted = \FFC_Utils::format_auth_code($submission['auth_code']);
                 }
 
                 // Format date using plugin settings (with safety check for strtotime)
@@ -880,8 +860,8 @@ class FFC_REST_Controller {
 
         } catch (Exception $e) {
             // Log the error for debugging
-            if (class_exists('FFC_Utils')) {
-                FFC_Utils::debug_log('get_user_certificates error', array(
+            if (class_exists('\FFC_Utils')) {
+                \FFC_Utils::debug_log('get_user_certificates error', array(
                     'message' => $e->getMessage(),
                     'file' => $e->getFile(),
                     'line' => $e->getLine(),
@@ -923,7 +903,7 @@ class FFC_REST_Controller {
             }
 
             // Load User Manager if needed
-            if (!class_exists('FFC_User_Manager')) {
+            if (!class_exists('\FFC_User_Manager')) {
                 $user_manager_file = FFC_PLUGIN_DIR . 'includes/user-dashboard/class-ffc-user-manager.php';
                 if (file_exists($user_manager_file)) {
                     require_once $user_manager_file;
@@ -942,14 +922,14 @@ class FFC_REST_Controller {
 
             // Get CPF/RF (masked)
             $cpf_masked = '';
-            if (class_exists('FFC_User_Manager')) {
-                $cpf_masked = FFC_User_Manager::get_user_cpf_masked($user_id);
+            if (class_exists('\FFC_User_Manager')) {
+                $cpf_masked = \FFC_User_Manager::get_user_cpf_masked($user_id);
             }
 
             // Get all emails used
             $emails = array();
-            if (class_exists('FFC_User_Manager')) {
-                $emails = FFC_User_Manager::get_user_emails($user_id);
+            if (class_exists('\FFC_User_Manager')) {
+                $emails = \FFC_User_Manager::get_user_emails($user_id);
             }
 
             // Format member since date
@@ -995,12 +975,12 @@ class FFC_REST_Controller {
             return $data;
         }
 
-        if (!class_exists('FFC_Encryption')) {
+        if (!class_exists('\FFC_Encryption')) {
             return $data;
         }
 
         try {
-            $decrypted = FFC_Encryption::decrypt($submission['data_encrypted']);
+            $decrypted = \FFC_Encryption::decrypt($submission['data_encrypted']);
             $decrypted_data = json_decode($decrypted, true);
 
             if (is_array($decrypted_data)) {
@@ -1008,8 +988,8 @@ class FFC_REST_Controller {
             }
         } catch (Exception $e) {
             // Log error but continue with non-encrypted data
-            if (class_exists('FFC_Debug')) {
-                FFC_Debug::log_rest_api('Decryption failed', $e->getMessage());
+            if (class_exists('\FFC_Debug')) {
+                \FFC_Debug::log_rest_api('Decryption failed', $e->getMessage());
             }
         }
 

@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /**
- * FFC_Cleanup_Migration_Strategy
+ * CleanupMigrationStrategy
  *
  * Strategy for cleaning up unencrypted data after encryption (LGPD compliance).
  * Nullifies email, cpf_rf, user_ip, and data columns for submissions 15+ days old
@@ -11,13 +11,16 @@ declare(strict_types=1);
  *
  * @since 3.1.0 (Extracted from FFC_Migration_Manager)
  * @version 3.3.0 - Added strict types and type hints
+ * @version 3.2.0 - Migrated to namespace (Phase 2)
  */
+
+namespace FreeFormCertificate\Migrations\Strategies;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class FFC_Cleanup_Migration_Strategy implements FFC_Migration_Strategy {
+class CleanupMigrationStrategy implements MigrationStrategyInterface {
 
     /**
      * @var string Database table name
@@ -29,7 +32,7 @@ class FFC_Cleanup_Migration_Strategy implements FFC_Migration_Strategy {
      */
     public function __construct() {
         global $wpdb;
-        $this->table_name = FFC_Utils::get_submissions_table();
+        $this->table_name = \FFC_Utils::get_submissions_table();
     }
 
     /**
@@ -221,7 +224,7 @@ class FFC_Cleanup_Migration_Strategy implements FFC_Migration_Strategy {
         }
 
         // Check if encryption is configured
-        if ( ! FFC_Encryption::is_configured() ) {
+        if ( ! \FFC_Encryption::is_configured() ) {
             return new WP_Error(
                 'encryption_not_configured',
                 __( 'Encryption must be configured before cleanup.', 'ffc' )

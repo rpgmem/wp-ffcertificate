@@ -2,20 +2,23 @@
 declare(strict_types=1);
 
 /**
- * FFC_User_Link_Migration_Strategy
+ * UserLinkMigrationStrategy
  *
  * Strategy for linking submissions to WordPress users.
  * Adds user_id column and links existing submissions based on CPF/RF and email.
  *
  * @since 3.1.1
  * @version 3.3.0 - Added strict types and type hints
+ * @version 3.2.0 - Migrated to namespace (Phase 2)
  */
+
+namespace FreeFormCertificate\Migrations\Strategies;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class FFC_User_Link_Migration_Strategy implements FFC_Migration_Strategy {
+class UserLinkMigrationStrategy implements MigrationStrategyInterface {
 
     /**
      * @var string Database table name
@@ -27,7 +30,7 @@ class FFC_User_Link_Migration_Strategy implements FFC_Migration_Strategy {
      */
     public function __construct() {
         global $wpdb;
-        $this->table_name = FFC_Utils::get_submissions_table();
+        $this->table_name = \FFC_Utils::get_submissions_table();
     }
 
     /**
@@ -112,7 +115,7 @@ class FFC_User_Link_Migration_Strategy implements FFC_Migration_Strategy {
         }
 
         // Delegate to legacy class
-        $result = FFC_Migration_User_Link::run();
+        $result = \FFC_Migration_User_Link::run();
 
         return array(
             'success' => $result['success'],
@@ -137,7 +140,7 @@ class FFC_User_Link_Migration_Strategy implements FFC_Migration_Strategy {
             );
         }
 
-        if ( ! FFC_Encryption::is_configured() ) {
+        if ( ! \FFC_Encryption::is_configured() ) {
             return new WP_Error(
                 'encryption_not_configured',
                 __( 'Encryption is not configured. Please configure encryption keys first.', 'ffc' )

@@ -2,15 +2,18 @@
 declare(strict_types=1);
 
 /**
- * FFC_Rate_Limit_Activator v3.3.0
+ * RateLimitActivator v3.3.0
  * Creates database tables - dbDelta compatible
  *
  * v3.3.0 - Added strict types and type hints
+ * v3.2.0 - Migrated to namespace (Phase 2)
  */
+
+namespace FreeFormCertificate\Security;
 
 if (!defined('ABSPATH')) exit;
 
-class FFC_Rate_Limit_Activator {
+class RateLimitActivator {
     
     public static function create_tables(): bool {
         global $wpdb;

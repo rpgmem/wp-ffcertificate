@@ -2,37 +2,31 @@
 declare(strict_types=1);
 
 /**
- * FFC_Frontend
+ * Frontend
  *
  * @version 3.3.0 - Added strict types and type hints
+ * @version 3.2.0 - Migrated to namespace (Phase 2)
  */
+
+namespace FreeFormCertificate\Frontend;
+
+use FreeFormCertificate\Submissions\SubmissionHandler;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class FFC_Frontend {
+class Frontend {
 
     private $shortcodes;
     private $form_processor;
     private $verification_handler;
 
-    public function __construct( FFC_Submission_Handler $submission_handler, FFC_Email_Handler $email_handler ) {
-        // Load classes only if not already loaded
-        if (!class_exists('FFC_Verification_Handler')) {
-            require_once FFC_PLUGIN_DIR . 'includes/frontend/class-ffc-verification-handler.php';
-        }
-        if (!class_exists('FFC_Form_Processor')) {
-            require_once FFC_PLUGIN_DIR . 'includes/frontend/class-ffc-form-processor.php';
-        }
-        if (!class_exists('FFC_Shortcodes')) {
-            require_once FFC_PLUGIN_DIR . 'includes/frontend/class-ffc-shortcodes.php';
-        }
-
-        $this->verification_handler = new FFC_Verification_Handler( $submission_handler, $email_handler );
-        $this->form_processor = new FFC_Form_Processor( $submission_handler, $email_handler );
-        $this->shortcodes = new FFC_Shortcodes( 
-            $this->form_processor, 
+    public function __construct( SubmissionHandler $submission_handler, $email_handler ) {
+        $this->verification_handler = new VerificationHandler( $submission_handler, $email_handler );
+        $this->form_processor = new FormProcessor( $submission_handler, $email_handler );
+        $this->shortcodes = new Shortcodes(
+            $this->form_processor,
             $this->verification_handler,
             $submission_handler
         );
@@ -164,7 +158,7 @@ class FFC_Frontend {
 
         foreach ($matches[1] as $form_id) {
             $form_id_int = (int) $form_id;
-            $config = FFC_Geofence::get_frontend_config($form_id_int);
+            $config = \FFC_Geofence::get_frontend_config($form_id_int);
 
             if ($config !== null) {
                 $geofence_configs[$form_id_int] = $config;

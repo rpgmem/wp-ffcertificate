@@ -2,16 +2,19 @@
 declare(strict_types=1);
 
 /**
- * FFC_Form_Cache
+ * FormCache
  * Caching layer for form configurations to improve performance
  *
  * @version 3.3.0 - Added strict types and type hints
+ * @version 3.2.0 - Migrated to namespace (Phase 2)
  * @since 2.9.1
  */
 
+namespace FreeFormCertificate\Submissions;
+
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class FFC_Form_Cache {
+class FormCache {
     
     const CACHE_GROUP = 'ffc_forms';
     
@@ -37,14 +40,14 @@ class FFC_Form_Cache {
                 wp_cache_set( $cache_key, $config, self::CACHE_GROUP, self::get_expiration() );
                 
                 if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-                    FFC_Utils::debug_log( 'Form config cache MISS', array( 'form_id' => $form_id ) );
+                    \FFC_Utils::debug_log( 'Form config cache MISS', array( 'form_id' => $form_id ) );
                 }
             } else {
                 return false;
             }
         } else {
             if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-                FFC_Utils::debug_log( 'Form config cache HIT', array( 'form_id' => $form_id ) );
+                \FFC_Utils::debug_log( 'Form config cache HIT', array( 'form_id' => $form_id ) );
             }
         }
         

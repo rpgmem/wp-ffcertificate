@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /**
- * FFC_PDF_Generator
+ * PdfGenerator
  *
  * Centralized PDF generation for all contexts:
  * - Form submission (frontend)
@@ -12,15 +12,18 @@ declare(strict_types=1);
  * - Certificate reprint
  *
  * v3.3.0: Added strict types and type hints
+ * v3.2.0: Migrated to namespace (Phase 2)
  * v2.9.2: Single source of truth for PDF generation
  * v2.9.14: REFACTORED - Moved generate_html logic from FFC_Email_Handler
  */
+
+namespace FreeFormCertificate\Generators;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class FFC_PDF_Generator {
+class PdfGenerator {
     
     /**
      * Constructor
@@ -70,9 +73,9 @@ class FFC_PDF_Generator {
             $extra_data = json_decode( stripslashes( $sub_array['data'] ), true );
         }
 
-        FFC_Debug::log_pdf( 'JSON: data', $sub_array['data'] );
-        FFC_Debug::log_pdf( 'JSON: extra_data', $extra_data );
-        FFC_Debug::log_pdf( 'JSON: is_array', is_array( $extra_data ) ? 'YES' : 'NO' );
+        \FFC_Debug::log_pdf( 'JSON: data', $sub_array['data'] );
+        \FFC_Debug::log_pdf( 'JSON: extra_data', $extra_data );
+        \FFC_Debug::log_pdf( 'JSON: is_array', is_array( $extra_data ) ? 'YES' : 'NO' );
 
         // Step 3: Merge (extras do NOT overwrite required fields)
         if ( is_array( $extra_data ) && ! empty( $extra_data ) ) {
@@ -80,8 +83,8 @@ class FFC_PDF_Generator {
         }
 
         // ✅ Now $data has EVERYTHING: columns + JSON
-        FFC_Debug::log_pdf( 'MERGE: count', count( $extra_data ) );
-        FFC_Debug::log_pdf( 'MERGE: AFTER', $data );
+        \FFC_Debug::log_pdf( 'MERGE: count', count( $extra_data ) );
+        \FFC_Debug::log_pdf( 'MERGE: AFTER', $data );
         
         // Enrich data with submission metadata
         $data = $this->enrich_submission_data( $data, $sub_array );
@@ -103,10 +106,10 @@ class FFC_PDF_Generator {
         
         // Log generation
         if ( class_exists( 'FFC_Utils' ) && method_exists( 'FFC_Utils', 'debug_log' ) ) {
-            FFC_Utils::debug_log( 'PDF data generated', array(
+            \FFC_Utils::debug_log( 'PDF data generated', array(
                 'submission_id' => $submission_id,
                 'form_id' => $form_id,
-                'form_title' => FFC_Utils::truncate( $form_title, 50 ),
+                'form_title' => \FFC_Utils::truncate( $form_title, 50 ),
                 'auth_code' => $auth_code,
                 'filename' => $filename,
                 'html_length' => strlen( $html ),
@@ -237,18 +240,18 @@ class FFC_PDF_Generator {
             
             // Format documents (CPF, RF, RG)
             if ( in_array( $key, array( 'cpf', 'cpf_rf', 'rg' ) ) ) {
-                $value = FFC_Utils::format_document( $value );
+                $value = \FFC_Utils::format_document( $value );
             }
             
             // Format auth code
             if ( $key === 'auth_code' ) {
-                $value = FFC_Utils::format_auth_code( $value );
+                $value = \FFC_Utils::format_auth_code( $value );
             }
             
             // Apply allowed HTML filtering
-            $safe_value = wp_kses( $value, FFC_Utils::get_allowed_html_tags() );
+            $safe_value = wp_kses( $value, \FFC_Utils::get_allowed_html_tags() );
             $layout = str_replace( '{{' . $key . '}}', $safe_value, $layout );
-            FFC_Debug::log_pdf( 'REPLACED: {{' . $key . '}}', substr( $safe_value, 0, 30 ) );
+            \FFC_Debug::log_pdf( 'REPLACED: {{' . $key . '}}', substr( $safe_value, 0, 30 ) );
         }
         
         // Fix relative URLs to absolute
@@ -292,7 +295,7 @@ class FFC_PDF_Generator {
             require_once FFC_PLUGIN_DIR . 'includes/generators/class-ffc-qrcode-generator.php';
         }
         
-        $qr_generator = new FFC_QRCode_Generator();
+        $qr_generator = new \FFC_QRCode_Generator();
         
         // Determine target URL (magic link or verification page)
         $target_url = $this->get_qr_code_target_url( $data );
@@ -335,7 +338,7 @@ class FFC_PDF_Generator {
     }
     
     // Use helper to generate magic link
-    $magic_link = FFC_Magic_Link_Helper::generate_magic_link( $submission['magic_token'] );
+    $magic_link = \FFC_Magic_Link_Helper::generate_magic_link( $submission['magic_token'] );
     
     if ( empty( $magic_link ) ) {
         return '';
@@ -364,7 +367,7 @@ class FFC_PDF_Generator {
         
         // Priority 1: Magic link (if exists)
         $magic_token = isset( $data['magic_token'] ) ? $data['magic_token'] : '';
-        $magic_url = FFC_Magic_Link_Helper::generate_magic_link( $magic_token );
+        $magic_url = \FFC_Magic_Link_Helper::generate_magic_link( $magic_token );
 
         return ! empty( $magic_url ) ? $magic_url : $verification_url;
     }
@@ -393,7 +396,7 @@ class FFC_PDF_Generator {
         
         // Get magic link URL (with fallback to /valid)
         $magic_token = isset( $data['magic_token'] ) ? $data['magic_token'] : '';
-        $magic_url = FFC_Magic_Link_Helper::generate_magic_link( $magic_token );
+        $magic_url = \FFC_Magic_Link_Helper::generate_magic_link( $magic_token );
 
         if ( empty( $magic_url ) ) {
             $magic_url = $valid_url; // Fallback
@@ -520,7 +523,7 @@ class FFC_PDF_Generator {
         
         // Show auth code if exists
         if ( isset( $data['auth_code'] ) ) {
-            $layout .= '<p>' . esc_html__( 'Authenticity:', 'ffc' ) . ' ' . esc_html( FFC_Utils::format_auth_code( $data['auth_code'] ) ) . '</p>';
+            $layout .= '<p>' . esc_html__( 'Authenticity:', 'ffc' ) . ' ' . esc_html( \FFC_Utils::format_auth_code( $data['auth_code'] ) ) . '</p>';
         }
         
         $layout .= '</div>';
@@ -538,7 +541,7 @@ class FFC_PDF_Generator {
     private function generate_filename( string $form_title, string $auth_code = '' ): string {
         // Sanitize form title
         if ( class_exists( 'FFC_Utils' ) && method_exists( 'FFC_Utils', 'sanitize_filename' ) ) {
-            $safe_name = FFC_Utils::sanitize_filename( $form_title );
+            $safe_name = \FFC_Utils::sanitize_filename( $form_title );
         } else {
             $safe_name = sanitize_file_name( $form_title );
         }
@@ -599,9 +602,9 @@ class FFC_PDF_Generator {
         
         // Log generation
         if ( class_exists( 'FFC_Utils' ) && method_exists( 'FFC_Utils', 'debug_log' ) ) {
-            FFC_Utils::debug_log( 'PDF data generated from form', array(
+            \FFC_Utils::debug_log( 'PDF data generated from form', array(
                 'form_id' => $form_id,
-                'form_title' => FFC_Utils::truncate( $form_title, 50 ),
+                'form_title' => \FFC_Utils::truncate( $form_title, 50 ),
                 'html_length' => strlen( $html ),
                 'has_bg_image' => ! empty( $bg_image_url )
             ) );

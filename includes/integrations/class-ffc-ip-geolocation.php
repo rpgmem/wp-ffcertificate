@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /**
- * FFC_IP_Geolocation
+ * IpGeolocation
  *
  * Handles IP-based geolocation using external APIs
  *
@@ -12,12 +12,15 @@ declare(strict_types=1);
  *
  * @package FFC
  * @version 3.3.0 - Added strict types and type hints
+ * @version 3.2.0 - Migrated to namespace (Phase 2)
  * @since 3.0.0
  */
 
+namespace FreeFormCertificate\Integrations;
+
 if (!defined('ABSPATH')) exit;
 
-class FFC_IP_Geolocation {
+class IpGeolocation {
 
     /**
      * Get location data by IP address
@@ -36,7 +39,7 @@ class FFC_IP_Geolocation {
 
         // Get user IP if not provided
         if (empty($ip)) {
-            $ip = FFC_Utils::get_user_ip();
+            $ip = \FFC_Utils::get_user_ip();
         }
 
         // Validate IP
@@ -319,15 +322,15 @@ class FFC_IP_Geolocation {
         }
 
         // Log via centralized debug system
-        if (class_exists('FFC_Debug')) {
-            FFC_Debug::log_geofence($message, $context);
+        if (class_exists('\FFC_Debug')) {
+            \FFC_Debug::log_geofence($message, $context);
         }
 
         // Log to activity log
-        if (class_exists('FFC_Activity_Log')) {
-            FFC_Activity_Log::log(
+        if (class_exists('\FFC_Activity_Log')) {
+            \FFC_Activity_Log::log(
                 'ip_geolocation_debug',
-                FFC_Activity_Log::LEVEL_DEBUG,
+                \FFC_Activity_Log::LEVEL_DEBUG,
                 array_merge(array('message' => $message), $context)
             );
         }

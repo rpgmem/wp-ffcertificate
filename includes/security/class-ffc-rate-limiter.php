@@ -2,19 +2,22 @@
 declare(strict_types=1);
 
 /**
- * FFC_Rate_Limiter v3.3.0
+ * RateLimiter v3.3.0
  * Advanced rate limiting system with WordPress Object Cache API
  *
  * v3.3.0: Added strict types and type hints
- * v3.2.0: Migrated from transients to WordPress Object Cache API
+ * v3.2.0: Migrated to namespace (Phase 2)
+ *         Migrated from transients to WordPress Object Cache API
  *         - Automatically uses Redis/Memcached if available (via LiteSpeed Cache, etc.)
  *         - Falls back to transients if no object cache plugin is installed
  *         - Significant performance improvement for high-traffic sites
  */
 
+namespace FreeFormCertificate\Security;
+
 if (!defined('ABSPATH')) exit;
 
-class FFC_Rate_Limiter {
+class RateLimiter {
 
     /**
      * Cache group for WordPress Object Cache API
@@ -273,14 +276,14 @@ class FFC_Rate_Limiter {
         $fw = $form_id ? $wpdb->prepare("AND form_id=%d", $form_id) : '';
         
         if ($field === 'email') {
-            if (class_exists('FFC_Encryption') && FFC_Encryption::is_configured()) {
-                return intval($wpdb->get_var("SELECT COUNT(*) FROM $t WHERE email_hash='" . FFC_Encryption::hash($value) . "' $dw $fw"));
+            if (class_exists('\FFC_Encryption') && \FFC_Encryption::is_configured()) {
+                return intval($wpdb->get_var("SELECT COUNT(*) FROM $t WHERE email_hash='" . \FFC_Encryption::hash($value) . "' $dw $fw"));
             } else {
                 return intval($wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $t WHERE email=%s $dw $fw", $value)));
             }
         } elseif ($field === 'cpf') {
-            if (class_exists('FFC_Encryption') && FFC_Encryption::is_configured()) {
-                return intval($wpdb->get_var("SELECT COUNT(*) FROM $t WHERE cpf_rf_hash='" . FFC_Encryption::hash($value) . "' $dw $fw"));
+            if (class_exists('\FFC_Encryption') && \FFC_Encryption::is_configured()) {
+                return intval($wpdb->get_var("SELECT COUNT(*) FROM $t WHERE cpf_rf_hash='" . \FFC_Encryption::hash($value) . "' $dw $fw"));
             } else {
                 return intval($wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $t WHERE cpf_rf=%s $dw $fw", $value)));
             }
