@@ -43,14 +43,19 @@ class CsvExporter {
      */
     private function get_dynamic_columns( array $rows ): array {
         $all_keys = array();
-        
-        foreach( $rows as $r ) { 
-            $d = json_decode( $r['data'], true ); 
+
+        foreach( $rows as $r ) {
+            // Skip null or empty data fields
+            if ( empty( $r['data'] ) ) {
+                continue;
+            }
+
+            $d = json_decode( $r['data'], true );
             if ( is_array( $d ) ) {
-                $all_keys = array_merge( $all_keys, array_keys( $d ) ); 
+                $all_keys = array_merge( $all_keys, array_keys( $d ) );
             }
         }
-        
+
         return array_unique( $all_keys );
     }
 
@@ -179,9 +184,12 @@ class CsvExporter {
         }
         
         // Dynamic Columns (each field from 'data' column in separate CSV column)
-        $data = json_decode( $row['data'], true );
-        if ( ! is_array( $data ) ) {
-            $data = array();
+        $data = array();
+        if ( ! empty( $row['data'] ) ) {
+            $decoded = json_decode( $row['data'], true );
+            if ( is_array( $decoded ) ) {
+                $data = $decoded;
+            }
         }
         
         foreach ( $dynamic_keys as $key ) {
