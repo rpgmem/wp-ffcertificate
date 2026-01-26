@@ -150,7 +150,7 @@ class Admin {
     }
 
     private function render_list_page(): void {
-        require_once FFC_PLUGIN_DIR . 'includes/admin/class-ffc-submissions-list-table.php';
+        // Autoloader handles class loading
         $table = new \FreeFormCertificate\Admin\SubmissionsList( $this->submission_handler );
         $this->display_admin_notices();
         $table->prepare_items();
