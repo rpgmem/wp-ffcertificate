@@ -11,8 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-// Initialize Migration Manager
-require_once FFC_PLUGIN_DIR . 'includes/migrations/class-ffc-migration-manager.php';
+// Autoloader handles class loading
 $migration_manager = new \FreeFormCertificate\Migrations\MigrationManager();
 $migrations = $migration_manager->get_migrations();
 ?>

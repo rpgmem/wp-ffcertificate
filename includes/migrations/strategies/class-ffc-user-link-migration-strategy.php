@@ -109,12 +109,7 @@ class UserLinkMigrationStrategy implements MigrationStrategyInterface {
      * @return array Result array
      */
     public function execute( string $migration_key, array $migration_config, int $batch_number = 0 ): array {
-        // Load legacy migration class
-        if ( ! class_exists( 'FFC_Migration_User_Link' ) ) {
-            require_once FFC_PLUGIN_DIR . 'includes/migrations/class-ffc-migration-user-link.php';
-        }
-
-        // Delegate to legacy class
+        // Autoloader handles class loading
         $result = \FreeFormCertificate\Migrations\MigrationUserLink::run();
 
         return array(

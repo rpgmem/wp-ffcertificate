@@ -290,11 +290,7 @@ class PdfGenerator {
      * @return string Processed HTML
      */
     private function process_qrcode_placeholders( string $layout, array $data, array $form_config ): string {
-        // Initialize QR Code generator
-        if ( ! class_exists( 'FFC_QRCode_Generator' ) ) {
-            require_once FFC_PLUGIN_DIR . 'includes/generators/class-ffc-qrcode-generator.php';
-        }
-        
+        // Autoloader handles class loading
         $qr_generator = new \FreeFormCertificate\Generators\QRCodeGenerator();
         
         // Determine target URL (magic link or verification page)

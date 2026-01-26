@@ -99,10 +99,7 @@ $get_option = function($key, $default = '') {
     <h2>📊 <?php esc_html_e('Cache Statistics', 'ffc'); ?></h2>
     
     <?php
-    if (!class_exists('\FreeFormCertificate\Generators\QRCodeGenerator')) {
-        require_once FFC_PLUGIN_DIR . 'includes/generators/class-ffc-qrcode-generator.php';
-    }
-    
+    // Autoloader handles class loading
     $qr_generator = new \FreeFormCertificate\Generators\QRCodeGenerator();
     $stats = $qr_generator->get_cache_stats();
     ?>
