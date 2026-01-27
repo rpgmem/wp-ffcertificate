@@ -283,6 +283,7 @@ class CalendarCPT {
             'advance_booking_max' => $config['advance_booking_max'] ?? 30,
             'allow_cancellation' => $config['allow_cancellation'] ?? 1,
             'cancellation_min_hours' => $config['cancellation_min_hours'] ?? 24,
+            'minimum_interval_between_bookings' => $config['minimum_interval_between_bookings'] ?? 24,
             'requires_approval' => $config['requires_approval'] ?? 0,
             'max_appointments_per_slot' => $config['max_appointments_per_slot'] ?? 1,
             'require_login' => $config['require_login'] ?? 0,

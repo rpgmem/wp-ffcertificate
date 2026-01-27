@@ -279,14 +279,51 @@ class CalendarActivator {
      */
     public static function maybe_migrate(): void {
         global $wpdb;
-        $table_name = $wpdb->prefix . 'ffc_appointments';
 
-        // Check if table exists
-        $table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") == $table_name;
+        // Migrate appointments table
+        $appointments_table = $wpdb->prefix . 'ffc_appointments';
+        $appointments_exists = $wpdb->get_var("SHOW TABLES LIKE '{$appointments_table}'") == $appointments_table;
 
-        if ($table_exists) {
+        if ($appointments_exists) {
             // Run migration to ensure cpf_rf columns exist
             self::migrate_appointments_table();
+        }
+
+        // Migrate calendars table
+        $calendars_table = $wpdb->prefix . 'ffc_calendars';
+        $calendars_exists = $wpdb->get_var("SHOW TABLES LIKE '{$calendars_table}'") == $calendars_table;
+
+        if ($calendars_exists) {
+            // Run migration to ensure minimum_interval_between_bookings column exists
+            self::migrate_calendars_table();
+        }
+    }
+
+    /**
+     * Migrate calendars table to add minimum_interval_between_bookings column
+     *
+     * @return void
+     */
+    private static function migrate_calendars_table(): void {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'ffc_calendars';
+
+        // Check if minimum_interval_between_bookings column exists
+        $column_exists = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = 'minimum_interval_between_bookings'",
+                DB_NAME,
+                $table_name
+            )
+        );
+
+        if (empty($column_exists)) {
+            // Add minimum_interval_between_bookings column after cancellation_min_hours
+            $wpdb->query(
+                "ALTER TABLE {$table_name}
+                ADD COLUMN minimum_interval_between_bookings int unsigned DEFAULT 24 COMMENT 'Minimum hours between user bookings (0 = disabled)' AFTER cancellation_min_hours"
+            );
         }
     }
 
