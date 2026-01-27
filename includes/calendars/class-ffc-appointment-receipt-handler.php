@@ -82,11 +82,19 @@ class AppointmentReceiptHandler {
             wp_die(__('You do not have permission to view this appointment receipt.', 'ffc'), 403);
         }
 
-        // Get calendar
-        $calendar = $calendar_repo->findById($appointment['calendar_id']);
+        // Get calendar (may be null if deleted)
+        $calendar = null;
+        if (!empty($appointment['calendar_id'])) {
+            $calendar = $calendar_repo->findById((int)$appointment['calendar_id']);
+        }
 
+        // If calendar was deleted, create a placeholder
         if (!$calendar) {
-            wp_die(__('Calendar not found.', 'ffc'), 404);
+            $calendar = array(
+                'id' => 0,
+                'title' => __('(Calendar Deleted)', 'ffc'),
+                'description' => '',
+            );
         }
 
         // Generate and display receipt
@@ -102,8 +110,8 @@ class AppointmentReceiptHandler {
      * @return void
      */
     private function display_receipt(array $appointment, array $calendar): void {
-        // Decrypt sensitive data
-        $email = $appointment['email'];
+        // Decrypt sensitive data with safety checks
+        $email = $appointment['email'] ?? '';
         if (empty($email) && !empty($appointment['email_encrypted'])) {
             if (class_exists('\FreeFormCertificate\Core\Encryption')) {
                 try {
@@ -125,16 +133,47 @@ class AppointmentReceiptHandler {
             }
         }
 
-        // Format dates
+        // Format dates with validation
         $date_format = get_option('date_format');
         $time_format = get_option('time_format');
 
-        $appointment_date = date_i18n($date_format, strtotime($appointment['appointment_date']));
-        $start_time = date_i18n($time_format, strtotime($appointment['start_time']));
-        $end_time = !empty($appointment['end_time']) ? date_i18n($time_format, strtotime($appointment['end_time'])) : '';
-        $created_at = date_i18n($date_format . ' ' . $time_format, strtotime($appointment['created_at']));
+        // Validate and format appointment date
+        $appointment_date = __('N/A', 'ffc');
+        if (!empty($appointment['appointment_date'])) {
+            $timestamp = strtotime($appointment['appointment_date']);
+            if ($timestamp !== false) {
+                $appointment_date = date_i18n($date_format, $timestamp);
+            }
+        }
 
-        // Status label
+        // Validate and format start time
+        $start_time = __('N/A', 'ffc');
+        if (!empty($appointment['start_time'])) {
+            $timestamp = strtotime($appointment['start_time']);
+            if ($timestamp !== false) {
+                $start_time = date_i18n($time_format, $timestamp);
+            }
+        }
+
+        // Validate and format end time
+        $end_time = '';
+        if (!empty($appointment['end_time'])) {
+            $timestamp = strtotime($appointment['end_time']);
+            if ($timestamp !== false) {
+                $end_time = date_i18n($time_format, $timestamp);
+            }
+        }
+
+        // Validate and format created at
+        $created_at = __('N/A', 'ffc');
+        if (!empty($appointment['created_at'])) {
+            $timestamp = strtotime($appointment['created_at']);
+            if ($timestamp !== false) {
+                $created_at = date_i18n($date_format . ' ' . $time_format, $timestamp);
+            }
+        }
+
+        // Status label with safety check
         $status_labels = array(
             'pending' => __('Pending Approval', 'ffc'),
             'confirmed' => __('Confirmed', 'ffc'),
@@ -142,7 +181,8 @@ class AppointmentReceiptHandler {
             'completed' => __('Completed', 'ffc'),
             'no_show' => __('No Show', 'ffc'),
         );
-        $status_label = $status_labels[$appointment['status']] ?? $appointment['status'];
+        $appointment_status = $appointment['status'] ?? 'pending';
+        $status_label = $status_labels[$appointment_status] ?? $appointment_status;
 
         ?>
         <!DOCTYPE html>
@@ -150,7 +190,7 @@ class AppointmentReceiptHandler {
         <head>
             <meta charset="<?php bloginfo('charset'); ?>">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title><?php echo esc_html__('Appointment Receipt', 'ffc'); ?> #<?php echo esc_html($appointment['id']); ?></title>
+            <title><?php echo esc_html__('Appointment Receipt', 'ffc'); ?> #<?php echo esc_html($appointment['id'] ?? '0'); ?></title>
             <style>
                 * {
                     margin: 0;
@@ -286,7 +326,7 @@ class AppointmentReceiptHandler {
                 </div>
 
                 <div style="text-align: center;">
-                    <span class="status-badge status-<?php echo esc_attr($appointment['status']); ?>">
+                    <span class="status-badge status-<?php echo esc_attr($appointment_status); ?>">
                         <?php echo esc_html($status_label); ?>
                     </span>
                 </div>
@@ -295,7 +335,7 @@ class AppointmentReceiptHandler {
                     <h2><?php echo esc_html__('Event Details', 'ffc'); ?></h2>
                     <div class="info-row">
                         <span class="info-label"><?php echo esc_html__('Event:', 'ffc'); ?></span>
-                        <span class="info-value"><?php echo esc_html($calendar['title']); ?></span>
+                        <span class="info-value"><?php echo esc_html($calendar['title'] ?? __('N/A', 'ffc')); ?></span>
                     </div>
                     <?php if (!empty($calendar['description'])): ?>
                     <div class="info-row">
@@ -309,7 +349,7 @@ class AppointmentReceiptHandler {
                     <h2><?php echo esc_html__('Appointment Information', 'ffc'); ?></h2>
                     <div class="info-row">
                         <span class="info-label"><?php echo esc_html__('Appointment ID:', 'ffc'); ?></span>
-                        <span class="info-value">#<?php echo esc_html($appointment['id']); ?></span>
+                        <span class="info-value">#<?php echo esc_html($appointment['id'] ?? '0'); ?></span>
                     </div>
                     <div class="info-row">
                         <span class="info-label"><?php echo esc_html__('Date:', 'ffc'); ?></span>
