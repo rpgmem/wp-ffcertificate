@@ -27,6 +27,7 @@ use FreeFormCertificate\Calendars\CalendarCPT;
 use FreeFormCertificate\Calendars\CalendarAdmin;
 use FreeFormCertificate\Calendars\CalendarEditor;
 use FreeFormCertificate\Calendars\AppointmentHandler;
+use FreeFormCertificate\Calendars\AppointmentEmailHandler;
 use FreeFormCertificate\Calendars\CalendarShortcode;
 
 if (!defined('ABSPATH')) exit;
@@ -44,6 +45,7 @@ class Loader {
     protected $calendar_admin = null;
     protected $calendar_editor = null;
     protected $appointment_handler = null;
+    protected $appointment_email_handler = null;
     protected $calendar_shortcode = null;
 
     public function __construct() {
@@ -75,11 +77,12 @@ class Loader {
         AccessControl::init();
 
         // ✅ v4.1.0: Initialize Calendar System
-        $this->calendar_cpt        = new CalendarCPT();
-        $this->calendar_admin      = new CalendarAdmin();
-        $this->calendar_editor     = new CalendarEditor();
-        $this->appointment_handler = new AppointmentHandler();
-        $this->calendar_shortcode  = new CalendarShortcode();
+        $this->calendar_cpt              = new CalendarCPT();
+        $this->calendar_admin            = new CalendarAdmin();
+        $this->calendar_editor           = new CalendarEditor();
+        $this->appointment_handler       = new AppointmentHandler();
+        $this->appointment_email_handler = new AppointmentEmailHandler();
+        $this->calendar_shortcode        = new CalendarShortcode();
 
         $this->define_admin_hooks();
         $this->init_rest_api(); // Initialize REST API
