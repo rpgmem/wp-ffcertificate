@@ -355,7 +355,7 @@ class AppointmentHandler {
             $data['calendar_id'],
             $data['appointment_date'],
             $data['start_time'],
-            $calendar['max_appointments_per_slot']
+            (int)$calendar['max_appointments_per_slot']
         );
 
         if (!$is_available) {
@@ -492,9 +492,9 @@ class AppointmentHandler {
 
         // Build slot list
         $slots = array();
-        $slot_duration = $calendar['slot_duration'];
-        $slot_interval = $calendar['slot_interval'];
-        $max_per_slot = $calendar['max_appointments_per_slot'];
+        $slot_duration = (int)$calendar['slot_duration'];
+        $slot_interval = (int)$calendar['slot_interval'];
+        $max_per_slot = (int)$calendar['max_appointments_per_slot'];
 
         foreach ($day_hours as $hours) {
             $current_time = strtotime($date . ' ' . $hours['start']);
