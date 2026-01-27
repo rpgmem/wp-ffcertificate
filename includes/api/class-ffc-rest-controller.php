@@ -189,6 +189,13 @@ class RestController {
             'callback' => array($this, 'get_user_profile'),
             'permission_callback' => 'is_user_logged_in', // Requires logged in user
         ));
+
+        // GET /user/appointments - Get current user's appointments (v4.1.0)
+        register_rest_route($this->namespace, '/user/appointments', array(
+            'methods' => \WP_REST_Server::READABLE,
+            'callback' => array($this, 'get_user_appointments'),
+            'permission_callback' => 'is_user_logged_in', // Requires logged in user
+        ));
     }
     
     /**
@@ -957,6 +964,131 @@ class RestController {
         } catch (\Exception $e) {
             return new \WP_Error(
                 'get_profile_error',
+                $e->getMessage(),
+                array('status' => 500)
+            );
+        }
+    }
+
+    /**
+     * GET /user/appointments
+     * Get current user's appointments
+     *
+     * @since 4.1.0
+     * @param \WP_REST_Request $request
+     * @return \WP_REST_Response|\WP_Error
+     */
+    public function get_user_appointments($request) {
+        try {
+            $user_id = get_current_user_id();
+
+            if (!$user_id) {
+                return new \WP_Error(
+                    'not_logged_in',
+                    __('You must be logged in to view appointments', 'ffc'),
+                    array('status' => 401)
+                );
+            }
+
+            // Check for admin view-as mode
+            $view_as_user_id = $request->get_param('viewAsUserId');
+            if ($view_as_user_id && current_user_can('manage_options')) {
+                $user_id = absint($view_as_user_id);
+            }
+
+            // Get appointment repository
+            if (!class_exists('\FreeFormCertificate\Repositories\AppointmentRepository')) {
+                return new \WP_Error(
+                    'repository_not_found',
+                    __('Appointment repository not available', 'ffc'),
+                    array('status' => 500)
+                );
+            }
+
+            $appointment_repository = new \FreeFormCertificate\Repositories\AppointmentRepository();
+
+            // Get all appointments for this user
+            $appointments = $appointment_repository->findByUserId($user_id);
+
+            // Get date format from settings
+            $settings = get_option('ffc_settings', array());
+            $date_format = $settings['date_format'] ?? 'F j, Y';
+
+            // Format response
+            $appointments_formatted = array();
+
+            foreach ($appointments as $appointment) {
+                // Get calendar info
+                $calendar_title = '';
+                if (!empty($appointment['calendar_id'])) {
+                    $calendar_repo = new \FreeFormCertificate\Repositories\CalendarRepository();
+                    $calendar = $calendar_repo->findById($appointment['calendar_id']);
+                    $calendar_title = $calendar['title'] ?? __('Unknown Calendar', 'ffc');
+                }
+
+                // Format date
+                $date_formatted = '';
+                if (!empty($appointment['appointment_date'])) {
+                    $timestamp = strtotime($appointment['appointment_date']);
+                    $date_formatted = ($timestamp !== false) ? date_i18n($date_format, $timestamp) : $appointment['appointment_date'];
+                }
+
+                // Format time
+                $time_formatted = '';
+                if (!empty($appointment['start_time'])) {
+                    $time_formatted = date_i18n('H:i', strtotime($appointment['start_time']));
+                }
+
+                // Decrypt email if encrypted
+                $email_display = '';
+                if (!empty($appointment['email_encrypted'])) {
+                    try {
+                        $email_plain = \FreeFormCertificate\Core\Encryption::decrypt($appointment['email_encrypted']);
+                        $email_display = ($email_plain && is_string($email_plain)) ? $email_plain : '';
+                    } catch (\Exception $e) {
+                        $email_display = '';
+                    }
+                } elseif (!empty($appointment['email'])) {
+                    $email_display = $appointment['email'];
+                }
+
+                // Status badge
+                $status_labels = array(
+                    'pending' => __('Pending', 'ffc'),
+                    'confirmed' => __('Confirmed', 'ffc'),
+                    'cancelled' => __('Cancelled', 'ffc'),
+                    'completed' => __('Completed', 'ffc'),
+                    'no_show' => __('No Show', 'ffc'),
+                );
+
+                $appointments_formatted[] = array(
+                    'id' => (int) $appointment['id'],
+                    'calendar_id' => (int) $appointment['calendar_id'],
+                    'calendar_title' => $calendar_title,
+                    'appointment_date' => $date_formatted,
+                    'appointment_date_raw' => $appointment['appointment_date'],
+                    'start_time' => $time_formatted,
+                    'start_time_raw' => $appointment['start_time'],
+                    'end_time' => !empty($appointment['end_time']) ? date_i18n('H:i', strtotime($appointment['end_time'])) : '',
+                    'status' => $appointment['status'],
+                    'status_label' => $status_labels[$appointment['status']] ?? $appointment['status'],
+                    'name' => $appointment['name'] ?? '',
+                    'email' => $email_display,
+                    'phone' => $appointment['phone'] ?? '',
+                    'user_notes' => $appointment['user_notes'] ?? '',
+                    'created_at' => $appointment['created_at'] ?? '',
+                    'can_cancel' => in_array($appointment['status'], ['pending', 'confirmed']),
+                );
+            }
+
+            return rest_ensure_response(array(
+                'appointments' => $appointments_formatted,
+                'total' => count($appointments_formatted),
+            ));
+
+        } catch (\Exception $e) {
+            return new \WP_Error(
+                'get_appointments_error',
                 $e->getMessage(),
                 array('status' => 500)
             );
