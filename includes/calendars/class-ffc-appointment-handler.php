@@ -395,7 +395,30 @@ class AppointmentHandler {
             }
         }
 
-        // 11. Validate user permissions (if login required)
+        // 11. Check minimum interval between bookings
+        if (!empty($calendar['minimum_interval_between_bookings']) && $calendar['minimum_interval_between_bookings'] > 0) {
+            // Get identifier (user_id or email/cpf)
+            $user_identifier = null;
+
+            if (!empty($data['user_id'])) {
+                $user_identifier = $data['user_id'];
+            } elseif (!empty($data['email'])) {
+                $user_identifier = $data['email'];
+            } elseif (!empty($data['cpf_rf'])) {
+                $user_identifier = $data['cpf_rf'];
+            }
+
+            if ($user_identifier) {
+                $interval_hours = (int) $calendar['minimum_interval_between_bookings'];
+                $interval_check = $this->check_booking_interval($user_identifier, $data['calendar_id'], $interval_hours);
+
+                if (is_wp_error($interval_check)) {
+                    return $interval_check;
+                }
+            }
+        }
+
+        // 12. Validate user permissions (if login required)
         if ($calendar['require_login']) {
             if (!is_user_logged_in()) {
                 return new \WP_Error('login_required', __('You must be logged in to book this calendar.', 'ffc'));
@@ -414,12 +437,12 @@ class AppointmentHandler {
             }
         }
 
-        // 12. Validate email (if not logged in)
+        // 13. Validate email (if not logged in)
         if (!is_user_logged_in() && empty($data['email'])) {
             return new \WP_Error('email_required', __('Email address is required.', 'ffc'));
         }
 
-        // 13. Validate CPF/RF
+        // 14. Validate CPF/RF
         if (empty($data['cpf_rf'])) {
             return new \WP_Error('cpf_rf_required', __('CPF/RF is required.', 'ffc'));
         }
@@ -438,6 +461,70 @@ class AppointmentHandler {
             }
         } else {
             return new \WP_Error('invalid_cpf_rf', __('CPF/RF must be 7 digits (RF) or 11 digits (CPF).', 'ffc'));
+        }
+
+        return true;
+    }
+
+    /**
+     * Check minimum interval between bookings for a user
+     *
+     * @param mixed $user_identifier User ID, email, or CPF/RF
+     * @param int $calendar_id Calendar ID
+     * @param int $interval_hours Minimum hours between bookings
+     * @return bool|WP_Error True if valid, WP_Error if too soon
+     */
+    private function check_booking_interval($user_identifier, int $calendar_id, int $interval_hours) {
+        $now = current_time('timestamp');
+        $cutoff_time = $now + ($interval_hours * 3600);
+
+        // Get user's recent appointments for this calendar
+        $recent_appointments = array();
+
+        if (is_int($user_identifier)) {
+            // User ID
+            $recent_appointments = $this->appointment_repository->findByUserId($user_identifier);
+        } else {
+            // Email or CPF/RF
+            if (filter_var($user_identifier, FILTER_VALIDATE_EMAIL)) {
+                $recent_appointments = $this->appointment_repository->findByEmail($user_identifier);
+            } else {
+                $recent_appointments = $this->appointment_repository->findByCpfRf($user_identifier);
+            }
+        }
+
+        // Check if any appointment exists within the interval window
+        foreach ($recent_appointments as $appointment) {
+            // Skip cancelled appointments
+            if ($appointment['status'] === 'cancelled') {
+                continue;
+            }
+
+            // Only check for the same calendar
+            if ((int)$appointment['calendar_id'] !== $calendar_id) {
+                continue;
+            }
+
+            // Get appointment timestamp
+            $apt_timestamp = strtotime($appointment['appointment_date'] . ' ' . $appointment['start_time']);
+
+            // Check if appointment is in the future and within the interval window
+            if ($apt_timestamp >= $now && $apt_timestamp <= $cutoff_time) {
+                // Format the next available time
+                $next_available = date_i18n(
+                    get_option('date_format') . ' ' . get_option('time_format'),
+                    $apt_timestamp + ($interval_hours * 3600)
+                );
+
+                return new \WP_Error(
+                    'booking_too_soon',
+                    sprintf(
+                        __('You already have an appointment scheduled within the next %d hours. You can book again after %s.', 'ffc'),
+                        $interval_hours,
+                        $next_available
+                    )
+                );
+            }
         }
 
         return true;

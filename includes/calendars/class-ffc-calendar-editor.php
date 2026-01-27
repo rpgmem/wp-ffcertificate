@@ -288,6 +288,7 @@ class CalendarEditor {
             'advance_booking_max' => 30,
             'allow_cancellation' => 1,
             'cancellation_min_hours' => 24,
+            'minimum_interval_between_bookings' => 24,
             'requires_approval' => 0,
             'require_login' => 0,
             'allowed_roles' => array()
@@ -326,6 +327,13 @@ class CalendarEditor {
                 <td>
                     <input type="number" id="cancellation_min_hours" name="ffc_calendar_config[cancellation_min_hours]" value="<?php echo esc_attr($config['cancellation_min_hours']); ?>" min="0" max="168" /> <?php _e('hours before', 'ffc'); ?>
                     <p class="description"><?php _e('Minimum notice required to cancel (e.g., 24 hours)', 'ffc'); ?></p>
+                </td>
+            </tr>
+            <tr>
+                <th><label for="minimum_interval_between_bookings"><?php _e('Minimum Interval Between Bookings', 'ffc'); ?></label></th>
+                <td>
+                    <input type="number" id="minimum_interval_between_bookings" name="ffc_calendar_config[minimum_interval_between_bookings]" value="<?php echo esc_attr($config['minimum_interval_between_bookings']); ?>" min="0" max="720" /> <?php _e('hours', 'ffc'); ?>
+                    <p class="description"><?php _e('Prevent users from booking another appointment within X hours of their last booking (0 = disabled, default: 24 hours)', 'ffc'); ?></p>
                 </td>
             </tr>
             <tr>
@@ -525,6 +533,7 @@ class CalendarEditor {
             $config['advance_booking_max'] = absint($config['advance_booking_max'] ?? 30);
             $config['allow_cancellation'] = isset($config['allow_cancellation']) ? 1 : 0;
             $config['cancellation_min_hours'] = absint($config['cancellation_min_hours'] ?? 24);
+            $config['minimum_interval_between_bookings'] = absint($config['minimum_interval_between_bookings'] ?? 24);
             $config['requires_approval'] = isset($config['requires_approval']) ? 1 : 0;
             $config['require_login'] = isset($config['require_login']) ? 1 : 0;
             $config['status'] = sanitize_text_field($config['status'] ?? 'active');
