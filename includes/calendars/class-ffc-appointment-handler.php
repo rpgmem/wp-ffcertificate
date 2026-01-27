@@ -51,6 +51,13 @@ class AppointmentHandler {
         check_ajax_referer('ffc_calendar_nonce', 'nonce');
 
         // Validate security fields (honeypot + captcha)
+        if (!class_exists('\FreeFormCertificate\Core\Utils')) {
+            wp_send_json_error(array(
+                'message' => __('System error: Utils class not loaded.', 'ffc')
+            ));
+            return;
+        }
+
         $security_check = \FreeFormCertificate\Core\Utils::validate_security_fields($_POST);
         if ($security_check !== true) {
             // Generate new captcha for retry
@@ -61,6 +68,7 @@ class AppointmentHandler {
                 'new_label' => $new_captcha['label'],
                 'new_hash' => $new_captcha['hash']
             ));
+            return;
         }
 
         // Get and validate input
@@ -72,6 +80,7 @@ class AppointmentHandler {
             wp_send_json_error(array(
                 'message' => __('Missing required fields.', 'ffc')
             ));
+            return;
         }
 
         // Collect appointment data
@@ -102,6 +111,7 @@ class AppointmentHandler {
             wp_send_json_error(array(
                 'message' => $result->get_error_message()
             ));
+            return;
         }
 
         wp_send_json_success(array(
@@ -126,6 +136,7 @@ class AppointmentHandler {
             wp_send_json_error(array(
                 'message' => __('Invalid parameters.', 'ffc')
             ));
+            return;
         }
 
         $slots = $this->get_available_slots($calendar_id, $date);
@@ -134,6 +145,7 @@ class AppointmentHandler {
             wp_send_json_error(array(
                 'message' => $slots->get_error_message()
             ));
+            return;
         }
 
         wp_send_json_success(array(
@@ -158,6 +170,7 @@ class AppointmentHandler {
             wp_send_json_error(array(
                 'message' => __('Invalid appointment ID.', 'ffc')
             ));
+            return;
         }
 
         $result = $this->cancel_appointment($appointment_id, $token, $reason);
@@ -166,6 +179,7 @@ class AppointmentHandler {
             wp_send_json_error(array(
                 'message' => $result->get_error_message()
             ));
+            return;
         }
 
         wp_send_json_success(array(
