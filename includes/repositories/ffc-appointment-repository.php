@@ -464,7 +464,7 @@ class AppointmentRepository extends AbstractRepository {
                     $this->generate_random_string(4);
 
             // Check if code already exists
-            $existing = $this->findAll(['validation_code' => $code], null, null, 1);
+            $existing = $this->findAll(['validation_code' => $code], 'id', 'ASC', 1);
         } while (!empty($existing));
 
         return $code;
