@@ -24,6 +24,9 @@ class CalendarEditor {
         add_action('save_post_ffc_calendar', array($this, 'save_calendar_data'), 10, 3);
         add_action('admin_notices', array($this, 'display_save_errors'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
+
+        // AJAX handler for appointment cleanup
+        add_action('wp_ajax_ffc_cleanup_appointments', array($this, 'handle_cleanup_appointments'));
     }
 
     /**
@@ -121,6 +124,19 @@ class CalendarEditor {
             'side',
             'high'
         );
+
+        // Cleanup appointments (sidebar) - Only show for existing calendars
+        $post_id = get_the_ID();
+        if ($post_id) {
+            add_meta_box(
+                'ffc_calendar_cleanup',
+                __('Clean Up Appointments', 'ffc'),
+                array($this, 'render_cleanup_metabox'),
+                'ffc_calendar',
+                'side',
+                'default'
+            );
+        }
     }
 
     /**
@@ -577,6 +593,306 @@ class CalendarEditor {
 
             update_post_meta($post_id, '_ffc_calendar_email_config', $email_config);
         }
+    }
+
+    /**
+     * Handle appointment cleanup AJAX request
+     *
+     * @return void
+     */
+    public function handle_cleanup_appointments(): void {
+        // Verify nonce
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'ffc_cleanup_appointments_nonce')) {
+            wp_send_json_error(array(
+                'message' => __('Security check failed', 'ffc')
+            ));
+            return;
+        }
+
+        // Verify permissions
+        if (!\FreeFormCertificate\Core\Utils::current_user_can_manage()) {
+            wp_send_json_error(array(
+                'message' => __('You do not have permission to perform this action', 'ffc')
+            ));
+            return;
+        }
+
+        // Get parameters
+        $calendar_id = isset($_POST['calendar_id']) ? absint($_POST['calendar_id']) : 0;
+        $cleanup_action = isset($_POST['cleanup_action']) ? sanitize_text_field($_POST['cleanup_action']) : '';
+
+        if (!$calendar_id || !$cleanup_action) {
+            wp_send_json_error(array(
+                'message' => __('Invalid parameters', 'ffc')
+            ));
+            return;
+        }
+
+        // Verify calendar exists
+        $calendar_repository = new \FreeFormCertificate\Repositories\CalendarRepository();
+        $calendar = $calendar_repository->findById($calendar_id);
+
+        if (!$calendar) {
+            wp_send_json_error(array(
+                'message' => __('Calendar not found', 'ffc')
+            ));
+            return;
+        }
+
+        global $wpdb;
+        $table = $wpdb->prefix . 'ffc_appointments';
+        $today = current_time('Y-m-d');
+
+        $deleted = 0;
+
+        // Build query based on action
+        switch ($cleanup_action) {
+            case 'all':
+                // Delete all appointments for this calendar
+                $deleted = $wpdb->delete($table, ['calendar_id' => $calendar_id], ['%d']);
+                $message = sprintf(
+                    __('Successfully deleted %d appointment(s).', 'ffc'),
+                    $deleted
+                );
+                break;
+
+            case 'old':
+                // Delete appointments before today
+                $deleted = $wpdb->query($wpdb->prepare(
+                    "DELETE FROM {$table} WHERE calendar_id = %d AND appointment_date < %s",
+                    $calendar_id,
+                    $today
+                ));
+                $message = sprintf(
+                    __('Successfully deleted %d past appointment(s).', 'ffc'),
+                    $deleted
+                );
+                break;
+
+            case 'future':
+                // Delete appointments today and after
+                $deleted = $wpdb->query($wpdb->prepare(
+                    "DELETE FROM {$table} WHERE calendar_id = %d AND appointment_date >= %s",
+                    $calendar_id,
+                    $today
+                ));
+                $message = sprintf(
+                    __('Successfully deleted %d future appointment(s).', 'ffc'),
+                    $deleted
+                );
+                break;
+
+            case 'cancelled':
+                // Delete only cancelled appointments
+                $deleted = $wpdb->delete($table, [
+                    'calendar_id' => $calendar_id,
+                    'status' => 'cancelled'
+                ], ['%d', '%s']);
+                $message = sprintf(
+                    __('Successfully deleted %d cancelled appointment(s).', 'ffc'),
+                    $deleted
+                );
+                break;
+
+            default:
+                wp_send_json_error(array(
+                    'message' => __('Invalid cleanup action', 'ffc')
+                ));
+                return;
+        }
+
+        // Log the action
+        \FreeFormCertificate\Core\Utils::debug_log('Appointments cleaned up', array(
+            'calendar_id' => $calendar_id,
+            'calendar_title' => $calendar['title'],
+            'action' => $cleanup_action,
+            'deleted_count' => $deleted,
+            'user_id' => get_current_user_id()
+        ));
+
+        wp_send_json_success(array(
+            'message' => $message,
+            'deleted' => $deleted
+        ));
+    }
+
+    /**
+     * Render cleanup appointments metabox
+     *
+     * Allows admins to bulk delete appointments based on criteria:
+     * - All appointments
+     * - Old/past appointments
+     * - Future appointments
+     * - Cancelled appointments
+     *
+     * @param object $post
+     * @return void
+     */
+    public function render_cleanup_metabox(object $post): void {
+        // Get calendar ID from database
+        $calendar_repository = new \FreeFormCertificate\Repositories\CalendarRepository();
+        $calendar = $calendar_repository->findByPostId($post->ID);
+
+        if (!$calendar) {
+            echo '<p>' . esc_html__('Calendar not found in database. Save the calendar first.', 'ffc') . '</p>';
+            return;
+        }
+
+        $calendar_id = (int) $calendar['id'];
+        $appointment_repo = new \FreeFormCertificate\Repositories\AppointmentRepository();
+
+        // Count appointments by category
+        $today = current_time('Y-m-d');
+
+        $count_all = $appointment_repo->count(['calendar_id' => $calendar_id]);
+
+        // Count old appointments (before today)
+        global $wpdb;
+        $table = $wpdb->prefix . 'ffc_appointments';
+        $count_old = (int) $wpdb->get_var($wpdb->prepare(
+            "SELECT COUNT(*) FROM {$table} WHERE calendar_id = %d AND appointment_date < %s",
+            $calendar_id,
+            $today
+        ));
+
+        // Count future appointments (today and after)
+        $count_future = (int) $wpdb->get_var($wpdb->prepare(
+            "SELECT COUNT(*) FROM {$table} WHERE calendar_id = %d AND appointment_date >= %s",
+            $calendar_id,
+            $today
+        ));
+
+        // Count cancelled appointments
+        $count_cancelled = $appointment_repo->count([
+            'calendar_id' => $calendar_id,
+            'status' => 'cancelled'
+        ]);
+
+        wp_nonce_field('ffc_cleanup_appointments_nonce', 'ffc_cleanup_appointments_nonce');
+        ?>
+        <div class="ffc-cleanup-appointments">
+            <p class="description">
+                <?php esc_html_e('Permanently delete appointments from this calendar. This action cannot be undone.', 'ffc'); ?>
+            </p>
+
+            <div class="ffc-cleanup-stats" style="margin: 15px 0;">
+                <table class="widefat" style="border: none;">
+                    <tr>
+                        <td><strong><?php esc_html_e('Total:', 'ffc'); ?></strong></td>
+                        <td><?php echo esc_html($count_all); ?></td>
+                    </tr>
+                    <tr>
+                        <td><strong><?php esc_html_e('Past:', 'ffc'); ?></strong></td>
+                        <td><?php echo esc_html($count_old); ?></td>
+                    </tr>
+                    <tr>
+                        <td><strong><?php esc_html_e('Future:', 'ffc'); ?></strong></td>
+                        <td><?php echo esc_html($count_future); ?></td>
+                    </tr>
+                    <tr>
+                        <td><strong><?php esc_html_e('Cancelled:', 'ffc'); ?></strong></td>
+                        <td><?php echo esc_html($count_cancelled); ?></td>
+                    </tr>
+                </table>
+            </div>
+
+            <?php if ($count_all > 0) : ?>
+                <div class="ffc-cleanup-actions">
+                    <p><strong><?php esc_html_e('Delete appointments:', 'ffc'); ?></strong></p>
+
+                    <?php if ($count_cancelled > 0) : ?>
+                        <button type="button"
+                                class="button ffc-cleanup-btn"
+                                data-action="cancelled"
+                                data-calendar-id="<?php echo esc_attr($calendar_id); ?>"
+                                style="width: 100%; margin-bottom: 5px;">
+                            🗑️ <?php printf(esc_html__('Cancelled (%d)', 'ffc'), $count_cancelled); ?>
+                        </button>
+                    <?php endif; ?>
+
+                    <?php if ($count_old > 0) : ?>
+                        <button type="button"
+                                class="button ffc-cleanup-btn"
+                                data-action="old"
+                                data-calendar-id="<?php echo esc_attr($calendar_id); ?>"
+                                style="width: 100%; margin-bottom: 5px;">
+                            📅 <?php printf(esc_html__('Past (%d)', 'ffc'), $count_old); ?>
+                        </button>
+                    <?php endif; ?>
+
+                    <?php if ($count_future > 0) : ?>
+                        <button type="button"
+                                class="button ffc-cleanup-btn"
+                                data-action="future"
+                                data-calendar-id="<?php echo esc_attr($calendar_id); ?>"
+                                style="width: 100%; margin-bottom: 5px;">
+                            ⏭️ <?php printf(esc_html__('Future (%d)', 'ffc'), $count_future); ?>
+                        </button>
+                    <?php endif; ?>
+
+                    <button type="button"
+                            class="button button-link-delete ffc-cleanup-btn"
+                            data-action="all"
+                            data-calendar-id="<?php echo esc_attr($calendar_id); ?>"
+                            style="width: 100%; margin-top: 10px;">
+                        ⚠️ <?php printf(esc_html__('All Appointments (%d)', 'ffc'), $count_all); ?>
+                    </button>
+                </div>
+
+                <p class="description" style="margin-top: 10px; color: #d63638;">
+                    ⚠️ <?php esc_html_e('Warning: This action is permanent and cannot be undone!', 'ffc'); ?>
+                </p>
+            <?php else : ?>
+                <p><?php esc_html_e('No appointments to clean up.', 'ffc'); ?></p>
+            <?php endif; ?>
+        </div>
+
+        <script>
+        jQuery(document).ready(function($) {
+            $('.ffc-cleanup-btn').on('click', function() {
+                const $btn = $(this);
+                const action = $btn.data('action');
+                const calendarId = $btn.data('calendar-id');
+
+                let confirmMessage = '<?php esc_html_e('Are you sure you want to delete these appointments? This action cannot be undone.', 'ffc'); ?>';
+
+                if (action === 'all') {
+                    confirmMessage = '<?php esc_html_e('Are you sure you want to delete ALL appointments? This will permanently remove all appointment data and cannot be undone!', 'ffc'); ?>';
+                }
+
+                if (!confirm(confirmMessage)) {
+                    return;
+                }
+
+                $btn.prop('disabled', true).text('<?php esc_html_e('Deleting...', 'ffc'); ?>');
+
+                $.ajax({
+                    url: ajaxurl,
+                    method: 'POST',
+                    data: {
+                        action: 'ffc_cleanup_appointments',
+                        calendar_id: calendarId,
+                        cleanup_action: action,
+                        nonce: $('#ffc_cleanup_appointments_nonce').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            alert(response.data.message);
+                            location.reload();
+                        } else {
+                            alert(response.data.message || '<?php esc_html_e('Error deleting appointments', 'ffc'); ?>');
+                            $btn.prop('disabled', false);
+                        }
+                    },
+                    error: function() {
+                        alert('<?php esc_html_e('Error communicating with server', 'ffc'); ?>');
+                        $btn.prop('disabled', false);
+                    }
+                });
+            });
+        });
+        </script>
+        <?php
     }
 
     /**
