@@ -23,6 +23,9 @@ use FreeFormCertificate\Admin\AdminAjax;
 use FreeFormCertificate\API\RestController;
 use FreeFormCertificate\Shortcodes\DashboardShortcode;
 use FreeFormCertificate\UserDashboard\AccessControl;
+use FreeFormCertificate\Calendars\CalendarCPT;
+use FreeFormCertificate\Calendars\CalendarAdmin;
+use FreeFormCertificate\Calendars\CalendarEditor;
 
 if (!defined('ABSPATH')) exit;
 
@@ -35,6 +38,9 @@ class Loader {
     protected $admin = null;
     protected $frontend = null;
     protected $admin_ajax = null;
+    protected $calendar_cpt = null;
+    protected $calendar_admin = null;
+    protected $calendar_editor = null;
 
     public function __construct() {
         // Let WordPress load textdomain automatically (just-in-time in WP 6.7+)
@@ -63,6 +69,11 @@ class Loader {
 
         // ✅ v3.1.0: Initialize Access Control (blocks wp-admin for configured roles)
         AccessControl::init();
+
+        // ✅ v4.1.0: Initialize Calendar System
+        $this->calendar_cpt    = new CalendarCPT();
+        $this->calendar_admin  = new CalendarAdmin();
+        $this->calendar_editor = new CalendarEditor();
 
         $this->define_admin_hooks();
         $this->init_rest_api(); // Initialize REST API
