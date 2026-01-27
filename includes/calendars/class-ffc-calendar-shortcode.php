@@ -266,6 +266,27 @@ class CalendarShortcode {
                         <textarea id="ffc-booking-notes" name="notes" rows="3"></textarea>
                     </div>
 
+                    <!-- Security Fields (Honeypot + Math Captcha) -->
+                    <?php
+                    $captcha = \FreeFormCertificate\Core\Utils::generate_simple_captcha();
+                    ?>
+                    <div class="ffc-security-container">
+                        <!-- Honeypot Field -->
+                        <div class="ffc-honeypot-field">
+                            <label><?php esc_html_e('Do not fill this field if you are human:', 'ffc'); ?></label>
+                            <input type="text" name="ffc_honeypot_trap" value="" tabindex="-1" autocomplete="off">
+                        </div>
+
+                        <!-- Math Captcha -->
+                        <div class="ffc-captcha-row">
+                            <label for="ffc_captcha_ans">
+                                <?php echo $captcha['label']; ?>
+                            </label>
+                            <input type="number" name="ffc_captcha_ans" id="ffc_captcha_ans" class="ffc-input" required>
+                            <input type="hidden" name="ffc_captcha_hash" id="ffc_captcha_hash" value="<?php echo esc_attr($captcha['hash']); ?>">
+                        </div>
+                    </div>
+
                     <!-- LGPD Consent -->
                     <div class="ffc-form-row ffc-consent-row">
                         <label class="ffc-consent-label">

@@ -50,6 +50,19 @@ class AppointmentHandler {
         // Verify nonce
         check_ajax_referer('ffc_calendar_nonce', 'nonce');
 
+        // Validate security fields (honeypot + captcha)
+        $security_check = \FreeFormCertificate\Core\Utils::validate_security_fields($_POST);
+        if ($security_check !== true) {
+            // Generate new captcha for retry
+            $new_captcha = \FreeFormCertificate\Core\Utils::generate_simple_captcha();
+            wp_send_json_error(array(
+                'message' => $security_check,
+                'refresh_captcha' => true,
+                'new_label' => $new_captcha['label'],
+                'new_hash' => $new_captcha['hash']
+            ));
+        }
+
         // Get and validate input
         $calendar_id = isset($_POST['calendar_id']) ? absint($_POST['calendar_id']) : 0;
         $date = isset($_POST['date']) ? sanitize_text_field($_POST['date']) : '';
