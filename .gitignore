@@ -28,3 +28,7 @@ package-lock.json
 # PHPUnit
 .phpunit.result.cache
 /phpunit.xml
+
+# Others
+html/atestado_jair.html
+html/jair_sipioni.png
