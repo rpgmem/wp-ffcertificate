@@ -47,78 +47,86 @@ class AppointmentHandler {
      * @return void
      */
     public function ajax_book_appointment(): void {
-        // Verify nonce
-        check_ajax_referer('ffc_calendar_nonce', 'nonce');
+        try {
+            // Verify nonce
+            check_ajax_referer('ffc_calendar_nonce', 'nonce');
 
-        // Validate security fields (honeypot + captcha)
-        if (!class_exists('\FreeFormCertificate\Core\Utils')) {
-            wp_send_json_error(array(
-                'message' => __('System error: Utils class not loaded.', 'ffc')
+            // Validate security fields (honeypot + captcha)
+            if (!class_exists('\FreeFormCertificate\Core\Utils')) {
+                wp_send_json_error(array(
+                    'message' => __('System error: Utils class not loaded.', 'ffc')
+                ));
+                return;
+            }
+
+            $security_check = \FreeFormCertificate\Core\Utils::validate_security_fields($_POST);
+            if ($security_check !== true) {
+                // Generate new captcha for retry
+                $new_captcha = \FreeFormCertificate\Core\Utils::generate_simple_captcha();
+                wp_send_json_error(array(
+                    'message' => $security_check,
+                    'refresh_captcha' => true,
+                    'new_label' => $new_captcha['label'],
+                    'new_hash' => $new_captcha['hash']
+                ));
+                return;
+            }
+
+            // Get and validate input
+            $calendar_id = isset($_POST['calendar_id']) ? absint($_POST['calendar_id']) : 0;
+            $date = isset($_POST['date']) ? sanitize_text_field($_POST['date']) : '';
+            $time = isset($_POST['time']) ? sanitize_text_field($_POST['time']) : '';
+
+            if (!$calendar_id || !$date || !$time) {
+                wp_send_json_error(array(
+                    'message' => __('Missing required fields.', 'ffc')
+                ));
+                return;
+            }
+
+            // Collect appointment data
+            $appointment_data = array(
+                'calendar_id' => $calendar_id,
+                'appointment_date' => $date,
+                'start_time' => $time,
+                'name' => isset($_POST['name']) ? sanitize_text_field($_POST['name']) : '',
+                'email' => isset($_POST['email']) ? sanitize_email($_POST['email']) : '',
+                'cpf_rf' => isset($_POST['cpf_rf']) ? sanitize_text_field($_POST['cpf_rf']) : '',
+                'user_notes' => isset($_POST['notes']) ? sanitize_textarea_field($_POST['notes']) : '',
+                'custom_data' => isset($_POST['custom_data']) ? $_POST['custom_data'] : array(),
+                'consent_given' => isset($_POST['consent']) ? 1 : 0,
+                'consent_text' => isset($_POST['consent_text']) ? sanitize_textarea_field($_POST['consent_text']) : '',
+                'user_ip' => \FreeFormCertificate\Core\Utils::get_user_ip(),
+                'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? sanitize_text_field($_SERVER['HTTP_USER_AGENT']) : ''
+            );
+
+            // Add user ID if logged in
+            if (is_user_logged_in()) {
+                $appointment_data['user_id'] = get_current_user_id();
+            }
+
+            // Process appointment
+            $result = $this->process_appointment($appointment_data);
+
+            if (is_wp_error($result)) {
+                wp_send_json_error(array(
+                    'message' => $result->get_error_message()
+                ));
+                return;
+            }
+
+            wp_send_json_success(array(
+                'message' => __('Appointment booked successfully!', 'ffc'),
+                'appointment_id' => $result['appointment_id'],
+                'confirmation_token' => $result['confirmation_token'] ?? null
             ));
-            return;
-        }
-
-        $security_check = \FreeFormCertificate\Core\Utils::validate_security_fields($_POST);
-        if ($security_check !== true) {
-            // Generate new captcha for retry
-            $new_captcha = \FreeFormCertificate\Core\Utils::generate_simple_captcha();
+        } catch (\Exception $e) {
+            error_log('FFC Calendar Appointment Error: ' . $e->getMessage());
             wp_send_json_error(array(
-                'message' => $security_check,
-                'refresh_captcha' => true,
-                'new_label' => $new_captcha['label'],
-                'new_hash' => $new_captcha['hash']
+                'message' => __('An unexpected error occurred. Please try again.', 'ffc'),
+                'debug' => WP_DEBUG ? $e->getMessage() : null
             ));
-            return;
         }
-
-        // Get and validate input
-        $calendar_id = isset($_POST['calendar_id']) ? absint($_POST['calendar_id']) : 0;
-        $date = isset($_POST['date']) ? sanitize_text_field($_POST['date']) : '';
-        $time = isset($_POST['time']) ? sanitize_text_field($_POST['time']) : '';
-
-        if (!$calendar_id || !$date || !$time) {
-            wp_send_json_error(array(
-                'message' => __('Missing required fields.', 'ffc')
-            ));
-            return;
-        }
-
-        // Collect appointment data
-        $appointment_data = array(
-            'calendar_id' => $calendar_id,
-            'appointment_date' => $date,
-            'start_time' => $time,
-            'name' => isset($_POST['name']) ? sanitize_text_field($_POST['name']) : '',
-            'email' => isset($_POST['email']) ? sanitize_email($_POST['email']) : '',
-            'cpf_rf' => isset($_POST['cpf_rf']) ? sanitize_text_field($_POST['cpf_rf']) : '',
-            'user_notes' => isset($_POST['notes']) ? sanitize_textarea_field($_POST['notes']) : '',
-            'custom_data' => isset($_POST['custom_data']) ? $_POST['custom_data'] : array(),
-            'consent_given' => isset($_POST['consent']) ? 1 : 0,
-            'consent_text' => isset($_POST['consent_text']) ? sanitize_textarea_field($_POST['consent_text']) : '',
-            'user_ip' => \FreeFormCertificate\Core\Utils::get_user_ip(),
-            'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? sanitize_text_field($_SERVER['HTTP_USER_AGENT']) : ''
-        );
-
-        // Add user ID if logged in
-        if (is_user_logged_in()) {
-            $appointment_data['user_id'] = get_current_user_id();
-        }
-
-        // Process appointment
-        $result = $this->process_appointment($appointment_data);
-
-        if (is_wp_error($result)) {
-            wp_send_json_error(array(
-                'message' => $result->get_error_message()
-            ));
-            return;
-        }
-
-        wp_send_json_success(array(
-            'message' => __('Appointment booked successfully!', 'ffc'),
-            'appointment_id' => $result['appointment_id'],
-            'confirmation_token' => $result['confirmation_token'] ?? null
-        ));
     }
 
     /**
