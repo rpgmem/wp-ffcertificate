@@ -28,6 +28,13 @@
         bindEvents: function() {
             var self = this;
 
+            // Apply CPF/RF mask if the helper function is available
+            if (typeof window.ffcApplyCpfRfMask === 'function') {
+                $(document).on('focus', '#ffc-booking-cpf-rf', function() {
+                    window.ffcApplyCpfRfMask(this);
+                });
+            }
+
             // Time slot selection
             $(document).on('click', '.ffc-timeslot:not(.ffc-timeslot-full)', function() {
                 var $slot = $(this);

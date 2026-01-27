@@ -65,11 +65,20 @@ class CalendarShortcode {
             FFC_VERSION
         );
 
+        // Enqueue FFC frontend helpers (for CPF/RF mask)
+        wp_enqueue_script(
+            'ffc-frontend-helpers',
+            FFC_PLUGIN_URL . 'assets/js/ffc-frontend-helpers.js',
+            array('jquery'),
+            FFC_VERSION,
+            true
+        );
+
         // Enqueue calendar frontend scripts
         wp_enqueue_script(
             'ffc-calendar-frontend',
             FFC_PLUGIN_URL . 'assets/js/calendar-frontend.js',
-            array('jquery', 'jquery-ui-datepicker'),
+            array('jquery', 'jquery-ui-datepicker', 'ffc-frontend-helpers'),
             FFC_VERSION,
             true
         );
@@ -238,10 +247,16 @@ class CalendarShortcode {
                     </div>
 
                     <div class="ffc-form-row">
-                        <label for="ffc-booking-phone">
-                            <?php _e('Phone', 'ffc'); ?>
+                        <label for="ffc-booking-cpf-rf">
+                            <?php _e('CPF / RF', 'ffc'); ?> <span class="required">*</span>
                         </label>
-                        <input type="tel" id="ffc-booking-phone" name="phone">
+                        <input
+                            type="tel"
+                            id="ffc-booking-cpf-rf"
+                            name="cpf_rf"
+                            maxlength="14"
+                            required
+                        >
                     </div>
 
                     <div class="ffc-form-row">
