@@ -69,7 +69,7 @@ class AdminSubmissionEditPage {
         $sub = $this->submission_handler->get_submission( $submission_id );
 
         if ( ! $sub ) {
-            echo '<div class="wrap"><p>' . __( 'Submission not found.', 'ffc' ) . '</p></div>';
+            echo '<div class="wrap"><p>' . __( 'Submission not found.', 'wp-ffcertificate' ) . '</p></div>';
             return;
         }
 
@@ -81,7 +81,7 @@ class AdminSubmissionEditPage {
         // Render page
         ?>
         <div class="wrap">
-            <h1><?php printf( __( 'Edit Submission #%s', 'ffc' ), $this->sub_array['id'] ); ?></h1>
+            <h1><?php printf( __( 'Edit Submission #%s', 'wp-ffcertificate' ), $this->sub_array['id'] ); ?></h1>
 
             <?php $this->render_edit_warning(); ?>
 
@@ -100,8 +100,8 @@ class AdminSubmissionEditPage {
                 </table>
 
                 <p class="submit">
-                    <button type="submit" name="ffc_save_edit" class="button button-primary"><?php _e( 'Save Changes', 'ffc' ); ?></button>
-                    <a href="<?php echo admin_url('edit.php?post_type=ffc_form&page=ffc-submissions'); ?>" class="button"><?php _e( 'Cancel', 'ffc' ); ?></a>
+                    <button type="submit" name="ffc_save_edit" class="button button-primary"><?php esc_html_e( 'Save Changes', 'wp-ffcertificate' ); ?></button>
+                    <a href="<?php echo admin_url('edit.php?post_type=ffc_form&page=ffc-submissions'); ?>" class="button"><?php esc_html_e( 'Cancel', 'wp-ffcertificate' ); ?></a>
                 </p>
             </form>
         </div>
@@ -132,15 +132,15 @@ class AdminSubmissionEditPage {
         ?>
         <div class="notice notice-warning ffc-edited-notice">
             <p>
-                <strong><?php _e( '⚠️ Warning:', 'ffc' ); ?></strong>
+                <strong><?php esc_html_e( '⚠️ Warning:', 'wp-ffcertificate' ); ?></strong>
                 <?php
                 printf(
-                    __( 'This record was manually edited on <strong>%s</strong>', 'ffc' ),
+                    __( 'This record was manually edited on <strong>%s</strong>', 'wp-ffcertificate' ),
                     date_i18n( get_option('date_format') . ' ' . get_option('time_format'), strtotime($edited_at) )
                 );
                 ?>
                 <?php if ( $edited_by_name ): ?>
-                    <?php printf( __( ' by <strong>%s</strong>', 'ffc' ), esc_html($edited_by_name) ); ?>
+                    <?php printf( __( ' by <strong>%s</strong>', 'wp-ffcertificate' ), esc_html($edited_by_name) ); ?>
                 <?php endif; ?>.
             </p>
         </div>
@@ -156,64 +156,64 @@ class AdminSubmissionEditPage {
         $magic_token = isset( $this->sub_array['magic_token'] ) ? $this->sub_array['magic_token'] : '';
         $formatted_date = isset( $this->sub_array['submission_date'] )
             ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $this->sub_array['submission_date'] ) )
-            : __( 'Unknown', 'ffc' );
+            : __( 'Unknown', 'wp-ffcertificate' );
 
         ?>
         <!-- SEÇÃO: INFORMAÇÕES DO SISTEMA -->
         <tr>
             <td colspan="2">
                 <h2 class="ffc-section-header">
-                    <?php _e( 'System Information', 'ffc' ); ?>
+                    <?php esc_html_e( 'System Information', 'wp-ffcertificate' ); ?>
                 </h2>
             </td>
         </tr>
 
         <tr>
-            <th><label><?php _e( 'Submission ID', 'ffc' ); ?></label></th>
+            <th><label><?php esc_html_e( 'Submission ID', 'wp-ffcertificate' ); ?></label></th>
             <td>
                 <input type="text" value="<?php echo esc_attr( $this->sub_array['id'] ); ?>" class="regular-text ffc-input-readonly" readonly>
-                <p class="description"><?php _e( 'Unique submission identifier.', 'ffc' ); ?></p>
+                <p class="description"><?php esc_html_e( 'Unique submission identifier.', 'wp-ffcertificate' ); ?></p>
             </td>
         </tr>
 
         <tr>
-            <th><label><?php _e( 'Submission Date', 'ffc' ); ?></label></th>
+            <th><label><?php esc_html_e( 'Submission Date', 'wp-ffcertificate' ); ?></label></th>
             <td>
                 <input type="text" value="<?php echo esc_attr( $formatted_date ); ?>" class="regular-text ffc-input-readonly" readonly>
-                <p class="description"><?php _e( 'Original submission timestamp (read-only).', 'ffc' ); ?></p>
+                <p class="description"><?php esc_html_e( 'Original submission timestamp (read-only).', 'wp-ffcertificate' ); ?></p>
             </td>
         </tr>
 
         <tr>
-            <th><label><?php _e( 'Status', 'ffc' ); ?></label></th>
+            <th><label><?php esc_html_e( 'Status', 'wp-ffcertificate' ); ?></label></th>
             <td>
                 <input type="text" value="<?php echo esc_attr( $this->sub_array['status'] ); ?>" class="regular-text ffc-input-readonly" readonly>
-                <p class="description"><?php _e( 'Submission status (publish, trash, etc).', 'ffc' ); ?></p>
+                <p class="description"><?php esc_html_e( 'Submission status (publish, trash, etc).', 'wp-ffcertificate' ); ?></p>
             </td>
         </tr>
 
         <tr>
-            <th><label><?php _e( 'Magic Link Token', 'ffc' ); ?></label></th>
+            <th><label><?php esc_html_e( 'Magic Link Token', 'wp-ffcertificate' ); ?></label></th>
             <td>
                 <?php if ( ! empty( $magic_token ) ): ?>
                     <input type="text" value="<?php echo esc_attr( $magic_token ); ?>" class="regular-text ffc-input-readonly" readonly>
                     <p class="description">
-                        <?php _e( 'Unique token for certificate access (read-only).', 'ffc' ); ?>
+                        <?php esc_html_e( 'Unique token for certificate access (read-only).', 'wp-ffcertificate' ); ?>
                         <?php echo \FreeFormCertificate\Generators\MagicLinkHelper::get_magic_link_html( $magic_token ); ?>
                     </p>
                 <?php else: ?>
-                    <p class="description"><?php _e( 'Submission created before magic links', 'ffc' ); ?></p>
+                    <p class="description"><?php esc_html_e( 'Submission created before magic links', 'wp-ffcertificate' ); ?></p>
                 <?php endif; ?>
             </td>
         </tr>
 
         <?php if ( !empty( $this->sub_array['user_ip'] ) ): ?>
         <tr>
-            <th><label><?php _e( 'User IP', 'ffc' ); ?></label></th>
+            <th><label><?php esc_html_e( 'User IP', 'wp-ffcertificate' ); ?></label></th>
             <td>
                 <input type="text" value="<?php echo esc_attr( $this->sub_array['user_ip'] ); ?>" class="regular-text ffc-input-readonly" readonly>
                 <?php if ( ! empty( $this->sub_array['user_ip_encrypted'] ) ): ?>
-                    <p class="description">🔒 <?php _e( 'This IP is encrypted in the database.', 'ffc' ); ?></p>
+                    <p class="description">🔒 <?php esc_html_e( 'This IP is encrypted in the database.', 'wp-ffcertificate' ); ?></p>
                 <?php endif; ?>
             </td>
         </tr>
@@ -231,31 +231,31 @@ class AdminSubmissionEditPage {
             <td colspan="2">
                 <div class="ffc-qr-info-box">
                     <h3>
-                        📱 <?php _e( 'QR Code Placeholder Usage', 'ffc' ); ?>
+                        📱 <?php esc_html_e( 'QR Code Placeholder Usage', 'wp-ffcertificate' ); ?>
                     </h3>
                     <p>
-                        <?php _e( 'You can add dynamic QR Codes to your certificate template using these placeholders:', 'ffc' ); ?>
+                        <?php esc_html_e( 'You can add dynamic QR Codes to your certificate template using these placeholders:', 'wp-ffcertificate' ); ?>
                     </p>
                     <table>
                         <tr>
                             <td><code>{{qr_code}}</code></td>
-                            <td><?php _e( 'Default QR Code (200x200px)', 'ffc' ); ?></td>
+                            <td><?php esc_html_e( 'Default QR Code (200x200px)', 'wp-ffcertificate' ); ?></td>
                         </tr>
                         <tr>
                             <td><code>{{qr_code:size=150}}</code></td>
-                            <td><?php _e( 'Custom size (150x150px)', 'ffc' ); ?></td>
+                            <td><?php esc_html_e( 'Custom size (150x150px)', 'wp-ffcertificate' ); ?></td>
                         </tr>
                         <tr>
                             <td><code>{{qr_code:size=250:margin=0}}</code></td>
-                            <td><?php _e( 'Custom size without margin', 'ffc' ); ?></td>
+                            <td><?php esc_html_e( 'Custom size without margin', 'wp-ffcertificate' ); ?></td>
                         </tr>
                         <tr>
                             <td><code>{{qr_code:error=H}}</code></td>
-                            <td><?php _e( 'High error correction (30%)', 'ffc' ); ?></td>
+                            <td><?php esc_html_e( 'High error correction (30%)', 'wp-ffcertificate' ); ?></td>
                         </tr>
                     </table>
                     <p class="ffc-qr-note">
-                        💡 <?php _e( 'QR Codes automatically link to this certificate verification page. Configure defaults in Settings → QR Code.', 'ffc' ); ?>
+                        💡 <?php esc_html_e( 'QR Codes automatically link to this certificate verification page. Configure defaults in Settings → QR Code.', 'wp-ffcertificate' ); ?>
                     </p>
                 </div>
             </td>
@@ -278,36 +278,36 @@ class AdminSubmissionEditPage {
                 <div class="ffc-consent-box <?php echo $consent_given ? 'consent-given' : 'consent-not-given'; ?>">
                     <h3>
                         <?php echo $consent_given ? '✅' : '⚠️'; ?>
-                        <?php _e( 'LGPD Consent Status', 'ffc' ); ?>
+                        <?php esc_html_e( 'LGPD Consent Status', 'wp-ffcertificate' ); ?>
                     </h3>
 
                     <?php if ( $consent_given ): ?>
                         <p>
-                            <strong><?php _e( 'Consent given:', 'ffc' ); ?></strong>
-                            <?php _e( 'User explicitly agreed to data storage and privacy policy.', 'ffc' ); ?>
+                            <strong><?php esc_html_e( 'Consent given:', 'wp-ffcertificate' ); ?></strong>
+                            <?php esc_html_e( 'User explicitly agreed to data storage and privacy policy.', 'wp-ffcertificate' ); ?>
                         </p>
                         <?php if ( $consent_date ): ?>
                             <p class="description">
-                                📅 <?php printf( __( 'Date: %s', 'ffc' ), esc_html( $consent_date ) ); ?>
+                                📅 <?php printf( __( 'Date: %s', 'wp-ffcertificate' ), esc_html( $consent_date ) ); ?>
                             </p>
                         <?php endif; ?>
 
                         <?php if ( $consent_ip ): ?>
                             <p class="description">
-                                🌐 <?php printf( __( 'IP: %s', 'ffc' ), esc_html( $consent_ip ) ); ?>
+                                🌐 <?php printf( __( 'IP: %s', 'wp-ffcertificate' ), esc_html( $consent_ip ) ); ?>
                             </p>
                         <?php endif; ?>
 
                         <p class="description">
-                            🔒 <?php _e( 'Sensitive data (email, CPF/RF, IP) is encrypted in the database.', 'ffc' ); ?>
+                            🔒 <?php esc_html_e( 'Sensitive data (email, CPF/RF, IP) is encrypted in the database.', 'wp-ffcertificate' ); ?>
                         </p>
                     <?php else: ?>
                         <p>
-                            <strong><?php _e( 'No consent recorded:', 'ffc' ); ?></strong>
-                            <?php _e( 'This submission was created before LGPD consent feature (v2.10.0).', 'ffc' ); ?>
+                            <strong><?php esc_html_e( 'No consent recorded:', 'wp-ffcertificate' ); ?></strong>
+                            <?php esc_html_e( 'This submission was created before LGPD consent feature (v2.10.0).', 'wp-ffcertificate' ); ?>
                         </p>
                         <p class="description">
-                            ℹ️ <?php _e( 'Older submissions do not have explicit consent flag but may have been collected under privacy policy.', 'ffc' ); ?>
+                            ℹ️ <?php esc_html_e( 'Older submissions do not have explicit consent flag but may have been collected under privacy policy.', 'wp-ffcertificate' ); ?>
                         </p>
                     <?php endif; ?>
                 </div>
@@ -327,18 +327,18 @@ class AdminSubmissionEditPage {
         <tr>
             <td colspan="2">
                 <h2 class="ffc-section-header">
-                    <?php _e( 'Participant Data', 'ffc' ); ?>
+                    <?php esc_html_e( 'Participant Data', 'wp-ffcertificate' ); ?>
                 </h2>
             </td>
         </tr>
 
         <!-- ✅ EMAIL (editável) -->
         <tr>
-            <th><label for="user_email"><?php _e( 'Email', 'ffc' ); ?> *</label></th>
+            <th><label for="user_email"><?php esc_html_e( 'Email', 'wp-ffcertificate' ); ?> *</label></th>
             <td>
                 <input type="email" name="user_email" id="user_email" value="<?php echo esc_attr($this->sub_array['email']); ?>" class="regular-text" required>
                 <?php if ( ! empty( $this->sub_array['email_encrypted'] ) ): ?>
-                    <p class="description">🔒 <?php _e( 'This email is encrypted in the database.', 'ffc' ); ?></p>
+                    <p class="description">🔒 <?php esc_html_e( 'This email is encrypted in the database.', 'wp-ffcertificate' ); ?></p>
                 <?php endif; ?>
             </td>
         </tr>
@@ -346,11 +346,11 @@ class AdminSubmissionEditPage {
         <!-- ✅ CPF/RF (read-only se existir) -->
         <?php if ( !empty( $this->sub_array['cpf_rf'] ) ): ?>
         <tr>
-            <th><label><?php _e( 'CPF/RF', 'ffc' ); ?></label></th>
+            <th><label><?php esc_html_e( 'CPF/RF', 'wp-ffcertificate' ); ?></label></th>
             <td>
                 <input type="text" value="<?php echo esc_attr( $this->sub_array['cpf_rf'] ); ?>" class="regular-text ffc-input-readonly" readonly>
                 <?php if ( ! empty( $this->sub_array['cpf_rf_encrypted'] ) ): ?>
-                    <p class="description">🔒 <?php _e( 'This CPF/RF is encrypted in the database.', 'ffc' ); ?></p>
+                    <p class="description">🔒 <?php esc_html_e( 'This CPF/RF is encrypted in the database.', 'wp-ffcertificate' ); ?></p>
                 <?php endif; ?>
             </td>
         </tr>
@@ -359,10 +359,10 @@ class AdminSubmissionEditPage {
         <!-- ✅ AUTH CODE (read-only se existir) -->
         <?php if ( !empty( $this->sub_array['auth_code'] ) ): ?>
         <tr>
-            <th><label><?php _e( 'Auth Code', 'ffc' ); ?></label></th>
+            <th><label><?php esc_html_e( 'Auth Code', 'wp-ffcertificate' ); ?></label></th>
             <td>
                 <input type="text" value="<?php echo esc_attr( $this->sub_array['auth_code'] ); ?>" class="regular-text ffc-input-readonly" readonly>
-                <p class="description"><?php _e( 'Protected authentication code.', 'ffc' ); ?></p>
+                <p class="description"><?php esc_html_e( 'Protected authentication code.', 'wp-ffcertificate' ); ?></p>
             </td>
         </tr>
         <?php endif; ?>
@@ -410,7 +410,7 @@ class AdminSubmissionEditPage {
                 <td>
                     <input type="text" name="data[<?php echo esc_attr($k); ?>]" value="<?php echo esc_attr($display_value); ?>" class="<?php echo esc_attr($field_class); ?>" <?php echo $readonly_attr; ?>>
                     <?php if ( $is_protected ): ?>
-                        <p class="description"><?php _e('Protected internal field.', 'ffc'); ?></p>
+                        <p class="description"><?php esc_html_e('Protected internal field.', 'wp-ffcertificate'); ?></p>
                     <?php endif; ?>
                 </td>
             </tr>

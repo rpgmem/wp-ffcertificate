@@ -220,7 +220,7 @@ class MigrationManager {
         if ( ! $status['is_complete'] ) {
             return new WP_Error(
                 'encryption_not_complete',
-                __( 'Encryption migration must be 100% complete before cleanup.', 'ffc' )
+                __( 'Encryption migration must be 100% complete before cleanup.', 'wp-ffcertificate' )
             );
         }
 
@@ -230,7 +230,7 @@ class MigrationManager {
         if ( ! $encryption_completed_date ) {
             return new WP_Error(
                 'no_completion_date',
-                __( 'Encryption completion date not found.', 'ffc' )
+                __( 'Encryption completion date not found.', 'wp-ffcertificate' )
             );
         }
 
@@ -240,7 +240,7 @@ class MigrationManager {
             return new WP_Error(
                 'grace_period_not_met',
                 sprintf(
-                    __( 'Must wait 15 days after encryption completion. Days remaining: %d', 'ffc' ),
+                    __( 'Must wait 15 days after encryption completion. Days remaining: %d', 'wp-ffcertificate' ),
                     15 - $days_since_completion
                 )
             );
@@ -250,7 +250,7 @@ class MigrationManager {
         if ( ! isset( $_POST['confirm_cleanup'] ) || $_POST['confirm_cleanup'] !== 'CONFIRMAR EXCLUSÃO' ) {
             return new WP_Error(
                 'confirmation_required',
-                __( 'User confirmation required. Type "CONFIRMAR EXCLUSÃO" to proceed.', 'ffc' )
+                __( 'User confirmation required. Type "CONFIRMAR EXCLUSÃO" to proceed.', 'wp-ffcertificate' )
             );
         }
 
@@ -296,7 +296,7 @@ class MigrationManager {
         if ( ! isset( $_POST['confirm_drop'] ) || $_POST['confirm_drop'] !== 'CONFIRMAR EXCLUSÃO' ) {
             return new WP_Error(
                 'confirmation_required',
-                __( 'CRITICAL: This is IRREVERSIBLE! Type "CONFIRMAR EXCLUSÃO" to proceed.', 'ffc' )
+                __( 'CRITICAL: This is IRREVERSIBLE! Type "CONFIRMAR EXCLUSÃO" to proceed.', 'wp-ffcertificate' )
             );
         }
 
@@ -362,7 +362,7 @@ class MigrationManager {
         if ( ! $status['is_complete'] ) {
             return new WP_Error(
                 'encryption_not_complete',
-                __( 'Encryption migration must be 100% complete.', 'ffc' )
+                __( 'Encryption migration must be 100% complete.', 'wp-ffcertificate' )
             );
         }
 
@@ -372,7 +372,7 @@ class MigrationManager {
         if ( ! $encryption_completed_date ) {
             return new WP_Error(
                 'no_completion_date',
-                __( 'Encryption completion date not found.', 'ffc' )
+                __( 'Encryption completion date not found.', 'wp-ffcertificate' )
             );
         }
 
@@ -382,7 +382,7 @@ class MigrationManager {
             return new WP_Error(
                 'grace_period_not_met',
                 sprintf(
-                    __( 'Must wait 30 days after encryption completion. Days remaining: %d', 'ffc' ),
+                    __( 'Must wait 30 days after encryption completion. Days remaining: %d', 'wp-ffcertificate' ),
                     30 - $days_since_completion
                 )
             );

@@ -296,7 +296,7 @@ class RestController {
             if (!$this->form_repository) {
                 return new \WP_Error(
                     'repository_not_found',
-                    __('Form repository not available', 'ffc'),
+                    __('Form repository not available', 'wp-ffcertificate'),
                     array('status' => 500)
                 );
             }
@@ -344,7 +344,7 @@ class RestController {
             if (!$form || $form->post_type !== 'ffc_form') {
                 return new \WP_Error(
                     'form_not_found',
-                    __('Form not found', 'ffc'),
+                    __('Form not found', 'wp-ffcertificate'),
                     array('status' => 404)
                 );
             }
@@ -352,7 +352,7 @@ class RestController {
             if ($form->post_status !== 'publish') {
                 return new \WP_Error(
                     'form_not_published',
-                    __('Form is not published', 'ffc'),
+                    __('Form is not published', 'wp-ffcertificate'),
                     array('status' => 403)
                 );
             }
@@ -851,7 +851,7 @@ class RestController {
             if (!$user_id) {
                 return new \WP_Error(
                     'not_logged_in',
-                    __('You must be logged in to view certificates', 'ffc'),
+                    __('You must be logged in to view certificates', 'wp-ffcertificate'),
                     array('status' => 401)
                 );
             }
@@ -901,7 +901,7 @@ class RestController {
                         // Check if decrypt returned valid string before masking
                         $email_display = ($email_plain && is_string($email_plain)) ? \FreeFormCertificate\Core\Utils::mask_email($email_plain) : '';
                     } catch (\Exception $e) {
-                        $email_display = __('Error decrypting', 'ffc');
+                        $email_display = __('Error decrypting', 'wp-ffcertificate');
                     }
                 } elseif (!empty($submission['email'])) {
                     // Fallback to plain email if not encrypted
@@ -936,7 +936,7 @@ class RestController {
                 $certificates[] = array(
                     'id' => (int) ($submission['id'] ?? 0),
                     'form_id' => (int) ($submission['form_id'] ?? 0),
-                    'form_title' => $submission['form_title'] ?? __('Unknown Form', 'ffc'),
+                    'form_title' => $submission['form_title'] ?? __('Unknown Form', 'wp-ffcertificate'),
                     'submission_date' => $date_formatted ?: '',
                     'submission_date_raw' => $submission['submission_date'] ?? '',
                     'consent_given' => !empty($submission['consent_given']),
@@ -985,7 +985,7 @@ class RestController {
             if (!$user_id) {
                 return new \WP_Error(
                     'not_logged_in',
-                    __('You must be logged in to view profile', 'ffc'),
+                    __('You must be logged in to view profile', 'wp-ffcertificate'),
                     array('status' => 401)
                 );
             }
@@ -1009,7 +1009,7 @@ class RestController {
             if (!$user) {
                 return new \WP_Error(
                     'user_not_found',
-                    __('User not found', 'ffc'),
+                    __('User not found', 'wp-ffcertificate'),
                     array('status' => 404)
                 );
             }
@@ -1040,7 +1040,7 @@ class RestController {
                 'display_name' => $user->display_name,
                 'email' => $user->user_email,
                 'emails' => $emails,
-                'cpf_masked' => $cpf_masked ?? __('Not found', 'ffc'),
+                'cpf_masked' => $cpf_masked ?? __('Not found', 'wp-ffcertificate'),
                 'member_since' => $member_since,
                 'roles' => $user->roles,
             ));
@@ -1069,7 +1069,7 @@ class RestController {
             if (!$user_id) {
                 return new \WP_Error(
                     'not_logged_in',
-                    __('You must be logged in to view appointments', 'ffc'),
+                    __('You must be logged in to view appointments', 'wp-ffcertificate'),
                     array('status' => 401)
                 );
             }
@@ -1084,7 +1084,7 @@ class RestController {
             if (!class_exists('\FreeFormCertificate\Repositories\AppointmentRepository')) {
                 return new \WP_Error(
                     'repository_not_found',
-                    __('Appointment repository not available', 'ffc'),
+                    __('Appointment repository not available', 'wp-ffcertificate'),
                     array('status' => 500)
                 );
             }
@@ -1093,7 +1093,7 @@ class RestController {
             if (!class_exists('\FreeFormCertificate\Repositories\CalendarRepository')) {
                 return new \WP_Error(
                     'calendar_repository_not_found',
-                    __('Calendar repository not available', 'ffc'),
+                    __('Calendar repository not available', 'wp-ffcertificate'),
                     array('status' => 500)
                 );
             }
@@ -1123,7 +1123,7 @@ class RestController {
                 }
 
                 // Get calendar info
-                $calendar_title = __('Unknown Calendar', 'ffc');
+                $calendar_title = __('Unknown Calendar', 'wp-ffcertificate');
                 $calendar = null;
                 if (!empty($appointment['calendar_id'])) {
                     try {
@@ -1174,11 +1174,11 @@ class RestController {
 
                 // Status badge
                 $status_labels = array(
-                    'pending' => __('Pending', 'ffc'),
-                    'confirmed' => __('Confirmed', 'ffc'),
-                    'cancelled' => __('Cancelled', 'ffc'),
-                    'completed' => __('Completed', 'ffc'),
-                    'no_show' => __('No Show', 'ffc'),
+                    'pending' => __('Pending', 'wp-ffcertificate'),
+                    'confirmed' => __('Confirmed', 'wp-ffcertificate'),
+                    'cancelled' => __('Cancelled', 'wp-ffcertificate'),
+                    'completed' => __('Completed', 'wp-ffcertificate'),
+                    'no_show' => __('No Show', 'wp-ffcertificate'),
                 );
 
                 $status = $appointment['status'] ?? 'pending';
@@ -1257,7 +1257,7 @@ class RestController {
 
             return new \WP_Error(
                 'get_appointments_error',
-                sprintf(__('Error loading appointments: %s', 'ffc'), $e->getMessage()),
+                sprintf(__('Error loading appointments: %s', 'wp-ffcertificate'), $e->getMessage()),
                 array('status' => 500)
             );
         }
@@ -1276,7 +1276,7 @@ class RestController {
             if (!class_exists('\FreeFormCertificate\Repositories\CalendarRepository')) {
                 return new \WP_Error(
                     'repository_not_found',
-                    __('Calendar repository not available', 'ffc'),
+                    __('Calendar repository not available', 'wp-ffcertificate'),
                     array('status' => 500)
                 );
             }
@@ -1334,7 +1334,7 @@ class RestController {
             if (!class_exists('\FreeFormCertificate\Repositories\CalendarRepository')) {
                 return new \WP_Error(
                     'repository_not_found',
-                    __('Calendar repository not available', 'ffc'),
+                    __('Calendar repository not available', 'wp-ffcertificate'),
                     array('status' => 500)
                 );
             }
@@ -1345,7 +1345,7 @@ class RestController {
             if (!$calendar) {
                 return new \WP_Error(
                     'calendar_not_found',
-                    __('Calendar not found', 'ffc'),
+                    __('Calendar not found', 'wp-ffcertificate'),
                     array('status' => 404)
                 );
             }
@@ -1353,7 +1353,7 @@ class RestController {
             if ($calendar['status'] !== 'active') {
                 return new \WP_Error(
                     'calendar_inactive',
-                    __('Calendar is not active', 'ffc'),
+                    __('Calendar is not active', 'wp-ffcertificate'),
                     array('status' => 403)
                 );
             }
@@ -1399,7 +1399,7 @@ class RestController {
             if (!class_exists('\FreeFormCertificate\Calendars\AppointmentHandler')) {
                 return new \WP_Error(
                     'handler_not_found',
-                    __('Appointment handler not available', 'ffc'),
+                    __('Appointment handler not available', 'wp-ffcertificate'),
                     array('status' => 500)
                 );
             }
@@ -1442,7 +1442,7 @@ class RestController {
             if (empty($params)) {
                 return new \WP_Error(
                     'no_data',
-                    __('No data provided in request body', 'ffc'),
+                    __('No data provided in request body', 'wp-ffcertificate'),
                     array('status' => 400)
                 );
             }
@@ -1453,7 +1453,7 @@ class RestController {
                 if (empty($params[$field])) {
                     return new \WP_Error(
                         'missing_field',
-                        sprintf(__('Missing required field: %s', 'ffc'), $field),
+                        sprintf(__('Missing required field: %s', 'wp-ffcertificate'), $field),
                         array('status' => 400)
                     );
                 }
@@ -1463,7 +1463,7 @@ class RestController {
             if (!is_email($params['email'])) {
                 return new \WP_Error(
                     'invalid_email',
-                    __('Invalid email address', 'ffc'),
+                    __('Invalid email address', 'wp-ffcertificate'),
                     array('status' => 400)
                 );
             }
@@ -1493,7 +1493,7 @@ class RestController {
             if (!class_exists('\FreeFormCertificate\Calendars\AppointmentHandler')) {
                 return new \WP_Error(
                     'handler_not_found',
-                    __('Appointment handler not available', 'ffc'),
+                    __('Appointment handler not available', 'wp-ffcertificate'),
                     array('status' => 500)
                 );
             }
@@ -1507,7 +1507,7 @@ class RestController {
 
             return rest_ensure_response(array(
                 'success' => true,
-                'message' => __('Appointment booked successfully!', 'ffc'),
+                'message' => __('Appointment booked successfully!', 'wp-ffcertificate'),
                 'appointment_id' => $result['appointment_id'],
                 'requires_approval' => $result['requires_approval'],
             ));
@@ -1536,7 +1536,7 @@ class RestController {
             if (!class_exists('\FreeFormCertificate\Repositories\AppointmentRepository')) {
                 return new \WP_Error(
                     'repository_not_found',
-                    __('Appointment repository not available', 'ffc'),
+                    __('Appointment repository not available', 'wp-ffcertificate'),
                     array('status' => 500)
                 );
             }
@@ -1547,7 +1547,7 @@ class RestController {
             if (!$appointment) {
                 return new \WP_Error(
                     'appointment_not_found',
-                    __('Appointment not found', 'ffc'),
+                    __('Appointment not found', 'wp-ffcertificate'),
                     array('status' => 404)
                 );
             }
@@ -1610,7 +1610,7 @@ class RestController {
             if (!class_exists('\FreeFormCertificate\Calendars\AppointmentHandler')) {
                 return new \WP_Error(
                     'handler_not_found',
-                    __('Appointment handler not available', 'ffc'),
+                    __('Appointment handler not available', 'wp-ffcertificate'),
                     array('status' => 500)
                 );
             }
@@ -1626,7 +1626,7 @@ class RestController {
 
             return rest_ensure_response(array(
                 'success' => true,
-                'message' => __('Appointment cancelled successfully', 'ffc'),
+                'message' => __('Appointment cancelled successfully', 'wp-ffcertificate'),
             ));
 
         } catch (\Exception $e) {

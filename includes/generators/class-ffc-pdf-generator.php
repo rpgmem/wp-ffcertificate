@@ -44,7 +44,7 @@ class PdfGenerator {
         $submission = $submission_handler->get_submission( $submission_id );
         
         if ( ! $submission ) {
-            return new WP_Error( 'submission_not_found', __( 'Submission not found.', 'ffc' ) );
+            return new WP_Error( 'submission_not_found', __( 'Submission not found.', 'wp-ffcertificate' ) );
         }
         
         // Convert to array
@@ -501,7 +501,7 @@ class PdfGenerator {
     private function generate_default_html( array $data, string $form_title ): string {
         $layout = '<div style="text-align:center; padding: 50px;">';
         $layout .= '<h1>' . esc_html( $form_title ) . '</h1>';
-        $layout .= '<p>' . esc_html__( 'We certify that the holder of the data below has completed the event.', 'ffc' ) . '</p>';
+        $layout .= '<p>' . esc_html__( 'We certify that the holder of the data below has completed the event.', 'wp-ffcertificate' ) . '</p>';
         
         // Show name if exists
         if ( isset( $data['name'] ) ) {
@@ -510,7 +510,7 @@ class PdfGenerator {
         
         // Show auth code if exists
         if ( isset( $data['auth_code'] ) ) {
-            $layout .= '<p>' . esc_html__( 'Authenticity:', 'ffc' ) . ' ' . esc_html( \FreeFormCertificate\Core\Utils::format_auth_code( $data['auth_code'] ) ) . '</p>';
+            $layout .= '<p>' . esc_html__( 'Authenticity:', 'wp-ffcertificate' ) . ' ' . esc_html( \FreeFormCertificate\Core\Utils::format_auth_code( $data['auth_code'] ) ) . '</p>';
         }
         
         $layout .= '</div>';
@@ -561,7 +561,7 @@ class PdfGenerator {
         // Get form data
         $form_post = get_post( $form_id );
         if ( ! $form_post ) {
-            return new WP_Error( 'form_not_found', __( 'Form not found.', 'ffc' ) );
+            return new WP_Error( 'form_not_found', __( 'Form not found.', 'wp-ffcertificate' ) );
         }
         
         $form_title = $form_post->post_title;

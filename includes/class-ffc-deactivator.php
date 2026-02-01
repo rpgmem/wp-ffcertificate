@@ -38,7 +38,7 @@ class Deactivator {
         // Security check: Ensure this was a conscious post action with a nonce
         // Note: WordPress deactivation via the "Plugins" page doesn't send POST data by default.
         if ( ! isset( $_POST['confirm_uninstall'] ) || $_POST['confirm_uninstall'] !== 'yes' ) {
-            wp_die( esc_html__( 'Please confirm the uninstallation to proceed.', 'ffc' ) );
+            wp_die( esc_html__( 'Please confirm the uninstallation to proceed.', 'wp-ffcertificate' ) );
         }
         
         global $wpdb;

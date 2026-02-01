@@ -22,7 +22,7 @@ class TabGeolocation extends SettingsTab {
 
     protected function init(): void {
         $this->tab_id = 'geolocation';
-        $this->tab_title = __('Geolocation', 'ffc');
+        $this->tab_title = __('Geolocation', 'wp-ffcertificate');
         $this->tab_icon = '🌍';
         $this->tab_order = 65;
     }
@@ -75,7 +75,7 @@ class TabGeolocation extends SettingsTab {
         if ($_POST && isset($_POST['ffc_save_geolocation'])) {
             check_admin_referer('ffc_geolocation_nonce');
             $this->save_settings();
-            echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__('Geolocation settings saved successfully!', 'ffc') . '</p></div>';
+            echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__('Geolocation settings saved successfully!', 'wp-ffcertificate') . '</p></div>';
         }
 
         $settings = $this->get_settings();

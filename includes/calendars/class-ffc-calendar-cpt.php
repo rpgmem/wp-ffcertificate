@@ -63,19 +63,19 @@ class CalendarCPT {
      */
     public function register_calendar_cpt(): void {
         $labels = array(
-            'name'                  => _x('Calendars', 'Post Type General Name', 'ffc'),
-            'singular_name'         => _x('Calendar', 'Post Type Singular Name', 'ffc'),
-            'menu_name'             => __('FFC Calendars', 'ffc'),
-            'name_admin_bar'        => __('FFC Calendar', 'ffc'),
-            'add_new'               => __('Add New', 'ffc'),
-            'add_new_item'          => __('Add New Calendar', 'ffc'),
-            'new_item'              => __('New Calendar', 'ffc'),
-            'edit_item'             => __('Edit Calendar', 'ffc'),
-            'view_item'             => __('View Calendar', 'ffc'),
-            'all_items'             => __('All Calendars', 'ffc'),
-            'search_items'          => __('Search Calendars', 'ffc'),
-            'not_found'             => __('No calendars found.', 'ffc'),
-            'not_found_in_trash'    => __('No calendars found in Trash.', 'ffc'),
+            'name'                  => _x('Calendars', 'Post Type General Name', 'wp-ffcertificate'),
+            'singular_name'         => _x('Calendar', 'Post Type Singular Name', 'wp-ffcertificate'),
+            'menu_name'             => __('FFC Calendars', 'wp-ffcertificate'),
+            'name_admin_bar'        => __('FFC Calendar', 'wp-ffcertificate'),
+            'add_new'               => __('Add New', 'wp-ffcertificate'),
+            'add_new_item'          => __('Add New Calendar', 'wp-ffcertificate'),
+            'new_item'              => __('New Calendar', 'wp-ffcertificate'),
+            'edit_item'             => __('Edit Calendar', 'wp-ffcertificate'),
+            'view_item'             => __('View Calendar', 'wp-ffcertificate'),
+            'all_items'             => __('All Calendars', 'wp-ffcertificate'),
+            'search_items'          => __('Search Calendars', 'wp-ffcertificate'),
+            'not_found'             => __('No calendars found.', 'wp-ffcertificate'),
+            'not_found_in_trash'    => __('No calendars found in Trash.', 'wp-ffcertificate'),
         );
 
         $args = array(
@@ -117,7 +117,7 @@ class CalendarCPT {
             'ffc_duplicate_calendar_nonce'
         );
 
-        $actions['duplicate'] = '<a href="' . esc_url($url) . '" title="' . esc_attr__('Duplicate this calendar', 'ffc') . '">' . __('Duplicate', 'ffc') . '</a>';
+        $actions['duplicate'] = '<a href="' . esc_url($url) . '" title="' . esc_attr__('Duplicate this calendar', 'wp-ffcertificate') . '">' . __('Duplicate', 'wp-ffcertificate') . '</a>';
 
         return $actions;
     }
@@ -133,7 +133,7 @@ class CalendarCPT {
                 'user_id' => get_current_user_id(),
                 'ip' => \FreeFormCertificate\Core\Utils::get_user_ip()
             ));
-            wp_die(esc_html__('You do not have permission to duplicate this calendar.', 'ffc'));
+            wp_die(esc_html__('You do not have permission to duplicate this calendar.', 'wp-ffcertificate'));
         }
 
         $post_id = (isset($_GET['post']) ? absint($_GET['post']) : 0);
@@ -147,11 +147,11 @@ class CalendarCPT {
                 'post_id' => $post_id,
                 'user_id' => get_current_user_id()
             ));
-            wp_die(esc_html__('Invalid calendar.', 'ffc'));
+            wp_die(esc_html__('Invalid calendar.', 'wp-ffcertificate'));
         }
 
         $original_title = $post->post_title;
-        $new_title = sprintf(__('%s (Copy)', 'ffc'), $original_title);
+        $new_title = sprintf(__('%s (Copy)', 'wp-ffcertificate'), $original_title);
 
         // Create new post
         $new_post_args = array(
@@ -378,7 +378,7 @@ class CalendarCPT {
             $result = $appointment_repo->cancel(
                 (int)$appointment['id'],
                 get_current_user_id(),
-                sprintf(__('Calendar "%s" was deleted', 'ffc'), $calendar_title)
+                sprintf(__('Calendar "%s" was deleted', 'wp-ffcertificate'), $calendar_title)
             );
 
             if ($result) {
@@ -424,7 +424,7 @@ class CalendarCPT {
 
         // Prepare email
         $subject = sprintf(
-            __('[%s] Appointment Cancelled - Calendar No Longer Available', 'ffc'),
+            __('[%s] Appointment Cancelled - Calendar No Longer Available', 'wp-ffcertificate'),
             get_bloginfo('name')
         );
 
@@ -432,7 +432,7 @@ class CalendarCPT {
         $time_formatted = date_i18n(get_option('time_format'), strtotime($appointment['start_time']));
 
         $message = sprintf(
-            __('Hello,%s%sWe regret to inform you that your appointment has been cancelled because the calendar "%s" is no longer available.%s%sAppointment Details:%s- Date: %s%s- Time: %s%s- Calendar: %s%s%sWe apologize for any inconvenience this may cause.%s%sBest regards,%s%s', 'ffc'),
+            __('Hello,%s%sWe regret to inform you that your appointment has been cancelled because the calendar "%s" is no longer available.%s%sAppointment Details:%s- Date: %s%s- Time: %s%s- Calendar: %s%s%sWe apologize for any inconvenience this may cause.%s%sBest regards,%s%s', 'wp-ffcertificate'),
             "\n\n",
             "\n",
             $calendar_title,

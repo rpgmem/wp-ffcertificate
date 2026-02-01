@@ -31,14 +31,14 @@ class AppointmentPdfGenerator {
         $appointment = $appointment_repo->findById($appointment_id);
 
         if (!$appointment) {
-            return new \WP_Error('appointment_not_found', __('Appointment not found.', 'ffc'));
+            return new \WP_Error('appointment_not_found', __('Appointment not found.', 'wp-ffcertificate'));
         }
 
         // Get calendar
         $calendar = $calendar_repo->findById($appointment['calendar_id']);
 
         if (!$calendar) {
-            return new \WP_Error('calendar_not_found', __('Calendar not found.', 'ffc'));
+            return new \WP_Error('calendar_not_found', __('Calendar not found.', 'wp-ffcertificate'));
         }
 
         // Decrypt sensitive data if needed
@@ -75,11 +75,11 @@ class AppointmentPdfGenerator {
 
         // Status label
         $status_labels = array(
-            'pending' => __('Pending Approval', 'ffc'),
-            'confirmed' => __('Confirmed', 'ffc'),
-            'cancelled' => __('Cancelled', 'ffc'),
-            'completed' => __('Completed', 'ffc'),
-            'no_show' => __('No Show', 'ffc'),
+            'pending' => __('Pending Approval', 'wp-ffcertificate'),
+            'confirmed' => __('Confirmed', 'wp-ffcertificate'),
+            'cancelled' => __('Cancelled', 'wp-ffcertificate'),
+            'completed' => __('Completed', 'wp-ffcertificate'),
+            'no_show' => __('No Show', 'wp-ffcertificate'),
         );
         $status_label = $status_labels[$appointment['status']] ?? $appointment['status'];
 
@@ -126,7 +126,7 @@ class AppointmentPdfGenerator {
         <html>
         <head>
             <meta charset="UTF-8">
-            <title><?php echo esc_html__('Appointment Confirmation', 'ffc'); ?></title>
+            <title><?php echo esc_html__('Appointment Confirmation', 'wp-ffcertificate'); ?></title>
             <style>
                 body {
                     font-family: Arial, Helvetica, sans-serif;
@@ -214,7 +214,7 @@ class AppointmentPdfGenerator {
         </head>
         <body>
             <div class="header">
-                <h1><?php echo esc_html__('Appointment Confirmation', 'ffc'); ?></h1>
+                <h1><?php echo esc_html__('Appointment Confirmation', 'wp-ffcertificate'); ?></h1>
                 <div class="site-name"><?php echo esc_html($data['site_name']); ?></div>
             </div>
 
@@ -228,14 +228,14 @@ class AppointmentPdfGenerator {
 
                 <!-- Calendar Info -->
                 <div class="info-section">
-                    <h2><?php echo esc_html__('Event Details', 'ffc'); ?></h2>
+                    <h2><?php echo esc_html__('Event Details', 'wp-ffcertificate'); ?></h2>
                     <div class="info-row">
-                        <span class="info-label"><?php echo esc_html__('Event:', 'ffc'); ?></span>
+                        <span class="info-label"><?php echo esc_html__('Event:', 'wp-ffcertificate'); ?></span>
                         <span class="info-value"><?php echo esc_html($data['calendar_title']); ?></span>
                     </div>
                     <?php if (!empty($data['calendar_description'])): ?>
                     <div class="info-row">
-                        <span class="info-label"><?php echo esc_html__('Description:', 'ffc'); ?></span>
+                        <span class="info-label"><?php echo esc_html__('Description:', 'wp-ffcertificate'); ?></span>
                         <span class="info-value"><?php echo esc_html($data['calendar_description']); ?></span>
                     </div>
                     <?php endif; ?>
@@ -243,41 +243,41 @@ class AppointmentPdfGenerator {
 
                 <!-- Appointment Info -->
                 <div class="info-section">
-                    <h2><?php echo esc_html__('Appointment Information', 'ffc'); ?></h2>
+                    <h2><?php echo esc_html__('Appointment Information', 'wp-ffcertificate'); ?></h2>
                     <div class="info-row">
-                        <span class="info-label"><?php echo esc_html__('Appointment ID:', 'ffc'); ?></span>
+                        <span class="info-label"><?php echo esc_html__('Appointment ID:', 'wp-ffcertificate'); ?></span>
                         <span class="info-value">#<?php echo esc_html($data['appointment_id']); ?></span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label"><?php echo esc_html__('Date:', 'ffc'); ?></span>
+                        <span class="info-label"><?php echo esc_html__('Date:', 'wp-ffcertificate'); ?></span>
                         <span class="info-value"><?php echo esc_html($data['appointment_date']); ?></span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label"><?php echo esc_html__('Time:', 'ffc'); ?></span>
+                        <span class="info-label"><?php echo esc_html__('Time:', 'wp-ffcertificate'); ?></span>
                         <span class="info-value"><?php echo esc_html($data['start_time']); ?><?php echo !empty($data['end_time']) ? ' - ' . esc_html($data['end_time']) : ''; ?></span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label"><?php echo esc_html__('Booked on:', 'ffc'); ?></span>
+                        <span class="info-label"><?php echo esc_html__('Booked on:', 'wp-ffcertificate'); ?></span>
                         <span class="info-value"><?php echo esc_html($data['created_at']); ?></span>
                     </div>
                 </div>
 
                 <!-- Personal Info -->
                 <div class="info-section">
-                    <h2><?php echo esc_html__('Personal Information', 'ffc'); ?></h2>
+                    <h2><?php echo esc_html__('Personal Information', 'wp-ffcertificate'); ?></h2>
                     <div class="info-row">
-                        <span class="info-label"><?php echo esc_html__('Name:', 'ffc'); ?></span>
+                        <span class="info-label"><?php echo esc_html__('Name:', 'wp-ffcertificate'); ?></span>
                         <span class="info-value"><?php echo esc_html($data['name']); ?></span>
                     </div>
                     <?php if (!empty($data['email'])): ?>
                     <div class="info-row">
-                        <span class="info-label"><?php echo esc_html__('Email:', 'ffc'); ?></span>
+                        <span class="info-label"><?php echo esc_html__('Email:', 'wp-ffcertificate'); ?></span>
                         <span class="info-value"><?php echo esc_html($data['email']); ?></span>
                     </div>
                     <?php endif; ?>
                     <?php if (!empty($data['phone'])): ?>
                     <div class="info-row">
-                        <span class="info-label"><?php echo esc_html__('Phone:', 'ffc'); ?></span>
+                        <span class="info-label"><?php echo esc_html__('Phone:', 'wp-ffcertificate'); ?></span>
                         <span class="info-value"><?php echo esc_html($data['phone']); ?></span>
                     </div>
                     <?php endif; ?>
@@ -286,14 +286,14 @@ class AppointmentPdfGenerator {
                 <!-- Notes -->
                 <?php if (!empty($data['user_notes'])): ?>
                 <div class="info-section">
-                    <h2><?php echo esc_html__('Notes', 'ffc'); ?></h2>
+                    <h2><?php echo esc_html__('Notes', 'wp-ffcertificate'); ?></h2>
                     <div class="info-value"><?php echo nl2br(esc_html($data['user_notes'])); ?></div>
                 </div>
                 <?php endif; ?>
             </div>
 
             <div class="footer">
-                <p><?php echo esc_html(sprintf(__('Generated on %s', 'ffc'), date_i18n(get_option('date_format') . ' ' . get_option('time_format')))); ?></p>
+                <p><?php echo esc_html(sprintf(__('Generated on %s', 'wp-ffcertificate'), date_i18n(get_option('date_format') . ' ' . get_option('time_format')))); ?></p>
                 <p><?php echo esc_html($data['site_name']); ?> - <?php echo esc_html($data['site_url']); ?></p>
             </div>
         </body>

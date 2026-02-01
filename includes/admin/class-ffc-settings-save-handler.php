@@ -80,7 +80,7 @@ class SettingsSaveHandler {
         $clean = $this->save_date_format_settings( $clean, $new );
 
         update_option( 'ffc_settings', $clean );
-        add_settings_error( 'ffc_settings', 'ffc_settings_updated', __( 'Settings saved.', 'ffc' ), 'updated' );
+        add_settings_error( 'ffc_settings', 'ffc_settings_updated', __( 'Settings saved.', 'wp-ffcertificate' ), 'updated' );
     }
 
     /**
@@ -263,7 +263,7 @@ class SettingsSaveHandler {
         add_settings_error(
             'ffc_user_access_settings',
             'ffc_user_access_updated',
-            __( 'User Access settings saved successfully.', 'ffc' ),
+            __( 'User Access settings saved successfully.', 'wp-ffcertificate' ),
             'updated'
         );
     }
@@ -284,11 +284,11 @@ class SettingsSaveHandler {
 
         if ( $result !== false ) {
             $message = $reset_counter
-                ? __( 'Data deleted and counter reset successfully.', 'ffc' )
-                : __( 'Data deleted successfully.', 'ffc' );
+                ? __( 'Data deleted and counter reset successfully.', 'wp-ffcertificate' )
+                : __( 'Data deleted successfully.', 'wp-ffcertificate' );
             add_settings_error( 'ffc_settings', 'ffc_data_deleted', $message, 'updated' );
         } else {
-            add_settings_error( 'ffc_settings', 'ffc_data_delete_failed', __( 'Failed to delete data.', 'ffc' ), 'error' );
+            add_settings_error( 'ffc_settings', 'ffc_data_delete_failed', __( 'Failed to delete data.', 'wp-ffcertificate' ), 'error' );
         }
     }
 }

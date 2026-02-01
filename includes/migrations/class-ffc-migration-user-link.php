@@ -53,7 +53,7 @@ class MigrationUserLink {
                 'success' => true,
                 'processed' => 0,
                 'errors' => 0,
-                'message' => __('No submissions to migrate.', 'ffc'),
+                'message' => __('No submissions to migrate.', 'wp-ffcertificate'),
             );
         }
 
@@ -113,7 +113,7 @@ class MigrationUserLink {
             try {
                 if (empty($submission['email_encrypted'])) {
                     $errors[] = sprintf(
-                        __('Submission ID %d: Email encrypted is empty', 'ffc'),
+                        __('Submission ID %d: Email encrypted is empty', 'wp-ffcertificate'),
                         $submission_id
                     );
                     continue;
@@ -123,7 +123,7 @@ class MigrationUserLink {
 
                 if (empty($email) || !is_email($email)) {
                     $errors[] = sprintf(
-                        __('Submission ID %d: Invalid email after decryption', 'ffc'),
+                        __('Submission ID %d: Invalid email after decryption', 'wp-ffcertificate'),
                         $submission_id
                     );
                     continue;
@@ -131,7 +131,7 @@ class MigrationUserLink {
 
             } catch (\Exception $e) {
                 $errors[] = sprintf(
-                    __('Submission ID %d: Failed to decrypt email - %s', 'ffc'),
+                    __('Submission ID %d: Failed to decrypt email - %s', 'wp-ffcertificate'),
                     $submission_id,
                     $e->getMessage()
                 );
@@ -151,7 +151,7 @@ class MigrationUserLink {
 
                     if ($other_cpf_hash && $other_cpf_hash !== $cpf_rf_hash) {
                         $errors[] = sprintf(
-                            __('Submission ID %d: Email "%s" is used by multiple CPF/RF (conflict detected)', 'ffc'),
+                            __('Submission ID %d: Email "%s" is used by multiple CPF/RF (conflict detected)', 'wp-ffcertificate'),
                             $submission_id,
                             $email
                         );
@@ -177,7 +177,7 @@ class MigrationUserLink {
 
                 if (is_wp_error($user_id)) {
                     $errors[] = sprintf(
-                        __('Submission ID %d: Failed to create user - %s', 'ffc'),
+                        __('Submission ID %d: Failed to create user - %s', 'wp-ffcertificate'),
                         $submission_id,
                         $user_id->get_error_message()
                     );
@@ -238,7 +238,7 @@ class MigrationUserLink {
             'processed' => $processed_count,
             'errors' => count($errors),
             'message' => sprintf(
-                __('Migration completed: %d users linked, %d errors', 'ffc'),
+                __('Migration completed: %d users linked, %d errors', 'wp-ffcertificate'),
                 $processed_count,
                 count($errors)
             ),

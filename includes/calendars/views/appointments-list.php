@@ -40,14 +40,14 @@ class FFC_Appointments_List_Table extends WP_List_Table {
     public function get_columns(): array {
         return array(
             'cb'              => '<input type="checkbox" />',
-            'id'              => __('ID', 'ffc'),
-            'calendar'        => __('Calendar', 'ffc'),
-            'name'            => __('Name', 'ffc'),
-            'email'           => __('Email', 'ffc'),
-            'appointment_date'=> __('Date', 'ffc'),
-            'time'            => __('Time', 'ffc'),
-            'status'          => __('Status', 'ffc'),
-            'created_at'      => __('Created', 'ffc')
+            'id'              => __('ID', 'wp-ffcertificate'),
+            'calendar'        => __('Calendar', 'wp-ffcertificate'),
+            'name'            => __('Name', 'wp-ffcertificate'),
+            'email'           => __('Email', 'wp-ffcertificate'),
+            'appointment_date'=> __('Date', 'wp-ffcertificate'),
+            'time'            => __('Time', 'wp-ffcertificate'),
+            'status'          => __('Status', 'wp-ffcertificate'),
+            'created_at'      => __('Created', 'wp-ffcertificate')
         );
     }
 
@@ -90,7 +90,7 @@ class FFC_Appointments_List_Table extends WP_List_Table {
                 esc_attr($_REQUEST['page']),
                 $item['id'],
                 wp_create_nonce('ffc_confirm_appointment_' . $item['id']),
-                __('Confirm', 'ffc')
+                __('Confirm', 'wp-ffcertificate')
             );
         }
 
@@ -100,7 +100,7 @@ class FFC_Appointments_List_Table extends WP_List_Table {
                 esc_attr($_REQUEST['page']),
                 $item['id'],
                 wp_create_nonce('ffc_cancel_appointment_' . $item['id']),
-                __('Cancel', 'ffc')
+                __('Cancel', 'wp-ffcertificate')
             );
         }
 
@@ -108,7 +108,7 @@ class FFC_Appointments_List_Table extends WP_List_Table {
             '<a href="?post_type=ffc_calendar&page=%s&action=view&appointment=%d">%s</a>',
             esc_attr($_REQUEST['page']),
             $item['id'],
-            __('View', 'ffc')
+            __('View', 'wp-ffcertificate')
         );
 
         // Add receipt link
@@ -119,7 +119,7 @@ class FFC_Appointments_List_Table extends WP_List_Table {
         $actions['receipt'] = sprintf(
             '<a href="%s" target="_blank">%s</a>',
             esc_url($receipt_url),
-            __('View Receipt', 'ffc')
+            __('View Receipt', 'wp-ffcertificate')
         );
 
         return sprintf('#%d %s', $item['id'], $this->row_actions($actions));
@@ -134,7 +134,7 @@ class FFC_Appointments_List_Table extends WP_List_Table {
             $edit_url = admin_url('post.php?post=' . $calendar['post_id'] . '&action=edit');
             return sprintf('<a href="%s">%s</a>', esc_url($edit_url), esc_html($calendar['title']));
         }
-        return __('(Deleted)', 'ffc');
+        return __('(Deleted)', 'wp-ffcertificate');
     }
 
     /**
@@ -147,7 +147,7 @@ class FFC_Appointments_List_Table extends WP_List_Table {
                 return esc_html($user->display_name);
             }
         }
-        return esc_html($item['name'] ?? __('(Guest)', 'ffc'));
+        return esc_html($item['name'] ?? __('(Guest)', 'wp-ffcertificate'));
     }
 
     /**
@@ -180,11 +180,11 @@ class FFC_Appointments_List_Table extends WP_List_Table {
      */
     public function column_status($item): string {
         $status_labels = array(
-            'pending'   => '<span class="ffc-status ffc-status-pending">' . __('Pending', 'ffc') . '</span>',
-            'confirmed' => '<span class="ffc-status ffc-status-confirmed">' . __('Confirmed', 'ffc') . '</span>',
-            'cancelled' => '<span class="ffc-status ffc-status-cancelled">' . __('Cancelled', 'ffc') . '</span>',
-            'completed' => '<span class="ffc-status ffc-status-completed">' . __('Completed', 'ffc') . '</span>',
-            'no_show'   => '<span class="ffc-status ffc-status-noshow">' . __('No Show', 'ffc') . '</span>',
+            'pending'   => '<span class="ffc-status ffc-status-pending">' . __('Pending', 'wp-ffcertificate') . '</span>',
+            'confirmed' => '<span class="ffc-status ffc-status-confirmed">' . __('Confirmed', 'wp-ffcertificate') . '</span>',
+            'cancelled' => '<span class="ffc-status ffc-status-cancelled">' . __('Cancelled', 'wp-ffcertificate') . '</span>',
+            'completed' => '<span class="ffc-status ffc-status-completed">' . __('Completed', 'wp-ffcertificate') . '</span>',
+            'no_show'   => '<span class="ffc-status ffc-status-noshow">' . __('No Show', 'wp-ffcertificate') . '</span>',
         );
 
         return $status_labels[$item['status']] ?? esc_html($item['status']);
@@ -247,7 +247,7 @@ class FFC_Appointments_List_Table extends WP_List_Table {
         ?>
         <div class="alignleft actions">
             <select name="calendar_id">
-                <option value=""><?php _e('All Calendars', 'ffc'); ?></option>
+                <option value=""><?php esc_html_e('All Calendars', 'wp-ffcertificate'); ?></option>
                 <?php foreach ($calendars as $calendar): ?>
                     <option value="<?php echo esc_attr($calendar['id']); ?>" <?php selected($calendar_id, $calendar['id']); ?>>
                         <?php echo esc_html($calendar['title']); ?>
@@ -256,15 +256,15 @@ class FFC_Appointments_List_Table extends WP_List_Table {
             </select>
 
             <select name="status">
-                <option value=""><?php _e('All Statuses', 'ffc'); ?></option>
-                <option value="pending" <?php selected($status, 'pending'); ?>><?php _e('Pending', 'ffc'); ?></option>
-                <option value="confirmed" <?php selected($status, 'confirmed'); ?>><?php _e('Confirmed', 'ffc'); ?></option>
-                <option value="cancelled" <?php selected($status, 'cancelled'); ?>><?php _e('Cancelled', 'ffc'); ?></option>
-                <option value="completed" <?php selected($status, 'completed'); ?>><?php _e('Completed', 'ffc'); ?></option>
-                <option value="no_show" <?php selected($status, 'no_show'); ?>><?php _e('No Show', 'ffc'); ?></option>
+                <option value=""><?php esc_html_e('All Statuses', 'wp-ffcertificate'); ?></option>
+                <option value="pending" <?php selected($status, 'pending'); ?>><?php esc_html_e('Pending', 'wp-ffcertificate'); ?></option>
+                <option value="confirmed" <?php selected($status, 'confirmed'); ?>><?php esc_html_e('Confirmed', 'wp-ffcertificate'); ?></option>
+                <option value="cancelled" <?php selected($status, 'cancelled'); ?>><?php esc_html_e('Cancelled', 'wp-ffcertificate'); ?></option>
+                <option value="completed" <?php selected($status, 'completed'); ?>><?php esc_html_e('Completed', 'wp-ffcertificate'); ?></option>
+                <option value="no_show" <?php selected($status, 'no_show'); ?>><?php esc_html_e('No Show', 'wp-ffcertificate'); ?></option>
             </select>
 
-            <?php submit_button(__('Filter', 'ffc'), '', 'filter_action', false); ?>
+            <?php submit_button(__('Filter', 'wp-ffcertificate'), '', 'filter_action', false); ?>
         </div>
         <?php
     }
@@ -277,7 +277,7 @@ if (isset($_GET['action']) && isset($_GET['appointment'])) {
 
     // Verify user has admin permissions
     if (!\FreeFormCertificate\Core\Utils::current_user_can_manage()) {
-        wp_die(esc_html__('You do not have permission to perform this action.', 'ffc'));
+        wp_die(esc_html__('You do not have permission to perform this action.', 'wp-ffcertificate'));
     }
 
     $appointment_repo = new \FreeFormCertificate\Repositories\AppointmentRepository();
@@ -291,13 +291,13 @@ if (isset($_GET['action']) && isset($_GET['appointment'])) {
                 // Store success message in transient
                 set_transient('ffc_admin_notice_' . get_current_user_id(), array(
                     'type' => 'success',
-                    'message' => __('Appointment confirmed successfully.', 'ffc')
+                    'message' => __('Appointment confirmed successfully.', 'wp-ffcertificate')
                 ), 30);
             } else {
                 // Store error message in transient
                 set_transient('ffc_admin_notice_' . get_current_user_id(), array(
                     'type' => 'error',
-                    'message' => __('Failed to confirm appointment.', 'ffc')
+                    'message' => __('Failed to confirm appointment.', 'wp-ffcertificate')
                 ), 30);
             }
 
@@ -313,19 +313,19 @@ if (isset($_GET['action']) && isset($_GET['appointment'])) {
 
         case 'cancel':
             check_admin_referer('ffc_cancel_appointment_' . $appointment_id);
-            $result = $appointment_repo->cancel($appointment_id, get_current_user_id(), __('Cancelled by admin', 'ffc'));
+            $result = $appointment_repo->cancel($appointment_id, get_current_user_id(), __('Cancelled by admin', 'wp-ffcertificate'));
 
             if ($result) {
                 // Store success message in transient
                 set_transient('ffc_admin_notice_' . get_current_user_id(), array(
                     'type' => 'success',
-                    'message' => __('Appointment cancelled successfully.', 'ffc')
+                    'message' => __('Appointment cancelled successfully.', 'wp-ffcertificate')
                 ), 30);
             } else {
                 // Store error message in transient
                 set_transient('ffc_admin_notice_' . get_current_user_id(), array(
                     'type' => 'error',
-                    'message' => __('Failed to cancel appointment.', 'ffc')
+                    'message' => __('Failed to cancel appointment.', 'wp-ffcertificate')
                 ), 30);
             }
 
@@ -342,27 +342,27 @@ if (isset($_GET['action']) && isset($_GET['appointment'])) {
 }
 
 // Display admin notices from transients
-$admin_notice = get_transient('ffc_admin_notice_' . get_current_user_id());
-if ($admin_notice && is_array($admin_notice)) {
-    $notice_type = $admin_notice['type'] === 'error' ? 'notice-error' : 'notice-success';
-    echo '<div class="notice ' . esc_attr($notice_type) . ' is-dismissible"><p>' . esc_html($admin_notice['message']) . '</p></div>';
+$ffc_admin_notice = get_transient('ffc_admin_notice_' . get_current_user_id());
+if ($ffc_admin_notice && is_array($ffc_admin_notice)) {
+    $ffc_notice_type = $ffc_admin_notice['type'] === 'error' ? 'notice-error' : 'notice-success';
+    echo '<div class="notice ' . esc_attr($ffc_notice_type) . ' is-dismissible"><p>' . esc_html($ffc_admin_notice['message']) . '</p></div>';
     // Delete transient after displaying
     delete_transient('ffc_admin_notice_' . get_current_user_id());
 }
 
 // Create and display table
-$table = new FFC_Appointments_List_Table();
-$table->prepare_items();
+$ffc_table = new FFC_Appointments_List_Table();
+$ffc_table->prepare_items();
 
 ?>
 <div class="wrap">
-    <h1 class="wp-heading-inline"><?php _e('Appointments', 'ffc'); ?></h1>
-    <a href="#" class="page-title-action"><?php _e('Export CSV', 'ffc'); ?></a>
+    <h1 class="wp-heading-inline"><?php esc_html_e('Appointments', 'wp-ffcertificate'); ?></h1>
+    <a href="#" class="page-title-action"><?php esc_html_e('Export CSV', 'wp-ffcertificate'); ?></a>
     <hr class="wp-header-end">
 
     <form method="get">
         <input type="hidden" name="page" value="<?php echo esc_attr($_REQUEST['page']); ?>" />
-        <?php $table->display(); ?>
+        <?php $ffc_table->display(); ?>
     </form>
 </div>
 

@@ -6,7 +6,7 @@
 
 if (!defined('ABSPATH')) exit;
 
-$get_option = function($key, $default = '') {
+$ffc_get_option = function($key, $default = '') {
     $settings = get_option('ffc_settings', array());
     return isset($settings[$key]) ? $settings[$key] : $default;
 };
@@ -16,7 +16,7 @@ $get_option = function($key, $default = '') {
 
 <!-- QR Code Settings Card -->
 <div class="card">
-    <h2>📱 <?php esc_html_e('QR Code Generation Settings', 'ffc'); ?></h2>
+    <h2>📱 <?php esc_html_e('QR Code Generation Settings', 'wp-ffcertificate'); ?></h2>
     
     <form method="post">
         <?php wp_nonce_field('ffc_settings_action', 'ffc_settings_nonce'); ?>
@@ -26,64 +26,64 @@ $get_option = function($key, $default = '') {
             <tbody>
                 <tr>
                     <th scope="row">
-                        <label for="qr_cache_enabled"><?php esc_html_e('Enable QR Code Cache', 'ffc'); ?></label>
+                        <label for="qr_cache_enabled"><?php esc_html_e('Enable QR Code Cache', 'wp-ffcertificate'); ?></label>
                     </th>
                     <td>
                         <label>
-                            <input type="checkbox" name="ffc_settings[qr_cache_enabled]" id="qr_cache_enabled" value="1" <?php checked(1, $get_option('qr_cache_enabled')); ?>>
-                            <?php esc_html_e('Store generated QR Codes in database', 'ffc'); ?>
+                            <input type="checkbox" name="ffc_settings[qr_cache_enabled]" id="qr_cache_enabled" value="1" <?php checked(1, $ffc_get_option('qr_cache_enabled')); ?>>
+                            <?php esc_html_e('Store generated QR Codes in database', 'wp-ffcertificate'); ?>
                         </label>
                         <p class="description">
-                            <?php esc_html_e('Improves performance by caching QR Codes. Increases database size (~4KB per submission).', 'ffc'); ?>
+                            <?php esc_html_e('Improves performance by caching QR Codes. Increases database size (~4KB per submission).', 'wp-ffcertificate'); ?>
                         </p>
                     </td>
                 </tr>
                 
                 <tr>
                     <th scope="row">
-                        <label for="qr_default_size"><?php esc_html_e('Default QR Code Size', 'ffc'); ?></label>
+                        <label for="qr_default_size"><?php esc_html_e('Default QR Code Size', 'wp-ffcertificate'); ?></label>
                     </th>
                     <td>
-                        <input type="number" name="ffc_settings[qr_default_size]" id="qr_default_size" value="<?php echo esc_attr($get_option('qr_default_size', 100)); ?>" min="100" max="500" step="10" class="small-text"> px
+                        <input type="number" name="ffc_settings[qr_default_size]" id="qr_default_size" value="<?php echo esc_attr($ffc_get_option('qr_default_size', 100)); ?>" min="100" max="500" step="10" class="small-text"> px
                         <p class="description">
-                            <?php esc_html_e('Default size when {{qr_code}} placeholder is used without size parameter. Range: 100-500px.', 'ffc'); ?>
+                            <?php esc_html_e('Default size when {{qr_code}} placeholder is used without size parameter. Range: 100-500px.', 'wp-ffcertificate'); ?>
                         </p>
                     </td>
                 </tr>
                 
                 <tr>
                     <th scope="row">
-                        <label for="qr_default_margin"><?php esc_html_e('Default QR Code Margin', 'ffc'); ?></label>
+                        <label for="qr_default_margin"><?php esc_html_e('Default QR Code Margin', 'wp-ffcertificate'); ?></label>
                     </th>
                     <td>
-                        <input type="number" name="ffc_settings[qr_default_margin]" id="qr_default_margin" value="<?php echo esc_attr($get_option('qr_default_margin', 0)); ?>" min="0" max="10" step="1" class="small-text">
+                        <input type="number" name="ffc_settings[qr_default_margin]" id="qr_default_margin" value="<?php echo esc_attr($ffc_get_option('qr_default_margin', 0)); ?>" min="0" max="10" step="1" class="small-text">
                         <p class="description">
-                            <?php esc_html_e('White space around QR Code in modules. 0 = no margin, higher values = more white space.', 'ffc'); ?>
+                            <?php esc_html_e('White space around QR Code in modules. 0 = no margin, higher values = more white space.', 'wp-ffcertificate'); ?>
                         </p>
                     </td>
                 </tr>
                 
                 <tr>
                     <th scope="row">
-                        <label for="qr_default_error_level"><?php esc_html_e('Default Error Correction Level', 'ffc'); ?></label>
+                        <label for="qr_default_error_level"><?php esc_html_e('Default Error Correction Level', 'wp-ffcertificate'); ?></label>
                     </th>
                     <td>
                         <select name="ffc_settings[qr_default_error_level]" id="qr_default_error_level" class="regular-text">
-                            <option value="L" <?php selected('L', $get_option('qr_default_error_level', 'L')); ?>>
-                                L - <?php esc_html_e('Low (7% correction)', 'ffc'); ?>
+                            <option value="L" <?php selected('L', $ffc_get_option('qr_default_error_level', 'L')); ?>>
+                                L - <?php esc_html_e('Low (7% correction)', 'wp-ffcertificate'); ?>
                             </option>
-                            <option value="M" <?php selected('M', $get_option('qr_default_error_level', 'M')); ?>>
-                                M - <?php esc_html_e('Medium (15% correction) - Recommended', 'ffc'); ?>
+                            <option value="M" <?php selected('M', $ffc_get_option('qr_default_error_level', 'M')); ?>>
+                                M - <?php esc_html_e('Medium (15% correction) - Recommended', 'wp-ffcertificate'); ?>
                             </option>
-                            <option value="Q" <?php selected('Q', $get_option('qr_default_error_level', 'Q')); ?>>
-                                Q - <?php esc_html_e('Quartile (25% correction)', 'ffc'); ?>
+                            <option value="Q" <?php selected('Q', $ffc_get_option('qr_default_error_level', 'Q')); ?>>
+                                Q - <?php esc_html_e('Quartile (25% correction)', 'wp-ffcertificate'); ?>
                             </option>
-                            <option value="H" <?php selected('H', $get_option('qr_default_error_level', 'H')); ?>>
-                                H - <?php esc_html_e('High (30% correction)', 'ffc'); ?>
+                            <option value="H" <?php selected('H', $ffc_get_option('qr_default_error_level', 'H')); ?>>
+                                H - <?php esc_html_e('High (30% correction)', 'wp-ffcertificate'); ?>
                             </option>
                         </select>
                         <p class="description">
-                            <?php esc_html_e('Higher levels allow more damage to QR Code but create denser patterns.', 'ffc'); ?>
+                            <?php esc_html_e('Higher levels allow more damage to QR Code but create denser patterns.', 'wp-ffcertificate'); ?>
                         </p>
                     </td>
                 </tr>
@@ -96,52 +96,52 @@ $get_option = function($key, $default = '') {
 
 <!-- Cache Statistics Card -->
 <div class="card">
-    <h2>📊 <?php esc_html_e('Cache Statistics', 'ffc'); ?></h2>
+    <h2>📊 <?php esc_html_e('Cache Statistics', 'wp-ffcertificate'); ?></h2>
     
     <?php
     // Autoloader handles class loading
-    $qr_generator = new \FreeFormCertificate\Generators\QRCodeGenerator();
-    $stats = $qr_generator->get_cache_stats();
+    $ffc_qr_generator = new \FreeFormCertificate\Generators\QRCodeGenerator();
+    $ffc_stats = $ffc_qr_generator->get_cache_stats();
     ?>
     
     <div class="ffc-stats-box">
         <table>
             <tr class="alternate">
-                <td><strong><?php _e('Cache Status:', 'ffc'); ?></strong></td>
+                <td><strong><?php esc_html_e('Cache Status:', 'wp-ffcertificate'); ?></strong></td>
                 <td>
-                    <?php if ($stats['enabled']): ?>
-                        <span class="ffc-text-success">✓ <?php _e('Enabled', 'ffc'); ?></span>
+                    <?php if ($ffc_stats['enabled']): ?>
+                        <span class="ffc-text-success">✓ <?php esc_html_e('Enabled', 'wp-ffcertificate'); ?></span>
                     <?php else: ?>
-                        <span class="ffc-text-error">✗ <?php _e('Disabled', 'ffc'); ?></span>
+                        <span class="ffc-text-error">✗ <?php esc_html_e('Disabled', 'wp-ffcertificate'); ?></span>
                     <?php endif; ?>
                 </td>
             </tr>
             <tr>
-                <td><strong><?php _e('Total Submissions:', 'ffc'); ?></strong></td>
-                <td class="stat-value"><?php echo number_format_i18n($stats['total_submissions']); ?></td>
+                <td><strong><?php esc_html_e('Total Submissions:', 'wp-ffcertificate'); ?></strong></td>
+                <td class="stat-value"><?php echo number_format_i18n($ffc_stats['total_submissions']); ?></td>
             </tr>
             <tr class="alternate">
-                <td><strong><?php _e('Cached QR Codes:', 'ffc'); ?></strong></td>
-                <td class="stat-value info"><?php echo number_format_i18n($stats['cached_qr_codes']); ?></td>
+                <td><strong><?php esc_html_e('Cached QR Codes:', 'wp-ffcertificate'); ?></strong></td>
+                <td class="stat-value info"><?php echo number_format_i18n($ffc_stats['cached_qr_codes']); ?></td>
             </tr>
             <tr>
-                <td><strong><?php _e('Estimated Cache Size:', 'ffc'); ?></strong></td>
-                <td class="stat-value"><?php echo esc_html($stats['cache_size']); ?></td>
+                <td><strong><?php esc_html_e('Estimated Cache Size:', 'wp-ffcertificate'); ?></strong></td>
+                <td class="stat-value"><?php echo esc_html($ffc_stats['cache_size']); ?></td>
             </tr>
         </table>
     </div>
     
     <p class="description ffc-mt-15">
-        💡 <?php _e('Cache stores generated QR Codes to improve performance. Enable "QR Code Cache" above to start caching.', 'ffc'); ?>
+        💡 <?php esc_html_e('Cache stores generated QR Codes to improve performance. Enable "QR Code Cache" above to start caching.', 'wp-ffcertificate'); ?>
     </p>
 </div>
 
 <!-- Maintenance Card -->
 <div class="card">
-    <h2>🗑️ <?php esc_html_e('Maintenance', 'ffc'); ?></h2>
+    <h2>🗑️ <?php esc_html_e('Maintenance', 'wp-ffcertificate'); ?></h2>
     
     <?php
-    $clear_url = wp_nonce_url(
+    $ffc_clear_url = wp_nonce_url(
         add_query_arg(array(
             'post_type' => 'ffc_form',
             'page' => 'ffc-settings',
@@ -152,18 +152,18 @@ $get_option = function($key, $default = '') {
     );
     ?>
     
-    <p><?php _e('Use this to clear outdated QR Codes or free database space.', 'ffc'); ?></p>
+    <p><?php esc_html_e('Use this to clear outdated QR Codes or free database space.', 'wp-ffcertificate'); ?></p>
     
     <p>
-        <a href="<?php echo esc_url($clear_url); ?>" 
+        <a href="<?php echo esc_url($ffc_clear_url); ?>" 
            class="button button-secondary" 
-           onclick="return confirm('<?php echo esc_js(__('Clear all cached QR Codes?\n\nThey will be regenerated automatically when needed.', 'ffc')); ?>');">
-            🗑️ <?php _e('Clear All QR Code Cache', 'ffc'); ?>
+           onclick="return confirm('<?php echo esc_js(__('Clear all cached QR Codes?\n\nThey will be regenerated automatically when needed.', 'wp-ffcertificate')); ?>');">
+            🗑️ <?php esc_html_e('Clear All QR Code Cache', 'wp-ffcertificate'); ?>
         </a>
     </p>
     
     <p class="description">
-        <?php _e('QR Codes will be regenerated automatically when needed. This action is safe and reversible.', 'ffc'); ?>
+        <?php esc_html_e('QR Codes will be regenerated automatically when needed. This action is safe and reversible.', 'wp-ffcertificate'); ?>
     </p>
 </div>
 

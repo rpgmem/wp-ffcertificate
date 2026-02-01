@@ -96,25 +96,25 @@ class CalendarShortcode {
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('ffc_calendar_nonce'),
             'strings' => array(
-                'selectDate' => __('Please select a date', 'ffc'),
-                'selectTime' => __('Please select a time', 'ffc'),
-                'fillRequired' => __('Please fill all required fields', 'ffc'),
-                'consentRequired' => __('You must agree to the terms', 'ffc'),
-                'loading' => __('Loading...', 'ffc'),
-                'noSlots' => __('No available slots for this date', 'ffc'),
-                'success' => __('Appointment booked successfully!', 'ffc'),
-                'error' => __('An error occurred. Please try again.', 'ffc'),
+                'selectDate' => __('Please select a date', 'wp-ffcertificate'),
+                'selectTime' => __('Please select a time', 'wp-ffcertificate'),
+                'fillRequired' => __('Please fill all required fields', 'wp-ffcertificate'),
+                'consentRequired' => __('You must agree to the terms', 'wp-ffcertificate'),
+                'loading' => __('Loading...', 'wp-ffcertificate'),
+                'noSlots' => __('No available slots for this date', 'wp-ffcertificate'),
+                'success' => __('Appointment booked successfully!', 'wp-ffcertificate'),
+                'error' => __('An error occurred. Please try again.', 'wp-ffcertificate'),
                 // Confirmation screen
-                'date' => __('Date', 'ffc'),
-                'time' => __('Time', 'ffc'),
-                'name' => __('Name', 'ffc'),
-                'email' => __('Email', 'ffc'),
-                'status' => __('Status', 'ffc'),
-                'confirmed' => __('Confirmed', 'ffc'),
-                'pendingApproval' => __('Pending Approval', 'ffc'),
-                'confirmationCode' => __('Confirmation Code', 'ffc'),
-                'confirmationCodeHelp' => __('Save this code to manage your appointment.', 'ffc'),
-                'downloadReceipt' => __('Download Receipt', 'ffc'),
+                'date' => __('Date', 'wp-ffcertificate'),
+                'time' => __('Time', 'wp-ffcertificate'),
+                'name' => __('Name', 'wp-ffcertificate'),
+                'email' => __('Email', 'wp-ffcertificate'),
+                'status' => __('Status', 'wp-ffcertificate'),
+                'confirmed' => __('Confirmed', 'wp-ffcertificate'),
+                'pendingApproval' => __('Pending Approval', 'wp-ffcertificate'),
+                'confirmationCode' => __('Confirmation Code', 'wp-ffcertificate'),
+                'confirmationCodeHelp' => __('Save this code to manage your appointment.', 'wp-ffcertificate'),
+                'downloadReceipt' => __('Download Receipt', 'wp-ffcertificate'),
             )
         ));
     }
@@ -133,7 +133,7 @@ class CalendarShortcode {
         $calendar_id = absint($atts['id']);
 
         if (!$calendar_id) {
-            return '<p class="ffc-error">' . __('Calendar ID is required.', 'ffc') . '</p>';
+            return '<p class="ffc-error">' . __('Calendar ID is required.', 'wp-ffcertificate') . '</p>';
         }
 
         // Try to get calendar by Post ID first (most common usage)
@@ -155,22 +155,22 @@ class CalendarShortcode {
         }
 
         if (!$calendar) {
-            return '<p class="ffc-error">' . __('Calendar not found.', 'ffc') . '</p>';
+            return '<p class="ffc-error">' . __('Calendar not found.', 'wp-ffcertificate') . '</p>';
         }
 
         if ($calendar['status'] !== 'active') {
-            return '<p class="ffc-error">' . __('This calendar is not accepting bookings.', 'ffc') . '</p>';
+            return '<p class="ffc-error">' . __('This calendar is not accepting bookings.', 'wp-ffcertificate') . '</p>';
         }
 
         // Ensure working_hours is an array
         if (empty($calendar['working_hours']) || !is_array($calendar['working_hours'])) {
-            return '<p class="ffc-error">' . __('Calendar has no working hours configured. Please contact the administrator.', 'ffc') . '</p>';
+            return '<p class="ffc-error">' . __('Calendar has no working hours configured. Please contact the administrator.', 'wp-ffcertificate') . '</p>';
         }
 
         // Check login requirement
         if ($calendar['require_login'] && !is_user_logged_in()) {
             return '<p class="ffc-error">' . sprintf(
-                __('You must be <a href="%s">logged in</a> to book this calendar.', 'ffc'),
+                __('You must be <a href="%s">logged in</a> to book this calendar.', 'wp-ffcertificate'),
                 wp_login_url(get_permalink())
             ) . '</p>';
         }
@@ -180,7 +180,7 @@ class CalendarShortcode {
             $user = wp_get_current_user();
             $has_role = array_intersect($user->roles, $calendar['allowed_roles']);
             if (empty($has_role)) {
-                return '<p class="ffc-error">' . __('You do not have permission to book this calendar.', 'ffc') . '</p>';
+                return '<p class="ffc-error">' . __('You do not have permission to book this calendar.', 'wp-ffcertificate') . '</p>';
             }
         }
 
@@ -211,24 +211,24 @@ class CalendarShortcode {
 
             <!-- Date Picker -->
             <div class="ffc-calendar-datepicker-wrapper">
-                <h3><?php _e('Select a Date', 'ffc'); ?></h3>
+                <h3><?php esc_html_e('Select a Date', 'wp-ffcertificate'); ?></h3>
                 <div id="ffc-datepicker-<?php echo $calendar['id']; ?>" class="ffc-datepicker"></div>
                 <input type="hidden" id="ffc-selected-date" name="selected_date" value="">
             </div>
 
             <!-- Time Slots -->
             <div class="ffc-timeslots-wrapper" style="display: none;">
-                <h3><?php _e('Available Times', 'ffc'); ?></h3>
+                <h3><?php esc_html_e('Available Times', 'wp-ffcertificate'); ?></h3>
                 <div class="ffc-timeslots-loading">
                     <div class="ffc-spinner"></div>
-                    <p><?php _e('Loading available slots...', 'ffc'); ?></p>
+                    <p><?php esc_html_e('Loading available slots...', 'wp-ffcertificate'); ?></p>
                 </div>
                 <div id="ffc-timeslots-container" class="ffc-timeslots-grid"></div>
             </div>
 
             <!-- Booking Form -->
             <div class="ffc-booking-form-wrapper" style="display: none;">
-                <h3><?php _e('Your Information', 'ffc'); ?></h3>
+                <h3><?php esc_html_e('Your Information', 'wp-ffcertificate'); ?></h3>
 
                 <form id="ffc-booking-form" class="ffc-booking-form">
                     <?php wp_nonce_field('ffc_calendar_nonce', 'nonce'); ?>
@@ -239,7 +239,7 @@ class CalendarShortcode {
 
                     <div class="ffc-form-row">
                         <label for="ffc-booking-name">
-                            <?php _e('Name', 'ffc'); ?> <span class="required">*</span>
+                            <?php esc_html_e('Name', 'wp-ffcertificate'); ?> <span class="required">*</span>
                         </label>
                         <input
                             type="text"
@@ -253,7 +253,7 @@ class CalendarShortcode {
 
                     <div class="ffc-form-row">
                         <label for="ffc-booking-email">
-                            <?php _e('Email', 'ffc'); ?> <span class="required">*</span>
+                            <?php esc_html_e('Email', 'wp-ffcertificate'); ?> <span class="required">*</span>
                         </label>
                         <input
                             type="email"
@@ -267,7 +267,7 @@ class CalendarShortcode {
 
                     <div class="ffc-form-row">
                         <label for="ffc-booking-cpf-rf">
-                            <?php _e('CPF / RF', 'ffc'); ?> <span class="required">*</span>
+                            <?php esc_html_e('CPF / RF', 'wp-ffcertificate'); ?> <span class="required">*</span>
                         </label>
                         <input
                             type="tel"
@@ -280,7 +280,7 @@ class CalendarShortcode {
 
                     <div class="ffc-form-row">
                         <label for="ffc-booking-notes">
-                            <?php _e('Notes (optional)', 'ffc'); ?>
+                            <?php esc_html_e('Notes (optional)', 'wp-ffcertificate'); ?>
                         </label>
                         <textarea id="ffc-booking-notes" name="notes" rows="3"></textarea>
                     </div>
@@ -292,7 +292,7 @@ class CalendarShortcode {
                     <div class="ffc-security-container">
                         <!-- Honeypot Field -->
                         <div class="ffc-honeypot-field">
-                            <label><?php esc_html_e('Do not fill this field if you are human:', 'ffc'); ?></label>
+                            <label><?php esc_html_e('Do not fill this field if you are human:', 'wp-ffcertificate'); ?></label>
                             <input type="text" name="ffc_honeypot_trap" value="" tabindex="-1" autocomplete="off">
                         </div>
 
@@ -312,22 +312,22 @@ class CalendarShortcode {
                             <input type="checkbox" id="ffc-booking-consent" name="consent" value="1" required>
                             <?php
                             printf(
-                                __('I agree to the collection and processing of my personal data in accordance with the <a href="%s" target="_blank">Privacy Policy</a> (LGPD).', 'ffc'),
+                                __('I agree to the collection and processing of my personal data in accordance with the <a href="%s" target="_blank">Privacy Policy</a> (LGPD).', 'wp-ffcertificate'),
                                 get_privacy_policy_url()
                             );
                             ?>
                             <span class="required">*</span>
                         </label>
-                        <input type="hidden" name="consent_text" value="<?php echo esc_attr(__('User consented to data collection for appointment booking.', 'ffc')); ?>">
+                        <input type="hidden" name="consent_text" value="<?php echo esc_attr(__('User consented to data collection for appointment booking.', 'wp-ffcertificate')); ?>">
                     </div>
 
                     <!-- Submit Button -->
                     <div class="ffc-form-row ffc-submit-row">
                         <button type="submit" class="ffc-btn ffc-btn-primary">
-                            <?php _e('Book Appointment', 'ffc'); ?>
+                            <?php esc_html_e('Book Appointment', 'wp-ffcertificate'); ?>
                         </button>
                         <button type="button" class="ffc-btn ffc-btn-secondary ffc-btn-back">
-                            <?php _e('← Back to Date Selection', 'ffc'); ?>
+                            <?php esc_html_e('← Back to Date Selection', 'wp-ffcertificate'); ?>
                         </button>
                     </div>
 
@@ -340,21 +340,21 @@ class CalendarShortcode {
             <div class="ffc-confirmation-wrapper" style="display: none;">
                 <div class="ffc-confirmation-success">
                     <div class="ffc-success-icon">✓</div>
-                    <h3><?php _e('Appointment Confirmed!', 'ffc'); ?></h3>
+                    <h3><?php esc_html_e('Appointment Confirmed!', 'wp-ffcertificate'); ?></h3>
                     <div class="ffc-appointment-details"></div>
 
                     <?php if ($calendar['requires_approval']): ?>
                         <p class="ffc-approval-notice">
-                            <?php _e('Your appointment is pending approval. You will receive an email confirmation once it is approved.', 'ffc'); ?>
+                            <?php esc_html_e('Your appointment is pending approval. You will receive an email confirmation once it is approved.', 'wp-ffcertificate'); ?>
                         </p>
                     <?php else: ?>
                         <p class="ffc-confirmation-notice">
-                            <?php _e('A confirmation email has been sent to your email address.', 'ffc'); ?>
+                            <?php esc_html_e('A confirmation email has been sent to your email address.', 'wp-ffcertificate'); ?>
                         </p>
                     <?php endif; ?>
 
                     <button type="button" class="ffc-btn ffc-btn-primary ffc-btn-new-booking">
-                        <?php _e('Book Another Appointment', 'ffc'); ?>
+                        <?php esc_html_e('Book Another Appointment', 'wp-ffcertificate'); ?>
                     </button>
                 </div>
             </div>

@@ -48,33 +48,33 @@ class AppointmentCsvExporter {
      */
     private function get_fixed_headers(): array {
         return array(
-            __('ID', 'ffc'),
-            __('Calendar', 'ffc'),
-            __('Calendar ID', 'ffc'),
-            __('User ID', 'ffc'),
-            __('Name', 'ffc'),
-            __('Email', 'ffc'),
-            __('Phone', 'ffc'),
-            __('Appointment Date', 'ffc'),
-            __('Start Time', 'ffc'),
-            __('End Time', 'ffc'),
-            __('Status', 'ffc'),
-            __('User Notes', 'ffc'),
-            __('Admin Notes', 'ffc'),
-            __('Consent Given', 'ffc'),
-            __('Consent Date', 'ffc'),
-            __('Consent IP', 'ffc'),
-            __('Consent Text', 'ffc'),
-            __('Created At', 'ffc'),
-            __('Updated At', 'ffc'),
-            __('Approved At', 'ffc'),
-            __('Approved By', 'ffc'),
-            __('Cancelled At', 'ffc'),
-            __('Cancelled By', 'ffc'),
-            __('Cancellation Reason', 'ffc'),
-            __('Reminder Sent At', 'ffc'),
-            __('User IP', 'ffc'),
-            __('User Agent', 'ffc'),
+            __('ID', 'wp-ffcertificate'),
+            __('Calendar', 'wp-ffcertificate'),
+            __('Calendar ID', 'wp-ffcertificate'),
+            __('User ID', 'wp-ffcertificate'),
+            __('Name', 'wp-ffcertificate'),
+            __('Email', 'wp-ffcertificate'),
+            __('Phone', 'wp-ffcertificate'),
+            __('Appointment Date', 'wp-ffcertificate'),
+            __('Start Time', 'wp-ffcertificate'),
+            __('End Time', 'wp-ffcertificate'),
+            __('Status', 'wp-ffcertificate'),
+            __('User Notes', 'wp-ffcertificate'),
+            __('Admin Notes', 'wp-ffcertificate'),
+            __('Consent Given', 'wp-ffcertificate'),
+            __('Consent Date', 'wp-ffcertificate'),
+            __('Consent IP', 'wp-ffcertificate'),
+            __('Consent Text', 'wp-ffcertificate'),
+            __('Created At', 'wp-ffcertificate'),
+            __('Updated At', 'wp-ffcertificate'),
+            __('Approved At', 'wp-ffcertificate'),
+            __('Approved By', 'wp-ffcertificate'),
+            __('Cancelled At', 'wp-ffcertificate'),
+            __('Cancelled By', 'wp-ffcertificate'),
+            __('Cancellation Reason', 'wp-ffcertificate'),
+            __('Reminder Sent At', 'wp-ffcertificate'),
+            __('User IP', 'wp-ffcertificate'),
+            __('User Agent', 'wp-ffcertificate'),
         );
     }
 
@@ -141,7 +141,7 @@ class AppointmentCsvExporter {
 
         foreach ($dynamic_keys as $key) {
             $label = ucwords(str_replace(array('_', '-'), ' ', $key));
-            $dynamic_headers[] = __($label, 'ffc');
+            $dynamic_headers[] = __($label, 'wp-ffcertificate');
         }
 
         return $dynamic_headers;
@@ -159,7 +159,7 @@ class AppointmentCsvExporter {
         $calendar_title = '';
         if (!empty($row['calendar_id'])) {
             $calendar = $this->calendar_repository->findById((int)$row['calendar_id']);
-            $calendar_title = $calendar['title'] ?? __('(Deleted)', 'ffc');
+            $calendar_title = $calendar['title'] ?? __('(Deleted)', 'wp-ffcertificate');
         }
 
         // Decrypt email
@@ -201,7 +201,7 @@ class AppointmentCsvExporter {
         // Consent given (Yes/No)
         $consent_given = '';
         if (isset($row['consent_given'])) {
-            $consent_given = $row['consent_given'] ? __('Yes', 'ffc') : __('No', 'ffc');
+            $consent_given = $row['consent_given'] ? __('Yes', 'wp-ffcertificate') : __('No', 'wp-ffcertificate');
         }
 
         // Get usernames for approval/cancellation
@@ -219,11 +219,11 @@ class AppointmentCsvExporter {
 
         // Status label
         $status_labels = array(
-            'pending' => __('Pending', 'ffc'),
-            'confirmed' => __('Confirmed', 'ffc'),
-            'cancelled' => __('Cancelled', 'ffc'),
-            'completed' => __('Completed', 'ffc'),
-            'no_show' => __('No Show', 'ffc'),
+            'pending' => __('Pending', 'wp-ffcertificate'),
+            'confirmed' => __('Confirmed', 'wp-ffcertificate'),
+            'cancelled' => __('Cancelled', 'wp-ffcertificate'),
+            'completed' => __('Completed', 'wp-ffcertificate'),
+            'no_show' => __('No Show', 'wp-ffcertificate'),
         );
         $status = $status_labels[$row['status']] ?? $row['status'];
 
@@ -299,7 +299,7 @@ class AppointmentCsvExporter {
         $rows = $this->get_appointments_for_export($calendar_ids, $statuses, $start_date, $end_date);
 
         if (empty($rows)) {
-            wp_die(__('No appointments available for export.', 'ffc'));
+            wp_die(__('No appointments available for export.', 'wp-ffcertificate'));
         }
 
         // Generate filename
@@ -421,11 +421,11 @@ class AppointmentCsvExporter {
             // Security check
             if (!isset($_POST['ffc_export_appointments_csv_action']) ||
                 !wp_verify_nonce($_POST['ffc_export_appointments_csv_action'], 'ffc_export_appointments_csv_nonce')) {
-                wp_die(__('Security check failed.', 'ffc'));
+                wp_die(__('Security check failed.', 'wp-ffcertificate'));
             }
 
             if (!\FreeFormCertificate\Core\Utils::current_user_can_manage()) {
-                wp_die(__('You do not have permission to export appointments.', 'ffc'));
+                wp_die(__('You do not have permission to export appointments.', 'wp-ffcertificate'));
             }
 
             // Get filters
@@ -451,7 +451,7 @@ class AppointmentCsvExporter {
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ));
-            wp_die(__('Error generating CSV: ', 'ffc') . $e->getMessage());
+            wp_die(__('Error generating CSV: ', 'wp-ffcertificate') . $e->getMessage());
         }
     }
 }

@@ -39,34 +39,34 @@ class AdminNoticeManager {
 
         switch ( $msg ) {
             case 'trash':
-                $text = __( 'Item moved to trash.', 'ffc' );
+                $text = __( 'Item moved to trash.', 'wp-ffcertificate' );
                 break;
 
             case 'restore':
-                $text = __( 'Item restored.', 'ffc' );
+                $text = __( 'Item restored.', 'wp-ffcertificate' );
                 break;
 
             case 'delete':
-                $text = __( 'Item permanently deleted.', 'ffc' );
+                $text = __( 'Item permanently deleted.', 'wp-ffcertificate' );
                 break;
 
             case 'bulk_done':
-                $text = __( 'Bulk action completed.', 'ffc' );
+                $text = __( 'Bulk action completed.', 'wp-ffcertificate' );
                 break;
 
             case 'updated':
-                $text = __( 'Submission updated successfully.', 'ffc' );
+                $text = __( 'Submission updated successfully.', 'wp-ffcertificate' );
                 break;
 
             case 'migration_success':
                 $migrated = isset( $_GET['migrated'] ) ? intval( $_GET['migrated'] ) : 0;
-                $migration_name = isset( $_GET['migration_name'] ) ? urldecode( $_GET['migration_name'] ) : __( 'Migration', 'ffc' );
-                $text = sprintf( __( '%s: %d records migrated successfully.', 'ffc' ), $migration_name, $migrated );
+                $migration_name = isset( $_GET['migration_name'] ) ? urldecode( $_GET['migration_name'] ) : __( 'Migration', 'wp-ffcertificate' );
+                $text = sprintf( __( '%s: %d records migrated successfully.', 'wp-ffcertificate' ), $migration_name, $migrated );
                 break;
 
             case 'migration_error':
-                $error_msg = isset( $_GET['error_msg'] ) ? urldecode( $_GET['error_msg'] ) : __( 'Unknown error', 'ffc' );
-                $text = __( 'Migration Error: ', 'ffc' ) . $error_msg;
+                $error_msg = isset( $_GET['error_msg'] ) ? urldecode( $_GET['error_msg'] ) : __( 'Unknown error', 'wp-ffcertificate' );
+                $text = __( 'Migration Error: ', 'wp-ffcertificate' ) . $error_msg;
                 $type = 'error';
                 break;
         }

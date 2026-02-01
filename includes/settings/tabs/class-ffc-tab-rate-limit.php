@@ -18,7 +18,7 @@ class TabRateLimit extends SettingsTab {
 
     protected function init(): void {
         $this->tab_id = 'rate_limit';
-        $this->tab_title = __('Rate Limit', 'ffc');
+        $this->tab_title = __('Rate Limit', 'wp-ffcertificate');
         $this->tab_icon = '🛡️';
         $this->tab_order = 60;
     }
@@ -41,7 +41,7 @@ class TabRateLimit extends SettingsTab {
         if ($_POST && isset($_POST['ffc_save_rate_limit'])) {
             check_admin_referer('ffc_rate_limit_nonce');
             $this->save_settings();
-            echo '<div class="notice notice-success"><p>' . __( 'Settings saved!', 'ffc' ) . '</p></div>';
+            echo '<div class="notice notice-success"><p>' . __( 'Settings saved!', 'wp-ffcertificate' ) . '</p></div>';
         }
         
         $settings = $this->get_settings();

@@ -66,7 +66,7 @@ class FormProcessor {
             if (empty($password)) {
                 return array(
                     'allowed' => false, 
-                    'message' => __('Password is required.', 'ffc'), 
+                    'message' => __('Password is required.', 'wp-ffcertificate'), 
                     'is_ticket' => false
                 );
             }
@@ -74,7 +74,7 @@ class FormProcessor {
             if ($password !== $valid_password) {
                 return array(
                     'allowed' => false, 
-                    'message' => __('Incorrect password.', 'ffc'), 
+                    'message' => __('Incorrect password.', 'wp-ffcertificate'), 
                     'is_ticket' => false
                 );
             }
@@ -95,7 +95,7 @@ class FormProcessor {
             if (in_array($clean_cpf, $denied_clean)) {
                 return array(
                     'allowed' => false, 
-                    'message' => __('Your CPF/RF is blocked.', 'ffc'), 
+                    'message' => __('Your CPF/RF is blocked.', 'wp-ffcertificate'), 
                     'is_ticket' => false
                 );
             }
@@ -116,7 +116,7 @@ class FormProcessor {
             if (!in_array($clean_cpf, $allowed_clean)) {
                 return array(
                     'allowed' => false, 
-                    'message' => __('Your CPF/RF is not authorized.', 'ffc'), 
+                    'message' => __('Your CPF/RF is not authorized.', 'wp-ffcertificate'), 
                     'is_ticket' => false
                 );
             }
@@ -131,7 +131,7 @@ class FormProcessor {
             if (empty($ticket)) {
                 return array(
                     'allowed' => false, 
-                    'message' => __('Ticket code is required.', 'ffc'), 
+                    'message' => __('Ticket code is required.', 'wp-ffcertificate'), 
                     'is_ticket' => false
                 );
             }
@@ -144,7 +144,7 @@ class FormProcessor {
             if (!in_array($ticket, $tickets)) {
                 return array(
                     'allowed' => false, 
-                    'message' => __('Invalid or already used ticket.', 'ffc'), 
+                    'message' => __('Invalid or already used ticket.', 'wp-ffcertificate'), 
                     'is_ticket' => false
                 );
             }
@@ -307,7 +307,7 @@ class FormProcessor {
     public function handle_submission_ajax(): void {
         // Verify nonce
         if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'ffc_frontend_nonce')) {
-            wp_send_json_error(['message' => __('Security check failed. Please refresh the page.', 'ffc')]);
+            wp_send_json_error(['message' => __('Security check failed. Please refresh the page.', 'wp-ffcertificate')]);
             return;
         }
         
@@ -341,14 +341,14 @@ class FormProcessor {
             wp_send_json_error( array( 
                 'message' => $security_check, 
                 'refresh_captcha' => true, 
-                'new_label' => sprintf( esc_html__( 'Security: How much is %d + %d?', 'ffc' ), $n1, $n2 ) . ' <span class="required">*</span>',
+                'new_label' => sprintf( esc_html__( 'Security: How much is %d + %d?', 'wp-ffcertificate' ), $n1, $n2 ) . ' <span class="required">*</span>',
                 'new_hash' => wp_hash( ($n1 + $n2) . 'ffc_math_salt' )
             ) );
         }
 
         $form_id = isset( $_POST['form_id'] ) ? absint( $_POST['form_id'] ) : 0;
         if ( ! $form_id ) {
-            wp_send_json_error( array( 'message' => __( 'Invalid Form ID.', 'ffc' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Invalid Form ID.', 'wp-ffcertificate' ) ) );
         }
 
         $form_config = get_post_meta( $form_id, '_ffc_form_config', true );
@@ -356,7 +356,7 @@ class FormProcessor {
         
         $fields_config = get_post_meta( $form_id, '_ffc_form_fields', true );
         if ( ! $fields_config ) {
-            wp_send_json_error( array( 'message' => __( 'Form configuration not found.', 'ffc' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Form configuration not found.', 'wp-ffcertificate' ) ) );
         }
 
         // Process and sanitize form fields using FFC_Utils
@@ -374,20 +374,20 @@ class FormProcessor {
                     
                     // Validate length
                     if ( strlen($value) !== 7 && strlen($value) !== 11 ) {
-                        wp_send_json_error( array( 'message' => __( 'CPF/RF must be exactly 7 or 11 digits.', 'ffc' ) ) );
+                        wp_send_json_error( array( 'message' => __( 'CPF/RF must be exactly 7 or 11 digits.', 'wp-ffcertificate' ) ) );
                     }
                     
                     // Validate CPF (11 digits) using official algorithm
                     if ( strlen($value) === 11 ) {
                         if ( ! \FreeFormCertificate\Core\Utils::validate_cpf( $value ) ) {
-                            wp_send_json_error( array( 'message' => __( 'Invalid CPF. Please check the number and try again.', 'ffc' ) ) );
+                            wp_send_json_error( array( 'message' => __( 'Invalid CPF. Please check the number and try again.', 'wp-ffcertificate' ) ) );
                         }
                     }
                     
                     // Validate RF (7 digits) - must be numeric
                     if ( strlen($value) === 7 ) {
                         if ( ! \FreeFormCertificate\Core\Utils::validate_rf( $value ) ) {
-                            wp_send_json_error( array( 'message' => __( 'Invalid RF. Must contain only numbers.', 'ffc' ) ) );
+                            wp_send_json_error( array( 'message' => __( 'Invalid RF. Must contain only numbers.', 'wp-ffcertificate' ) ) );
                         }
                     }
                 }
@@ -401,12 +401,12 @@ class FormProcessor {
         }
 
         if ( empty( $user_email ) ) {
-            wp_send_json_error( array( 'message' => __( 'Email address is required.', 'ffc' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Email address is required.', 'wp-ffcertificate' ) ) );
         }
         // ✅ v2.10.0: Validate LGPD consent (mandatory)
         if ( empty( $_POST['ffc_lgpd_consent'] ) || $_POST['ffc_lgpd_consent'] !== '1' ) {
             wp_send_json_error( array( 
-                'message' => __( 'You must agree to the Privacy Policy to continue.', 'ffc' ) 
+                'message' => __( 'You must agree to the Privacy Policy to continue.', 'wp-ffcertificate' ) 
             ) );
         }
         
@@ -527,8 +527,8 @@ class FormProcessor {
         // Success message with HTML response (v2.9.7+)
         $custom_message = isset( $form_config['success_message'] ) ? trim( $form_config['success_message'] ) : '';
         $msg = $is_reprint 
-            ? __( 'Certificate previously issued (Reprint).', 'ffc' ) 
-            : ( ! empty( $custom_message ) ? $custom_message : __( 'Success!', 'ffc' ) );
+            ? __( 'Certificate previously issued (Reprint).', 'wp-ffcertificate' ) 
+            : ( ! empty( $custom_message ) ? $custom_message : __( 'Success!', 'wp-ffcertificate' ) );
 
         wp_send_json_success( array( 
             'message' => $msg, 

@@ -104,7 +104,7 @@ class PageManager {
         
         // Create new page
         $page_id = wp_insert_post( array(
-            'post_title'     => __( 'Certificate Verification', 'ffc' ),
+            'post_title'     => __( 'Certificate Verification', 'wp-ffcertificate' ),
             'post_content'   => '[ffc_verification]',
             'post_status'    => 'publish',
             'post_type'      => 'page',
@@ -149,12 +149,12 @@ class PageManager {
         ?>
         <div class="notice notice-warning is-dismissible">
             <p>
-                <strong><?php esc_html_e( 'Free Form Certificate:', 'ffc' ); ?></strong>
-                <?php esc_html_e( 'The verification page is missing. Magic links and PDF downloads won\'t work!', 'ffc' ); ?>
+                <strong><?php esc_html_e( 'Free Form Certificate:', 'wp-ffcertificate' ); ?></strong>
+                <?php esc_html_e( 'The verification page is missing. Magic links and PDF downloads won\'t work!', 'wp-ffcertificate' ); ?>
             </p>
             <p>
                 <a href="<?php echo esc_url( $fix_url ); ?>" class="button button-primary">
-                    <?php esc_html_e( 'Create Verification Page', 'ffc' ); ?>
+                    <?php esc_html_e( 'Create Verification Page', 'wp-ffcertificate' ); ?>
                 </a>
             </p>
         </div>

@@ -110,7 +110,7 @@ class EncryptionMigrationStrategy implements MigrationStrategyInterface {
                 'success' => true,
                 'processed' => 0,
                 'has_more' => false,
-                'message' => __( 'No submissions to encrypt', 'ffc' )
+                'message' => __( 'No submissions to encrypt', 'wp-ffcertificate' )
             );
         }
 
@@ -208,7 +208,7 @@ class EncryptionMigrationStrategy implements MigrationStrategyInterface {
             'success' => count( $errors ) === 0,
             'processed' => $migrated,
             'has_more' => $has_more,
-            'message' => sprintf( __( 'Encrypted %d submissions', 'ffc' ), $migrated ),
+            'message' => sprintf( __( 'Encrypted %d submissions', 'wp-ffcertificate' ), $migrated ),
             'errors' => $errors
         );
     }
@@ -225,7 +225,7 @@ class EncryptionMigrationStrategy implements MigrationStrategyInterface {
         if ( ! class_exists( '\\FreeFormCertificate\\Core\\Encryption' ) ) {
             return new WP_Error(
                 'encryption_class_missing',
-                __( 'FFC_Encryption class not found. Please ensure class-ffc-encryption.php is loaded.', 'ffc' )
+                __( 'FFC_Encryption class not found. Please ensure class-ffc-encryption.php is loaded.', 'wp-ffcertificate' )
             );
         }
 
@@ -233,7 +233,7 @@ class EncryptionMigrationStrategy implements MigrationStrategyInterface {
         if ( ! \FreeFormCertificate\Core\Encryption::is_configured() ) {
             return new WP_Error(
                 'encryption_not_configured',
-                __( 'Encryption keys not configured. WordPress SECURE_AUTH_KEY and LOGGED_IN_KEY are required.', 'ffc' )
+                __( 'Encryption keys not configured. WordPress SECURE_AUTH_KEY and LOGGED_IN_KEY are required.', 'wp-ffcertificate' )
             );
         }
 
@@ -261,6 +261,6 @@ class EncryptionMigrationStrategy implements MigrationStrategyInterface {
      * @return string
      */
     public function get_name(): string {
-        return __( 'Encryption Migration Strategy', 'ffc' );
+        return __( 'Encryption Migration Strategy', 'wp-ffcertificate' );
     }
 }

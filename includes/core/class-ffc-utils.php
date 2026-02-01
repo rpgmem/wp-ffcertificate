@@ -594,7 +594,7 @@ class Utils {
         $answer = $n1 + $n2;
         
         return array(
-            'label' => sprintf( esc_html__( 'Security: How much is %d + %d?', 'ffc' ), $n1, $n2 ) . ' <span class="required">*</span>',
+            'label' => sprintf( esc_html__( 'Security: How much is %d + %d?', 'wp-ffcertificate' ), $n1, $n2 ) . ' <span class="required">*</span>',
             'hash'  => wp_hash( $answer . 'ffc_math_salt' ),
             'answer' => $answer  // For internal use only
         );
@@ -628,17 +628,17 @@ class Utils {
     public static function validate_security_fields( array $data ) {
         // Check honeypot
         if ( ! empty( $data['ffc_honeypot_trap'] ) ) {
-            return __( 'Security Error: Request blocked (Honeypot).', 'ffc' );
+            return __( 'Security Error: Request blocked (Honeypot).', 'wp-ffcertificate' );
         }
         
         // Check captcha presence
         if ( ! isset( $data['ffc_captcha_ans'] ) || ! isset( $data['ffc_captcha_hash'] ) ) {
-            return __( 'Error: Please answer the security question.', 'ffc' );
+            return __( 'Error: Please answer the security question.', 'wp-ffcertificate' );
         }
         
         // Validate captcha answer using verify_simple_captcha()
         if ( ! self::verify_simple_captcha( $data['ffc_captcha_ans'], $data['ffc_captcha_hash'] ) ) {
-            return __( 'Error: The math answer is incorrect.', 'ffc' );
+            return __( 'Error: The math answer is incorrect.', 'wp-ffcertificate' );
         }
         
         return true; 
@@ -683,13 +683,13 @@ class Utils {
 
         // Get form title
         $form_post = get_post( $form_id );
-        $form_title = $form_post ? $form_post->post_title : __( 'Certificate', 'ffc' );
+        $form_title = $form_post ? $form_post->post_title : __( 'Certificate', 'wp-ffcertificate' );
 
         // Default success message
         if ( empty( $success_message ) ) {
             $success_message = isset( $form_config['success_message'] ) && ! empty( $form_config['success_message'] )
                 ? $form_config['success_message']
-                : __( 'Success! Your certificate has been generated.', 'ffc' );
+                : __( 'Success! Your certificate has been generated.', 'wp-ffcertificate' );
         }
 
         // Format date

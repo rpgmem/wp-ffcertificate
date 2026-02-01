@@ -85,51 +85,51 @@ class Frontend {
             'nonce'    => wp_create_nonce( 'ffc_frontend_nonce' ),
             'strings'  => array(
             // Verification
-            'verifying'             => __( 'Verifying...', 'ffc' ),
-            'verify'                => __( 'Verify', 'ffc' ),
-            'processing'            => __( 'Processing...', 'ffc' ),
-            'submit'                => __( 'Submit', 'ffc' ),
-            'connectionError'       => __( 'Connection error.', 'ffc' ),
-            'enterCode'             => __( 'Please enter the code.', 'ffc' ),
-            'generatingCertificate' => __( 'Generating certificate in the background, please wait 10 seconds and check your downloads folder...', 'ffc' ),
-            'idMustHaveDigits'      => __( 'The ID must have exactly 7 digits (RF) or 11 digits (CPF).', 'ffc' ),
-            'invalidToken'          => __( 'Invalid token.', 'ffc' ),
-            'generating'            => __( 'Generating...', 'ffc' ),
-            'downloadAgain'         => __( 'Download Again', 'ffc' ),
+            'verifying'             => __( 'Verifying...', 'wp-ffcertificate' ),
+            'verify'                => __( 'Verify', 'wp-ffcertificate' ),
+            'processing'            => __( 'Processing...', 'wp-ffcertificate' ),
+            'submit'                => __( 'Submit', 'wp-ffcertificate' ),
+            'connectionError'       => __( 'Connection error.', 'wp-ffcertificate' ),
+            'enterCode'             => __( 'Please enter the code.', 'wp-ffcertificate' ),
+            'generatingCertificate' => __( 'Generating certificate in the background, please wait 10 seconds and check your downloads folder...', 'wp-ffcertificate' ),
+            'idMustHaveDigits'      => __( 'The ID must have exactly 7 digits (RF) or 11 digits (CPF).', 'wp-ffcertificate' ),
+            'invalidToken'          => __( 'Invalid token.', 'wp-ffcertificate' ),
+            'generating'            => __( 'Generating...', 'wp-ffcertificate' ),
+            'downloadAgain'         => __( 'Download Again', 'wp-ffcertificate' ),
 
             // Certificate Display
-            'certificateValid'      => __( 'Certificate Valid!', 'ffc' ),
-            'certificateInvalid'    => __( 'Certificate Invalid', 'ffc' ),
-            'formTitle'             => __( 'Form', 'ffc' ),
-            'authCode'              => __( 'Auth Code', 'ffc' ),
-            'issueDate'             => __( 'Issue Date', 'ffc' ),
-            'downloadPDF'           => __( 'Download PDF', 'ffc' ),
-            'tryManually'           => __( 'Or try manual verification', 'ffc' ),
-            'enterAuthCode'         => __( 'Enter auth code', 'ffc' ),
+            'certificateValid'      => __( 'Certificate Valid!', 'wp-ffcertificate' ),
+            'certificateInvalid'    => __( 'Certificate Invalid', 'wp-ffcertificate' ),
+            'formTitle'             => __( 'Form', 'wp-ffcertificate' ),
+            'authCode'              => __( 'Auth Code', 'wp-ffcertificate' ),
+            'issueDate'             => __( 'Issue Date', 'wp-ffcertificate' ),
+            'downloadPDF'           => __( 'Download PDF', 'wp-ffcertificate' ),
+            'tryManually'           => __( 'Or try manual verification', 'wp-ffcertificate' ),
+            'enterAuthCode'         => __( 'Enter auth code', 'wp-ffcertificate' ),
 
             // Validation (CPF/RF)
-            'rfInvalid'             => __( 'Invalid RF', 'ffc' ),
-            'cpfInvalid'            => __( 'Invalid CPF', 'ffc' ),
-            'enterValidCpfRf'       => __( 'Enter a valid CPF (11 digits) or RF (7 digits)', 'ffc' ),
+            'rfInvalid'             => __( 'Invalid RF', 'wp-ffcertificate' ),
+            'cpfInvalid'            => __( 'Invalid CPF', 'wp-ffcertificate' ),
+            'enterValidCpfRf'       => __( 'Enter a valid CPF (11 digits) or RF (7 digits)', 'wp-ffcertificate' ),
 
             // Success/Error Messages
-            'success'               => __( 'Success!', 'ffc' ),
-            'submissionSuccessful'  => __( 'Your submission was successful.', 'ffc' ),
-            'error'                 => __( 'Error occurred', 'ffc' ),
-            'fillRequired'          => __( 'Please fill all required fields', 'ffc' ),
+            'success'               => __( 'Success!', 'wp-ffcertificate' ),
+            'submissionSuccessful'  => __( 'Your submission was successful.', 'wp-ffcertificate' ),
+            'error'                 => __( 'Error occurred', 'wp-ffcertificate' ),
+            'fillRequired'          => __( 'Please fill all required fields', 'wp-ffcertificate' ),
 
             // Rate Limiting
-            'wait'                  => __( 'Wait...', 'ffc' ),
-            'send'                  => __( 'Send', 'ffc' ),
+            'wait'                  => __( 'Wait...', 'wp-ffcertificate' ),
+            'send'                  => __( 'Send', 'wp-ffcertificate' ),
 
             // PDF Generation
-            'pdfLibrariesFailed'    => __( 'PDF libraries failed to load. Please refresh the page.', 'ffc' ),
-            'pdfGenerationError'    => __( 'Error generating PDF (html2canvas). Please try again.', 'ffc' ),
-            'pleaseWait'            => __( 'Please wait, this may take a few seconds...', 'ffc' ),
-            'generatingPdf'         => __( 'Generating PDF...', 'ffc' ),
-            'pdfContainerNotFound'  => __( 'Error: PDF container not found', 'ffc' ),
-            'errorGeneratingPdf'    => __( 'Error generating PDF', 'ffc' ),
-            'html2canvasFailed'     => __( 'Error: html2canvas failed', 'ffc' ),
+            'pdfLibrariesFailed'    => __( 'PDF libraries failed to load. Please refresh the page.', 'wp-ffcertificate' ),
+            'pdfGenerationError'    => __( 'Error generating PDF (html2canvas). Please try again.', 'wp-ffcertificate' ),
+            'pleaseWait'            => __( 'Please wait, this may take a few seconds...', 'wp-ffcertificate' ),
+            'generatingPdf'         => __( 'Generating PDF...', 'wp-ffcertificate' ),
+            'pdfContainerNotFound'  => __( 'Error: PDF container not found', 'wp-ffcertificate' ),
+            'errorGeneratingPdf'    => __( 'Error generating PDF', 'wp-ffcertificate' ),
+            'html2canvasFailed'     => __( 'Error: html2canvas failed', 'wp-ffcertificate' ),
             )
         ) );
         }
@@ -170,24 +170,24 @@ class Frontend {
             'debug' => !empty($global_settings['debug_enabled']),
             'strings' => array(
                 // Admin bypass messages
-                'bypassGeneric' => __('Admin Bypass Mode Active - Geofence restrictions are disabled for administrators', 'ffc'),
-                'bypassDatetime' => __('Admin Bypass: Date/Time restrictions are disabled for administrators', 'ffc'),
-                'bypassGeo' => __('Admin Bypass: Geolocation restrictions are disabled for administrators', 'ffc'),
-                'bypassActive' => __('Admin Bypass Mode Active', 'ffc'),
+                'bypassGeneric' => __('Admin Bypass Mode Active - Geofence restrictions are disabled for administrators', 'wp-ffcertificate'),
+                'bypassDatetime' => __('Admin Bypass: Date/Time restrictions are disabled for administrators', 'wp-ffcertificate'),
+                'bypassGeo' => __('Admin Bypass: Geolocation restrictions are disabled for administrators', 'wp-ffcertificate'),
+                'bypassActive' => __('Admin Bypass Mode Active', 'wp-ffcertificate'),
 
                 // Geolocation messages
-                'detectingLocation' => __('Detecting your location...', 'ffc'),
-                'browserNoSupport' => __('Your browser does not support geolocation.', 'ffc'),
-                'locationError' => __('Unable to determine your location.', 'ffc'),
-                'permissionDenied' => __('Location permission denied. Please enable location services.', 'ffc'),
-                'positionUnavailable' => __('Location information is unavailable.', 'ffc'),
-                'timeout' => __('Location request timed out.', 'ffc'),
-                'outsideArea' => __('You are outside the allowed area for this form.', 'ffc'),
+                'detectingLocation' => __('Detecting your location...', 'wp-ffcertificate'),
+                'browserNoSupport' => __('Your browser does not support geolocation.', 'wp-ffcertificate'),
+                'locationError' => __('Unable to determine your location.', 'wp-ffcertificate'),
+                'permissionDenied' => __('Location permission denied. Please enable location services.', 'wp-ffcertificate'),
+                'positionUnavailable' => __('Location information is unavailable.', 'wp-ffcertificate'),
+                'timeout' => __('Location request timed out.', 'wp-ffcertificate'),
+                'outsideArea' => __('You are outside the allowed area for this form.', 'wp-ffcertificate'),
 
                 // DateTime messages
-                'formNotYetAvailable' => __('This form is not yet available.', 'ffc'),
-                'formNoLongerAvailable' => __('This form is no longer available.', 'ffc'),
-                'formOnlyDuringHours' => __('This form is only available during specific hours.', 'ffc'),
+                'formNotYetAvailable' => __('This form is not yet available.', 'wp-ffcertificate'),
+                'formNoLongerAvailable' => __('This form is no longer available.', 'wp-ffcertificate'),
+                'formOnlyDuringHours' => __('This form is only available during specific hours.', 'wp-ffcertificate'),
             ),
         );
 

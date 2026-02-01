@@ -54,21 +54,21 @@ class MigrationRegistry {
                 'column_name'       => 'email',
                 'sanitize_callback' => 'sanitize_email',
                 'icon'              => '📧',
-                'description'       => __( 'Email address', 'ffc' )
+                'description'       => __( 'Email address', 'wp-ffcertificate' )
             ),
             'cpf_rf' => array(
                 'json_keys'         => array( 'cpf_rf', 'cpf', 'rf', 'documento' ),
                 'column_name'       => 'cpf_rf',
                 'sanitize_callback' => array( '\FreeFormCertificate\Core\Utils', 'clean_identifier' ),
                 'icon'              => '🆔',
-                'description'       => __( 'CPF or RF number', 'ffc' )
+                'description'       => __( 'CPF or RF number', 'wp-ffcertificate' )
             ),
             'auth_code' => array(
                 'json_keys'         => array( 'auth_code', 'codigo_autenticacao', 'verification_code' ),
                 'column_name'       => 'auth_code',
                 'sanitize_callback' => array( '\FreeFormCertificate\Core\Utils', 'clean_auth_code' ),
                 'icon'              => '🔐',
-                'description'       => __( 'Authentication code', 'ffc' )
+                'description'       => __( 'Authentication code', 'wp-ffcertificate' )
             )
         );
 
@@ -88,9 +88,9 @@ class MigrationRegistry {
         $order = 1;
         foreach ( $this->field_definitions as $field_key => $field_config ) {
             $this->migrations[ $field_key ] = array(
-                'name'            => sprintf( __( '%s Migration', 'ffc' ), $field_config['description'] ),
+                'name'            => sprintf( __( '%s Migration', 'wp-ffcertificate' ), $field_config['description'] ),
                 'description'     => sprintf(
-                    __( 'Migrate %s from JSON data to dedicated %s column', 'ffc' ),
+                    __( 'Migrate %s from JSON data to dedicated %s column', 'wp-ffcertificate' ),
                     strtolower( $field_config['description'] ),
                     $field_config['column_name']
                 ),
@@ -104,8 +104,8 @@ class MigrationRegistry {
 
         // Special migrations
         $this->migrations['magic_tokens'] = array(
-            'name'            => __( 'Magic Tokens', 'ffc' ),
-            'description'     => __( 'Generate unique magic tokens for secure certificate access', 'ffc' ),
+            'name'            => __( 'Magic Tokens', 'wp-ffcertificate' ),
+            'description'     => __( 'Generate unique magic tokens for secure certificate access', 'wp-ffcertificate' ),
             'icon'            => '🔮',
             'batch_size'      => 100,
             'order'           => $order++,
@@ -114,8 +114,8 @@ class MigrationRegistry {
 
         // v2.10.0: Encryption migrations
         $this->migrations['encrypt_sensitive_data'] = array(
-            'name'            => __( 'Encrypt Sensitive Data', 'ffc' ),
-            'description'     => __( 'Encrypt email, data, and user_ip for LGPD compliance', 'ffc' ),
+            'name'            => __( 'Encrypt Sensitive Data', 'wp-ffcertificate' ),
+            'description'     => __( 'Encrypt email, data, and user_ip for LGPD compliance', 'wp-ffcertificate' ),
             'icon'            => '🔒',
             'batch_size'      => 50,
             'order'           => $order++,
@@ -123,8 +123,8 @@ class MigrationRegistry {
         );
 
         $this->migrations['cleanup_unencrypted'] = array(
-            'name'            => __( 'Cleanup Unencrypted Data (15+ days)', 'ffc' ),
-            'description'     => __( 'Remove unencrypted copies of sensitive data older than 15 days', 'ffc' ),
+            'name'            => __( 'Cleanup Unencrypted Data (15+ days)', 'wp-ffcertificate' ),
+            'description'     => __( 'Remove unencrypted copies of sensitive data older than 15 days', 'wp-ffcertificate' ),
             'icon'            => '🧹',
             'batch_size'      => 100,
             'order'           => $order++,
@@ -133,8 +133,8 @@ class MigrationRegistry {
 
         // v3.1.0: User linking migration
         $this->migrations['user_link'] = array(
-            'name'            => __( 'Link Submissions to Users', 'ffc' ),
-            'description'     => __( 'Associate submissions with WordPress users based on CPF/RF', 'ffc' ),
+            'name'            => __( 'Link Submissions to Users', 'wp-ffcertificate' ),
+            'description'     => __( 'Associate submissions with WordPress users based on CPF/RF', 'wp-ffcertificate' ),
             'icon'            => '👤',
             'batch_size'      => 100,
             'order'           => $order++,
@@ -143,8 +143,8 @@ class MigrationRegistry {
 
         // Data cleanup (option-based, not batch)
         $this->migrations['data_cleanup'] = array(
-            'name'            => __( 'Data Cleanup', 'ffc' ),
-            'description'     => __( 'Remove old migration data and cleanup database', 'ffc' ),
+            'name'            => __( 'Data Cleanup', 'wp-ffcertificate' ),
+            'description'     => __( 'Remove old migration data and cleanup database', 'wp-ffcertificate' ),
             'icon'            => '🗑️',
             'batch_size'      => 0,
             'order'           => 999, // Always last

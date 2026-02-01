@@ -6,34 +6,34 @@
 
 if (!defined('ABSPATH')) exit;
 
-$get_option = function($key, $default = '') {
+$ffc_get_option = function($key, $default = '') {
     $settings = get_option('ffc_settings', array());
     return isset($settings[$key]) ? $settings[$key] : $default;
 };
 
-$date_formats = array(
+$ffc_date_formats = array(
     'Y-m-d H:i:s' => '2026-01-04 15:30:45 (YYYY-MM-DD HH:MM:SS)',
     'Y-m-d' => '2026-01-04 (YYYY-MM-DD)',
     'd/m/Y' => '04/01/2026 (DD/MM/YYYY)',
     'd/m/Y H:i' => '04/01/2026 15:30 (DD/MM/YYYY HH:MM)',
     'd/m/Y H:i:s' => '04/01/2026 15:30:45 (DD/MM/YYYY HH:MM:SS)',
     'm/d/Y' => '01/04/2026 (MM/DD/YYYY)',
-    'F j, Y' => __('January 4, 2026 (Month Day, Year)', 'ffc'),
-    'j \d\e F \d\e Y' => __('4 of January, 2026', 'ffc'),
-    'd \d\e F \d\e Y' => __('04 of January, 2026', 'ffc'),
-    'l, j \d\e F \d\e Y' => __('Saturday, January 4, 2026', 'ffc'),
-    'custom' => __('Custom Format', 'ffc')
+    'F j, Y' => __('January 4, 2026 (Month Day, Year)', 'wp-ffcertificate'),
+    'j \d\e F \d\e Y' => __('4 of January, 2026', 'wp-ffcertificate'),
+    'd \d\e F \d\e Y' => __('04 of January, 2026', 'wp-ffcertificate'),
+    'l, j \d\e F \d\e Y' => __('Saturday, January 4, 2026', 'wp-ffcertificate'),
+    'custom' => __('Custom Format', 'wp-ffcertificate')
 );
 
-$current_format = $get_option('date_format', 'F j, Y');
-$custom_format = $get_option('date_format_custom', '');
+$ffc_current_format = $ffc_get_option('date_format', 'F j, Y');
+$ffc_custom_format = $ffc_get_option('date_format_custom', '');
 ?>
 
 <div class="ffc-settings-wrap">
 
 <!-- General Settings Card -->
 <div class="card">
-    <h2>⚙️ <?php esc_html_e('General Settings'); ?></h2>
+    <h2>⚙️ <?php esc_html_e('General Settings', 'wp-ffcertificate'); ?></h2>
     
     <form method="post">
         <?php wp_nonce_field('ffc_settings_action', 'ffc_settings_nonce'); ?>
@@ -43,47 +43,47 @@ $custom_format = $get_option('date_format_custom', '');
             <tbody>
                 <tr>
                     <th scope="row">
-                        <label for="cleanup_days"><?php esc_html_e('Auto-delete (days)', 'ffc'); ?></label>
+                        <label for="cleanup_days"><?php esc_html_e('Auto-delete (days)', 'wp-ffcertificate'); ?></label>
                     </th>
                     <td>
-                        <input type="number" name="ffc_settings[cleanup_days]" id="cleanup_days" value="<?php echo esc_attr($get_option('cleanup_days')); ?>" class="small-text" min="0">
-                        <p class="description"><?php esc_html_e('Files removed after X days. Set to 0 to disable.', 'ffc'); ?></p>
+                        <input type="number" name="ffc_settings[cleanup_days]" id="cleanup_days" value="<?php echo esc_attr($ffc_get_option('cleanup_days')); ?>" class="small-text" min="0">
+                        <p class="description"><?php esc_html_e('Files removed after X days. Set to 0 to disable.', 'wp-ffcertificate'); ?></p>
                     </td>
                 </tr>
                 
                 <tr>
                     <th scope="row">
-                        <label for="ffc_date_format"><?php esc_html_e('Date Format', 'ffc'); ?></label>
+                        <label for="ffc_date_format"><?php esc_html_e('Date Format', 'wp-ffcertificate'); ?></label>
                     </th>
                     <td>
                         <select name="ffc_settings[date_format]" id="ffc_date_format" class="regular-text">
-                            <?php foreach ($date_formats as $format => $label) : ?>
-                                <option value="<?php echo esc_attr($format); ?>" <?php selected($current_format, $format); ?>>
+                            <?php foreach ($ffc_date_formats as $format => $label) : ?>
+                                <option value="<?php echo esc_attr($format); ?>" <?php selected($ffc_current_format, $format); ?>>
                                     <?php echo esc_html($label); ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
                         <p class="description">
-                            <?php esc_html_e('Format used for {{submission_date}} placeholder in PDFs and emails.', 'ffc'); ?>
+                            <?php esc_html_e('Format used for {{submission_date}} placeholder in PDFs and emails.', 'wp-ffcertificate'); ?>
                             <br>
-                            <strong><?php esc_html_e('Preview:', 'ffc'); ?></strong>
+                            <strong><?php esc_html_e('Preview:', 'wp-ffcertificate'); ?></strong>
                             <span class="ffc-text-info ffc-monospace">
                                 <?php
-                                $preview_date = '2026-01-04 15:30:45';
-                                echo date_i18n(($current_format === 'custom' && !empty($custom_format)) ? $custom_format : $current_format, strtotime($preview_date));
+                                $ffc_preview_date = '2026-01-04 15:30:45';
+                                echo date_i18n(($ffc_current_format === 'custom' && !empty($ffc_custom_format)) ? $ffc_custom_format : $ffc_current_format, strtotime($ffc_preview_date));
                                 ?>
                             </span>
                         </p>
 
-                        <div id="ffc_custom_format_container" class="ffc-collapsible-section <?php echo $current_format !== 'custom' ? 'ffc-hidden' : ''; ?>">
+                        <div id="ffc_custom_format_container" class="ffc-collapsible-section <?php echo $ffc_current_format !== 'custom' ? 'ffc-hidden' : ''; ?>">
                             <div class="ffc-collapsible-content active">
                                 <label>
-                                    <strong><?php esc_html_e('Custom Format:', 'ffc'); ?></strong><br>
-                                    <input type="text" name="ffc_settings[date_format_custom]" id="ffc_date_format_custom" value="<?php echo esc_attr($custom_format); ?>" placeholder="d/m/Y H:i" class="regular-text">
+                                    <strong><?php esc_html_e('Custom Format:', 'wp-ffcertificate'); ?></strong><br>
+                                    <input type="text" name="ffc_settings[date_format_custom]" id="ffc_date_format_custom" value="<?php echo esc_attr($ffc_custom_format); ?>" placeholder="d/m/Y H:i" class="regular-text">
                                 </label>
                                 <p class="description">
-                                    <?php esc_html_e('Use PHP date format characters.', 'ffc'); ?>
-                                    <a href="https://www.php.net/manual/en/datetime.format.php" target="_blank"><?php esc_html_e('See documentation', 'ffc'); ?></a>
+                                    <?php esc_html_e('Use PHP date format characters.', 'wp-ffcertificate'); ?>
+                                    <a href="https://www.php.net/manual/en/datetime.format.php" target="_blank"><?php esc_html_e('See documentation', 'wp-ffcertificate'); ?></a>
                                 </p>
                             </div>
                         </div>
@@ -92,32 +92,32 @@ $custom_format = $get_option('date_format_custom', '');
             </tbody>
         </table>
 
-        <h3>📋 <?php esc_html_e('Activity Log Settings', 'ffc'); ?></h3>
+        <h3>📋 <?php esc_html_e('Activity Log Settings', 'wp-ffcertificate'); ?></h3>
         <p class="description">
-            <?php esc_html_e('Activity Log tracks important actions in your system for audit and compliance purposes (LGPD).', 'ffc'); ?> <br>
-            <?php esc_html_e('This option has a significant impact on website speed and stability, so use it wisely.', 'ffc'); ?> <br>
-            <span class="ffc-text-warning">⚠️ <?php esc_html_e('If this option is disabled, debug logging will also be disabled.', 'ffc'); ?></span><br>
-            <span class="ffc-text-info">ℹ️ <?php esc_html_e('When enabled, actions like submission creation, data access, and settings changes are logged.', 'ffc'); ?></span>
+            <?php esc_html_e('Activity Log tracks important actions in your system for audit and compliance purposes (LGPD).', 'wp-ffcertificate'); ?> <br>
+            <?php esc_html_e('This option has a significant impact on website speed and stability, so use it wisely.', 'wp-ffcertificate'); ?> <br>
+            <span class="ffc-text-warning">⚠️ <?php esc_html_e('If this option is disabled, debug logging will also be disabled.', 'wp-ffcertificate'); ?></span><br>
+            <span class="ffc-text-info">ℹ️ <?php esc_html_e('When enabled, actions like submission creation, data access, and settings changes are logged.', 'wp-ffcertificate'); ?></span>
         </p>
 
         <table class="form-table" role="presentation">
             <tbody>
                 <tr>
                     <th scope="row">
-                        <label for="enable_activity_log"><?php esc_html_e('Enable Activity Log', 'ffc'); ?></label>
+                        <label for="enable_activity_log"><?php esc_html_e('Enable Activity Log', 'wp-ffcertificate'); ?></label>
                     </th>
                     <td>
                         <label>
-                            <input type="checkbox" name="ffc_settings[enable_activity_log]" id="enable_activity_log" value="1" <?php checked($get_option('enable_activity_log'), 1); ?>>
-                            <?php esc_html_e('Track activities for audit trail', 'ffc'); ?>
+                            <input type="checkbox" name="ffc_settings[enable_activity_log]" id="enable_activity_log" value="1" <?php checked($ffc_get_option('enable_activity_log'), 1); ?>>
+                            <?php esc_html_e('Track activities for audit trail', 'wp-ffcertificate'); ?>
                         </label>
                         <p class="description">
-                            <?php esc_html_e('Logs submission creation, data access, settings changes, and security events.', 'ffc'); ?><br>
-                            <span class="ffc-text-success">✅ <?php esc_html_e('Includes user ID, IP address, and timestamp for LGPD compliance.', 'ffc'); ?></span>
-                            <?php if ($get_option('enable_activity_log') == 1) : ?>
+                            <?php esc_html_e('Logs submission creation, data access, settings changes, and security events.', 'wp-ffcertificate'); ?><br>
+                            <span class="ffc-text-success">✅ <?php esc_html_e('Includes user ID, IP address, and timestamp for LGPD compliance.', 'wp-ffcertificate'); ?></span>
+                            <?php if ($ffc_get_option('enable_activity_log') == 1) : ?>
                                 <br>
                                 <a href="<?php echo admin_url('edit.php?post_type=ffc_form&page=ffc-activity-log'); ?>" class="button button-secondary ffc-mt-10">
-                                    📊 <?php esc_html_e('View Activity Logs', 'ffc'); ?>
+                                    📊 <?php esc_html_e('View Activity Logs', 'wp-ffcertificate'); ?>
                                 </a>
                             <?php endif; ?>
                         </p>
@@ -126,146 +126,146 @@ $custom_format = $get_option('date_format_custom', '');
             </tbody>
         </table>
 
-        <h3>🐛 <?php esc_html_e('Debug Settings', 'ffc'); ?></h3>
+        <h3>🐛 <?php esc_html_e('Debug Settings', 'wp-ffcertificate'); ?></h3>
         <p class="description">
-            <?php esc_html_e('Enable debug logging for specific areas. Debug logs are written to the PHP error log.', 'ffc'); ?><br>
-            <span class="ffc-text-warning">⚠️ <?php esc_html_e('Only enable in development or when troubleshooting issues.', 'ffc'); ?></span>
+            <?php esc_html_e('Enable debug logging for specific areas. Debug logs are written to the PHP error log.', 'wp-ffcertificate'); ?><br>
+            <span class="ffc-text-warning">⚠️ <?php esc_html_e('Only enable in development or when troubleshooting issues.', 'wp-ffcertificate'); ?></span>
         </p>
 
         <table class="form-table" role="presentation">
             <tbody>
                 <tr>
                     <th scope="row">
-                        <label for="debug_pdf_generator"><?php esc_html_e('PDF Generator', 'ffc'); ?></label>
+                        <label for="debug_pdf_generator"><?php esc_html_e('PDF Generator', 'wp-ffcertificate'); ?></label>
                     </th>
                     <td>
                         <label>
-                            <input type="checkbox" name="ffc_settings[debug_pdf_generator]" id="debug_pdf_generator" value="1" <?php checked($get_option('debug_pdf_generator'), 1); ?>>
-                            <?php esc_html_e('Enable debug logging for PDF generation', 'ffc'); ?>
+                            <input type="checkbox" name="ffc_settings[debug_pdf_generator]" id="debug_pdf_generator" value="1" <?php checked($ffc_get_option('debug_pdf_generator'), 1); ?>>
+                            <?php esc_html_e('Enable debug logging for PDF generation', 'wp-ffcertificate'); ?>
                         </label>
                         <p class="description">
-                            <?php esc_html_e('Logs JSON data parsing, placeholder replacements, and PDF data preparation.', 'ffc'); ?>
+                            <?php esc_html_e('Logs JSON data parsing, placeholder replacements, and PDF data preparation.', 'wp-ffcertificate'); ?>
                         </p>
                     </td>
                 </tr>
 
                 <tr>
                     <th scope="row">
-                        <label for="debug_email_handler"><?php esc_html_e('Email Handler', 'ffc'); ?></label>
+                        <label for="debug_email_handler"><?php esc_html_e('Email Handler', 'wp-ffcertificate'); ?></label>
                     </th>
                     <td>
                         <label>
-                            <input type="checkbox" name="ffc_settings[debug_email_handler]" id="debug_email_handler" value="1" <?php checked($get_option('debug_email_handler'), 1); ?>>
-                            <?php esc_html_e('Enable debug logging for email sending', 'ffc'); ?>
+                            <input type="checkbox" name="ffc_settings[debug_email_handler]" id="debug_email_handler" value="1" <?php checked($ffc_get_option('debug_email_handler'), 1); ?>>
+                            <?php esc_html_e('Enable debug logging for email sending', 'wp-ffcertificate'); ?>
                         </label>
                         <p class="description">
-                            <?php esc_html_e('Logs email preparation, SMTP connection, and sending status.', 'ffc'); ?>
+                            <?php esc_html_e('Logs email preparation, SMTP connection, and sending status.', 'wp-ffcertificate'); ?>
                         </p>
                     </td>
                 </tr>
 
                 <tr>
                     <th scope="row">
-                        <label for="debug_form_processor"><?php esc_html_e('Form Processor', 'ffc'); ?></label>
+                        <label for="debug_form_processor"><?php esc_html_e('Form Processor', 'wp-ffcertificate'); ?></label>
                     </th>
                     <td>
                         <label>
-                            <input type="checkbox" name="ffc_settings[debug_form_processor]" id="debug_form_processor" value="1" <?php checked($get_option('debug_form_processor'), 1); ?>>
-                            <?php esc_html_e('Enable debug logging for form submission processing', 'ffc'); ?>
+                            <input type="checkbox" name="ffc_settings[debug_form_processor]" id="debug_form_processor" value="1" <?php checked($ffc_get_option('debug_form_processor'), 1); ?>>
+                            <?php esc_html_e('Enable debug logging for form submission processing', 'wp-ffcertificate'); ?>
                         </label>
                         <p class="description">
-                            <?php esc_html_e('Logs form data validation, processing steps, and submission creation.', 'ffc'); ?>
+                            <?php esc_html_e('Logs form data validation, processing steps, and submission creation.', 'wp-ffcertificate'); ?>
                         </p>
                     </td>
                 </tr>
 
                 <tr>
                     <th scope="row">
-                        <label for="debug_encryption"><?php esc_html_e('Encryption', 'ffc'); ?></label>
+                        <label for="debug_encryption"><?php esc_html_e('Encryption', 'wp-ffcertificate'); ?></label>
                     </th>
                     <td>
                         <label>
-                            <input type="checkbox" name="ffc_settings[debug_encryption]" id="debug_encryption" value="1" <?php checked($get_option('debug_encryption'), 1); ?>>
-                            <?php esc_html_e('Enable debug logging for encryption operations', 'ffc'); ?>
+                            <input type="checkbox" name="ffc_settings[debug_encryption]" id="debug_encryption" value="1" <?php checked($ffc_get_option('debug_encryption'), 1); ?>>
+                            <?php esc_html_e('Enable debug logging for encryption operations', 'wp-ffcertificate'); ?>
                         </label>
                         <p class="description">
-                            <?php esc_html_e('Logs encryption/decryption operations and key management.', 'ffc'); ?><br>
-                            <span class="ffc-text-warning">⚠️ <?php esc_html_e('Never enables actual data logging, only operation status.', 'ffc'); ?></span>
+                            <?php esc_html_e('Logs encryption/decryption operations and key management.', 'wp-ffcertificate'); ?><br>
+                            <span class="ffc-text-warning">⚠️ <?php esc_html_e('Never enables actual data logging, only operation status.', 'wp-ffcertificate'); ?></span>
                         </p>
                     </td>
                 </tr>
 
                 <tr>
                     <th scope="row">
-                        <label for="debug_geofence"><?php esc_html_e('Geofence', 'ffc'); ?></label>
+                        <label for="debug_geofence"><?php esc_html_e('Geofence', 'wp-ffcertificate'); ?></label>
                     </th>
                     <td>
                         <label>
-                            <input type="checkbox" name="ffc_settings[debug_geofence]" id="debug_geofence" value="1" <?php checked($get_option('debug_geofence'), 1); ?>>
-                            <?php esc_html_e('Enable debug logging for geofence validation', 'ffc'); ?>
+                            <input type="checkbox" name="ffc_settings[debug_geofence]" id="debug_geofence" value="1" <?php checked($ffc_get_option('debug_geofence'), 1); ?>>
+                            <?php esc_html_e('Enable debug logging for geofence validation', 'wp-ffcertificate'); ?>
                         </label>
                         <p class="description">
-                            <?php esc_html_e('Logs date/time restrictions, GPS validation, IP geolocation, and access denied events.', 'ffc'); ?>
+                            <?php esc_html_e('Logs date/time restrictions, GPS validation, IP geolocation, and access denied events.', 'wp-ffcertificate'); ?>
                         </p>
                     </td>
                 </tr>
 
                 <tr>
                     <th scope="row">
-                        <label for="debug_user_manager"><?php esc_html_e('User Manager', 'ffc'); ?></label>
+                        <label for="debug_user_manager"><?php esc_html_e('User Manager', 'wp-ffcertificate'); ?></label>
                     </th>
                     <td>
                         <label>
-                            <input type="checkbox" name="ffc_settings[debug_user_manager]" id="debug_user_manager" value="1" <?php checked($get_option('debug_user_manager'), 1); ?>>
-                            <?php esc_html_e('Enable debug logging for user management', 'ffc'); ?>
+                            <input type="checkbox" name="ffc_settings[debug_user_manager]" id="debug_user_manager" value="1" <?php checked($ffc_get_option('debug_user_manager'), 1); ?>>
+                            <?php esc_html_e('Enable debug logging for user management', 'wp-ffcertificate'); ?>
                         </label>
                         <p class="description">
-                            <?php esc_html_e('Logs user creation failures, decryption errors, and critical user management operations.', 'ffc'); ?>
+                            <?php esc_html_e('Logs user creation failures, decryption errors, and critical user management operations.', 'wp-ffcertificate'); ?>
                         </p>
                     </td>
                 </tr>
 
                 <tr>
                     <th scope="row">
-                        <label for="debug_rest_api"><?php esc_html_e('REST API', 'ffc'); ?></label>
+                        <label for="debug_rest_api"><?php esc_html_e('REST API', 'wp-ffcertificate'); ?></label>
                     </th>
                     <td>
                         <label>
-                            <input type="checkbox" name="ffc_settings[debug_rest_api]" id="debug_rest_api" value="1" <?php checked($get_option('debug_rest_api'), 1); ?>>
-                            <?php esc_html_e('Enable debug logging for REST API operations', 'ffc'); ?>
+                            <input type="checkbox" name="ffc_settings[debug_rest_api]" id="debug_rest_api" value="1" <?php checked($ffc_get_option('debug_rest_api'), 1); ?>>
+                            <?php esc_html_e('Enable debug logging for REST API operations', 'wp-ffcertificate'); ?>
                         </label>
                         <p class="description">
-                            <?php esc_html_e('Logs REST API requests, responses, and errors.', 'ffc'); ?>
+                            <?php esc_html_e('Logs REST API requests, responses, and errors.', 'wp-ffcertificate'); ?>
                         </p>
                     </td>
                 </tr>
 
                 <tr>
                     <th scope="row">
-                        <label for="debug_migrations"><?php esc_html_e('Migrations', 'ffc'); ?></label>
+                        <label for="debug_migrations"><?php esc_html_e('Migrations', 'wp-ffcertificate'); ?></label>
                     </th>
                     <td>
                         <label>
-                            <input type="checkbox" name="ffc_settings[debug_migrations]" id="debug_migrations" value="1" <?php checked($get_option('debug_migrations'), 1); ?>>
-                            <?php esc_html_e('Enable debug logging for database migrations', 'ffc'); ?>
+                            <input type="checkbox" name="ffc_settings[debug_migrations]" id="debug_migrations" value="1" <?php checked($ffc_get_option('debug_migrations'), 1); ?>>
+                            <?php esc_html_e('Enable debug logging for database migrations', 'wp-ffcertificate'); ?>
                         </label>
                         <p class="description">
-                            <?php esc_html_e('Logs migration execution, user linking, and data transformation operations.', 'ffc'); ?>
+                            <?php esc_html_e('Logs migration execution, user linking, and data transformation operations.', 'wp-ffcertificate'); ?>
                         </p>
                     </td>
                 </tr>
 
                 <tr>
                     <th scope="row">
-                        <label for="debug_activity_log"><?php esc_html_e('Activity Log', 'ffc'); ?></label>
+                        <label for="debug_activity_log"><?php esc_html_e('Activity Log', 'wp-ffcertificate'); ?></label>
                     </th>
                     <td>
                         <label>
-                            <input type="checkbox" name="ffc_settings[debug_activity_log]" id="debug_activity_log" value="1" <?php checked($get_option('debug_activity_log'), 1); ?>>
-                            <?php esc_html_e('Enable debug logging for activity log system', 'ffc'); ?>
+                            <input type="checkbox" name="ffc_settings[debug_activity_log]" id="debug_activity_log" value="1" <?php checked($ffc_get_option('debug_activity_log'), 1); ?>>
+                            <?php esc_html_e('Enable debug logging for activity log system', 'wp-ffcertificate'); ?>
                         </label>
                         <p class="description">
-                            <?php esc_html_e('Logs activity log operations and database queries.', 'ffc'); ?>
+                            <?php esc_html_e('Logs activity log operations and database queries.', 'wp-ffcertificate'); ?>
                         </p>
                     </td>
                 </tr>
@@ -278,8 +278,8 @@ $custom_format = $get_option('date_format_custom', '');
 
 <!-- Danger Zone Card -->
 <div class="card ffc-danger-zone">
-    <h2>⚠️ <?php esc_html_e('Danger Zone', 'ffc'); ?></h2>
-    <p class="description"><?php esc_html_e('Warning: These actions cannot be undone.', 'ffc'); ?></p>
+    <h2>⚠️ <?php esc_html_e('Danger Zone', 'wp-ffcertificate'); ?></h2>
+    <p class="description"><?php esc_html_e('Warning: These actions cannot be undone.', 'wp-ffcertificate'); ?></p>
     
     <form method="post" id="ffc-danger-zone-form">
         <?php wp_nonce_field('ffc_delete_all_data', 'ffc_critical_nonce'); ?>
@@ -289,17 +289,17 @@ $custom_format = $get_option('date_format_custom', '');
             <tbody>
                 <tr>
                     <th scope="row">
-                        <label for="ffc_delete_target"><?php esc_html_e('Delete Submissions', 'ffc'); ?></label>
+                        <label for="ffc_delete_target"><?php esc_html_e('Delete Submissions', 'wp-ffcertificate'); ?></label>
                     </th>
                     <td>
                         <select name="delete_target" id="ffc_delete_target" class="regular-text">
-                            <option value="all"><?php esc_html_e('🗑️ Delete All Submissions (All Forms)', 'ffc'); ?></option>
+                            <option value="all"><?php esc_html_e('🗑️ Delete All Submissions (All Forms)', 'wp-ffcertificate'); ?></option>
                             <?php 
-                            $forms = get_posts(['post_type' => 'ffc_form', 'posts_per_page' => -1, 'post_status' => 'publish']);
-                            if (!empty($forms)) :
-                                foreach ($forms as $f) : ?>
-                                    <option value="<?php echo esc_attr($f->ID); ?>">
-                                        <?php echo esc_html($f->post_title); ?>
+                            $ffc_forms = get_posts(['post_type' => 'ffc_form', 'posts_per_page' => -1, 'post_status' => 'publish']);
+                            if (!empty($ffc_forms)) :
+                                foreach ($ffc_forms as $ffc_f) : ?>
+                                    <option value="<?php echo esc_attr($ffc_f->ID); ?>">
+                                        <?php echo esc_html($ffc_f->post_title); ?>
                                     </option>
                                 <?php endforeach;
                             endif;
@@ -310,18 +310,18 @@ $custom_format = $get_option('date_format_custom', '');
                             <label>
                                 <input type="checkbox" name="reset_counter" value="1" id="ffc_reset_counter">
                                 <span>
-                                    <span class="checkbox-label-text"><?php esc_html_e('Reset ID counter to 1', 'ffc'); ?></span>
-                                    <span class="checkbox-sublabel"><?php esc_html_e('(recommended)', 'ffc'); ?></span>
+                                    <span class="checkbox-label-text"><?php esc_html_e('Reset ID counter to 1', 'wp-ffcertificate'); ?></span>
+                                    <span class="checkbox-sublabel"><?php esc_html_e('(recommended)', 'wp-ffcertificate'); ?></span>
                                 </span>
                             </label>
                             <p class="description">
-                                <?php esc_html_e('When checked, next submission will start from ID #1. Only works if table becomes empty.', 'ffc'); ?>
+                                <?php esc_html_e('When checked, next submission will start from ID #1. Only works if table becomes empty.', 'wp-ffcertificate'); ?>
                             </p>
                         </div>
                         
                         <div class="ffc-mt-20">
-                            <button type="submit" class="button button-link-delete" onclick="return confirm('<?php echo esc_js(__('⚠️ Are you absolutely sure?\n\nThis action CANNOT be undone!\n\nAll selected data will be permanently deleted.', 'ffc')); ?>');">
-                                <?php esc_html_e('🗑️ Delete Data Permanently', 'ffc'); ?>
+                            <button type="submit" class="button button-link-delete" onclick="return confirm('<?php echo esc_js(__('⚠️ Are you absolutely sure?\n\nThis action CANNOT be undone!\n\nAll selected data will be permanently deleted.', 'wp-ffcertificate')); ?>');">
+                                <?php esc_html_e('🗑️ Delete Data Permanently', 'wp-ffcertificate'); ?>
                             </button>
                         </div>
                     </td>
@@ -333,13 +333,13 @@ $custom_format = $get_option('date_format_custom', '');
 
 <!-- Form Cache Card -->
 <div class="card">
-    <h2>📦 <?php esc_html_e('Form Cache', 'ffc'); ?></h2>
+    <h2>📦 <?php esc_html_e('Form Cache', 'wp-ffcertificate'); ?></h2>
     <p class="description">
-        <?php esc_html_e('The cache stores form settings to improve performance.', 'ffc'); ?> 
+        <?php esc_html_e('The cache stores form settings to improve performance.', 'wp-ffcertificate'); ?> 
         <?php if (wp_using_ext_object_cache()): ?>
-            <span class="ffc-text-success">✅ <?php esc_html_e('External cache active (Redis/Memcached)', 'ffc'); ?></span>
+            <span class="ffc-text-success">✅ <?php esc_html_e('External cache active (Redis/Memcached)', 'wp-ffcertificate'); ?></span>
         <?php else: ?>
-            <span class="ffc-text-warning">⚠️ <?php esc_html_e('Using default WordPress cache (database)', 'ffc'); ?></span>
+            <span class="ffc-text-warning">⚠️ <?php esc_html_e('Using default WordPress cache (database)', 'wp-ffcertificate'); ?></span>
         <?php endif; ?>
     </p>
     
@@ -351,75 +351,75 @@ $custom_format = $get_option('date_format_custom', '');
             <tbody>
                 <tr>
                     <th scope="row">
-                        <label for="cache_enabled"><?php esc_html_e('Enable Cache', 'ffc'); ?></label>
+                        <label for="cache_enabled"><?php esc_html_e('Enable Cache', 'wp-ffcertificate'); ?></label>
                     </th>
                     <td>
                         <label>
-                            <input type="checkbox" name="ffc_settings[cache_enabled]" id="cache_enabled" value="1" <?php checked($get_option('cache_enabled'), 1); ?>>
-                            <?php esc_html_e('Enable form caching', 'ffc'); ?>
+                            <input type="checkbox" name="ffc_settings[cache_enabled]" id="cache_enabled" value="1" <?php checked($ffc_get_option('cache_enabled'), 1); ?>>
+                            <?php esc_html_e('Enable form caching', 'wp-ffcertificate'); ?>
                         </label>
-                        <p class="description"><?php _e('Recommended for sites with many forms or high traffic.', 'ffc'); ?></p>
+                        <p class="description"><?php esc_html_e('Recommended for sites with many forms or high traffic.', 'wp-ffcertificate'); ?></p>
                     </td>
                 </tr>
                 
                 <tr>
                     <th scope="row">
-                        <label for="cache_expiration"><?php esc_html_e('Expiration Time', 'ffc'); ?></label>
+                        <label for="cache_expiration"><?php esc_html_e('Expiration Time', 'wp-ffcertificate'); ?></label>
                     </th>
                     <td>
                         <select name="ffc_settings[cache_expiration]" id="cache_expiration" class="regular-text">
-                            <option value="900" <?php selected($get_option('cache_expiration'), 900); ?>><?php esc_html_e('15 minutes', 'ffc'); ?></option>
-                            <option value="1800" <?php selected($get_option('cache_expiration'), 1800); ?>><?php esc_html_e('30 minutes', 'ffc'); ?></option>
-                            <option value="3600" <?php selected($get_option('cache_expiration'), 3600); ?>><?php esc_html_e('1 hour (default)', 'ffc'); ?></option>
-                            <option value="86400" <?php selected($get_option('cache_expiration'), 86400); ?>><?php esc_html_e('24 hours', 'ffc'); ?></option>
+                            <option value="900" <?php selected($ffc_get_option('cache_expiration'), 900); ?>><?php esc_html_e('15 minutes', 'wp-ffcertificate'); ?></option>
+                            <option value="1800" <?php selected($ffc_get_option('cache_expiration'), 1800); ?>><?php esc_html_e('30 minutes', 'wp-ffcertificate'); ?></option>
+                            <option value="3600" <?php selected($ffc_get_option('cache_expiration'), 3600); ?>><?php esc_html_e('1 hour (default)', 'wp-ffcertificate'); ?></option>
+                            <option value="86400" <?php selected($ffc_get_option('cache_expiration'), 86400); ?>><?php esc_html_e('24 hours', 'wp-ffcertificate'); ?></option>
                         </select>
-                        <p class="description"><?php esc_html_e('Time the data remains in cache before being updated.', 'ffc'); ?></p>
+                        <p class="description"><?php esc_html_e('Time the data remains in cache before being updated.', 'wp-ffcertificate'); ?></p>
                     </td>
                 </tr>
                 
                 <tr>
                     <th scope="row">
-                        <label for="cache_auto_warm"><?php esc_html_e('Automatic Warming', 'ffc'); ?></label>
+                        <label for="cache_auto_warm"><?php esc_html_e('Automatic Warming', 'wp-ffcertificate'); ?></label>
                     </th>
                     <td>
                         <label>
-                            <input type="checkbox" name="ffc_settings[cache_auto_warm]" id="cache_auto_warm" value="1" <?php checked($get_option('cache_auto_warm'), 1); ?>>
-                            <?php esc_html_e('Pre-load cache daily', 'ffc'); ?>
+                            <input type="checkbox" name="ffc_settings[cache_auto_warm]" id="cache_auto_warm" value="1" <?php checked($ffc_get_option('cache_auto_warm'), 1); ?>>
+                            <?php esc_html_e('Pre-load cache daily', 'wp-ffcertificate'); ?>
                         </label>
-                        <p class="description"><?php esc_html_e('Runs a daily cron job to keep the cache always updated.', 'ffc'); ?></p>
+                        <p class="description"><?php esc_html_e('Runs a daily cron job to keep the cache always updated.', 'wp-ffcertificate'); ?></p>
                     </td>
                 </tr>
                 
                 <?php if (class_exists('\FreeFormCertificate\Submissions\FormCache')): ?>
                 <tr>
-                    <th scope="row"><?php esc_html_e('Statistics', 'ffc'); ?></th>
+                    <th scope="row"><?php esc_html_e('Statistics', 'wp-ffcertificate'); ?></th>
                     <td>
                         <?php 
-                        $stats = \FreeFormCertificate\Submissions\FormCache::get_stats();
-                        $total_forms = wp_count_posts('ffc_form')->publish;
+                        $ffc_stats = \FreeFormCertificate\Submissions\FormCache::get_stats();
+                        $ffc_total_forms = wp_count_posts('ffc_form')->publish;
                         ?>
                         <div class="ffc-stats-box">
                             <table>
                                 <tr class="alternate">
-                                    <td><strong><?php esc_html_e('Backend:', 'ffc'); ?></strong></td>
-                                    <td class="stat-value"><?php echo esc_html($stats['backend']); ?></td>
+                                    <td><strong><?php esc_html_e('Backend:', 'wp-ffcertificate'); ?></strong></td>
+                                    <td class="stat-value"><?php echo esc_html($ffc_stats['backend']); ?></td>
                                 </tr>
                                 <tr>
-                                    <td><strong><?php esc_html_e('Group:', 'ffc'); ?></strong></td>
-                                    <td class="stat-value"><?php echo esc_html($stats['group']); ?></td>
+                                    <td><strong><?php esc_html_e('Group:', 'wp-ffcertificate'); ?></strong></td>
+                                    <td class="stat-value"><?php echo esc_html($ffc_stats['group']); ?></td>
                                 </tr>
                                 <tr class="alternate">
-                                    <td><strong><?php esc_html_e('Expiration:', 'ffc'); ?></strong></td>
-                                    <td class="stat-value"><?php echo esc_html($stats['expiration']); ?></td>
+                                    <td><strong><?php esc_html_e('Expiration:', 'wp-ffcertificate'); ?></strong></td>
+                                    <td class="stat-value"><?php echo esc_html($ffc_stats['expiration']); ?></td>
                                 </tr>
                                 <tr>
-                                    <td><strong><?php esc_html_e('Published Forms:', 'ffc'); ?></strong></td>
-                                    <td class="stat-value info"><?php echo esc_html($total_forms); ?></td>
+                                    <td><strong><?php esc_html_e('Published Forms:', 'wp-ffcertificate'); ?></strong></td>
+                                    <td class="stat-value info"><?php echo esc_html($ffc_total_forms); ?></td>
                                 </tr>
                             </table>
                             <?php if (!wp_using_ext_object_cache()): ?>
                                 <p class="ffc-text-warning ffc-mt-20">
-                                    💡 <?php esc_html_e('Tip: Install Redis or Memcached for better performance.', 'ffc'); ?>
+                                    💡 <?php esc_html_e('Tip: Install Redis or Memcached for better performance.', 'wp-ffcertificate'); ?>
                                 </p>
                             <?php endif; ?>
                         </div>
@@ -427,13 +427,13 @@ $custom_format = $get_option('date_format_custom', '');
                 </tr>
                 
                 <tr>
-                    <th scope="row"><?php esc_html_e('Actions', 'ffc'); ?></th>
+                    <th scope="row"><?php esc_html_e('Actions', 'wp-ffcertificate'); ?></th>
                     <td>
                         <a href="<?php echo wp_nonce_url(admin_url('edit.php?post_type=ffc_form&page=ffc-settings&tab=general&action=warm_cache'), 'ffc_warm_cache'); ?>" class="button">
-                            🔥 <?php esc_html_e('Warm Cache Now', 'ffc'); ?>
+                            🔥 <?php esc_html_e('Warm Cache Now', 'wp-ffcertificate'); ?>
                         </a>
-                        <a href="<?php echo wp_nonce_url(admin_url('edit.php?post_type=ffc_form&page=ffc-settings&tab=general&action=clear_cache'), 'ffc_clear_cache'); ?>" class="button" onclick="return confirm('<?php echo esc_js(__('Clear all cache?', 'ffc')); ?>');">
-                            🗑️ <?php esc_html_e('Clear Cache', 'ffc'); ?>
+                        <a href="<?php echo wp_nonce_url(admin_url('edit.php?post_type=ffc_form&page=ffc-settings&tab=general&action=clear_cache'), 'ffc_clear_cache'); ?>" class="button" onclick="return confirm('<?php echo esc_js(__('Clear all cache?', 'wp-ffcertificate')); ?>');">
+                            🗑️ <?php esc_html_e('Clear Cache', 'wp-ffcertificate'); ?>
                         </a>
                     </td>
                 </tr>

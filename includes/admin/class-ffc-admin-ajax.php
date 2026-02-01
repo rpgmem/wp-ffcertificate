@@ -42,25 +42,25 @@ class AdminAjax {
         }
 
         if ( ! $nonce_verified ) {
-            wp_send_json_error( array( 'message' => __( 'Security check failed. Please reload the page.', 'ffc' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Security check failed. Please reload the page.', 'wp-ffcertificate' ) ) );
         }
 
         // Check permissions
         if ( ! current_user_can( 'edit_posts' ) ) {
-            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'ffc' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'wp-ffcertificate' ) ) );
         }
 
         $template_id = isset( $_POST['template_id'] ) ? absint( $_POST['template_id'] ) : 0;
 
         if ( ! $template_id ) {
-            wp_send_json_error( array( 'message' => __( 'Invalid template ID.', 'ffc' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Invalid template ID.', 'wp-ffcertificate' ) ) );
         }
 
         // Get template post
         $template = get_post( $template_id );
 
         if ( ! $template || $template->post_type !== 'ffc_template' ) {
-            wp_send_json_error( array( 'message' => __( 'Template not found.', 'ffc' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Template not found.', 'wp-ffcertificate' ) ) );
         }
 
         // Get template HTML from post meta
@@ -96,23 +96,23 @@ class AdminAjax {
         }
 
         if ( ! $nonce_verified ) {
-            wp_send_json_error( array( 'message' => __( 'Security check failed. Please reload the page.', 'ffc' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Security check failed. Please reload the page.', 'wp-ffcertificate' ) ) );
         }
 
         // Check permissions
         if ( ! current_user_can( 'edit_posts' ) ) {
-            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'ffc' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Permission denied.', 'wp-ffcertificate' ) ) );
         }
 
         $quantity = isset( $_POST['quantity'] ) ? absint( $_POST['quantity'] ) : 0;
         $form_id = isset( $_POST['form_id'] ) ? absint( $_POST['form_id'] ) : 0;
 
         if ( $quantity < 1 || $quantity > 1000 ) {
-            wp_send_json_error( array( 'message' => __( 'Quantity must be between 1 and 1000.', 'ffc' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Quantity must be between 1 and 1000.', 'wp-ffcertificate' ) ) );
         }
 
         if ( ! $form_id ) {
-            wp_send_json_error( array( 'message' => __( 'Invalid form ID.', 'ffc' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Invalid form ID.', 'wp-ffcertificate' ) ) );
         }
 
         // Generate unique codes
@@ -127,7 +127,7 @@ class AdminAjax {
 
                 // Prevent infinite loop
                 if ( $attempts > 100 ) {
-                    wp_send_json_error( array( 'message' => __( 'Error generating unique codes. Please try a smaller quantity.', 'ffc' ) ) );
+                    wp_send_json_error( array( 'message' => __( 'Error generating unique codes. Please try a smaller quantity.', 'wp-ffcertificate' ) ) );
                 }
             } while ( in_array( $code, $existing_codes ) || in_array( $code, $codes ) );
 

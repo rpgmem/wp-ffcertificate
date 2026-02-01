@@ -101,7 +101,7 @@ class MigrationStatusCalculator {
     public function calculate( string $migration_key ) {
         // Validate migration exists
         if ( ! $this->registry->exists( $migration_key ) ) {
-            return new WP_Error( 'invalid_migration', __( 'Migration not found', 'ffc' ) );
+            return new WP_Error( 'invalid_migration', __( 'Migration not found', 'wp-ffcertificate' ) );
         }
 
         // Handle data_cleanup special case (option-based, not strategy-based)
@@ -133,7 +133,7 @@ class MigrationStatusCalculator {
         if ( ! isset( $this->strategies[ $migration_key ] ) ) {
             return new WP_Error(
                 'strategy_not_found',
-                sprintf( __( 'No strategy found for migration: %s', 'ffc' ), $migration_key )
+                sprintf( __( 'No strategy found for migration: %s', 'wp-ffcertificate' ), $migration_key )
             );
         }
 
@@ -236,7 +236,7 @@ class MigrationStatusCalculator {
             'success' => true,
             'processed' => 1,
             'has_more' => false,
-            'message' => __( 'Data cleanup completed', 'ffc' )
+            'message' => __( 'Data cleanup completed', 'wp-ffcertificate' )
         );
     }
 

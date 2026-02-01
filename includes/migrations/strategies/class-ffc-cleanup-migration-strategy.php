@@ -59,7 +59,7 @@ class CleanupMigrationStrategy implements MigrationStrategyInterface {
                 'pending' => 0,
                 'percent' => 100,
                 'is_complete' => true,
-                'message' => __( 'No submissions older than 15 days with encrypted data', 'ffc' )
+                'message' => __( 'No submissions older than 15 days with encrypted data', 'wp-ffcertificate' )
             );
         }
 
@@ -84,7 +84,7 @@ class CleanupMigrationStrategy implements MigrationStrategyInterface {
             'percent' => round( $percent, 2 ),
             'is_complete' => ( $pending == 0 ),
             'message' => sprintf(
-                __( '%d submissions eligible for cleanup (15+ days old with encrypted data)', 'ffc' ),
+                __( '%d submissions eligible for cleanup (15+ days old with encrypted data)', 'wp-ffcertificate' ),
                 $total_eligible
             )
         );
@@ -126,7 +126,7 @@ class CleanupMigrationStrategy implements MigrationStrategyInterface {
                 'success' => true,
                 'processed' => 0,
                 'has_more' => false,
-                'message' => __( 'No submissions to cleanup', 'ffc' )
+                'message' => __( 'No submissions to cleanup', 'wp-ffcertificate' )
             );
         }
 
@@ -161,7 +161,7 @@ class CleanupMigrationStrategy implements MigrationStrategyInterface {
             'success' => ( $result !== false ),
             'processed' => $cleaned,
             'has_more' => $has_more,
-            'message' => sprintf( __( 'Cleaned %d submissions', 'ffc' ), $cleaned ),
+            'message' => sprintf( __( 'Cleaned %d submissions', 'wp-ffcertificate' ), $cleaned ),
             'errors' => ( $result === false ) ? array( $wpdb->last_error ) : array()
         );
     }
@@ -216,7 +216,7 @@ class CleanupMigrationStrategy implements MigrationStrategyInterface {
         if ( ! class_exists( '\\FreeFormCertificate\\Core\\Encryption' ) ) {
             return new WP_Error(
                 'encryption_class_missing',
-                __( 'FFC_Encryption class required for cleanup. Encrypt data first.', 'ffc' )
+                __( 'FFC_Encryption class required for cleanup. Encrypt data first.', 'wp-ffcertificate' )
             );
         }
 
@@ -224,7 +224,7 @@ class CleanupMigrationStrategy implements MigrationStrategyInterface {
         if ( ! \FreeFormCertificate\Core\Encryption::is_configured() ) {
             return new WP_Error(
                 'encryption_not_configured',
-                __( 'Encryption must be configured before cleanup.', 'ffc' )
+                __( 'Encryption must be configured before cleanup.', 'wp-ffcertificate' )
             );
         }
 
@@ -237,6 +237,6 @@ class CleanupMigrationStrategy implements MigrationStrategyInterface {
      * @return string
      */
     public function get_name(): string {
-        return __( 'Cleanup Unencrypted Data Strategy', 'ffc' );
+        return __( 'Cleanup Unencrypted Data Strategy', 'wp-ffcertificate' );
     }
 }

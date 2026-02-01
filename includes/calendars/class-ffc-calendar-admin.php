@@ -37,8 +37,8 @@ class CalendarAdmin {
         // Add Appointments submenu page
         add_submenu_page(
             'edit.php?post_type=ffc_calendar', // Parent slug (Calendar CPT menu)
-            __('Appointments', 'ffc'),          // Page title
-            __('Appointments', 'ffc'),          // Menu title
+            __('Appointments', 'wp-ffcertificate'),          // Page title
+            __('Appointments', 'wp-ffcertificate'),          // Menu title
             'edit_posts',                        // Capability
             'ffc-appointments',                  // Menu slug
             array($this, 'render_appointments_page') // Callback
@@ -55,7 +55,7 @@ class CalendarAdmin {
     public function render_appointments_page(): void {
         // Check permissions
         if (!\FreeFormCertificate\Core\Utils::current_user_can_manage()) {
-            wp_die(esc_html__('You do not have permission to access this page.', 'ffc'));
+            wp_die(esc_html__('You do not have permission to access this page.', 'wp-ffcertificate'));
         }
 
         // Include appointments list table
@@ -103,11 +103,11 @@ class CalendarAdmin {
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('ffc_calendar_admin_nonce'),
             'strings' => array(
-                'confirmDelete' => __('Are you sure you want to delete this?', 'ffc'),
-                'confirmCancel' => __('Are you sure you want to cancel this appointment?', 'ffc'),
-                'selectCalendar' => __('Please select a calendar', 'ffc'),
-                'selectDate' => __('Please select a date', 'ffc'),
-                'selectTime' => __('Please select a time', 'ffc'),
+                'confirmDelete' => __('Are you sure you want to delete this?', 'wp-ffcertificate'),
+                'confirmCancel' => __('Are you sure you want to cancel this appointment?', 'wp-ffcertificate'),
+                'selectCalendar' => __('Please select a calendar', 'wp-ffcertificate'),
+                'selectDate' => __('Please select a date', 'wp-ffcertificate'),
+                'selectTime' => __('Please select a time', 'wp-ffcertificate'),
             )
         ));
 

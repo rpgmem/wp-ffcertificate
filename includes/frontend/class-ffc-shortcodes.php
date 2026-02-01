@@ -46,7 +46,7 @@ class Shortcodes {
         $n1 = rand( 1, 9 );
         $n2 = rand( 1, 9 );
         return array(
-            'label' => sprintf( esc_html__( 'Security: How much is %d + %d?', 'ffc' ), $n1, $n2 ) . ' <span class="required">*</span>',
+            'label' => sprintf( esc_html__( 'Security: How much is %d + %d?', 'wp-ffcertificate' ), $n1, $n2 ) . ' <span class="required">*</span>',
             'hash'  => wp_hash( ($n1 + $n2) . 'ffc_math_salt' )
         );
     }
@@ -60,7 +60,7 @@ class Shortcodes {
         ?>
         <div class="ffc-security-container">
             <div class="ffc-honeypot-field">
-                <label><?php esc_html_e('Do not fill this field if you are human:', 'ffc'); ?></label>
+                <label><?php esc_html_e('Do not fill this field if you are human:', 'wp-ffcertificate'); ?></label>
                 <input type="text" name="ffc_honeypot_trap" value="" tabindex="-1" autocomplete="off">
             </div>
 
@@ -95,7 +95,7 @@ class Shortcodes {
         <div class="ffc-verification-container ffc-magic-link-container" data-token="<?php echo esc_attr( $token ); ?>">
             <div class="ffc-verify-loading">
                 <div class="ffc-spinner"></div>
-                <p><?php esc_html_e( 'Verifying certificate...', 'ffc' ); ?></p>
+                <p><?php esc_html_e( 'Verifying certificate...', 'wp-ffcertificate' ); ?></p>
             </div>
             <div class="ffc-verify-result"></div>
         </div>
@@ -147,7 +147,7 @@ class Shortcodes {
                 'form_id' => $form_id,
                 'ip' => \FreeFormCertificate\Core\Utils::get_user_ip()
             ) );
-            return '<p>' . esc_html__( 'Form not found.', 'ffc' ) . '</p>';
+            return '<p>' . esc_html__( 'Form not found.', 'wp-ffcertificate' ) . '</p>';
         }
 
         $form_post  = get_post( $form_id );
@@ -159,7 +159,7 @@ class Shortcodes {
             \FreeFormCertificate\Core\Utils::debug_log( 'Form has no fields', array(
                 'form_id' => $form_id
             ) );
-            return '<p>' . esc_html__( 'Form has no fields.', 'ffc' ) . '</p>';
+            return '<p>' . esc_html__( 'Form has no fields.', 'wp-ffcertificate' ) . '</p>';
         }
 
         // ✅ OPTIMIZED v2.9.2: Log form render
@@ -203,7 +203,7 @@ class Shortcodes {
                     ?>
                     <div class="ffc-form-field ffc-restriction-field">
                         <label for="ffc_password">
-                            <?php esc_html_e('Password', 'ffc'); ?> <span class="required">*</span>
+                            <?php esc_html_e('Password', 'wp-ffcertificate'); ?> <span class="required">*</span>
                         </label>
                         <input type="password" 
                                class="ffc-input" 
@@ -212,7 +212,7 @@ class Shortcodes {
                                required 
                                autocomplete="off"
                                maxlength="20"
-                               placeholder="<?php esc_attr_e('Enter password', 'ffc'); ?>">
+                               placeholder="<?php esc_attr_e('Enter password', 'wp-ffcertificate'); ?>">
                     </div>
                     <?php
                 }
@@ -222,7 +222,7 @@ class Shortcodes {
                     ?>
                     <div class="ffc-form-field ffc-restriction-field">
                         <label for="ffc_ticket">
-                            <?php esc_html_e('Ticket Code', 'ffc'); ?> <span class="required">*</span>
+                            <?php esc_html_e('Ticket Code', 'wp-ffcertificate'); ?> <span class="required">*</span>
                         </label>
                         <input type="text" 
                                class="ffc-input ffc-ticket-input" 
@@ -233,7 +233,7 @@ class Shortcodes {
                                class="ffc-uppercase"
                                autocomplete="off"
                                maxlength="9">
-                        <p class="description"><?php esc_html_e('Enter your unique ticket code', 'ffc'); ?></p>
+                        <p class="description"><?php esc_html_e('Enter your unique ticket code', 'wp-ffcertificate'); ?></p>
                     </div>
                     <?php
                 }
@@ -252,8 +252,8 @@ class Shortcodes {
                             <?php 
                             printf(
                                 /* translators: %s: Privacy Policy page link */
-                                esc_html__( 'I have read and agree to the %s and authorize the storage of my personal data for certificate issuance.', 'ffc' ),
-                                '<a href="' . esc_url( get_privacy_policy_url() ) . '" target="_blank">' . esc_html__( 'Privacy Policy', 'ffc' ) . '</a>'
+                                esc_html__( 'I have read and agree to the %s and authorize the storage of my personal data for certificate issuance.', 'wp-ffcertificate' ),
+                                '<a href="' . esc_url( get_privacy_policy_url() ) . '" target="_blank">' . esc_html__( 'Privacy Policy', 'wp-ffcertificate' ) . '</a>'
                             ); 
                             ?>
                             <span class="required">*</span>
@@ -261,11 +261,11 @@ class Shortcodes {
                     </label>
                     
                     <p class="ffc-consent-description">
-                        <?php esc_html_e( 'Your data will be stored securely and encrypted. You can request deletion at any time.', 'ffc' ); ?>
+                        <?php esc_html_e( 'Your data will be stored securely and encrypted. You can request deletion at any time.', 'wp-ffcertificate' ); ?>
                     </p>
                 </div>
 
-                <button type="submit" class="ffc-submit-btn"><?php esc_html_e( 'Submit', 'ffc' ); ?></button>
+                <button type="submit" class="ffc-submit-btn"><?php esc_html_e( 'Submit', 'wp-ffcertificate' ); ?></button>
                 <div class="ffc-message"></div>
             </form>
         </div>
@@ -308,7 +308,7 @@ class Shortcodes {
 
             <?php elseif ( $type === 'select' ) : ?>
                 <select class="ffc-input" name="<?php echo esc_attr( $name ); ?>" id="<?php echo esc_attr( $name ); ?>" <?php echo $required_attr; ?>>
-                    <option value=""><?php esc_html_e( 'Select...', 'ffc' ); ?></option>
+                    <option value=""><?php esc_html_e( 'Select...', 'wp-ffcertificate' ); ?></option>
                     <?php foreach ( $options as $opt ) : $opt_val = trim($opt); ?>
                         <option value="<?php echo esc_attr( $opt_val ); ?>" <?php selected($default, $opt_val); ?>><?php echo esc_html( $opt_val ); ?></option>
                     <?php endforeach; ?>

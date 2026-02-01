@@ -90,8 +90,8 @@ class Settings {
     public function add_settings_page(): void {
         add_submenu_page(
             'edit.php?post_type=ffc_form',
-            __( 'Settings', 'ffc' ),
-            __( 'Settings', 'ffc' ),
+            __( 'Settings', 'wp-ffcertificate' ),
+            __( 'Settings', 'wp-ffcertificate' ),
             'manage_options',
             'ffc-settings',
             array( $this, 'display_settings_page' )
@@ -194,7 +194,7 @@ class Settings {
             if ( $msg === 'qr_cache_cleared' ) {
                 $cleared = isset( $_GET['cleared'] ) ? intval( $_GET['cleared'] ) : 0;
                 echo '<div class="notice notice-success is-dismissible">';
-                echo '<p>' . sprintf( __( '%d QR Code(s) cleared from cache successfully.', 'ffc' ), $cleared ) . '</p>';
+                echo '<p>' . sprintf( __( '%d QR Code(s) cleared from cache successfully.', 'wp-ffcertificate' ), $cleared ) . '</p>';
                 echo '</div>';
             }
         }
@@ -217,7 +217,7 @@ class Settings {
                 echo '<div class="notice notice-success is-dismissible">';
                 echo '<p>' . sprintf(
                     /* translators: %d: number of forms pre-loaded */
-                    __( '✅ Cache warmed! %d form(s) pre-loaded.', 'ffc' ),
+                    __( '✅ Cache warmed! %d form(s) pre-loaded.', 'wp-ffcertificate' ),
                     $count
                 ) . '</p>';
                 echo '</div>';
@@ -225,14 +225,14 @@ class Settings {
 
             if ($msg === 'cache_cleared') {
                 echo '<div class="notice notice-success is-dismissible">';
-                echo '<p>' . __( '✅ Cache cleared successfully!', 'ffc' ) . '</p>';
+                echo '<p>' . __( '✅ Cache cleared successfully!', 'wp-ffcertificate' ) . '</p>';
                 echo '</div>';
             }
         }
         
         ?>
         <div class="wrap ffc-settings-wrap">
-            <h1><?php esc_html_e( 'Certificate Settings', 'ffc' ); ?></h1>
+            <h1><?php esc_html_e( 'Certificate Settings', 'wp-ffcertificate' ); ?></h1>
             <?php settings_errors( 'ffc_settings' ); ?>
             
             <?php
@@ -285,7 +285,7 @@ class Settings {
         
         // Verify nonce
         if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'ffc_migration_' . $migration_key ) ) {
-            wp_die( __( 'Security check failed.', 'ffc' ) );
+            wp_die( __( 'Security check failed.', 'wp-ffcertificate' ) );
         }
 
         // Autoloader handles class loading
@@ -309,7 +309,7 @@ class Settings {
             $redirect_url = add_query_arg( 'migration_error', urlencode( $result->get_error_message() ), $redirect_url );
         } else {
             $message = sprintf(
-                __( 'Migration executed: %d records processed.', 'ffc' ),
+                __( 'Migration executed: %d records processed.', 'wp-ffcertificate' ),
                 isset( $result['processed'] ) ? $result['processed'] : 0
             );
             $redirect_url = add_query_arg( 'migration_success', urlencode( $message ), $redirect_url );
@@ -342,7 +342,7 @@ class Settings {
             $formatted = date_i18n( $format, strtotime( $sample_date ) );
             wp_send_json_success( array( 'formatted' => $formatted ) );
         } catch ( Exception $e ) {
-            wp_send_json_error( array( 'message' => __( 'Invalid date format', 'ffc' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Invalid date format', 'wp-ffcertificate' ) ) );
         }
     }
 

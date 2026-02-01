@@ -29,19 +29,19 @@ class CPT {
      */
     public function register_form_cpt(): void {
         $labels = array(
-            'name'                  => _x( 'Forms', 'Post Type General Name', 'ffc' ),
-            'singular_name'         => _x( 'Form', 'Post Type Singular Name', 'ffc' ),
-            'menu_name'             => __( 'Free Form Certificate', 'ffc' ),
-            'name_admin_bar'        => __( 'FFC Form', 'ffc' ),
-            'add_new'               => __( 'Add New Form', 'ffc' ),
-            'add_new_item'          => __( 'Add New Form', 'ffc' ),
-            'new_item'              => __( 'New Form', 'ffc' ),
-            'edit_item'             => __( 'Edit Form', 'ffc' ),
-            'view_item'             => __( 'View Form', 'ffc' ),
-            'all_items'             => __( 'All Forms', 'ffc' ),
-            'search_items'          => __( 'Search Forms', 'ffc' ),
-            'not_found'             => __( 'No forms found.', 'ffc' ),
-            'not_found_in_trash'    => __( 'No forms found in Trash.', 'ffc' ),
+            'name'                  => _x( 'Forms', 'Post Type General Name', 'wp-ffcertificate' ),
+            'singular_name'         => _x( 'Form', 'Post Type Singular Name', 'wp-ffcertificate' ),
+            'menu_name'             => __( 'Free Form Certificate', 'wp-ffcertificate' ),
+            'name_admin_bar'        => __( 'FFC Form', 'wp-ffcertificate' ),
+            'add_new'               => __( 'Add New Form', 'wp-ffcertificate' ),
+            'add_new_item'          => __( 'Add New Form', 'wp-ffcertificate' ),
+            'new_item'              => __( 'New Form', 'wp-ffcertificate' ),
+            'edit_item'             => __( 'Edit Form', 'wp-ffcertificate' ),
+            'view_item'             => __( 'View Form', 'wp-ffcertificate' ),
+            'all_items'             => __( 'All Forms', 'wp-ffcertificate' ),
+            'search_items'          => __( 'Search Forms', 'wp-ffcertificate' ),
+            'not_found'             => __( 'No forms found.', 'wp-ffcertificate' ),
+            'not_found_in_trash'    => __( 'No forms found in Trash.', 'wp-ffcertificate' ),
         );
 
         $args = array(
@@ -79,7 +79,7 @@ class CPT {
             'ffc_duplicate_form_nonce'
         );
 
-        $actions['duplicate'] = '<a href="' . esc_url( $url ) . '" title="' . esc_attr__( 'Duplicate this form', 'ffc' ) . '">' . __( 'Duplicate', 'ffc' ) . '</a>';
+        $actions['duplicate'] = '<a href="' . esc_url( $url ) . '" title="' . esc_attr__( 'Duplicate this form', 'wp-ffcertificate' ) . '">' . __( 'Duplicate', 'wp-ffcertificate' ) . '</a>';
 
         return $actions;
     }
@@ -94,7 +94,7 @@ class CPT {
                 'user_id' => get_current_user_id(),
                 'ip' => \FreeFormCertificate\Core\Utils::get_user_ip()
             ) );
-            wp_die( esc_html__( 'You do not have permission to duplicate this post.', 'ffc' ) );
+            wp_die( esc_html__( 'You do not have permission to duplicate this post.', 'wp-ffcertificate' ) );
         }
 
         $post_id = ( isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0 );
@@ -108,12 +108,12 @@ class CPT {
                 'post_id' => $post_id,
                 'user_id' => get_current_user_id()
             ) );
-            wp_die( esc_html__( 'Invalid post.', 'ffc' ) );
+            wp_die( esc_html__( 'Invalid post.', 'wp-ffcertificate' ) );
         }
 
         // ✅ OPTIMIZED v2.9.2: Use \FreeFormCertificate\Core\Utils::sanitize_filename() for title
         $original_title = $post->post_title;
-        $new_title = sprintf( __( '%s (Copy)', 'ffc' ), $original_title );
+        $new_title = sprintf( __( '%s (Copy)', 'wp-ffcertificate' ), $original_title );
 
         // Create new post
         $new_post_args = array(

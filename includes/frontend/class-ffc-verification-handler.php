@@ -226,7 +226,7 @@ class VerificationHandler {
      */
     private function format_verification_response( object $submission, array $data, bool $show_download_button = false ): string {
         $form = get_post( $submission->form_id );
-        $form_title = $form ? $form->post_title : __( 'N/A', 'ffc' );
+        $form_title = $form ? $form->post_title : __( 'N/A', 'wp-ffcertificate' );
         $date_generated = date_i18n(
             get_option('date_format') . ' ' . get_option('time_format'),
             strtotime( $submission->submission_date )
@@ -273,23 +273,23 @@ class VerificationHandler {
     private function get_field_label( string $field_key ): string {
     // Custom labels for known fields
     $labels = array(
-        'cpf_rf'   => __( 'CPF/RF', 'ffc' ),
-        'cpf'      => __( 'CPF', 'ffc' ),
-        'rf'       => __( 'RF', 'ffc' ),
-        'name'     => __( 'Name', 'ffc' ),
-        'email'    => __( 'Email', 'ffc' ),
-        'program'  => __( 'Program', 'ffc' ),
-        'date'     => __( 'Date', 'ffc' ),
-        'rg'       => __( 'RG', 'ffc' ),
-        'phone'    => __( 'Phone', 'ffc' ),
-        'address'  => __( 'Address', 'ffc' ),
-        'city'     => __( 'City', 'ffc' ),
-        'state'    => __( 'State', 'ffc' ),
-        'zip'      => __( 'ZIP Code', 'ffc' ),
-        'course'   => __( 'Course', 'ffc' ),
-        'duration' => __( 'Duration', 'ffc' ),
-        'hours'    => __( 'Hours', 'ffc' ),
-        'grade'    => __( 'Grade', 'ffc' ),
+        'cpf_rf'   => __( 'CPF/RF', 'wp-ffcertificate' ),
+        'cpf'      => __( 'CPF', 'wp-ffcertificate' ),
+        'rf'       => __( 'RF', 'wp-ffcertificate' ),
+        'name'     => __( 'Name', 'wp-ffcertificate' ),
+        'email'    => __( 'Email', 'wp-ffcertificate' ),
+        'program'  => __( 'Program', 'wp-ffcertificate' ),
+        'date'     => __( 'Date', 'wp-ffcertificate' ),
+        'rg'       => __( 'RG', 'wp-ffcertificate' ),
+        'phone'    => __( 'Phone', 'wp-ffcertificate' ),
+        'address'  => __( 'Address', 'wp-ffcertificate' ),
+        'city'     => __( 'City', 'wp-ffcertificate' ),
+        'state'    => __( 'State', 'wp-ffcertificate' ),
+        'zip'      => __( 'ZIP Code', 'wp-ffcertificate' ),
+        'course'   => __( 'Course', 'wp-ffcertificate' ),
+        'duration' => __( 'Duration', 'wp-ffcertificate' ),
+        'hours'    => __( 'Hours', 'wp-ffcertificate' ),
+        'grade'    => __( 'Grade', 'wp-ffcertificate' ),
     );
     
     if ( isset( $labels[$field_key] ) ) {
@@ -347,7 +347,7 @@ class VerificationHandler {
             return array(
                 'success' => false,
                 'html' => '',
-                'message' => __( 'Certificate not found or invalid code.', 'ffc' )
+                'message' => __( 'Certificate not found or invalid code.', 'wp-ffcertificate' )
             );
         }
 
@@ -378,12 +378,12 @@ class VerificationHandler {
         $rate_check = \FreeFormCertificate\Security\RateLimiter::check_verification( $user_ip );
         if ( ! $rate_check['allowed'] ) {
             wp_send_json_error( array(
-                'message' => __( 'Too many verification attempts. Please try again later.', 'ffc' )
+                'message' => __( 'Too many verification attempts. Please try again later.', 'wp-ffcertificate' )
             ) );
         }
 
         if ( empty( $token ) ) {
-            wp_send_json_error( array( 'message' => __( 'Invalid token.', 'ffc' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Invalid token.', 'wp-ffcertificate' ) ) );
         }
 
         // Verify by magic token
@@ -391,13 +391,13 @@ class VerificationHandler {
         
         if ( isset( $result['error'] ) && $result['error'] === 'rate_limited' ) {
             wp_send_json_error( array( 
-                'message' => __( 'Too many attempts. Please try again in 1 minute.', 'ffc' ) 
+                'message' => __( 'Too many attempts. Please try again in 1 minute.', 'wp-ffcertificate' ) 
             ) );
         }
         
         if ( ! $result['found'] ) {
             wp_send_json_error( array( 
-                'message' => '❌ ' . __( 'Certificate not found or invalid link.', 'ffc' ) 
+                'message' => '❌ ' . __( 'Certificate not found or invalid link.', 'wp-ffcertificate' ) 
             ) );
         }
 
@@ -439,20 +439,20 @@ class VerificationHandler {
         $user_ip = \FreeFormCertificate\Core\Utils::get_user_ip();
 
         if ( ! empty( $honeypot ) ) {
-            wp_send_json_error( array( 'message' => __( 'Invalid submission.', 'ffc' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Invalid submission.', 'wp-ffcertificate' ) ) );
         }
 
         $rate_check = \FreeFormCertificate\Security\RateLimiter::check_verification( $user_ip );  
         if ( ! $rate_check['allowed'] ) {
             wp_send_json_error( array( 
-                'message' => __( 'Too many verification attempts. Please try again later.', 'ffc' ) 
+                'message' => __( 'Too many verification attempts. Please try again later.', 'wp-ffcertificate' ) 
             ) );
         }
         
         if ( ! \FreeFormCertificate\Core\Utils::verify_simple_captcha( $captcha_ans, $captcha_hash ) ) {
             $new_captcha = \FreeFormCertificate\Core\Utils::generate_simple_captcha();
             wp_send_json_error( array( 
-                'message' => __( 'Incorrect answer to math question.', 'ffc' ),
+                'message' => __( 'Incorrect answer to math question.', 'wp-ffcertificate' ),
                 'refresh_captcha' => true,
                 'new_label' => $new_captcha['label'],
                 'new_hash' => $new_captcha['hash']
@@ -465,7 +465,7 @@ class VerificationHandler {
         if ( ! $result['found'] ) {
             $new_captcha = \FreeFormCertificate\Core\Utils::generate_simple_captcha();
             wp_send_json_error( array( 
-                'message' => '❌ ' . __( 'Certificate not found or invalid code.', 'ffc' ),
+                'message' => '❌ ' . __( 'Certificate not found or invalid code.', 'wp-ffcertificate' ),
                 'refresh_captcha' => true,
                 'new_label' => $new_captcha['label'],
                 'new_hash' => $new_captcha['hash']

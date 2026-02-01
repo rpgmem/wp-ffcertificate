@@ -75,8 +75,8 @@ class Admin {
     public function register_admin_menu(): void {
         add_submenu_page(
             'edit.php?post_type=ffc_form',
-            __( 'Submissions', 'ffc' ),
-            __( 'Submissions', 'ffc' ),
+            __( 'Submissions', 'wp-ffcertificate' ),
+            __( 'Submissions', 'wp-ffcertificate' ),
             'manage_options',
             'ffc-submissions',
             array( $this, 'display_submissions_page' )
@@ -159,7 +159,7 @@ class Admin {
         $table->prepare_items();
         ?>
         <div class="wrap">
-            <h1 class="wp-heading-inline"><?php _e( 'Submissions', 'ffc' ); ?></h1>
+            <h1 class="wp-heading-inline"><?php esc_html_e( 'Submissions', 'wp-ffcertificate' ); ?></h1>
             <div class="ffc-admin-top-actions">
                 <form method="POST" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
                     <input type="hidden" name="action" value="ffc_export_csv">
@@ -182,9 +182,9 @@ class Admin {
                     <?php
                         endforeach;
                     ?>
-                        <button type="submit" class="button button-primary"><?php _e( 'Export Filtered CSV', 'ffc' ); ?></button>
+                        <button type="submit" class="button button-primary"><?php esc_html_e( 'Export Filtered CSV', 'wp-ffcertificate' ); ?></button>
                     <?php else: ?>
-                        <button type="submit" class="button"><?php _e( 'Export All CSV', 'ffc' ); ?></button>
+                        <button type="submit" class="button"><?php esc_html_e( 'Export All CSV', 'wp-ffcertificate' ); ?></button>
                     <?php endif; ?>
                     <?php wp_nonce_field('ffc_export_csv_nonce','ffc_export_csv_action'); ?>
                 </form>
@@ -195,7 +195,7 @@ class Admin {
                 <input type="hidden" name="page" value="ffc-submissions">
                 <?php
                 $table->views();
-                $table->search_box( __( 'Search', 'ffc' ), 's' );
+                $table->search_box( __( 'Search', 'wp-ffcertificate' ), 's' );
                 ?>
                 <div class="ffc-table-responsive">
                     <?php $table->display(); ?>
@@ -219,28 +219,28 @@ class Admin {
 
         switch ($msg) {
             case 'trash':
-                $text = __('Item moved to trash.', 'ffc');
+                $text = __('Item moved to trash.', 'wp-ffcertificate');
                 break;
             case 'restore':
-                $text = __('Item restored.', 'ffc');
+                $text = __('Item restored.', 'wp-ffcertificate');
                 break;
             case 'delete':
-                $text = __('Item permanently deleted.', 'ffc');
+                $text = __('Item permanently deleted.', 'wp-ffcertificate');
                 break;
             case 'bulk_done':
-                $text = __('Bulk action completed.', 'ffc');
+                $text = __('Bulk action completed.', 'wp-ffcertificate');
                 break;
             case 'updated':
-                $text = __('Submission updated successfully.', 'ffc');
+                $text = __('Submission updated successfully.', 'wp-ffcertificate');
                 break;
             case 'migration_success':
                 $migrated = isset($_GET['migrated']) ? intval($_GET['migrated']) : 0;
-                $migration_name = isset($_GET['migration_name']) ? urldecode($_GET['migration_name']) : __('Migration', 'ffc');
-                $text = sprintf(__('%s: %d records migrated successfully.', 'ffc'), $migration_name, $migrated);
+                $migration_name = isset($_GET['migration_name']) ? urldecode($_GET['migration_name']) : __('Migration', 'wp-ffcertificate');
+                $text = sprintf(__('%s: %d records migrated successfully.', 'wp-ffcertificate'), $migration_name, $migrated);
                 break;
             case 'migration_error':
-                $error_msg = isset($_GET['error_msg']) ? urldecode($_GET['error_msg']) : __('Unknown error', 'ffc');
-                $text = __('Migration Error: ', 'ffc') . $error_msg;
+                $error_msg = isset($_GET['error_msg']) ? urldecode($_GET['error_msg']) : __('Unknown error', 'wp-ffcertificate');
+                $text = __('Migration Error: ', 'wp-ffcertificate') . $error_msg;
                 $type = 'error';
                 break;
         }
@@ -278,7 +278,7 @@ class Admin {
         }
 
         if ( ! current_user_can( 'manage_options' ) ) {
-            wp_die( __( 'Insufficient permissions', 'ffc' ) );
+            wp_die( __( 'Insufficient permissions', 'wp-ffcertificate' ) );
         }
 
         $migration_key = sanitize_key( $_GET['ffc_migration'] );
@@ -289,7 +289,7 @@ class Admin {
         // Get migration info
         $migration = $this->migration_manager->get_migration( $migration_key );
         if ( ! $migration ) {
-            wp_die( __( 'Invalid migration key', 'ffc' ) );
+            wp_die( __( 'Invalid migration key', 'wp-ffcertificate' ) );
         }
 
         // Run migration
