@@ -1,13 +1,16 @@
 <?php
 /*
-Plugin Name: Free Form Certificate
-Plugin URI:  https://github.com/rpgmem/wp-ffcertificate
-Description: Allows creation of dynamic forms, saves submissions, generates a PDF certificate, and enables CSV export.
-Version: 4.0.0
-Author: Alex Meusburger
-Author URI: https://github.com/rpgmem
-Text Domain: ffc
-Domain Path: /languages
+Plugin Name:        Free Form Certificate
+Plugin URI:         https://github.com/rpgmem/wp-ffcertificate
+Description:        Allows creation of dynamic forms, saves submissions, generates a PDF certificate, and enables CSV export.
+Version:            4.0.0
+Requires PHP:       7.4
+Author:             Alex Meusburger
+Author URI:         https://github.com/rpgmem
+License:             GPLv3 or later
+License URI:         https://www.gnu.org/licenses/gpl-3.0.html
+Text Domain:        ffc
+Domain Path:        /languages
 */
 
 if ( ! defined( 'ABSPATH' ) ) {
