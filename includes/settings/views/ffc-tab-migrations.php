@@ -20,16 +20,16 @@ $migrations = $migration_manager->get_migrations();
 <div class="ffc-migrations-settings-wrap">
     
     <div class="card">
-        <h2>⚙️ <?php esc_html_e( 'Database Migrations', 'ffc' ); ?></h2>
+        <h2>⚙️ <?php esc_html_e( 'Database Migrations', 'wp-ffcertificate' ); ?></h2>
         
         <p class="description">
-            <?php esc_html_e( 'Manage database structure migrations to improve performance and data organization. These migrations move data from JSON storage to dedicated database columns for faster queries and better reliability.', 'ffc' ); ?>
+            <?php esc_html_e( 'Manage database structure migrations to improve performance and data organization. These migrations move data from JSON storage to dedicated database columns for faster queries and better reliability.', 'wp-ffcertificate' ); ?>
         </p>
         
         <div class="ffc-migration-warning">
             <p>
-                <strong>ℹ️ <?php esc_html_e( 'Important:', 'ffc' ); ?></strong>
-                <?php esc_html_e( 'Migrations are safe to run multiple times. Each migration processes up to 100 records at a time. Run again if needed until 100% complete.', 'ffc' ); ?>
+                <strong>ℹ️ <?php esc_html_e( 'Important:', 'wp-ffcertificate' ); ?></strong>
+                <?php esc_html_e( 'Migrations are safe to run multiple times. Each migration processes up to 100 records at a time. Run again if needed until 100% complete.', 'wp-ffcertificate' ); ?>
             </p>
         </div>
     </div>
@@ -39,7 +39,7 @@ $migrations = $migration_manager->get_migrations();
     if ( empty( $migrations ) ) :
     ?>
         <div class="notice notice-info inline">
-            <p><?php esc_html_e( 'No migrations available at this time.', 'ffc' ); ?></p>
+            <p><?php esc_html_e( 'No migrations available at this time.', 'wp-ffcertificate' ); ?></p>
         </div>
     <?php
     else :
@@ -104,7 +104,7 @@ $migrations = $migration_manager->get_migrations();
             <div class="ffc-migration-stats">
                 <div>
                     <div class="ffc-migration-stat-label">
-                        <?php esc_html_e( 'Total Records', 'ffc' ); ?>
+                        <?php esc_html_e( 'Total Records', 'wp-ffcertificate' ); ?>
                     </div>
                     <div class="ffc-migration-stat-value">
                         <?php echo esc_html( $total ); ?>
@@ -113,7 +113,7 @@ $migrations = $migration_manager->get_migrations();
                 
                 <div>
                     <div class="ffc-migration-stat-label">
-                        <?php esc_html_e( 'Migrated', 'ffc' ); ?>
+                        <?php esc_html_e( 'Migrated', 'wp-ffcertificate' ); ?>
                     </div>
                     <div class="ffc-migration-stat-value success">
                         <?php echo esc_html( $migrated ); ?>
@@ -122,7 +122,7 @@ $migrations = $migration_manager->get_migrations();
                 
                 <div>
                     <div class="ffc-migration-stat-label">
-                        <?php esc_html_e( 'Pending', 'ffc' ); ?>
+                        <?php esc_html_e( 'Pending', 'wp-ffcertificate' ); ?>
                     </div>
                     <div class="ffc-migration-stat-value <?php echo esc_attr( $stat_pending_class ); ?>">
                         <?php echo esc_html( $pending ); ?>
@@ -131,7 +131,7 @@ $migrations = $migration_manager->get_migrations();
                 
                 <div>
                     <div class="ffc-migration-stat-label">
-                        <?php esc_html_e( 'Progress', 'ffc' ); ?>
+                        <?php esc_html_e( 'Progress', 'wp-ffcertificate' ); ?>
                     </div>
                     <div class="ffc-migration-stat-value <?php echo esc_attr( $stat_progress_class ); ?>">
                         <?php echo number_format( $percent, 1 ); ?>%
@@ -144,7 +144,7 @@ $migrations = $migration_manager->get_migrations();
                 <div class="ffc-progress-bar-container">
                     <div class="ffc-progress-bar-fill <?php echo esc_attr( $progress_color ); ?>"></div>
                     <div class="ffc-progress-bar-label <?php echo esc_attr( $label_class ); ?>">
-                        <?php echo number_format( $percent, 1 ); ?>% <?php esc_html_e( 'Complete', 'ffc' ); ?>
+                        <?php echo number_format( $percent, 1 ); ?>% <?php esc_html_e( 'Complete', 'wp-ffcertificate' ); ?>
                     </div>
                 </div>
             </div>
@@ -154,24 +154,27 @@ $migrations = $migration_manager->get_migrations();
                 <?php if ( $is_complete ) : ?>
                     <span class="button button-secondary" disabled>
                         <span class="dashicons dashicons-yes-alt"></span>
-                        <?php esc_html_e( 'Migration Complete', 'ffc' ); ?>
+                        <?php esc_html_e( 'Migration Complete', 'wp-ffcertificate' ); ?>
                     </span>
                     
                     <p class="description">
-                        ✓ <?php esc_html_e( 'All records have been successfully migrated.', 'ffc' ); ?>
+                        ✓ <?php esc_html_e( 'All records have been successfully migrated.', 'wp-ffcertificate' ); ?>
                     </p>
                 <?php else : ?>
                     <a href="<?php echo esc_url( $migrate_url ); ?>"
                        class="button button-primary"
-                       onclick="return confirm('<?php echo esc_js( sprintf( __( 'Run %s migration?\n\nThis will automatically process ALL records in batches of 100 until complete.', 'ffc' ), $migration['name'] ) ); ?>')">
+                       onclick="return confirm('<?php echo esc_js( sprintf(
+                           /* translators: %s: migration name */
+                           __( 'Run %s migration?\n\nThis will automatically process ALL records in batches of 100 until complete.', 'wp-ffcertificate' ), $migration['name'] ) ); ?>')">
                         <span class="dashicons dashicons-update"></span>
-                        <?php esc_html_e( 'Run Migration', 'ffc' ); ?>
+                        <?php esc_html_e( 'Run Migration', 'wp-ffcertificate' ); ?>
                     </a>
 
                     <p class="description">
                         <?php
+                        /* translators: %s: number of pending records */
                         printf(
-                            esc_html__( 'Click once to process all records automatically. %s records remaining.', 'ffc' ),
+                            esc_html__( 'Click once to process all records automatically. %s records remaining.', 'wp-ffcertificate' ),
                             '<strong>' . esc_html( $pending ) . '</strong>'
                         );
                         ?>
@@ -188,19 +191,19 @@ $migrations = $migration_manager->get_migrations();
     
     <!-- Help Section -->
     <div class="card ffc-migration-help">
-        <h3>❓ <?php esc_html_e( 'Need Help?', 'ffc' ); ?></h3>
+        <h3>❓ <?php esc_html_e( 'Need Help?', 'wp-ffcertificate' ); ?></h3>
         
-        <p><strong><?php esc_html_e( 'What are migrations?', 'ffc' ); ?></strong></p>
-        <p><?php esc_html_e( 'Migrations improve database performance by moving frequently queried data from JSON format to dedicated database columns. This makes searches and filtering much faster.', 'ffc' ); ?></p>
+        <p><strong><?php esc_html_e( 'What are migrations?', 'wp-ffcertificate' ); ?></strong></p>
+        <p><?php esc_html_e( 'Migrations improve database performance by moving frequently queried data from JSON format to dedicated database columns. This makes searches and filtering much faster.', 'wp-ffcertificate' ); ?></p>
         
-        <p><strong><?php esc_html_e( 'Is it safe?', 'ffc' ); ?></strong></p>
-        <p><?php esc_html_e( 'Yes! Migrations only copy data to new columns - your original data remains intact. They are safe to run multiple times.', 'ffc' ); ?></p>
+        <p><strong><?php esc_html_e( 'Is it safe?', 'wp-ffcertificate' ); ?></strong></p>
+        <p><?php esc_html_e( 'Yes! Migrations only copy data to new columns - your original data remains intact. They are safe to run multiple times.', 'wp-ffcertificate' ); ?></p>
         
-        <p><strong><?php esc_html_e( 'How many times should I run it?', 'ffc' ); ?></strong></p>
-        <p><?php esc_html_e( 'Just click "Run Migration" once! The process will automatically continue processing batches of 100 records until complete. You can watch the progress bar update in real-time.', 'ffc' ); ?></p>
+        <p><strong><?php esc_html_e( 'How many times should I run it?', 'wp-ffcertificate' ); ?></strong></p>
+        <p><?php esc_html_e( 'Just click "Run Migration" once! The process will automatically continue processing batches of 100 records until complete. You can watch the progress bar update in real-time.', 'wp-ffcertificate' ); ?></p>
         
-        <p><strong><?php esc_html_e( 'Can I undo a migration?', 'ffc' ); ?></strong></p>
-        <p><?php esc_html_e( 'Migrations cannot be undone, but they don\'t delete any data. If you experience issues, your original data remains in the JSON column and can be accessed.', 'ffc' ); ?></p>
+        <p><strong><?php esc_html_e( 'Can I undo a migration?', 'wp-ffcertificate' ); ?></strong></p>
+        <p><?php esc_html_e( 'Migrations cannot be undone, but they don\'t delete any data. If you experience issues, your original data remains in the JSON column and can be accessed.', 'wp-ffcertificate' ); ?></p>
     </div>
 
 </div>
@@ -224,7 +227,7 @@ jQuery(document).ready(function($) {
         }
 
         // Disable button and show processing
-        $btn.prop('disabled', true).html('<span class="dashicons dashicons-update dashicons-spin"></span> <?php esc_html_e( 'Processing...', 'ffc' ); ?>');
+        $btn.prop('disabled', true).html('<span class="dashicons dashicons-update dashicons-spin"></span> <?php esc_html_e( 'Processing...', 'wp-ffcertificate' ); ?>');
 
         function runBatch() {
             $.ajax({
@@ -244,7 +247,7 @@ jQuery(document).ready(function($) {
                         var newPercent = $newProgress.attr('style').match(/width:\s*(\d+\.?\d*)%/);
                         if (newPercent) {
                             $card.find('.ffc-progress-bar-fill').attr('style', 'width: ' + newPercent[1] + '%');
-                            $card.find('.ffc-progress-bar-label').text(newPercent[1] + '% <?php esc_html_e( 'Complete', 'ffc' ); ?>');
+                            $card.find('.ffc-progress-bar-label').text(newPercent[1] + '% <?php esc_html_e( 'Complete', 'wp-ffcertificate' ); ?>');
                         }
 
                         // Update counters
@@ -252,15 +255,15 @@ jQuery(document).ready(function($) {
                         $card.find('.ffc-migration-stats').html($newStats.html());
 
                         totalProcessed += 100; // Approximate
-                        $description.html('<?php esc_html_e( 'Processed ', 'ffc' ); ?><strong>' + totalProcessed + '</strong> <?php esc_html_e( 'records...', 'ffc' ); ?>');
+                        $description.html('<?php esc_html_e( 'Processed ', 'wp-ffcertificate' ); ?><strong>' + totalProcessed + '</strong> <?php esc_html_e( 'records...', 'wp-ffcertificate' ); ?>');
 
                         // Check if complete (button is disabled or has "Complete" text)
                         var isComplete = $newCard.find('.button[disabled]').length > 0;
 
                         if (isComplete) {
                             // Migration complete!
-                            $btn.html('<span class="dashicons dashicons-yes-alt"></span> <?php esc_html_e( 'Migration Complete', 'ffc' ); ?>');
-                            $description.html('✓ <?php esc_html_e( 'All records have been successfully migrated.', 'ffc' ); ?>');
+                            $btn.html('<span class="dashicons dashicons-yes-alt"></span> <?php esc_html_e( 'Migration Complete', 'wp-ffcertificate' ); ?>');
+                            $description.html('✓ <?php esc_html_e( 'All records have been successfully migrated.', 'wp-ffcertificate' ); ?>');
 
                             // Reload page after 2 seconds to show final state
                             setTimeout(function() {
@@ -278,7 +281,7 @@ jQuery(document).ready(function($) {
                 error: function(xhr, status, error) {
                     console.error('Migration error:', error);
                     $btn.prop('disabled', false).html(originalBtnHtml);
-                    $description.html('✗ <?php esc_html_e( 'Error occurred. Please try again.', 'ffc' ); ?>');
+                    $description.html('✗ <?php esc_html_e( 'Error occurred. Please try again.', 'wp-ffcertificate' ); ?>');
                 }
             });
         }

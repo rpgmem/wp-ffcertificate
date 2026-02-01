@@ -80,20 +80,20 @@ class DashboardShortcode {
                 <?php if ($can_view_certificates) : ?>
                     <button class="ffc-tab <?php echo $current_tab === 'certificates' ? 'active' : ''; ?>"
                             data-tab="certificates">
-                        📜 <?php esc_html_e('My Certificates', 'ffc'); ?>
+                        📜 <?php esc_html_e('My Certificates', 'wp-ffcertificate'); ?>
                     </button>
                 <?php endif; ?>
 
                 <?php if ($can_view_appointments) : ?>
                     <button class="ffc-tab <?php echo $current_tab === 'appointments' ? 'active' : ''; ?>"
                             data-tab="appointments">
-                        📅 <?php esc_html_e('My Appointments', 'ffc'); ?>
+                        📅 <?php esc_html_e('My Appointments', 'wp-ffcertificate'); ?>
                     </button>
                 <?php endif; ?>
 
                 <button class="ffc-tab <?php echo $current_tab === 'profile' ? 'active' : ''; ?>"
                         data-tab="profile">
-                    👤 <?php esc_html_e('My Profile', 'ffc'); ?>
+                    👤 <?php esc_html_e('My Profile', 'wp-ffcertificate'); ?>
                 </button>
             </nav>
 
@@ -101,7 +101,7 @@ class DashboardShortcode {
                 <div class="ffc-tab-content <?php echo $current_tab === 'certificates' ? 'active' : ''; ?>"
                      id="tab-certificates">
                     <div class="ffc-loading">
-                        <?php esc_html_e('Loading certificates...', 'ffc'); ?>
+                        <?php esc_html_e('Loading certificates...', 'wp-ffcertificate'); ?>
                     </div>
                 </div>
             <?php endif; ?>
@@ -110,7 +110,7 @@ class DashboardShortcode {
                 <div class="ffc-tab-content <?php echo $current_tab === 'appointments' ? 'active' : ''; ?>"
                      id="tab-appointments">
                     <div class="ffc-loading">
-                        <?php esc_html_e('Loading appointments...', 'ffc'); ?>
+                        <?php esc_html_e('Loading appointments...', 'wp-ffcertificate'); ?>
                     </div>
                 </div>
             <?php endif; ?>
@@ -118,7 +118,7 @@ class DashboardShortcode {
             <div class="ffc-tab-content <?php echo $current_tab === 'profile' ? 'active' : ''; ?>"
                  id="tab-profile">
                 <div class="ffc-loading">
-                    <?php esc_html_e('Loading profile...', 'ffc'); ?>
+                    <?php esc_html_e('Loading profile...', 'wp-ffcertificate'); ?>
                 </div>
             </div>
         </div>
@@ -179,12 +179,12 @@ class DashboardShortcode {
         <div class="ffc-dashboard-notice ffc-notice-admin-viewing">
             <div class="ffc-dashboard-header">
                 <div>
-                    <strong>🔍 <?php esc_html_e('Admin View Mode', 'ffc'); ?></strong>
+                    <strong>🔍 <?php esc_html_e('Admin View Mode', 'wp-ffcertificate'); ?></strong>
                     <p class="ffc-m-5-0">
                         <?php
                         printf(
                             /* translators: 1: Admin name, 2: User name */
-                            esc_html__('You (%1$s) are viewing the dashboard as: %2$s', 'ffc'),
+                            esc_html__('You (%1$s) are viewing the dashboard as: %2$s', 'wp-ffcertificate'),
                             '<strong>' . esc_html($admin->display_name) . '</strong>',
                             '<strong>' . esc_html($user->display_name) . ' (' . esc_html($user->user_email) . ')</strong>'
                         );
@@ -193,7 +193,7 @@ class DashboardShortcode {
                 </div>
                 <div>
                     <a href="<?php echo esc_url($exit_url); ?>" class="button button-primary">
-                        <?php esc_html_e('Exit View Mode', 'ffc'); ?>
+                        <?php esc_html_e('Exit View Mode', 'wp-ffcertificate'); ?>
                     </a>
                 </div>
             </div>
@@ -211,10 +211,10 @@ class DashboardShortcode {
         ob_start();
         ?>
         <div class="ffc-dashboard-notice ffc-notice-warning">
-            <p><?php esc_html_e('You must be logged in to view your dashboard.', 'ffc'); ?></p>
+            <p><?php esc_html_e('You must be logged in to view your dashboard.', 'wp-ffcertificate'); ?></p>
             <p>
                 <a href="<?php echo esc_url(wp_login_url(get_permalink())); ?>" class="button">
-                    <?php esc_html_e('Login', 'ffc'); ?>
+                    <?php esc_html_e('Login', 'wp-ffcertificate'); ?>
                 </a>
             </p>
         </div>
@@ -233,7 +233,7 @@ class DashboardShortcode {
         }
 
         $settings = get_option('ffc_user_access_settings', array());
-        $message = $settings['redirect_message'] ?? __('You were redirected from the admin panel. Use this dashboard to access your certificates.', 'ffc');
+        $message = $settings['redirect_message'] ?? __('You were redirected from the admin panel. Use this dashboard to access your certificates.', 'wp-ffcertificate');
 
         ob_start();
         ?>
@@ -281,37 +281,37 @@ class DashboardShortcode {
             'canViewCertificates' => $can_view_certificates,
             'canViewAppointments' => $can_view_appointments,
             'strings' => array(
-                'loading' => __('Loading...', 'ffc'),
-                'error' => __('Error loading data', 'ffc'),
-                'noCertificates' => __('No certificates found', 'ffc'),
-                'noAppointments' => __('No appointments found', 'ffc'),
-                'downloadPdf' => __('View PDF', 'ffc'),
-                'yes' => __('Yes', 'ffc'),
-                'no' => __('No', 'ffc'),
+                'loading' => __('Loading...', 'wp-ffcertificate'),
+                'error' => __('Error loading data', 'wp-ffcertificate'),
+                'noCertificates' => __('No certificates found', 'wp-ffcertificate'),
+                'noAppointments' => __('No appointments found', 'wp-ffcertificate'),
+                'downloadPdf' => __('View PDF', 'wp-ffcertificate'),
+                'yes' => __('Yes', 'wp-ffcertificate'),
+                'no' => __('No', 'wp-ffcertificate'),
                 // Table headers
-                'eventName' => __('Event Name', 'ffc'),
-                'calendar' => __('Calendar', 'ffc'),
-                'date' => __('Date', 'ffc'),
-                'time' => __('Time', 'ffc'),
-                'status' => __('Status', 'ffc'),
-                'consent' => __('Consent (LGPD)', 'ffc'),
-                'email' => __('Email', 'ffc'),
-                'code' => __('Code', 'ffc'),
-                'actions' => __('Actions', 'ffc'),
-                'notes' => __('Notes', 'ffc'),
+                'eventName' => __('Event Name', 'wp-ffcertificate'),
+                'calendar' => __('Calendar', 'wp-ffcertificate'),
+                'date' => __('Date', 'wp-ffcertificate'),
+                'time' => __('Time', 'wp-ffcertificate'),
+                'status' => __('Status', 'wp-ffcertificate'),
+                'consent' => __('Consent (LGPD)', 'wp-ffcertificate'),
+                'email' => __('Email', 'wp-ffcertificate'),
+                'code' => __('Code', 'wp-ffcertificate'),
+                'actions' => __('Actions', 'wp-ffcertificate'),
+                'notes' => __('Notes', 'wp-ffcertificate'),
                 // Profile fields
-                'name' => __('Name:', 'ffc'),
-                'linkedEmails' => __('Linked Emails:', 'ffc'),
-                'cpfRf' => __('CPF/RF:', 'ffc'),
-                'memberSince' => __('Member Since:', 'ffc'),
+                'name' => __('Name:', 'wp-ffcertificate'),
+                'linkedEmails' => __('Linked Emails:', 'wp-ffcertificate'),
+                'cpfRf' => __('CPF/RF:', 'wp-ffcertificate'),
+                'memberSince' => __('Member Since:', 'wp-ffcertificate'),
                 // Appointment actions
-                'cancelAppointment' => __('Cancel', 'ffc'),
-                'viewReceipt' => __('View Receipt', 'ffc'),
-                'viewDetails' => __('View Details', 'ffc'),
-                'confirmCancel' => __('Are you sure you want to cancel this appointment?', 'ffc'),
-                'cancelSuccess' => __('Appointment cancelled successfully', 'ffc'),
-                'cancelError' => __('Error cancelling appointment', 'ffc'),
-                'noPermission' => __('You do not have permission to view this content.', 'ffc'),
+                'cancelAppointment' => __('Cancel', 'wp-ffcertificate'),
+                'viewReceipt' => __('View Receipt', 'wp-ffcertificate'),
+                'viewDetails' => __('View Details', 'wp-ffcertificate'),
+                'confirmCancel' => __('Are you sure you want to cancel this appointment?', 'wp-ffcertificate'),
+                'cancelSuccess' => __('Appointment cancelled successfully', 'wp-ffcertificate'),
+                'cancelError' => __('Error cancelling appointment', 'wp-ffcertificate'),
+                'noPermission' => __('You do not have permission to view this content.', 'wp-ffcertificate'),
             ),
         ));
     }

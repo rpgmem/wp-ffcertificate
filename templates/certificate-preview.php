@@ -24,29 +24,29 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <div class="ffc-certificate-preview">
     <div class="ffc-preview-header">
-        <span class="ffc-status-badge success">✅ <?php esc_html_e( 'Valid Certificate', 'ffc' ); ?></span>
+        <span class="ffc-status-badge success">✅ <?php esc_html_e( 'Valid Certificate', 'wp-ffcertificate' ); ?></span>
     </div>
 
     <div class="ffc-preview-body">
-        <h3><?php esc_html_e( 'Certificate Details', 'ffc' ); ?></h3>
+        <h3><?php esc_html_e( 'Certificate Details', 'wp-ffcertificate' ); ?></h3>
 
         <div class="ffc-detail-row">
-            <span class="label"><?php esc_html_e( 'Authentication Code:', 'ffc' ); ?></span>
+            <span class="label"><?php esc_html_e( 'Authentication Code:', 'wp-ffcertificate' ); ?></span>
             <span class="value code"><?php echo esc_html( $display_code ); ?></span>
         </div>
 
         <div class="ffc-detail-row">
-            <span class="label"><?php esc_html_e( 'Event:', 'ffc' ); ?></span>
+            <span class="label"><?php esc_html_e( 'Event:', 'wp-ffcertificate' ); ?></span>
             <span class="value"><?php echo esc_html( $form_title ); ?></span>
         </div>
 
         <div class="ffc-detail-row">
-            <span class="label"><?php esc_html_e( 'Issued on:', 'ffc' ); ?></span>
+            <span class="label"><?php esc_html_e( 'Issued on:', 'wp-ffcertificate' ); ?></span>
             <span class="value"><?php echo esc_html( $date_generated ); ?></span>
         </div>
 
         <hr>
-        <h4><?php esc_html_e( 'Participant Data:', 'ffc' ); ?></h4>
+        <h4><?php esc_html_e( 'Participant Data:', 'wp-ffcertificate' ); ?></h4>
 
         <?php if ( is_array( $data ) ) : ?>
             <?php
@@ -90,7 +90,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     <?php if ( $show_download_button ) : ?>
         <div class="ffc-preview-actions">
             <button class="ffc-download-btn ffc-download-pdf-btn" data-submission-id="<?php echo esc_attr( $submission->id ); ?>">
-                ⬇️ <?php esc_html_e( 'Download Certificate (PDF)', 'ffc' ); ?>
+                ⬇️ <?php esc_html_e( 'Download Certificate (PDF)', 'wp-ffcertificate' ); ?>
             </button>
         </div>
     <?php endif; ?>
