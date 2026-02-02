@@ -210,11 +210,13 @@ class SubmissionsList extends \WP_List_Table {
 
         // ✅ NEW: Filter by form ID(s)
         $filter_form_ids = [];
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- empty() existence check only.
         if ( !empty( $_GET['filter_form_id'] ) ) {
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- is_array() type check only.
             if ( is_array( $_GET['filter_form_id'] ) ) {
-                $filter_form_ids = array_map( 'absint', $_GET['filter_form_id'] );
+                $filter_form_ids = array_map( 'absint', wp_unslash( $_GET['filter_form_id'] ) );
             } else {
-                $filter_form_ids = [ absint( $_GET['filter_form_id'] ) ];
+                $filter_form_ids = [ absint( wp_unslash( $_GET['filter_form_id'] ) ) ];
             }
         }
         // phpcs:enable WordPress.Security.NonceVerification.Recommended
@@ -295,11 +297,13 @@ class SubmissionsList extends \WP_List_Table {
 
         // phpcs:disable WordPress.Security.NonceVerification.Recommended -- Display filter parameter for form selection.
         $selected_form_ids = [];
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- empty() existence check only.
         if ( !empty( $_GET['filter_form_id'] ) ) {
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- is_array() type check only.
             if ( is_array( $_GET['filter_form_id'] ) ) {
-                $selected_form_ids = array_map( 'absint', $_GET['filter_form_id'] );
+                $selected_form_ids = array_map( 'absint', wp_unslash( $_GET['filter_form_id'] ) );
             } else {
-                $selected_form_ids = [ absint( $_GET['filter_form_id'] ) ];
+                $selected_form_ids = [ absint( wp_unslash( $_GET['filter_form_id'] ) ) ];
             }
         }
         // phpcs:enable WordPress.Security.NonceVerification.Recommended

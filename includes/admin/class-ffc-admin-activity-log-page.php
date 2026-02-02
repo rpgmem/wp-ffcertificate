@@ -49,7 +49,7 @@ class AdminActivityLogPage {
 
         // Get filter parameters
         // phpcs:disable WordPress.Security.NonceVerification.Recommended -- These are standard admin page filter/pagination parameters.
-        $current_page = isset( $_GET['paged'] ) ? max( 1, absint( $_GET['paged'] ) ) : 1;
+        $current_page = isset( $_GET['paged'] ) ? max( 1, absint( wp_unslash( $_GET['paged'] ) ) ) : 1;
         $per_page = 50;
         $level = isset( $_GET['level'] ) ? sanitize_key( wp_unslash( $_GET['level'] ) ) : '';
         $action = isset( $_GET['log_action'] ) ? sanitize_text_field( wp_unslash( $_GET['log_action'] ) ) : '';

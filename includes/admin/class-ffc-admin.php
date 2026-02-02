@@ -105,8 +105,9 @@ class Admin {
         // phpcs:disable WordPress.Security.NonceVerification.Recommended -- Nonce verified per-action below via wp_verify_nonce and check_admin_referer.
         if ( ! isset( $_GET['page'] ) || sanitize_text_field( wp_unslash( $_GET['page'] ) ) !== 'ffc-submissions' ) return;
 
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- isset() existence checks only.
         if ( isset( $_GET['submission_id'] ) && isset( $_GET['action'] ) ) {
-            $id     = absint( $_GET['submission_id'] );
+            $id     = absint( wp_unslash( $_GET['submission_id'] ) );
             $action = sanitize_key( wp_unslash( $_GET['action'] ) );
             $nonce  = isset($_GET['_wpnonce']) ? sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ) : '';
             $manipulation_actions = array( 'trash', 'restore', 'delete' );
@@ -121,6 +122,7 @@ class Admin {
             }
         }
 
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- isset()/is_array() existence and type checks only.
         if ( isset($_GET['action']) && isset($_GET['submission']) && is_array($_GET['submission']) ) {
             $bulk_action = sanitize_key( wp_unslash( $_GET['action'] ) );
             if ( $bulk_action === '-1' && isset($_GET['action2']) ) $bulk_action = sanitize_key( wp_unslash( $_GET['action2'] ) );
@@ -128,7 +130,7 @@ class Admin {
             $allowed_bulk = array( 'bulk_trash', 'bulk_restore', 'bulk_delete' );
             if ( in_array( $bulk_action, $allowed_bulk ) ) {
                 check_admin_referer('bulk-submissions');
-                $ids = array_map('absint', $_GET['submission']);
+                $ids = array_map( 'absint', wp_unslash( $_GET['submission'] ) );
 
                 // Use optimized bulk methods (single query + single log)
                 if ( $bulk_action === 'bulk_trash' ) {
@@ -171,11 +173,13 @@ class Admin {
                     // ✅ Support multiple form filters
                     // phpcs:disable WordPress.Security.NonceVerification.Recommended -- Display filter parameter for form selection.
                     $filter_form_ids = [];
+                    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- empty() existence check only.
                     if ( !empty( $_GET['filter_form_id'] ) ) {
+                        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- is_array() type check only.
                         if ( is_array( $_GET['filter_form_id'] ) ) {
-                            $filter_form_ids = array_map( 'absint', $_GET['filter_form_id'] );
+                            $filter_form_ids = array_map( 'absint', wp_unslash( $_GET['filter_form_id'] ) );
                         } else {
-                            $filter_form_ids = [ absint( $_GET['filter_form_id'] ) ];
+                            $filter_form_ids = [ absint( wp_unslash( $_GET['filter_form_id'] ) ) ];
                         }
                     }
                     // phpcs:enable WordPress.Security.NonceVerification.Recommended
@@ -218,6 +222,7 @@ class Admin {
 
     private function display_admin_notices(): void {
         // phpcs:disable WordPress.Security.NonceVerification.Recommended -- Display-only URL parameters from admin redirects.
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- isset() existence check only.
         if (!isset($_GET['msg'])) return;
         $msg = sanitize_key( wp_unslash( $_GET['msg'] ) );
         $text = '';
@@ -240,7 +245,7 @@ class Admin {
                 $text = __('Submission updated successfully.', 'wp-ffcertificate');
                 break;
             case 'migration_success':
-                $migrated = isset($_GET['migrated']) ? intval($_GET['migrated']) : 0;
+                $migrated = isset( $_GET['migrated'] ) ? absint( wp_unslash( $_GET['migrated'] ) ) : 0;
                 $migration_name = isset($_GET['migration_name']) ? sanitize_text_field( wp_unslash( urldecode($_GET['migration_name']) ) ) : __('Migration', 'wp-ffcertificate');
                 /* translators: 1: migration name, 2: number of records migrated */
                 $text = sprintf(__('%1$s: %2$d records migrated successfully.', 'wp-ffcertificate'), $migration_name, $migrated);
@@ -262,7 +267,7 @@ class Admin {
     private function render_edit_page(): void {
         // ✅ v3.1.1: Extracted to FFC_Admin_Submission_Edit_Page
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Routing parameter for edit page display.
-        $submission_id = isset( $_GET['submission_id'] ) ? absint( $_GET['submission_id'] ) : 0;
+        $submission_id = isset( $_GET['submission_id'] ) ? absint( wp_unslash( $_GET['submission_id'] ) ) : 0;
         $this->edit_page->render( $submission_id );
     }
 

@@ -70,12 +70,12 @@ $wp_ffcertificate_custom_format = $wp_ffcertificate_get_option('date_format_cust
                             <span class="ffc-text-info ffc-monospace">
                                 <?php
                                 $wp_ffcertificate_preview_date = '2026-01-04 15:30:45';
-                                echo date_i18n(($wp_ffcertificate_current_format === 'custom' && !empty($wp_ffcertificate_custom_format)) ? $wp_ffcertificate_custom_format : $wp_ffcertificate_current_format, strtotime($wp_ffcertificate_preview_date));
+                                echo esc_html( date_i18n(($wp_ffcertificate_current_format === 'custom' && !empty($wp_ffcertificate_custom_format)) ? $wp_ffcertificate_custom_format : $wp_ffcertificate_current_format, strtotime($wp_ffcertificate_preview_date)) );
                                 ?>
                             </span>
                         </p>
 
-                        <div id="ffc_custom_format_container" class="ffc-collapsible-section <?php echo $wp_ffcertificate_current_format !== 'custom' ? 'ffc-hidden' : ''; ?>">
+                        <div id="ffc_custom_format_container" class="ffc-collapsible-section <?php echo esc_attr( $wp_ffcertificate_current_format !== 'custom' ? 'ffc-hidden' : '' ); ?>">
                             <div class="ffc-collapsible-content active">
                                 <label>
                                     <strong><?php esc_html_e('Custom Format:', 'wp-ffcertificate'); ?></strong><br>
@@ -116,7 +116,7 @@ $wp_ffcertificate_custom_format = $wp_ffcertificate_get_option('date_format_cust
                             <span class="ffc-text-success">✅ <?php esc_html_e('Includes user ID, IP address, and timestamp for LGPD compliance.', 'wp-ffcertificate'); ?></span>
                             <?php if ($wp_ffcertificate_get_option('enable_activity_log') == 1) : ?>
                                 <br>
-                                <a href="<?php echo admin_url('edit.php?post_type=ffc_form&page=ffc-activity-log'); ?>" class="button button-secondary ffc-mt-10">
+                                <a href="<?php echo esc_url( admin_url('edit.php?post_type=ffc_form&page=ffc-activity-log') ); ?>" class="button button-secondary ffc-mt-10">
                                     📊 <?php esc_html_e('View Activity Logs', 'wp-ffcertificate'); ?>
                                 </a>
                             <?php endif; ?>
@@ -429,10 +429,10 @@ $wp_ffcertificate_custom_format = $wp_ffcertificate_get_option('date_format_cust
                 <tr>
                     <th scope="row"><?php esc_html_e('Actions', 'wp-ffcertificate'); ?></th>
                     <td>
-                        <a href="<?php echo wp_nonce_url(admin_url('edit.php?post_type=ffc_form&page=ffc-settings&tab=general&action=warm_cache'), 'ffc_warm_cache'); ?>" class="button">
+                        <a href="<?php echo esc_url( wp_nonce_url(admin_url('edit.php?post_type=ffc_form&page=ffc-settings&tab=general&action=warm_cache'), 'ffc_warm_cache') ); ?>" class="button">
                             🔥 <?php esc_html_e('Warm Cache Now', 'wp-ffcertificate'); ?>
                         </a>
-                        <a href="<?php echo wp_nonce_url(admin_url('edit.php?post_type=ffc_form&page=ffc-settings&tab=general&action=clear_cache'), 'ffc_clear_cache'); ?>" class="button" onclick="return confirm('<?php echo esc_js(__('Clear all cache?', 'wp-ffcertificate')); ?>');">
+                        <a href="<?php echo esc_url( wp_nonce_url(admin_url('edit.php?post_type=ffc_form&page=ffc-settings&tab=general&action=clear_cache'), 'ffc_clear_cache') ); ?>" class="button" onclick="return confirm('<?php echo esc_js(__('Clear all cache?', 'wp-ffcertificate')); ?>');">
                             🗑️ <?php esc_html_e('Clear Cache', 'wp-ffcertificate'); ?>
                         </a>
                     </td>

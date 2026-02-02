@@ -142,7 +142,7 @@ class FormEditor {
         
         if ( ! current_user_can( 'edit_posts' ) ) wp_send_json_error();
 
-        $qty = isset($_POST['qty']) ? absint($_POST['qty']) : 10;
+        $qty = isset( $_POST['qty'] ) ? absint( wp_unslash( $_POST['qty'] ) ) : 10;
         $codes = array();
         for($i = 0; $i < $qty; $i++) {
             $rnd = strtoupper(bin2hex(random_bytes(4))); 
@@ -159,7 +159,7 @@ class FormEditor {
         
         if ( ! current_user_can( 'edit_posts' ) ) wp_send_json_error();
 
-        $filename = isset($_POST['filename']) ? sanitize_file_name($_POST['filename']) : '';
+        $filename = isset( $_POST['filename'] ) ? sanitize_file_name( wp_unslash( $_POST['filename'] ) ) : '';
         if ( empty($filename) ) wp_send_json_error();
 
         $filepath = FFC_PLUGIN_DIR . 'html/' . $filename;

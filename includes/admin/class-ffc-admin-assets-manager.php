@@ -75,7 +75,8 @@ class AdminAssetsManager {
      */
     private function is_ffc_page(): bool {
         $is_ffc_post_type = ( $this->post_type === 'ffc_form' );
-        $is_ffc_menu = ( isset( $_GET['page'] ) && strpos( $_GET['page'], 'ffc-' ) !== false );
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Page routing check, no nonce needed.
+        $is_ffc_menu = ( isset( $_GET['page'] ) && strpos( sanitize_text_field( wp_unslash( $_GET['page'] ) ), 'ffc-' ) !== false );
 
         return $is_ffc_post_type || $is_ffc_menu;
     }
@@ -252,7 +253,8 @@ class AdminAssetsManager {
      * @return bool
      */
     private function is_settings_page(): bool {
-        return isset( $_GET['page'] ) && $_GET['page'] === 'ffc-settings';
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Page routing check for asset loading.
+        return isset( $_GET['page'] ) && sanitize_key( wp_unslash( $_GET['page'] ) ) === 'ffc-settings';
     }
 
     /**
@@ -261,10 +263,12 @@ class AdminAssetsManager {
      * @return bool
      */
     private function is_submission_edit_page(): bool {
+        // phpcs:disable WordPress.Security.NonceVerification.Recommended -- Page routing check for asset loading.
         return isset( $_GET['page'] )
-            && $_GET['page'] === 'ffc-submissions'
+            && sanitize_key( wp_unslash( $_GET['page'] ) ) === 'ffc-submissions'
             && isset( $_GET['action'] )
-            && $_GET['action'] === 'edit';
+            && sanitize_key( wp_unslash( $_GET['action'] ) ) === 'edit';
+        // phpcs:enable WordPress.Security.NonceVerification.Recommended
     }
 
     /**

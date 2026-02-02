@@ -161,6 +161,7 @@ class Settings {
      */
     public function handle_clear_qr_cache(): void {
         // phpcs:disable WordPress.Security.NonceVerification.Recommended -- Nonce verified below via wp_verify_nonce.
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- isset() existence checks only.
         if ( ! isset( $_GET['ffc_clear_qr_cache'] ) || ! isset( $_GET['_wpnonce'] ) ) {
             return;
         }
@@ -192,11 +193,12 @@ class Settings {
     public function display_settings_page(): void {
         // phpcs:disable WordPress.Security.NonceVerification.Recommended -- These are display-only URL parameters from redirects.
         // Handle messages
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- isset() existence check only.
         if ( isset( $_GET['msg'] ) ) {
             $msg = sanitize_key( wp_unslash( $_GET['msg'] ) );
 
             if ( $msg === 'qr_cache_cleared' ) {
-                $cleared = isset( $_GET['cleared'] ) ? intval( $_GET['cleared'] ) : 0;
+                $cleared = isset( $_GET['cleared'] ) ? absint( wp_unslash( $_GET['cleared'] ) ) : 0;
                 echo '<div class="notice notice-success is-dismissible">';
                 /* translators: %d: number of QR codes cleared */
                 echo '<p>' . esc_html( sprintf( __( '%d QR Code(s) cleared from cache successfully.', 'wp-ffcertificate' ), $cleared ) ) . '</p>';
@@ -214,11 +216,12 @@ class Settings {
             $active_tab = $first_tab->get_id();
         }
 
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- isset() existence check only.
         if (isset($_GET['msg'])) {
             $msg = sanitize_key( wp_unslash( $_GET['msg'] ) );
 
             if ($msg === 'cache_warmed') {
-                $count = isset($_GET['count']) ? intval($_GET['count']) : 0;
+                $count = isset($_GET['count']) ? absint( wp_unslash( $_GET['count'] ) ) : 0;
                 echo '<div class="notice notice-success is-dismissible">';
                 echo '<p>' . esc_html( sprintf(
                     /* translators: %d: number of forms pre-loaded */
@@ -242,9 +245,11 @@ class Settings {
             
             <?php
             // Display migration messages
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- isset() existence check only.
             if ( isset( $_GET['migration_success'] ) ) {
                 echo '<div class="notice notice-success is-dismissible"><p>' . esc_html( sanitize_text_field( wp_unslash( urldecode( $_GET['migration_success'] ) ) ) ) . '</p></div>';
             }
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- isset() existence check only.
             if ( isset( $_GET['migration_error'] ) ) {
                 echo '<div class="notice notice-error is-dismissible"><p>' . esc_html( sanitize_text_field( wp_unslash( urldecode( $_GET['migration_error'] ) ) ) ) . '</p></div>';
             }
@@ -253,7 +258,7 @@ class Settings {
             <h2 class="nav-tab-wrapper">
                 <?php foreach ( $this->tabs as $tab_id => $tab_obj ) : ?>
                     <a href="?post_type=ffc_form&page=ffc-settings&tab=<?php echo esc_attr( $tab_id ); ?>" 
-                       class="nav-tab <?php echo $active_tab === $tab_id ? 'nav-tab-active' : ''; ?>">
+                       class="nav-tab <?php echo esc_attr( $active_tab === $tab_id ? 'nav-tab-active' : '' ); ?>">
                         <?php echo wp_kses_post( $tab_obj->get_icon() ); ?>
                         <?php echo esc_html( $tab_obj->get_title() ); ?>
                     </a>

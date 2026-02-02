@@ -275,9 +275,9 @@ class AdminSubmissionEditPage {
         <!-- ✅ v2.10.0: SEÇÃO LGPD CONSENT STATUS -->
         <tr>
             <td colspan="2">
-                <div class="ffc-consent-box <?php echo $consent_given ? 'consent-given' : 'consent-not-given'; ?>">
+                <div class="ffc-consent-box <?php echo esc_attr( $consent_given ? 'consent-given' : 'consent-not-given' ); ?>">
                     <h3>
-                        <?php echo $consent_given ? '✅' : '⚠️'; ?>
+                        <?php echo esc_html( $consent_given ? '✅' : '⚠️' ); ?>
                         <?php esc_html_e( 'LGPD Consent Status', 'wp-ffcertificate' ); ?>
                     </h3>
 
@@ -434,7 +434,7 @@ class AdminSubmissionEditPage {
         }
 
         // phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce verified above via check_admin_referer.
-        $id = absint( $_POST['submission_id'] );
+        $id = absint( wp_unslash( $_POST['submission_id'] ) );
         $new_email = sanitize_email( wp_unslash( $_POST['user_email'] ) );
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each field sanitized individually below.
         $raw_data = isset( $_POST['data'] ) ? wp_unslash( $_POST['data'] ) : array();

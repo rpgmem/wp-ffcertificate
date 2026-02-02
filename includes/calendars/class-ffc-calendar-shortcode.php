@@ -247,7 +247,7 @@ class CalendarShortcode {
                             name="name"
                             value="<?php echo $is_logged_in ? esc_attr($user->display_name) : ''; ?>"
                             required
-                            <?php echo $is_logged_in ? 'readonly' : ''; ?>
+                            <?php echo esc_attr( $is_logged_in ? 'readonly' : '' ); ?>
                         >
                     </div>
 
@@ -261,7 +261,7 @@ class CalendarShortcode {
                             name="email"
                             value="<?php echo $is_logged_in ? esc_attr($user->user_email) : ''; ?>"
                             required
-                            <?php echo $is_logged_in ? 'readonly' : ''; ?>
+                            <?php echo esc_attr( $is_logged_in ? 'readonly' : '' ); ?>
                         >
                     </div>
 
@@ -362,10 +362,10 @@ class CalendarShortcode {
 
         <script type="text/javascript">
         jQuery(document).ready(function($) {
-            var calendarId = <?php echo intval( $calendar['id'] ); ?>;
-            var workingDays = <?php echo json_encode(!empty($calendar['working_hours']) && is_array($calendar['working_hours']) ? array_column($calendar['working_hours'], 'day') : []); ?>;
-            var minDate = <?php echo isset($calendar['advance_booking_min']) ? intval($calendar['advance_booking_min']) : 0; ?>; // hours
-            var maxDate = <?php echo isset($calendar['advance_booking_max']) ? intval($calendar['advance_booking_max']) : 30; ?>; // days
+            var calendarId = <?php echo intval( $calendar['id'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- intval() is safe ?>;
+            var workingDays = <?php echo wp_json_encode(!empty($calendar['working_hours']) && is_array($calendar['working_hours']) ? array_column($calendar['working_hours'], 'day') : []); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_json_encode() is safe for JS context ?>;
+            var minDate = <?php echo intval( isset($calendar['advance_booking_min']) ? $calendar['advance_booking_min'] : 0 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- intval() is safe ?>; // hours
+            var maxDate = <?php echo intval( isset($calendar['advance_booking_max']) ? $calendar['advance_booking_max'] : 30 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- intval() is safe ?>; // days
 
             // Initialize datepicker
             $('#ffc-datepicker-' + calendarId).datepicker({

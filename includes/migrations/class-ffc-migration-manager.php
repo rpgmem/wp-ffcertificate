@@ -248,7 +248,8 @@ class MigrationManager {
         }
 
         // User confirmation required
-        if ( ! isset( $_POST['confirm_cleanup'] ) || $_POST['confirm_cleanup'] !== 'CONFIRMAR EXCLUSÃO' ) {
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by the calling admin action handler.
+        if ( ! isset( $_POST['confirm_cleanup'] ) || sanitize_text_field( wp_unslash( $_POST['confirm_cleanup'] ) ) !== 'CONFIRMAR EXCLUSÃO' ) {
             return new WP_Error(
                 'confirmation_required',
                 __( 'User confirmation required. Type "CONFIRMAR EXCLUSÃO" to proceed.', 'wp-ffcertificate' )
@@ -294,7 +295,8 @@ class MigrationManager {
         }
 
         // User confirmation required (IRREVERSIBLE operation!)
-        if ( ! isset( $_POST['confirm_drop'] ) || $_POST['confirm_drop'] !== 'CONFIRMAR EXCLUSÃO' ) {
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by the calling admin action handler.
+        if ( ! isset( $_POST['confirm_drop'] ) || sanitize_text_field( wp_unslash( $_POST['confirm_drop'] ) ) !== 'CONFIRMAR EXCLUSÃO' ) {
             return new WP_Error(
                 'confirmation_required',
                 __( 'CRITICAL: This is IRREVERSIBLE! Type "CONFIRMAR EXCLUSÃO" to proceed.', 'wp-ffcertificate' )

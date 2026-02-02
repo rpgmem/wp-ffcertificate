@@ -30,6 +30,7 @@ class AdminNoticeManager {
      */
     public function display_notices(): void {
         // phpcs:disable WordPress.Security.NonceVerification.Recommended -- Display-only URL parameters from admin redirects.
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- isset() existence check only.
         if ( ! isset( $_GET['msg'] ) ) {
             return;
         }
@@ -60,7 +61,7 @@ class AdminNoticeManager {
                 break;
 
             case 'migration_success':
-                $migrated = isset( $_GET['migrated'] ) ? intval( $_GET['migrated'] ) : 0;
+                $migrated = isset( $_GET['migrated'] ) ? absint( wp_unslash( $_GET['migrated'] ) ) : 0;
                 $migration_name = isset( $_GET['migration_name'] ) ? sanitize_text_field( wp_unslash( urldecode( $_GET['migration_name'] ) ) ) : __( 'Migration', 'wp-ffcertificate' );
                 /* translators: 1: migration name, 2: number of records migrated */
                 $text = sprintf( __( '%1$s: %2$d records migrated successfully.', 'wp-ffcertificate' ), $migration_name, $migrated );

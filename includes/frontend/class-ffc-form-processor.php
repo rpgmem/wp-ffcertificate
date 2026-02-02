@@ -323,6 +323,7 @@ class FormProcessor {
         \FreeFormCertificate\Core\Debug::log_form('Answer received', isset($_POST['ffc_captcha_ans']) ? sanitize_text_field(wp_unslash($_POST['ffc_captcha_ans'])) : 'NOT SET');
         \FreeFormCertificate\Core\Debug::log_form('Hash received', isset($_POST['ffc_captcha_hash']) ? sanitize_text_field(wp_unslash($_POST['ffc_captcha_hash'])) : 'NOT SET');
 
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- isset() check only; values sanitized inside block.
         if (isset($_POST['ffc_captcha_ans']) && isset($_POST['ffc_captcha_hash'])) {
             $test_answer = trim(sanitize_text_field(wp_unslash($_POST['ffc_captcha_ans'])));
             $received_hash = sanitize_text_field(wp_unslash($_POST['ffc_captcha_hash']));
@@ -354,7 +355,7 @@ class FormProcessor {
             ) );
         }
 
-        $form_id = isset( $_POST['form_id'] ) ? absint( $_POST['form_id'] ) : 0;
+        $form_id = isset( $_POST['form_id'] ) ? absint( wp_unslash( $_POST['form_id'] ) ) : 0;
         if ( ! $form_id ) {
             wp_send_json_error( array( 'message' => __( 'Invalid Form ID.', 'wp-ffcertificate' ) ) );
         }
@@ -373,6 +374,7 @@ class FormProcessor {
 
         foreach ( $fields_config as $field ) {
             $name = $field['name'];
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- isset() check only; value unslashed and sanitized below.
             if ( isset( $_POST[ $name ] ) ) {
                 $value = \FreeFormCertificate\Core\Utils::recursive_sanitize( wp_unslash( $_POST[ $name ] ) );
                 

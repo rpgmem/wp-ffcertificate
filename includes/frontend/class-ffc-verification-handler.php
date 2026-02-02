@@ -372,6 +372,7 @@ class VerificationHandler {
         // No nonce check - magic token is the authentication
         // No captcha - token proves legitimacy
 
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Magic token authentication; no nonce needed for this public endpoint.
         $token = isset( $_POST['token'] ) ? sanitize_text_field( wp_unslash( $_POST['token'] ) ) : '';
         $user_ip = \FreeFormCertificate\Core\Utils::get_user_ip();
 
@@ -432,6 +433,7 @@ class VerificationHandler {
     public function handle_verification_ajax(): void {
         check_ajax_referer( 'ffc_frontend_nonce', 'nonce' );
         
+        // phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce verified above via check_ajax_referer.
         // Validate security
         $captcha_ans = isset($_POST['ffc_captcha_ans']) ? sanitize_text_field(wp_unslash($_POST['ffc_captcha_ans'])) : '';
         $captcha_hash = isset($_POST['ffc_captcha_hash']) ? sanitize_text_field(wp_unslash($_POST['ffc_captcha_hash'])) : '';
@@ -460,6 +462,7 @@ class VerificationHandler {
         }
         
         $auth_code = isset($_POST['ffc_auth_code']) ? sanitize_text_field(wp_unslash($_POST['ffc_auth_code'])) : '';
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
         $result = $this->search_certificate( $auth_code );
         
         if ( ! $result['found'] ) {

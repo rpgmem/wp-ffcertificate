@@ -79,7 +79,7 @@ class CPT {
             'ffc_duplicate_form_nonce'
         );
 
-        $actions['duplicate'] = '<a href="' . esc_url( $url ) . '" title="' . esc_attr__( 'Duplicate this form', 'wp-ffcertificate' ) . '">' . __( 'Duplicate', 'wp-ffcertificate' ) . '</a>';
+        $actions['duplicate'] = '<a href="' . esc_url( $url ) . '" title="' . esc_attr__( 'Duplicate this form', 'wp-ffcertificate' ) . '">' . esc_html__( 'Duplicate', 'wp-ffcertificate' ) . '</a>';
 
         return $actions;
     }
@@ -97,7 +97,8 @@ class CPT {
             wp_die( esc_html__( 'You do not have permission to duplicate this post.', 'wp-ffcertificate' ) );
         }
 
-        $post_id = ( isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0 );
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verified immediately below via check_admin_referer.
+        $post_id = ( isset( $_GET['post'] ) ? absint( wp_unslash( $_GET['post'] ) ) : 0 );
 
         check_admin_referer( 'ffc_duplicate_form_nonce' );
 

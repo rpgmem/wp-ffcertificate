@@ -117,7 +117,7 @@ class CalendarCPT {
             'ffc_duplicate_calendar_nonce'
         );
 
-        $actions['duplicate'] = '<a href="' . esc_url($url) . '" title="' . esc_attr__('Duplicate this calendar', 'wp-ffcertificate') . '">' . __('Duplicate', 'wp-ffcertificate') . '</a>';
+        $actions['duplicate'] = '<a href="' . esc_url($url) . '" title="' . esc_attr__('Duplicate this calendar', 'wp-ffcertificate') . '">' . esc_html__('Duplicate', 'wp-ffcertificate') . '</a>';
 
         return $actions;
     }

@@ -30,6 +30,7 @@ class AdminAjax {
         // Verify nonce - try different nonce names
         $nonce_verified = false;
 
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- isset() existence check only; nonce verified immediately inside.
         if ( isset( $_POST['nonce'] ) ) {
             $nonce_value = sanitize_text_field( wp_unslash( $_POST['nonce'] ) );
             // Try ffc_form_nonce first
@@ -51,7 +52,7 @@ class AdminAjax {
             wp_send_json_error( array( 'message' => __( 'Permission denied.', 'wp-ffcertificate' ) ) );
         }
 
-        $template_id = isset( $_POST['template_id'] ) ? absint( $_POST['template_id'] ) : 0;
+        $template_id = isset( $_POST['template_id'] ) ? absint( wp_unslash( $_POST['template_id'] ) ) : 0;
 
         if ( ! $template_id ) {
             wp_send_json_error( array( 'message' => __( 'Invalid template ID.', 'wp-ffcertificate' ) ) );
@@ -85,6 +86,7 @@ class AdminAjax {
         // Verify nonce - try different nonce names
         $nonce_verified = false;
 
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- isset() existence check only; nonce verified immediately inside.
         if ( isset( $_POST['nonce'] ) ) {
             $nonce_value = sanitize_text_field( wp_unslash( $_POST['nonce'] ) );
             // Try ffc_form_nonce first
@@ -106,8 +108,8 @@ class AdminAjax {
             wp_send_json_error( array( 'message' => __( 'Permission denied.', 'wp-ffcertificate' ) ) );
         }
 
-        $quantity = isset( $_POST['quantity'] ) ? absint( $_POST['quantity'] ) : 0;
-        $form_id = isset( $_POST['form_id'] ) ? absint( $_POST['form_id'] ) : 0;
+        $quantity = isset( $_POST['quantity'] ) ? absint( wp_unslash( $_POST['quantity'] ) ) : 0;
+        $form_id = isset( $_POST['form_id'] ) ? absint( wp_unslash( $_POST['form_id'] ) ) : 0;
 
         if ( $quantity < 1 || $quantity > 1000 ) {
             wp_send_json_error( array( 'message' => __( 'Quantity must be between 1 and 1000.', 'wp-ffcertificate' ) ) );

@@ -118,11 +118,11 @@ $wp_ffcertificate_get_option = function($key, $default = '') {
             </tr>
             <tr>
                 <td><strong><?php esc_html_e('Total Submissions:', 'wp-ffcertificate'); ?></strong></td>
-                <td class="stat-value"><?php echo number_format_i18n($wp_ffcertificate_stats['total_submissions']); ?></td>
+                <td class="stat-value"><?php echo esc_html( number_format_i18n($wp_ffcertificate_stats['total_submissions']) ); ?></td>
             </tr>
             <tr class="alternate">
                 <td><strong><?php esc_html_e('Cached QR Codes:', 'wp-ffcertificate'); ?></strong></td>
-                <td class="stat-value info"><?php echo number_format_i18n($wp_ffcertificate_stats['cached_qr_codes']); ?></td>
+                <td class="stat-value info"><?php echo esc_html( number_format_i18n($wp_ffcertificate_stats['cached_qr_codes']) ); ?></td>
             </tr>
             <tr>
                 <td><strong><?php esc_html_e('Estimated Cache Size:', 'wp-ffcertificate'); ?></strong></td>

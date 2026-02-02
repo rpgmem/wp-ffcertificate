@@ -43,6 +43,7 @@ $wp_ffcertificate_stats = \FreeFormCertificate\Security\RateLimiter::get_stats()
             <td>
                 <?php
                 /* translators: %1$s: attempts input field, %2$s: hours input field */
+                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- printf() with escaped HTML inputs embedded in translated string.
                 printf(
                     __('%1$s attempts in %2$s hour(s)', 'wp-ffcertificate'),
                     '<input type="number" name="cpf_block_threshold" value="' . esc_attr($wp_ffcertificate_s['cpf']['block_threshold']) . '" min="1">',
@@ -55,6 +56,7 @@ $wp_ffcertificate_stats = \FreeFormCertificate\Security\RateLimiter::get_stats()
             <td>
                 <?php
                 /* translators: %1$s: duration input field */
+                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- printf() with escaped HTML input embedded in translated string.
                 printf(
                     __('%1$s hours', 'wp-ffcertificate'),
                     '<input type="number" name="cpf_block_duration" value="' . esc_attr($wp_ffcertificate_s['cpf']['block_duration']) . '" min="1">'

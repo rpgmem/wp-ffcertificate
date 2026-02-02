@@ -134,7 +134,7 @@ $wp_ffcertificate_migrations = $wp_ffcertificate_migration_manager->get_migratio
                         <?php esc_html_e( 'Progress', 'wp-ffcertificate' ); ?>
                     </div>
                     <div class="ffc-migration-stat-value <?php echo esc_attr( $wp_ffcertificate_stat_progress_class ); ?>">
-                        <?php echo number_format( $wp_ffcertificate_percent, 1 ); ?>%
+                        <?php echo esc_html( number_format( $wp_ffcertificate_percent, 1 ) ); ?>%
                     </div>
                 </div>
             </div>
@@ -144,7 +144,7 @@ $wp_ffcertificate_migrations = $wp_ffcertificate_migration_manager->get_migratio
                 <div class="ffc-progress-bar-container">
                     <div class="ffc-progress-bar-fill <?php echo esc_attr( $wp_ffcertificate_progress_color ); ?>"></div>
                     <div class="ffc-progress-bar-label <?php echo esc_attr( $wp_ffcertificate_label_class ); ?>">
-                        <?php echo number_format( $wp_ffcertificate_percent, 1 ); ?>% <?php esc_html_e( 'Complete', 'wp-ffcertificate' ); ?>
+                        <?php echo esc_html( number_format( $wp_ffcertificate_percent, 1 ) ); ?>% <?php esc_html_e( 'Complete', 'wp-ffcertificate' ); ?>
                     </div>
                 </div>
             </div>

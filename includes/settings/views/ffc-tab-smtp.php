@@ -109,7 +109,7 @@ $wp_ffcertificate_get_option = function($key, $default = '') {
             </tbody>
         </table>
         
-        <div id="smtp-options" class="ffc-collapsible-section <?php echo ($wp_ffcertificate_get_option('smtp_mode') === 'custom') ? '' : 'ffc-hidden'; ?>">
+        <div id="smtp-options" class="ffc-collapsible-section <?php echo esc_attr( ($wp_ffcertificate_get_option('smtp_mode') === 'custom') ? '' : 'ffc-hidden' ); ?>">
             <div class="ffc-collapsible-content active">
                 <h3><?php esc_html_e('SMTP Server Configuration', 'wp-ffcertificate'); ?></h3>
                 

@@ -61,7 +61,7 @@ class DashboardShortcode {
 
         // Get current tab - default to first available tab
         $default_tab = $can_view_certificates ? 'certificates' : ($can_view_appointments ? 'appointments' : 'profile');
-        $current_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : $default_tab;
+        $current_tab = isset($_GET['tab']) ? sanitize_text_field(wp_unslash($_GET['tab'])) : $default_tab; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Tab parameter for display only.
 
         // Start output buffering
         ob_start();
@@ -78,27 +78,27 @@ class DashboardShortcode {
 
             <nav class="ffc-dashboard-tabs">
                 <?php if ($can_view_certificates) : ?>
-                    <button class="ffc-tab <?php echo $current_tab === 'certificates' ? 'active' : ''; ?>"
+                    <button class="ffc-tab <?php echo esc_attr( $current_tab === 'certificates' ? 'active' : '' ); ?>"
                             data-tab="certificates">
                         📜 <?php esc_html_e('My Certificates', 'wp-ffcertificate'); ?>
                     </button>
                 <?php endif; ?>
 
                 <?php if ($can_view_appointments) : ?>
-                    <button class="ffc-tab <?php echo $current_tab === 'appointments' ? 'active' : ''; ?>"
+                    <button class="ffc-tab <?php echo esc_attr( $current_tab === 'appointments' ? 'active' : '' ); ?>"
                             data-tab="appointments">
                         📅 <?php esc_html_e('My Appointments', 'wp-ffcertificate'); ?>
                     </button>
                 <?php endif; ?>
 
-                <button class="ffc-tab <?php echo $current_tab === 'profile' ? 'active' : ''; ?>"
+                <button class="ffc-tab <?php echo esc_attr( $current_tab === 'profile' ? 'active' : '' ); ?>"
                         data-tab="profile">
                     👤 <?php esc_html_e('My Profile', 'wp-ffcertificate'); ?>
                 </button>
             </nav>
 
             <?php if ($can_view_certificates) : ?>
-                <div class="ffc-tab-content <?php echo $current_tab === 'certificates' ? 'active' : ''; ?>"
+                <div class="ffc-tab-content <?php echo esc_attr( $current_tab === 'certificates' ? 'active' : '' ); ?>"
                      id="tab-certificates">
                     <div class="ffc-loading">
                         <?php esc_html_e('Loading certificates...', 'wp-ffcertificate'); ?>
@@ -107,7 +107,7 @@ class DashboardShortcode {
             <?php endif; ?>
 
             <?php if ($can_view_appointments) : ?>
-                <div class="ffc-tab-content <?php echo $current_tab === 'appointments' ? 'active' : ''; ?>"
+                <div class="ffc-tab-content <?php echo esc_attr( $current_tab === 'appointments' ? 'active' : '' ); ?>"
                      id="tab-appointments">
                     <div class="ffc-loading">
                         <?php esc_html_e('Loading appointments...', 'wp-ffcertificate'); ?>
@@ -115,7 +115,7 @@ class DashboardShortcode {
                 </div>
             <?php endif; ?>
 
-            <div class="ffc-tab-content <?php echo $current_tab === 'profile' ? 'active' : ''; ?>"
+            <div class="ffc-tab-content <?php echo esc_attr( $current_tab === 'profile' ? 'active' : '' ); ?>"
                  id="tab-profile">
                 <div class="ffc-loading">
                     <?php esc_html_e('Loading profile...', 'wp-ffcertificate'); ?>
@@ -134,6 +134,7 @@ class DashboardShortcode {
      */
     private static function get_view_as_user_id() {
         // Check if admin is trying to view as another user
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce verified below via wp_verify_nonce; isset() check only.
         if (!isset($_GET['ffc_view_as_user']) || !isset($_GET['ffc_view_nonce'])) {
             return false;
         }
@@ -143,8 +144,10 @@ class DashboardShortcode {
             return false;
         }
 
-        $target_user_id = absint($_GET['ffc_view_as_user']);
-        $nonce = sanitize_text_field($_GET['ffc_view_nonce']);
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verified below via wp_verify_nonce.
+        $target_user_id = absint(wp_unslash($_GET['ffc_view_as_user']));
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- This IS the nonce value being extracted for verification.
+        $nonce = sanitize_text_field(wp_unslash($_GET['ffc_view_nonce']));
 
         // Verify nonce
         if (!wp_verify_nonce($nonce, 'ffc_view_as_user_' . $target_user_id)) {
@@ -228,7 +231,8 @@ class DashboardShortcode {
      * @return string HTML output
      */
     private static function render_redirect_message(): string {
-        if (!isset($_GET['ffc_redirect']) || $_GET['ffc_redirect'] !== 'access_denied') {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display-only parameter for redirect message.
+        if (!isset($_GET['ffc_redirect']) || sanitize_text_field(wp_unslash($_GET['ffc_redirect'])) !== 'access_denied') {
             return '';
         }
 

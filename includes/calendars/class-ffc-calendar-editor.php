@@ -338,7 +338,7 @@ class CalendarEditor {
                     </label>
                 </td>
             </tr>
-            <tr class="ffc-cancellation-hours" <?php echo $config['allow_cancellation'] ? '' : 'style="display:none;"'; ?>>
+            <tr class="ffc-cancellation-hours" <?php echo esc_attr( $config['allow_cancellation'] ? '' : 'style="display:none;"' ); ?>>
                 <th><label for="cancellation_min_hours"><?php esc_html_e('Cancellation Deadline', 'wp-ffcertificate'); ?></label></th>
                 <td>
                     <input type="number" id="cancellation_min_hours" name="ffc_calendar_config[cancellation_min_hours]" value="<?php echo esc_attr($config['cancellation_min_hours']); ?>" min="0" max="168" /> <?php esc_html_e('hours before', 'wp-ffcertificate'); ?>
@@ -370,7 +370,7 @@ class CalendarEditor {
                     </label>
                 </td>
             </tr>
-            <tr class="ffc-allowed-roles" <?php echo $config['require_login'] ? '' : 'style="display:none;"'; ?>>
+            <tr class="ffc-allowed-roles" <?php echo esc_attr( $config['require_login'] ? '' : 'style="display:none;"' ); ?>>
                 <th><label><?php esc_html_e('Allowed Roles', 'wp-ffcertificate'); ?></label></th>
                 <td>
                     <?php foreach ($roles as $role_key => $role_name): ?>
@@ -536,6 +536,7 @@ class CalendarEditor {
         }
 
         // Save configuration
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- isset() check only; value unslashed below.
         if (isset($_POST['ffc_calendar_config'])) {
             // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each field sanitized individually below.
             $config = wp_unslash($_POST['ffc_calendar_config']);
@@ -566,6 +567,7 @@ class CalendarEditor {
         }
 
         // Save working hours
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- isset()/is_array() check only; value unslashed below.
         if (isset($_POST['ffc_calendar_working_hours']) && is_array($_POST['ffc_calendar_working_hours'])) {
             $working_hours = array();
             // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each field sanitized individually below.
@@ -580,6 +582,7 @@ class CalendarEditor {
         }
 
         // Save email configuration
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- isset() check only; value unslashed below.
         if (isset($_POST['ffc_calendar_email_config'])) {
             // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each field sanitized individually below.
             $email_config = wp_unslash($_POST['ffc_calendar_email_config']);
@@ -621,7 +624,7 @@ class CalendarEditor {
         }
 
         // Get parameters
-        $calendar_id = isset($_POST['calendar_id']) ? absint($_POST['calendar_id']) : 0;
+        $calendar_id = isset($_POST['calendar_id']) ? absint(wp_unslash($_POST['calendar_id'])) : 0;
         $cleanup_action = isset($_POST['cleanup_action']) ? sanitize_text_field(wp_unslash($_POST['cleanup_action'])) : '';
 
         if (!$calendar_id || !$cleanup_action) {
@@ -821,7 +824,7 @@ class CalendarEditor {
                                 style="width: 100%; margin-bottom: 5px;">
                             🗑️ <?php
                             /* translators: %d: number of cancelled appointments */
-                            printf(esc_html__('Cancelled (%d)', 'wp-ffcertificate'), $count_cancelled); ?>
+                            printf(esc_html__('Cancelled (%d)', 'wp-ffcertificate'), intval($count_cancelled)); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- printf with esc_html__ and %d integer format ?>
                         </button>
                     <?php endif; ?>
 
@@ -833,7 +836,7 @@ class CalendarEditor {
                                 style="width: 100%; margin-bottom: 5px;">
                             📅 <?php
                             /* translators: %d: number of past appointments */
-                            printf(esc_html__('Past (%d)', 'wp-ffcertificate'), $count_old); ?>
+                            printf(esc_html__('Past (%d)', 'wp-ffcertificate'), intval($count_old)); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- printf with esc_html__ and %d integer format ?>
                         </button>
                     <?php endif; ?>
 
@@ -845,7 +848,7 @@ class CalendarEditor {
                                 style="width: 100%; margin-bottom: 5px;">
                             ⏭️ <?php
                             /* translators: %d: number of future appointments */
-                            printf(esc_html__('Future (%d)', 'wp-ffcertificate'), $count_future); ?>
+                            printf(esc_html__('Future (%d)', 'wp-ffcertificate'), intval($count_future)); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- printf with esc_html__ and %d integer format ?>
                         </button>
                     <?php endif; ?>
 
@@ -854,7 +857,7 @@ class CalendarEditor {
                             data-action="all"
                             data-calendar-id="<?php echo esc_attr($calendar_id); ?>"
                             style="width: 100%; margin-top: 10px;">
-                        ⚠️ <?php printf(esc_html__('All Appointments (%d)', 'wp-ffcertificate'), $count_all); ?>
+                        ⚠️ <?php printf(esc_html__('All Appointments (%d)', 'wp-ffcertificate'), intval($count_all)); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- printf with esc_html__ and %d integer format ?>
                     </button>
                 </div>
 

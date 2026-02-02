@@ -88,26 +88,31 @@ class TabGeolocation extends SettingsTab {
      */
     private function save_settings(): void {
         // phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce verified in render() via check_admin_referer.
+        $ffc_ip_api_service = sanitize_key(wp_unslash($_POST['ip_api_service'] ?? ''));
+        $ffc_api_fallback = sanitize_key(wp_unslash($_POST['api_fallback'] ?? ''));
+        $ffc_gps_fallback = sanitize_key(wp_unslash($_POST['gps_fallback'] ?? ''));
+        $ffc_both_fail_fallback = sanitize_key(wp_unslash($_POST['both_fail_fallback'] ?? ''));
+
         $settings = array(
             'ip_api_enabled' => isset($_POST['ip_api_enabled']),
-            'ip_api_service' => in_array($_POST['ip_api_service'] ?? '', array('ip-api', 'ipinfo'))
-                ? sanitize_key($_POST['ip_api_service'])
+            'ip_api_service' => in_array($ffc_ip_api_service, array('ip-api', 'ipinfo'))
+                ? $ffc_ip_api_service
                 : 'ip-api',
             'ip_api_cascade' => isset($_POST['ip_api_cascade']),
-            'ipinfo_api_key' => sanitize_text_field($_POST['ipinfo_api_key'] ?? ''),
+            'ipinfo_api_key' => sanitize_text_field(wp_unslash($_POST['ipinfo_api_key'] ?? '')),
             'ip_cache_enabled' => isset($_POST['ip_cache_enabled']),
-            'ip_cache_ttl' => max(300, min(3600, absint($_POST['ip_cache_ttl'] ?? 600))),
+            'ip_cache_ttl' => max(300, min(3600, absint(wp_unslash($_POST['ip_cache_ttl'] ?? 600)))),
 
-            'gps_cache_ttl' => max(60, min(3600, absint($_POST['gps_cache_ttl'] ?? 600))),
+            'gps_cache_ttl' => max(60, min(3600, absint(wp_unslash($_POST['gps_cache_ttl'] ?? 600)))),
 
-            'api_fallback' => in_array($_POST['api_fallback'] ?? '', array('allow', 'block', 'gps_only'))
-                ? sanitize_key($_POST['api_fallback'])
+            'api_fallback' => in_array($ffc_api_fallback, array('allow', 'block', 'gps_only'))
+                ? $ffc_api_fallback
                 : 'gps_only',
-            'gps_fallback' => in_array($_POST['gps_fallback'] ?? '', array('allow', 'block'))
-                ? sanitize_key($_POST['gps_fallback'])
+            'gps_fallback' => in_array($ffc_gps_fallback, array('allow', 'block'))
+                ? $ffc_gps_fallback
                 : 'allow',
-            'both_fail_fallback' => in_array($_POST['both_fail_fallback'] ?? '', array('allow', 'block'))
-                ? sanitize_key($_POST['both_fail_fallback'])
+            'both_fail_fallback' => in_array($ffc_both_fail_fallback, array('allow', 'block'))
+                ? $ffc_both_fail_fallback
                 : 'block',
 
             'admin_bypass_datetime' => isset($_POST['admin_bypass_datetime']),

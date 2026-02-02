@@ -160,7 +160,7 @@ abstract class SettingsTab {
      * @return bool
      */
     protected function is_active() {
-        $active_tab = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : '';
+        $active_tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Tab parameter for display only.
         return $active_tab === $this->tab_id;
     }
     

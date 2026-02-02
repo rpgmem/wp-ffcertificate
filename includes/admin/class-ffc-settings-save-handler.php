@@ -57,6 +57,7 @@ class SettingsSaveHandler {
         }
 
         // Handle Global Data Deletion (Danger Zone)
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- isset() existence check only; nonce verified via check_admin_referer.
         if ( isset( $_POST['ffc_delete_all_data'] ) && check_admin_referer( 'ffc_delete_all_data', 'ffc_critical_nonce' ) ) {
             $this->handle_danger_zone();
         }
@@ -68,6 +69,7 @@ class SettingsSaveHandler {
      * @return void
      */
     private function save_general_and_specific_settings(): void {
+        // phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce verified in handle_all_submissions() via wp_verify_nonce.
         $current = get_option( 'ffc_settings', array() );
         $new     = isset( $_POST['ffc_settings'] ) ? array_map( 'sanitize_text_field', wp_unslash( $_POST['ffc_settings'] ) ) : array();
 
@@ -80,6 +82,7 @@ class SettingsSaveHandler {
         $clean = $this->save_date_format_settings( $clean, $new );
 
         update_option( 'ffc_settings', $clean );
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
         add_settings_error( 'ffc_settings', 'ffc_settings_updated', __( 'Settings saved.', 'wp-ffcertificate' ), 'updated' );
     }
 
@@ -91,6 +94,7 @@ class SettingsSaveHandler {
      * @return array Updated settings
      */
     private function save_general_settings( array $clean, array $new ): array {
+        // phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce verified in handle_all_submissions() via wp_verify_nonce.
         // Cleanup Days
         if ( isset( $new['cleanup_days'] ) ) {
             $clean['cleanup_days'] = absint( $new['cleanup_days'] );
@@ -130,6 +134,7 @@ class SettingsSaveHandler {
                 $clean[ $flag ] = isset( $new[ $flag ] ) ? 1 : 0;
             }
         }
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
 
         return $clean;
     }
@@ -142,6 +147,7 @@ class SettingsSaveHandler {
      * @return array Updated settings
      */
     private function save_smtp_settings( array $clean, array $new ): array {
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in handle_all_submissions() via wp_verify_nonce.
         // Email Status checkbox (only when on SMTP tab to prevent unchecking from other tabs)
         if ( isset( $_POST['_ffc_tab'] ) && sanitize_key( wp_unslash( $_POST['_ffc_tab'] ) ) === 'smtp' ) {
             $clean['disable_all_emails'] = isset( $new['disable_all_emails'] ) ? 1 : 0;
@@ -199,6 +205,7 @@ class SettingsSaveHandler {
      * @return array Updated settings
      */
     private function save_qrcode_settings( array $clean, array $new ): array {
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in handle_all_submissions() via wp_verify_nonce.
         // QR Cache (checkbox - only set if on QR tab)
         if ( isset( $_POST['_ffc_tab'] ) && sanitize_key( wp_unslash( $_POST['_ffc_tab'] ) ) === 'qr_code' ) {
             $clean['qr_cache_enabled'] = isset( $new['qr_cache_enabled'] ) ? 1 : 0;
@@ -244,6 +251,8 @@ class SettingsSaveHandler {
      * @return void
      */
     private function save_user_access_settings(): void {
+        // phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce verified in handle_all_submissions() via wp_verify_nonce.
+        // phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- isset()/empty()/is_array() are existence and type checks; values are sanitized with wp_unslash + sanitize_text_field/esc_url_raw/sanitize_textarea_field.
         $settings = array(
             'block_wp_admin' => isset( $_POST['block_wp_admin'] ),
             'blocked_roles' => isset( $_POST['blocked_roles'] ) && is_array( $_POST['blocked_roles'] )
@@ -258,6 +267,8 @@ class SettingsSaveHandler {
             'allow_admin_bar' => isset( $_POST['allow_admin_bar'] ),
             'bypass_for_admins' => isset( $_POST['bypass_for_admins'] ),
         );
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
+        // phpcs:enable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 
         update_option( 'ffc_user_access_settings', $settings );
         add_settings_error(
@@ -274,8 +285,10 @@ class SettingsSaveHandler {
      * @return void
      */
     private function handle_danger_zone(): void {
+        // phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce verified in handle_all_submissions() via check_admin_referer.
         $target = isset( $_POST['delete_target'] ) ? sanitize_text_field( wp_unslash( $_POST['delete_target'] ) ) : 'all';
         $reset_counter = isset( $_POST['reset_counter'] ) && sanitize_text_field( wp_unslash( $_POST['reset_counter'] ) ) == '1';
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
 
         $result = $this->submission_handler->delete_all_submissions(
             $target === 'all' ? null : absint( $target ),

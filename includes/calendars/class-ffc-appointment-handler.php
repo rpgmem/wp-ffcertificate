@@ -73,7 +73,7 @@ class AppointmentHandler {
             }
 
             // Get and validate input
-            $calendar_id = isset($_POST['calendar_id']) ? absint($_POST['calendar_id']) : 0;
+            $calendar_id = isset($_POST['calendar_id']) ? absint(wp_unslash($_POST['calendar_id'])) : 0;
             $date = isset($_POST['date']) ? sanitize_text_field(wp_unslash($_POST['date'])) : '';
             $time = isset($_POST['time']) ? sanitize_text_field(wp_unslash($_POST['time'])) : '';
 
@@ -94,6 +94,7 @@ class AppointmentHandler {
                 'cpf_rf' => isset($_POST['cpf_rf']) ? sanitize_text_field(wp_unslash($_POST['cpf_rf'])) : '',
                 'user_notes' => isset($_POST['notes']) ? sanitize_textarea_field(wp_unslash($_POST['notes'])) : '',
                 'custom_data' => isset($_POST['custom_data']) ? array_map('sanitize_text_field', wp_unslash($_POST['custom_data'])) : array(),
+                // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- isset() used as boolean only.
                 'consent_given' => isset($_POST['consent']) ? 1 : 0,
                 'consent_text' => isset($_POST['consent_text']) ? sanitize_textarea_field(wp_unslash($_POST['consent_text'])) : '',
                 'user_ip' => \FreeFormCertificate\Core\Utils::get_user_ip(),
@@ -138,7 +139,7 @@ class AppointmentHandler {
     public function ajax_get_available_slots(): void {
         check_ajax_referer('ffc_calendar_nonce', 'nonce');
 
-        $calendar_id = isset($_POST['calendar_id']) ? absint($_POST['calendar_id']) : 0;
+        $calendar_id = isset($_POST['calendar_id']) ? absint(wp_unslash($_POST['calendar_id'])) : 0;
         $date = isset($_POST['date']) ? sanitize_text_field(wp_unslash($_POST['date'])) : '';
 
         if (!$calendar_id || !$date) {
@@ -186,7 +187,7 @@ class AppointmentHandler {
             return;
         }
 
-        $appointment_id = isset($_POST['appointment_id']) ? absint($_POST['appointment_id']) : 0;
+        $appointment_id = isset($_POST['appointment_id']) ? absint(wp_unslash($_POST['appointment_id'])) : 0;
         $token = isset($_POST['token']) ? sanitize_text_field(wp_unslash($_POST['token'])) : '';
         $reason = isset($_POST['reason']) ? sanitize_textarea_field(wp_unslash($_POST['reason'])) : '';
 

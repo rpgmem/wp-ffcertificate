@@ -31,6 +31,7 @@ class FormEditorSaveHandler {
         if ( ! current_user_can( 'edit_post', $post_id ) ) return;
 
         // 1. Save Form Fields
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- isset()/is_array() existence and type checks only.
         if ( isset( $_POST['ffc_fields'] ) && is_array( $_POST['ffc_fields'] ) ) {
             $clean_fields = array();
             // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each field sanitized individually below.
@@ -51,6 +52,7 @@ class FormEditorSaveHandler {
         }
 
         // 2. Save Configurations
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- isset() existence check only.
         if ( isset( $_POST['ffc_config'] ) ) {
             // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each field sanitized individually below.
             $config = wp_unslash( $_POST['ffc_config'] );
@@ -95,6 +97,7 @@ class FormEditorSaveHandler {
         }
 
         // 3. Save Geofence Configuration
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- isset() existence check only.
         if ( isset( $_POST['ffc_geofence'] ) ) {
             // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each field sanitized individually below.
             $geofence = wp_unslash( $_POST['ffc_geofence'] );

@@ -300,7 +300,8 @@ class CsvExporter {
 
         $output = fopen( 'php://output', 'w' );
 
-        // ✅ BOM for Excel UTF-8 recognition
+        // BOM for Excel UTF-8 recognition
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- CSV binary output, not HTML context
         fprintf( $output, chr(0xEF).chr(0xBB).chr(0xBF) );
 
         $dynamic_keys = $this->get_dynamic_columns( $rows );
@@ -314,12 +315,13 @@ class CsvExporter {
             return mb_convert_encoding( $header, 'UTF-8', 'UTF-8' );
         }, $headers );
 
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- CSV file output, not HTML context
         fputcsv( $output, $headers, ';' );
 
         foreach( $rows as $row ) {
             $csv_row = $this->format_csv_row( $row, $dynamic_keys, $include_edit_columns );
 
-            // ✅ Convert all row data to UTF-8
+            // Convert all row data to UTF-8
             $csv_row = array_map( function( $value ) {
                 if ( is_string( $value ) ) {
                     return mb_convert_encoding( $value, 'UTF-8', 'UTF-8' );
@@ -327,6 +329,7 @@ class CsvExporter {
                 return $value;
             }, $csv_row );
 
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- CSV file output, not HTML context
             fputcsv( $output, $csv_row, ';' );
         }
 
@@ -340,11 +343,14 @@ class CsvExporter {
     public function handle_export_request(): void {
         try {
             // Debug logging
+            // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Debug logging before nonce check; POST superglobal used as-is for debug.
             \FreeFormCertificate\Core\Utils::debug_log( 'CSV export handler called', array(
                 'POST' => $_POST,
+                // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- isset() existence check only; nonce verified below.
                 'has_nonce' => isset( $_POST['ffc_export_csv_action'] )
             ) );
 
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- isset() existence check only.
             if ( ! isset( $_POST['ffc_export_csv_action'] ) ||
                  ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ffc_export_csv_action'] ) ), 'ffc_export_csv_nonce' ) ) {
                 \FreeFormCertificate\Core\Utils::debug_log( 'CSV export nonce failed' );
@@ -358,10 +364,12 @@ class CsvExporter {
 
             // ✅ Support multiple form IDs or single form_id
             $form_ids = null;
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- empty()/is_array() existence and type checks only.
             if ( !empty( $_POST['form_ids'] ) && is_array( $_POST['form_ids'] ) ) {
-                $form_ids = array_map( 'absint', $_POST['form_ids'] );
+                $form_ids = array_map( 'absint', wp_unslash( $_POST['form_ids'] ) );
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- empty() existence check only.
             } elseif ( !empty( $_POST['form_id'] ) ) {
-                $form_ids = [ absint( $_POST['form_id'] ) ];
+                $form_ids = [ absint( wp_unslash( $_POST['form_id'] ) ) ];
             }
 
             $status = isset( $_POST['status'] ) ? sanitize_key( wp_unslash( $_POST['status'] ) ) : 'publish';

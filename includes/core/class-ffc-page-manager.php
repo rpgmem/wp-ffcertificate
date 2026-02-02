@@ -167,6 +167,7 @@ class PageManager {
      * Call this in admin_init hook
      */
     public static function handle_page_recreation_request(): void {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- isset() check only; nonce verified below via check_admin_referer().
         if ( ! isset( $_GET['ffc_recreate_page'] ) ) {
             return;
         }

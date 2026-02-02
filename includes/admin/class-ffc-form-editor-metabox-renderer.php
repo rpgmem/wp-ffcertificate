@@ -226,7 +226,7 @@ class FormEditorMetaboxRenderer {
                 </td>
             </tr>
 
-            <tr id="ffc_password_field" class="ffc-conditional-field<?php echo $password_active ? ' active' : ''; ?>">
+            <tr id="ffc_password_field" class="ffc-conditional-field<?php echo esc_attr( $password_active ? ' active' : '' ); ?>">
                 <th><label><?php esc_html_e( 'Password Value', 'wp-ffcertificate' ); ?></label></th>
                 <td>
                     <input type="text"
@@ -238,7 +238,7 @@ class FormEditorMetaboxRenderer {
                 </td>
             </tr>
 
-            <tr id="ffc_allowlist_field" class="ffc-conditional-field<?php echo $allowlist_active ? ' active' : ''; ?>">
+            <tr id="ffc_allowlist_field" class="ffc-conditional-field<?php echo esc_attr( $allowlist_active ? ' active' : '' ); ?>">
                 <th><label><?php esc_html_e( 'Allowlist (CPFs / IDs)', 'wp-ffcertificate' ); ?></label></th>
                 <td>
                     <textarea name="ffc_config[allowed_users_list]"
@@ -248,7 +248,7 @@ class FormEditorMetaboxRenderer {
                 </td>
             </tr>
 
-            <tr id="ffc_denylist_field" class="ffc-conditional-field<?php echo $denylist_active ? ' active' : ''; ?>">
+            <tr id="ffc_denylist_field" class="ffc-conditional-field<?php echo esc_attr( $denylist_active ? ' active' : '' ); ?>">
                 <th><label><?php esc_html_e( 'Denylist (Blocked)', 'wp-ffcertificate' ); ?></label></th>
                 <td>
                     <textarea name="ffc_config[denied_users_list]"
@@ -258,7 +258,7 @@ class FormEditorMetaboxRenderer {
                 </td>
             </tr>
 
-            <tr id="ffc_ticket_field" class="ffc-highlight-row ffc-conditional-field<?php echo $ticket_active ? ' active' : ''; ?>">
+            <tr id="ffc_ticket_field" class="ffc-highlight-row ffc-conditional-field<?php echo esc_attr( $ticket_active ? ' active' : '' ); ?>">
                 <th><label class="ffc-label-accent"><?php esc_html_e( 'Ticket Generator', 'wp-ffcertificate' ); ?></label></th>
                 <td>
                     <div class="ffc-admin-flex-row ffc-mb5">
@@ -391,7 +391,7 @@ class FormEditorMetaboxRenderer {
                             <p class="description"><?php esc_html_e('Leave empty for 24/7 access. Default: 00:00 to 23:59', 'wp-ffcertificate'); ?></p>
                         </td>
                     </tr>
-                    <tr id="ffc-time-mode-row" class="ffc-conditional-field<?php echo (!empty($date_start) && !empty($date_end) && $date_start !== $date_end) ? ' active' : ''; ?>">
+                    <tr id="ffc-time-mode-row" class="ffc-conditional-field<?php echo esc_attr( (!empty($date_start) && !empty($date_end) && $date_start !== $date_end) ? ' active' : '' ); ?>">
                         <th><label><?php esc_html_e('Time Behavior', 'wp-ffcertificate'); ?></label></th>
                         <td>
                             <fieldset>

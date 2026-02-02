@@ -200,8 +200,8 @@ class FFC_Appointments_List_Table extends WP_List_Table {
 
         // Get filter parameters
         // phpcs:disable WordPress.Security.NonceVerification.Recommended -- Standard WP_List_Table filter parameters.
-        $calendar_id = isset($_GET['calendar_id']) ? absint($_GET['calendar_id']) : 0;
-        $status = isset($_GET['status']) ? sanitize_text_field($_GET['status']) : '';
+        $calendar_id = isset($_GET['calendar_id']) ? absint(wp_unslash($_GET['calendar_id'])) : 0;
+        $status = isset($_GET['status']) ? sanitize_text_field(wp_unslash($_GET['status'])) : '';
         // phpcs:enable WordPress.Security.NonceVerification.Recommended
 
         // Build conditions
@@ -241,8 +241,8 @@ class FFC_Appointments_List_Table extends WP_List_Table {
         }
 
         // phpcs:disable WordPress.Security.NonceVerification.Recommended -- Display filter parameters for dropdown selection.
-        $calendar_id = isset($_GET['calendar_id']) ? absint($_GET['calendar_id']) : 0;
-        $status = isset($_GET['status']) ? sanitize_text_field($_GET['status']) : '';
+        $calendar_id = isset($_GET['calendar_id']) ? absint(wp_unslash($_GET['calendar_id'])) : 0;
+        $status = isset($_GET['status']) ? sanitize_text_field(wp_unslash($_GET['status'])) : '';
         // phpcs:enable WordPress.Security.NonceVerification.Recommended
 
         // Get all calendars for filter
@@ -277,8 +277,8 @@ class FFC_Appointments_List_Table extends WP_List_Table {
 // Process actions
 // phpcs:disable WordPress.Security.NonceVerification.Recommended -- Nonce verified in switch cases below via check_admin_referer.
 if (isset($_GET['action']) && isset($_GET['appointment'])) {
-    $appointment_id = absint($_GET['appointment']);
-    $action = sanitize_text_field($_GET['action']);
+    $appointment_id = absint(wp_unslash($_GET['appointment']));
+    $action = sanitize_text_field(wp_unslash($_GET['action']));
     // phpcs:enable WordPress.Security.NonceVerification.Recommended
 
     // Verify user has admin permissions

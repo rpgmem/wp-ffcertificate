@@ -322,6 +322,7 @@ class AppointmentCsvExporter {
         $output = fopen('php://output', 'w');
 
         // BOM for Excel UTF-8 recognition
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- CSV binary output, not HTML context
         fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
 
         // Build headers
@@ -336,6 +337,7 @@ class AppointmentCsvExporter {
             return mb_convert_encoding($header, 'UTF-8', 'UTF-8');
         }, $headers);
 
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- CSV file output, not HTML context
         fputcsv($output, $headers, ';');
 
         // Write data rows
@@ -350,6 +352,7 @@ class AppointmentCsvExporter {
                 return $value;
             }, $csv_row);
 
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- CSV file output, not HTML context
             fputcsv($output, $csv_row, ';');
         }
 
@@ -431,13 +434,15 @@ class AppointmentCsvExporter {
 
             // Get filters
             $calendar_ids = null;
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- absint() applied to each element; is_array() is a type check only.
             if (!empty($_POST['calendar_ids']) && is_array($_POST['calendar_ids'])) {
-                $calendar_ids = array_map('absint', $_POST['calendar_ids']);
+                $calendar_ids = array_map('absint', wp_unslash($_POST['calendar_ids']));
             } elseif (!empty($_POST['calendar_id'])) {
-                $calendar_ids = [absint($_POST['calendar_id'])];
+                $calendar_ids = [absint(wp_unslash($_POST['calendar_id']))];
             }
 
             $statuses = array();
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitize_key() applied after unslash; is_array() is a type check only.
             if (!empty($_POST['statuses']) && is_array($_POST['statuses'])) {
                 $statuses = array_map('sanitize_key', wp_unslash($_POST['statuses']));
             }
