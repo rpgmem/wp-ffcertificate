@@ -376,7 +376,7 @@ class FormProcessor {
             $name = $field['name'];
             // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- isset() check only; value unslashed and sanitized below.
             if ( isset( $_POST[ $name ] ) ) {
-                $value = \FreeFormCertificate\Core\Utils::recursive_sanitize( wp_unslash( $_POST[ $name ] ) );
+                $value = \FreeFormCertificate\Core\Utils::recursive_sanitize( wp_unslash( $_POST[ $name ] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized via recursive_sanitize().
                 
                 // Special validation for CPF/RF
                 if ( $name === 'cpf_rf' ) {

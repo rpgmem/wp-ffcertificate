@@ -53,21 +53,9 @@ class Loader {
     protected $calendar_shortcode = null;
 
     public function __construct() {
-        // Load textdomain at init action to prevent early translation loading warnings
-        add_action('init', [$this, 'load_plugin_textdomain']);
-
         add_action('plugins_loaded', [$this, 'init_plugin'], 10);
         add_action('wp_enqueue_scripts', [$this, 'enqueue_rate_limit_assets']);
         $this->define_activation_hooks();
-    }
-
-    /**
-     * Load plugin textdomain for translations
-     *
-     * @since 4.0.1
-     */
-    public function load_plugin_textdomain(): void {
-        load_plugin_textdomain('ffc', false, dirname(plugin_basename(FFC_PLUGIN_DIR . 'wp-ffcertificate.php')) . '/languages');
     }
 
     public function init_plugin(): void {

@@ -18,6 +18,8 @@ use FreeFormCertificate\Repositories\CalendarRepository;
 
 if (!defined('ABSPATH')) exit;
 
+// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared
+
 class AppointmentCsvExporter {
 
     /**

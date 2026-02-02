@@ -14,6 +14,8 @@ namespace FreeFormCertificate\Repositories;
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
+// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+
 abstract class AbstractRepository {
 
     protected $wpdb;

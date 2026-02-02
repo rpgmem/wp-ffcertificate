@@ -108,19 +108,17 @@ class AppointmentReceiptHandler {
      * @return void
      */
     private function enqueue_pdf_scripts(): void {
-        // phpcs:ignore PluginCheck.CodeAnalysis.EnqueuedResourceOffloading.OffloadedContent -- html2canvas loaded from official CDN.
         wp_enqueue_script(
             'html2canvas',
-            'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
+            FFC_PLUGIN_URL . 'libs/js/html2canvas.min.js',
             array(),
             '1.4.1',
             true
         );
 
-        // phpcs:ignore PluginCheck.CodeAnalysis.EnqueuedResourceOffloading.OffloadedContent -- jsPDF loaded from official CDN.
         wp_enqueue_script(
             'jspdf',
-            'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
+            FFC_PLUGIN_URL . 'libs/js/jspdf.umd.min.js',
             array(),
             '2.5.1',
             true

@@ -138,7 +138,7 @@ $wp_ffcertificate_base_url = admin_url( 'edit.php?post_type=ffc_form&page=ffc-ac
                                     <summary class="ffc-log-summary">
                                         <?php esc_html_e( 'View Details', 'wp-ffcertificate' ); ?> ▼
                                     </summary>
-                                    <pre class="ffc-log-pre"><?php echo esc_html( print_r( $wp_ffcertificate_log['context'], true ) ); ?></pre>
+                                    <pre class="ffc-log-pre"><?php echo esc_html( wp_json_encode( $wp_ffcertificate_log['context'], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE ) ); ?></pre>
                                 </details>
                             <?php else : ?>
                                 <span class="description">—</span>

@@ -1,13 +1,13 @@
 === Free Form Certificate ===
 Contributors: alexmeusburger
-Tags: certificate, form builder, pdf generation, verification, validation, html2canvas, jspdf, magic links
+Tags: certificate, form builder, pdf generation, verification, validation
 Requires at least: 5.0
-Tested up to: 6.4
-Stable tag: 2.8.0
-License: GPLv2 or later
-License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Tested up to: 6.9
+Stable tag: 4.0.0
+License: GPLv3 or later
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Complete solution for creating dynamic forms, generating PDF certificates, and validating authenticity with modular OOP architecture and magic link access.
+Create dynamic forms, generate PDF certificates, and validate authenticity with magic link access.
 
 == Description ==
 

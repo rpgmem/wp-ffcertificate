@@ -278,8 +278,8 @@ class FFC_Appointments_List_Table extends WP_List_Table {
 // Process actions
 // phpcs:disable WordPress.Security.NonceVerification.Recommended -- Nonce verified in switch cases below via check_admin_referer.
 if (isset($_GET['action']) && isset($_GET['appointment'])) {
-    $appointment_id = absint(wp_unslash($_GET['appointment']));
-    $action = sanitize_text_field(wp_unslash($_GET['action']));
+    $wp_ffcertificate_appointment_id = absint(wp_unslash($_GET['appointment']));
+    $wp_ffcertificate_action = sanitize_text_field(wp_unslash($_GET['action']));
     // phpcs:enable WordPress.Security.NonceVerification.Recommended
 
     // Verify user has admin permissions
@@ -287,14 +287,14 @@ if (isset($_GET['action']) && isset($_GET['appointment'])) {
         wp_die(esc_html__('You do not have permission to perform this action.', 'wp-ffcertificate'));
     }
 
-    $appointment_repo = new \FreeFormCertificate\Repositories\AppointmentRepository();
+    $wp_ffcertificate_repo = new \FreeFormCertificate\Repositories\AppointmentRepository();
 
-    switch ($action) {
+    switch ($wp_ffcertificate_action) {
         case 'confirm':
-            check_admin_referer('ffc_confirm_appointment_' . $appointment_id);
-            $result = $appointment_repo->confirm($appointment_id, get_current_user_id());
+            check_admin_referer('ffc_confirm_appointment_' . $wp_ffcertificate_appointment_id);
+            $wp_ffcertificate_result = $wp_ffcertificate_repo->confirm($wp_ffcertificate_appointment_id, get_current_user_id());
 
-            if ($result) {
+            if ($wp_ffcertificate_result) {
                 // Store success message in transient
                 set_transient('ffc_admin_notice_' . get_current_user_id(), array(
                     'type' => 'success',
@@ -308,21 +308,21 @@ if (isset($_GET['action']) && isset($_GET['appointment'])) {
                 ), 30);
             }
 
-            $redirect_url = add_query_arg(
+            $wp_ffcertificate_redirect = add_query_arg(
                 array(
                     'post_type' => 'ffc_calendar',
                     'page' => 'ffc-appointments'
                 ),
                 admin_url('edit.php')
             );
-            wp_safe_redirect($redirect_url);
+            wp_safe_redirect($wp_ffcertificate_redirect);
             exit;
 
         case 'cancel':
-            check_admin_referer('ffc_cancel_appointment_' . $appointment_id);
-            $result = $appointment_repo->cancel($appointment_id, get_current_user_id(), __('Cancelled by admin', 'wp-ffcertificate'));
+            check_admin_referer('ffc_cancel_appointment_' . $wp_ffcertificate_appointment_id);
+            $wp_ffcertificate_result = $wp_ffcertificate_repo->cancel($wp_ffcertificate_appointment_id, get_current_user_id(), __('Cancelled by admin', 'wp-ffcertificate'));
 
-            if ($result) {
+            if ($wp_ffcertificate_result) {
                 // Store success message in transient
                 set_transient('ffc_admin_notice_' . get_current_user_id(), array(
                     'type' => 'success',
@@ -336,14 +336,14 @@ if (isset($_GET['action']) && isset($_GET['appointment'])) {
                 ), 30);
             }
 
-            $redirect_url = add_query_arg(
+            $wp_ffcertificate_redirect = add_query_arg(
                 array(
                     'post_type' => 'ffc_calendar',
                     'page' => 'ffc-appointments'
                 ),
                 admin_url('edit.php')
             );
-            wp_safe_redirect($redirect_url);
+            wp_safe_redirect($wp_ffcertificate_redirect);
             exit;
     }
 }

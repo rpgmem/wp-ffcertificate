@@ -9,7 +9,7 @@ Author:             Alex Meusburger
 Author URI:         https://github.com/rpgmem
 License:             GPLv3 or later
 License URI:         https://www.gnu.org/licenses/gpl-3.0.html
-Text Domain:        ffc
+Text Domain:        wp-ffcertificate
 Domain Path:        /languages
 */
 

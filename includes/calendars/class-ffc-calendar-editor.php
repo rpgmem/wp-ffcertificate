@@ -857,6 +857,7 @@ class CalendarEditor {
                             data-action="all"
                             data-calendar-id="<?php echo esc_attr($calendar_id); ?>"
                             style="width: 100%; margin-top: 10px;">
+                        /* translators: %d: number of records, %d: number of records */
                         ⚠️ <?php printf(esc_html__('All Appointments (%d)', 'wp-ffcertificate'), intval($count_all)); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- printf with esc_html__ and %d integer format ?>
                     </button>
                 </div>

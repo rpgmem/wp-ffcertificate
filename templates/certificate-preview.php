@@ -51,35 +51,35 @@ if ( ! defined( 'ABSPATH' ) ) {
         <?php if ( is_array( $data ) ) : ?>
             <?php
             // Show priority fields first
-            foreach ( $priority_fields as $field ) {
-                if ( ! isset( $data[$field] ) || in_array( $field, $skip_fields ) ) {
+            foreach ( $priority_fields as $wp_ffcertificate_field ) {
+                if ( ! isset( $data[$wp_ffcertificate_field] ) || in_array( $wp_ffcertificate_field, $skip_fields ) ) {
                     continue;
                 }
 
-                $value = $data[$field];
-                $label = call_user_func( $get_field_label_callback, $field );
-                $display_value = call_user_func( $format_field_value_callback, $field, $value );
+                $wp_ffcertificate_value = $data[$wp_ffcertificate_field];
+                $wp_ffcertificate_label = call_user_func( $get_field_label_callback, $wp_ffcertificate_field );
+                $wp_ffcertificate_display = call_user_func( $format_field_value_callback, $wp_ffcertificate_field, $wp_ffcertificate_value );
                 ?>
                 <div class="ffc-detail-row">
-                    <span class="label"><?php echo esc_html( $label ); ?>:</span>
-                    <span class="value"><?php echo esc_html( $display_value ); ?></span>
+                    <span class="label"><?php echo esc_html( $wp_ffcertificate_label ); ?>:</span>
+                    <span class="value"><?php echo esc_html( $wp_ffcertificate_display ); ?></span>
                 </div>
                 <?php
             }
 
             // Then show remaining fields
-            foreach ( $data as $key => $value ) {
+            foreach ( $data as $wp_ffcertificate_key => $wp_ffcertificate_value ) {
                 // Skip if already shown or in skip list
-                if ( in_array( $key, $priority_fields ) || in_array( $key, $skip_fields, true ) ) {
+                if ( in_array( $wp_ffcertificate_key, $priority_fields ) || in_array( $wp_ffcertificate_key, $skip_fields, true ) ) {
                     continue;
                 }
 
-                $label = call_user_func( $get_field_label_callback, $key );
-                $display_value = call_user_func( $format_field_value_callback, $key, $value );
+                $wp_ffcertificate_label = call_user_func( $get_field_label_callback, $wp_ffcertificate_key );
+                $wp_ffcertificate_display = call_user_func( $format_field_value_callback, $wp_ffcertificate_key, $wp_ffcertificate_value );
                 ?>
                 <div class="ffc-detail-row">
-                    <span class="label"><?php echo esc_html( $label ); ?>:</span>
-                    <span class="value"><?php echo esc_html( $display_value ); ?></span>
+                    <span class="label"><?php echo esc_html( $wp_ffcertificate_label ); ?>:</span>
+                    <span class="value"><?php echo esc_html( $wp_ffcertificate_display ); ?></span>
                 </div>
                 <?php
             }

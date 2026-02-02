@@ -171,6 +171,7 @@ class CalendarShortcode {
         // Check login requirement
         if ($calendar['require_login'] && !is_user_logged_in()) {
             return '<p class="ffc-error">' . sprintf(
+                /* translators: %s: value */
                 __('You must be <a href="%s">logged in</a> to book this calendar.', 'wp-ffcertificate'),
                 wp_login_url(get_permalink())
             ) . '</p>';
@@ -313,6 +314,7 @@ class CalendarShortcode {
                             <input type="checkbox" id="ffc-booking-consent" name="consent" value="1" required>
                             <?php
                             echo wp_kses_post( sprintf(
+                                /* translators: %s: value */
                                 __('I agree to the collection and processing of my personal data in accordance with the <a href="%s" target="_blank">Privacy Policy</a> (LGPD).', 'wp-ffcertificate'),
                                 esc_url( get_privacy_policy_url() )
                             ) );

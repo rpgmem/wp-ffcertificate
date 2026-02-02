@@ -81,6 +81,7 @@ class AdminSubmissionEditPage {
         // Render page
         ?>
         <div class="wrap">
+            /* translators: %s: value */
             <h1><?php echo esc_html( sprintf( __( 'Edit Submission #%s', 'wp-ffcertificate' ), $this->sub_array['id'] ) ); ?></h1>
 
             <?php $this->render_edit_warning(); ?>
@@ -135,11 +136,13 @@ class AdminSubmissionEditPage {
                 <strong><?php esc_html_e( '⚠️ Warning:', 'wp-ffcertificate' ); ?></strong>
                 <?php
                 echo wp_kses_post( sprintf(
+                    /* translators: %s: name */
                     __( 'This record was manually edited on <strong>%s</strong>', 'wp-ffcertificate' ),
                     esc_html( date_i18n( get_option('date_format') . ' ' . get_option('time_format'), strtotime($edited_at) ) )
                 ) );
                 ?>
                 <?php if ( $edited_by_name ): ?>
+                    /* translators: %s: name */
                     <?php echo wp_kses_post( sprintf( __( ' by <strong>%s</strong>', 'wp-ffcertificate' ), esc_html($edited_by_name) ) ); ?>
                 <?php endif; ?>.
             </p>
@@ -288,12 +291,14 @@ class AdminSubmissionEditPage {
                         </p>
                         <?php if ( $consent_date ): ?>
                             <p class="description">
+                                /* translators: %s: date/time */
                                 📅 <?php echo esc_html( sprintf( __( 'Date: %s', 'wp-ffcertificate' ), $consent_date ) ); ?>
                             </p>
                         <?php endif; ?>
 
                         <?php if ( $consent_ip ): ?>
                             <p class="description">
+                                /* translators: %s: value */
                                 🌐 <?php echo esc_html( sprintf( __( 'IP: %s', 'wp-ffcertificate' ), $consent_ip ) ); ?>
                             </p>
                         <?php endif; ?>

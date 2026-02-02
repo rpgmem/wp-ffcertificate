@@ -344,12 +344,12 @@ class CsvExporter {
     public function handle_export_request(): void {
         try {
             // Debug logging
-            // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Debug logging before nonce check; POST superglobal used as-is for debug.
+            // phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Debug logging before nonce check; POST superglobal used as-is for debug.
             \FreeFormCertificate\Core\Utils::debug_log( 'CSV export handler called', array(
                 'POST' => $_POST,
-                // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- isset() existence check only; nonce verified below.
                 'has_nonce' => isset( $_POST['ffc_export_csv_action'] )
             ) );
+            // phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 
             // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- isset() existence check only.
             if ( ! isset( $_POST['ffc_export_csv_action'] ) ||

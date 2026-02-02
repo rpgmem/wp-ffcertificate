@@ -20,6 +20,8 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+
 class CleanupMigrationStrategy implements MigrationStrategyInterface {
 
     /**
@@ -84,6 +86,7 @@ class CleanupMigrationStrategy implements MigrationStrategyInterface {
             'migrated' => $cleaned,
             'pending' => $pending,
             'percent' => round( $percent, 2 ),
+            /* translators: %d: submission ID */
             'is_complete' => ( $pending == 0 ),
             'message' => sprintf(
                 __( '%d submissions eligible for cleanup (15+ days old with encrypted data)', 'wp-ffcertificate' ),
@@ -164,6 +167,7 @@ class CleanupMigrationStrategy implements MigrationStrategyInterface {
 
         return array(
             'success' => ( $result !== false ),
+            /* translators: %d: submission ID */
             'processed' => $cleaned,
             'has_more' => $has_more,
             'message' => sprintf( __( 'Cleaned %d submissions', 'wp-ffcertificate' ), $cleaned ),

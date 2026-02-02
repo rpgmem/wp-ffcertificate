@@ -212,6 +212,7 @@ class EncryptionMigrationStrategy implements MigrationStrategyInterface {
             'success' => count( $errors ) === 0,
             'processed' => $migrated,
             'has_more' => $has_more,
+            /* translators: %d: number of records */
             'message' => sprintf( __( 'Encrypted %d submissions', 'wp-ffcertificate' ), $migrated ),
             'errors' => $errors
         );

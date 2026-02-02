@@ -118,6 +118,7 @@ class MagicTokenMigrationStrategy implements MigrationStrategyInterface {
             'success' => true,
             'processed' => $processed,
             'has_more' => $has_more,
+            /* translators: %d: number */
             'message' => sprintf( __( 'Generated %d magic tokens', 'wp-ffcertificate' ), $processed )
         );
     }

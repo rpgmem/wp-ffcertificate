@@ -147,8 +147,8 @@ class SettingsSaveHandler {
      * @return array Updated settings
      */
     private function save_smtp_settings( array $clean, array $new ): array {
-        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in handle_all_submissions() via wp_verify_nonce.
         // Email Status checkbox (only when on SMTP tab to prevent unchecking from other tabs)
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in handle_all_submissions() via wp_verify_nonce.
         if ( isset( $_POST['_ffc_tab'] ) && sanitize_key( wp_unslash( $_POST['_ffc_tab'] ) ) === 'smtp' ) {
             $clean['disable_all_emails'] = isset( $new['disable_all_emails'] ) ? 1 : 0;
         }
@@ -205,8 +205,8 @@ class SettingsSaveHandler {
      * @return array Updated settings
      */
     private function save_qrcode_settings( array $clean, array $new ): array {
-        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in handle_all_submissions() via wp_verify_nonce.
         // QR Cache (checkbox - only set if on QR tab)
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in handle_all_submissions() via wp_verify_nonce.
         if ( isset( $_POST['_ffc_tab'] ) && sanitize_key( wp_unslash( $_POST['_ffc_tab'] ) ) === 'qr_code' ) {
             $clean['qr_cache_enabled'] = isset( $new['qr_cache_enabled'] ) ? 1 : 0;
         }

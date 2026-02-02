@@ -89,7 +89,7 @@ class FieldMigrationStrategy implements MigrationStrategyInterface {
             // If encrypted column exists, count records that have EITHER:
             // 1. Data in encrypted column (migrated with encryption)
             // 2. NULL in both columns (already cleaned up)
-            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQLPlaceholders.UnsupportedIdentifierPlaceholder
             $migrated = $wpdb->get_var( $wpdb->prepare(
                 "SELECT COUNT(*) FROM {$this->table_name}
                 WHERE (%i IS NOT NULL AND %i != '')
@@ -99,7 +99,7 @@ class FieldMigrationStrategy implements MigrationStrategyInterface {
             ));
         } else {
             // No encrypted column, use old logic
-            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQLPlaceholders.UnsupportedIdentifierPlaceholder
             $migrated = $wpdb->get_var( $wpdb->prepare(
                 "SELECT COUNT(*) FROM {$this->table_name}
                 WHERE %i IS NOT NULL AND %i != ''",
@@ -147,7 +147,7 @@ class FieldMigrationStrategy implements MigrationStrategyInterface {
 
         // Get submissions without migrated field value
         // Always use OFFSET 0 because migrated records won't appear in next query
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQLPlaceholders.UnsupportedIdentifierPlaceholder
         $submissions = $wpdb->get_results( $wpdb->prepare(
             "SELECT id, data FROM {$this->table_name}
             WHERE (%i IS NULL OR %i = '')
@@ -206,7 +206,8 @@ class FieldMigrationStrategy implements MigrationStrategyInterface {
             'success' => true,
             'processed' => $processed,
             'has_more' => $has_more,
-            'message' => sprintf( __( 'Migrated %d %s values', 'wp-ffcertificate' ), $processed, $field_def['description'] )
+            /* translators: %d: number of records, %s: error message */
+            'message' => sprintf( __( 'Migrated %1$d %2$s values', 'wp-ffcertificate' ), $processed, $field_def['description'] )
         );
     }
 
@@ -241,6 +242,7 @@ class FieldMigrationStrategy implements MigrationStrategyInterface {
         if ( ! $column_exists ) {
             return new WP_Error(
                 'missing_column',
+                /* translators: %s: date/time */
                 sprintf( __( '%s column does not exist. Please update the database schema first.', 'wp-ffcertificate' ), $column )
             );
         }

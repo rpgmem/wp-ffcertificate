@@ -306,6 +306,7 @@ class AdminAssetsManager {
                 'pdfContainerNotFound'    => __( 'Error: PDF container not found', 'wp-ffcertificate' ),
                 'errorGeneratingPdf'      => __( 'Error generating PDF', 'wp-ffcertificate' ),
                 'html2canvasFailed'       => __( 'Error: html2canvas failed', 'wp-ffcertificate' ),
+                /* translators: %s: value */
                 'confirmLoadTemplate'     => __( 'Load "%s"? This will replace your current certificate HTML.', 'wp-ffcertificate' ),
                 'dismiss'                 => __( 'Dismiss', 'wp-ffcertificate' ),
 
@@ -316,6 +317,7 @@ class AdminAssetsManager {
                 'codesFieldNotFound'      => __( 'Error: codes field not found', 'wp-ffcertificate' ),
                 'permissionDenied'        => __( 'Permission denied. Please reload the page.', 'wp-ffcertificate' ),
                 'badRequest'              => __( 'Bad request. Check console.', 'wp-ffcertificate' ),
+                /* translators: %d: number */
                 'serverError'             => __( 'Server error (Status: %d)', 'wp-ffcertificate' ),
 
                 // Field Builder
@@ -344,10 +346,12 @@ class AdminAssetsManager {
                 'selectTemplate'          => __( 'Select a Template', 'wp-ffcertificate' ),
                 'cancel'                  => __( 'Cancel', 'wp-ffcertificate' ),
                 'loadingTemplate'         => __( 'Loading template...', 'wp-ffcertificate' ),
+                /* translators: %s: error message, %s: error message */
                 'templateLoadedSuccess'   => __( 'Template "%s" loaded successfully!', 'wp-ffcertificate' ),
                 'templateFileNotFound'    => __( 'Template file not found. Check if file exists in html/ folder.', 'wp-ffcertificate' ),
                 'accessDenied'            => __( 'Access denied. Check file permissions.', 'wp-ffcertificate' ),
                 'networkError'            => __( 'Network error. Check your connection.', 'wp-ffcertificate' ),
+                /* translators: %s: error message */
                 'errorLoadingTemplate'    => __( 'Error loading template: %s', 'wp-ffcertificate' ),
                 'chooseBackgroundImage'   => __( 'Choose Background Image', 'wp-ffcertificate' ),
                 'useThisImage'            => __( 'Use this image', 'wp-ffcertificate' ),
