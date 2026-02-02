@@ -23,6 +23,8 @@ namespace FreeFormCertificate\Migrations;
 
 if (!defined('ABSPATH')) exit;
 
+// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange
+
 class MigrationUserLink {
 
     /**

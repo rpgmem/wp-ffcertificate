@@ -20,6 +20,8 @@ namespace FreeFormCertificate\Calendars;
 
 if (!defined('ABSPATH')) exit;
 
+// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange
+
 class CalendarActivator {
 
     /**

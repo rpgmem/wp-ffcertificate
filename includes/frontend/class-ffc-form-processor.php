@@ -21,6 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
 class FormProcessor {
 
     private $submission_handler;

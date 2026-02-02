@@ -81,8 +81,10 @@ class AdminSubmissionEditPage {
         // Render page
         ?>
         <div class="wrap">
-            /* translators: %s: value */
-            <h1><?php echo esc_html( sprintf( __( 'Edit Submission #%s', 'wp-ffcertificate' ), $this->sub_array['id'] ) ); ?></h1>
+            <h1><?php
+                /* translators: %s: submission ID */
+                echo esc_html( sprintf( __( 'Edit Submission #%s', 'wp-ffcertificate' ), $this->sub_array['id'] ) );
+            ?></h1>
 
             <?php $this->render_edit_warning(); ?>
 
@@ -142,8 +144,10 @@ class AdminSubmissionEditPage {
                 ) );
                 ?>
                 <?php if ( $edited_by_name ): ?>
-                    /* translators: %s: name */
-                    <?php echo wp_kses_post( sprintf( __( ' by <strong>%s</strong>', 'wp-ffcertificate' ), esc_html($edited_by_name) ) ); ?>
+                    <?php
+                    /* translators: %s: editor name */
+                    echo wp_kses_post( sprintf( __( ' by <strong>%s</strong>', 'wp-ffcertificate' ), esc_html($edited_by_name) ) );
+                    ?>
                 <?php endif; ?>.
             </p>
         </div>
@@ -291,15 +295,19 @@ class AdminSubmissionEditPage {
                         </p>
                         <?php if ( $consent_date ): ?>
                             <p class="description">
-                                /* translators: %s: date/time */
-                                📅 <?php echo esc_html( sprintf( __( 'Date: %s', 'wp-ffcertificate' ), $consent_date ) ); ?>
+                                <?php
+                                /* translators: %s: consent date/time */
+                                echo esc_html( sprintf( __( 'Date: %s', 'wp-ffcertificate' ), $consent_date ) );
+                                ?>
                             </p>
                         <?php endif; ?>
 
                         <?php if ( $consent_ip ): ?>
                             <p class="description">
-                                /* translators: %s: value */
-                                🌐 <?php echo esc_html( sprintf( __( 'IP: %s', 'wp-ffcertificate' ), $consent_ip ) ); ?>
+                                <?php
+                                /* translators: %s: IP address */
+                                echo esc_html( sprintf( __( 'IP: %s', 'wp-ffcertificate' ), $consent_ip ) );
+                                ?>
                             </p>
                         <?php endif; ?>
 

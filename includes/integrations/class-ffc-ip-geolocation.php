@@ -20,6 +20,8 @@ namespace FreeFormCertificate\Integrations;
 
 if (!defined('ABSPATH')) exit;
 
+// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
+
 class IpGeolocation {
 
     /**

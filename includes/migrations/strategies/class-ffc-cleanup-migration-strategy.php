@@ -89,6 +89,7 @@ class CleanupMigrationStrategy implements MigrationStrategyInterface {
             /* translators: %d: submission ID */
             'is_complete' => ( $pending == 0 ),
             'message' => sprintf(
+                /* translators: placeholders are dynamic values */
                 __( '%d submissions eligible for cleanup (15+ days old with encrypted data)', 'wp-ffcertificate' ),
                 $total_eligible
             )
@@ -170,6 +171,7 @@ class CleanupMigrationStrategy implements MigrationStrategyInterface {
             /* translators: %d: submission ID */
             'processed' => $cleaned,
             'has_more' => $has_more,
+            /* translators: placeholders are dynamic values */
             'message' => sprintf( __( 'Cleaned %d submissions', 'wp-ffcertificate' ), $cleaned ),
             'errors' => ( $result === false ) ? array( $wpdb->last_error ) : array()
         );

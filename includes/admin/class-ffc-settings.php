@@ -245,14 +245,14 @@ class Settings {
             
             <?php
             // Display migration messages
-            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- isset() existence check only.
+            // phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized via sanitize_text_field().
             if ( isset( $_GET['migration_success'] ) ) {
                 echo '<div class="notice notice-success is-dismissible"><p>' . esc_html( sanitize_text_field( urldecode( wp_unslash( $_GET['migration_success'] ) ) ) ) . '</p></div>';
             }
-            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- isset() existence check only.
             if ( isset( $_GET['migration_error'] ) ) {
                 echo '<div class="notice notice-error is-dismissible"><p>' . esc_html( sanitize_text_field( urldecode( wp_unslash( $_GET['migration_error'] ) ) ) ) . '</p></div>';
             }
+            // phpcs:enable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
             ?>
             
             <h2 class="nav-tab-wrapper">

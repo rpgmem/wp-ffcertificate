@@ -246,12 +246,12 @@ class Admin {
                 break;
             case 'migration_success':
                 $migrated = isset( $_GET['migrated'] ) ? absint( wp_unslash( $_GET['migrated'] ) ) : 0;
-                $migration_name = isset($_GET['migration_name']) ? sanitize_text_field( urldecode( wp_unslash( $_GET['migration_name'] ) ) ) : __('Migration', 'wp-ffcertificate');
+                $migration_name = isset($_GET['migration_name']) ? sanitize_text_field( urldecode( wp_unslash( $_GET['migration_name'] ) ) ) : __('Migration', 'wp-ffcertificate'); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized via sanitize_text_field().
                 /* translators: 1: migration name, 2: number of records migrated */
                 $text = sprintf(__('%1$s: %2$d records migrated successfully.', 'wp-ffcertificate'), $migration_name, $migrated);
                 break;
             case 'migration_error':
-                $error_msg = isset($_GET['error_msg']) ? sanitize_text_field( urldecode( wp_unslash( $_GET['error_msg'] ) ) ) : __('Unknown error', 'wp-ffcertificate');
+                $error_msg = isset($_GET['error_msg']) ? sanitize_text_field( urldecode( wp_unslash( $_GET['error_msg'] ) ) ) : __('Unknown error', 'wp-ffcertificate'); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized via sanitize_text_field().
                 $text = __('Migration Error: ', 'wp-ffcertificate') . $error_msg;
                 $type = 'error';
                 break;

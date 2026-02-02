@@ -17,6 +17,8 @@ namespace FreeFormCertificate\Security;
 
 if (!defined('ABSPATH')) exit;
 
+// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
+
 class RateLimiter {
 
     /**

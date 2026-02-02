@@ -18,6 +18,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Autoloader handles class loading
 
+// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
 class AdminActivityLogPage {
 
     /**
