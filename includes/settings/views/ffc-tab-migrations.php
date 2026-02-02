@@ -172,8 +172,8 @@ $wp_ffcertificate_migrations = $wp_ffcertificate_migration_manager->get_migratio
 
                     <p class="description">
                         <?php
-                        /* translators: %s: number of pending records */
                         printf(
+                            /* translators: %s: number of pending records */
                             esc_html__( 'Click once to process all records automatically. %s records remaining.', 'wp-ffcertificate' ),
                             '<strong>' . esc_html( $wp_ffcertificate_pending ) . '</strong>'
                         );

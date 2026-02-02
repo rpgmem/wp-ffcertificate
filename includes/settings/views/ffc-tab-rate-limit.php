@@ -42,9 +42,9 @@ $wp_ffcertificate_stats = \FreeFormCertificate\Security\RateLimiter::get_stats()
             <th><?php esc_html_e('Block after', 'wp-ffcertificate'); ?></th>
             <td>
                 <?php
-                /* translators: %1$s: attempts input field, %2$s: hours input field */
                 echo wp_kses(
                     sprintf(
+                        /* translators: %1$s: attempts input field, %2$s: hours input field */
                         __('%1$s attempts in %2$s hour(s)', 'wp-ffcertificate'),
                         '<input type="number" name="cpf_block_threshold" value="' . esc_attr($wp_ffcertificate_s['cpf']['block_threshold']) . '" min="1">',
                         '<input type="number" name="cpf_block_hours" value="' . esc_attr($wp_ffcertificate_s['cpf']['block_hours']) . '" min="1">'
@@ -57,9 +57,9 @@ $wp_ffcertificate_stats = \FreeFormCertificate\Security\RateLimiter::get_stats()
             <th><?php esc_html_e('Block duration', 'wp-ffcertificate'); ?></th>
             <td>
                 <?php
-                /* translators: %1$s: duration input field */
                 echo wp_kses(
                     sprintf(
+                        /* translators: %1$s: duration input field */
                         __('%1$s hours', 'wp-ffcertificate'),
                         '<input type="number" name="cpf_block_duration" value="' . esc_attr($wp_ffcertificate_s['cpf']['block_duration']) . '" min="1">'
                     ),

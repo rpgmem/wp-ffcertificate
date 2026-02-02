@@ -659,8 +659,8 @@ class CalendarEditor {
                 // Delete all appointments for this calendar
                 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
                 $deleted = $wpdb->delete($table, ['calendar_id' => $calendar_id], ['%d']);
-                /* translators: %d: number of deleted appointments */
                 $message = sprintf(
+                    /* translators: %d: number of deleted appointments */
                     __('Successfully deleted %d appointment(s).', 'wp-ffcertificate'),
                     $deleted
                 );
@@ -674,8 +674,8 @@ class CalendarEditor {
                     $calendar_id,
                     $today
                 ));
-                /* translators: %d: number of deleted past appointments */
                 $message = sprintf(
+                    /* translators: %d: number of deleted past appointments */
                     __('Successfully deleted %d past appointment(s).', 'wp-ffcertificate'),
                     $deleted
                 );
@@ -689,8 +689,8 @@ class CalendarEditor {
                     $calendar_id,
                     $today
                 ));
-                /* translators: %d: number of deleted future appointments */
                 $message = sprintf(
+                    /* translators: %d: number of deleted future appointments */
                     __('Successfully deleted %d future appointment(s).', 'wp-ffcertificate'),
                     $deleted
                 );
@@ -703,8 +703,8 @@ class CalendarEditor {
                     'calendar_id' => $calendar_id,
                     'status' => 'cancelled'
                 ], ['%d', '%s']);
-                /* translators: %d: number of deleted cancelled appointments */
                 $message = sprintf(
+                    /* translators: %d: number of deleted cancelled appointments */
                     __('Successfully deleted %d cancelled appointment(s).', 'wp-ffcertificate'),
                     $deleted
                 );

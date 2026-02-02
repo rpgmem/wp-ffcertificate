@@ -429,8 +429,8 @@ class CalendarCPT {
         }
 
         // Prepare email
-        /* translators: %s: site name */
         $subject = sprintf(
+            /* translators: %s: site name */
             __('[%s] Appointment Cancelled - Calendar No Longer Available', 'wp-ffcertificate'),
             get_bloginfo('name')
         );
@@ -438,8 +438,8 @@ class CalendarCPT {
         $date_formatted = date_i18n(get_option('date_format'), strtotime($appointment['appointment_date']));
         $time_formatted = date_i18n(get_option('time_format'), strtotime($appointment['start_time']));
 
-        /* translators: %1$s, %2$s, %4$s, %5$s, %6$s, %8$s, %10$s, %12$s, %13$s, %14$s, %15$s: line breaks, %3$s: calendar title, %7$s: appointment date, %9$s: appointment time, %11$s: calendar title, %16$s: site name */
         $message = sprintf(
+            /* translators: %1$s, %2$s, %4$s, %5$s, %6$s, %8$s, %10$s, %12$s, %13$s, %14$s, %15$s: line breaks, %3$s: calendar title, %7$s: appointment date, %9$s: appointment time, %11$s: calendar title, %16$s: site name */
             __('Hello,%1$s%2$sWe regret to inform you that your appointment has been cancelled because the calendar "%3$s" is no longer available.%4$s%5$sAppointment Details:%6$s- Date: %7$s%8$s- Time: %9$s%10$s- Calendar: %11$s%12$s%13$sWe apologize for any inconvenience this may cause.%14$s%15$sBest regards,%16$s%17$s', 'wp-ffcertificate'),
             "\n\n",
             "\n",

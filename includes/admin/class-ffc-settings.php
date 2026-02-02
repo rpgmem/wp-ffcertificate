@@ -321,8 +321,8 @@ class Settings {
         if ( is_wp_error( $result ) ) {
             $redirect_url = add_query_arg( 'migration_error', urlencode( $result->get_error_message() ), $redirect_url );
         } else {
-            /* translators: %d: number of records processed */
             $message = sprintf(
+                /* translators: %d: number of records processed */
                 __( 'Migration executed: %d records processed.', 'wp-ffcertificate' ),
                 isset( $result['processed'] ) ? $result['processed'] : 0
             );

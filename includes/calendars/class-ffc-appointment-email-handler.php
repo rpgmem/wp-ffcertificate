@@ -80,8 +80,8 @@ class AppointmentEmailHandler {
         }
 
         // Email subject
-        /* translators: %s: calendar title */
         $subject = sprintf(
+            /* translators: %s: calendar title */
             __('Appointment Confirmation: %s', 'wp-ffcertificate'),
             $calendar['title']
         );
@@ -170,8 +170,8 @@ class AppointmentEmailHandler {
             : array(get_option('admin_email'));
 
         // Email subject
-        /* translators: %s: calendar title */
         $subject = sprintf(
+            /* translators: %s: calendar title */
             __('New Appointment: %s', 'wp-ffcertificate'),
             $calendar['title']
         );
@@ -240,8 +240,8 @@ class AppointmentEmailHandler {
         }
 
         // Email subject
-        /* translators: %s: calendar title */
         $subject = sprintf(
+            /* translators: %s: calendar title */
             __('Appointment Approved: %s', 'wp-ffcertificate'),
             $calendar['title']
         );
@@ -291,8 +291,8 @@ class AppointmentEmailHandler {
         }
 
         // Email subject
-        /* translators: %s: calendar title */
         $subject = sprintf(
+            /* translators: %s: calendar title */
             __('Appointment Cancelled: %s', 'wp-ffcertificate'),
             $calendar['title']
         );
@@ -350,8 +350,8 @@ class AppointmentEmailHandler {
         }
 
         // Email subject
-        /* translators: %s: calendar title */
         $subject = sprintf(
+            /* translators: %s: calendar title */
             __('Reminder: Appointment Tomorrow - %s', 'wp-ffcertificate'),
             $calendar['title']
         );

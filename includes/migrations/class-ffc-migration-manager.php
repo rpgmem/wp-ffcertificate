@@ -239,8 +239,8 @@ class MigrationManager {
         if ( $days_since_completion < 15 ) {
             return new WP_Error(
                 'grace_period_not_met',
-                /* translators: %d: number of days remaining */
                 sprintf(
+                    /* translators: %d: number of days remaining */
                     __( 'Must wait 15 days after encryption completion. Days remaining: %d', 'wp-ffcertificate' ),
                     15 - $days_since_completion
                 )
@@ -385,8 +385,8 @@ class MigrationManager {
         if ( $days_since_completion < 30 ) {
             return new WP_Error(
                 'grace_period_not_met',
-                /* translators: %d: number of days remaining */
                 sprintf(
+                    /* translators: %d: number of days remaining */
                     __( 'Must wait 30 days after encryption completion. Days remaining: %d', 'wp-ffcertificate' ),
                     30 - $days_since_completion
                 )
