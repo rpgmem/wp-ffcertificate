@@ -48,11 +48,13 @@ class AdminActivityLogPage {
         }
 
         // Get filter parameters
+        // phpcs:disable WordPress.Security.NonceVerification.Recommended -- These are standard admin page filter/pagination parameters.
         $current_page = isset( $_GET['paged'] ) ? max( 1, absint( $_GET['paged'] ) ) : 1;
         $per_page = 50;
         $level = isset( $_GET['level'] ) ? sanitize_key( $_GET['level'] ) : '';
         $action = isset( $_GET['log_action'] ) ? sanitize_text_field( $_GET['log_action'] ) : '';
         $search = isset( $_GET['s'] ) ? sanitize_text_field( $_GET['s'] ) : '';
+        // phpcs:enable WordPress.Security.NonceVerification.Recommended
 
         // Get logs
         $args = array(
@@ -105,7 +107,7 @@ class AdminActivityLogPage {
                 </p>
                 <p>
                     <?php esc_html_e( 'To enable activity logging, go to:', 'wp-ffcertificate' ); ?>
-                    <a href="<?php echo admin_url( 'edit.php?post_type=ffc_form&page=ffc-settings&tab=general' ); ?>">
+                    <a href="<?php echo esc_url( admin_url( 'edit.php?post_type=ffc_form&page=ffc-settings&tab=general' ) ); ?>">
                         <?php esc_html_e( 'Settings > General > Activity Log Settings', 'wp-ffcertificate' ); ?>
                     </a>
                 </p>
@@ -121,6 +123,7 @@ class AdminActivityLogPage {
         global $wpdb;
         $table_name = $wpdb->prefix . 'ffc_activity_log';
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $actions = $wpdb->get_col(
             "SELECT DISTINCT action FROM {$table_name} ORDER BY action ASC"
         );

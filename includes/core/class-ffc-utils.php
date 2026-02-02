@@ -115,7 +115,7 @@ class Utils {
          * Allows developers to filter or add new tags 
          * without modifying the plugin core.
          */
-        return apply_filters( 'ffc_allowed_html_tags', $allowed );
+        return apply_filters( 'wp_ffcertificate_allowed_html_tags', $allowed );
     }
     
     /**
@@ -335,7 +335,7 @@ class Utils {
         
         foreach ( $ip_keys as $key ) {
             if ( array_key_exists( $key, $_SERVER ) ) {
-                foreach ( explode( ',', $_SERVER[$key] ) as $ip ) {
+                foreach ( explode( ',', sanitize_text_field( wp_unslash( $_SERVER[$key] ) ) ) as $ip ) {
                     $ip = trim( $ip );
                     
                     // Validate IP (exclude private/reserved ranges)
@@ -577,9 +577,11 @@ class Utils {
         $log_message = '[FFC] ' . $message;
         
         if ( $data !== null ) {
+            // phpcs:ignore WordPress.PHP.DevelopmentFunctions
             $log_message .= ' | Data: ' . print_r( $data, true );
         }
-        
+
+        // phpcs:ignore WordPress.PHP.DevelopmentFunctions
         error_log( $log_message );
     }
     

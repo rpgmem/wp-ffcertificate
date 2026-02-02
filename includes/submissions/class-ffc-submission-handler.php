@@ -25,14 +25,14 @@ class SubmissionHandler {
     public function __construct() {
         $this->repository = new SubmissionRepository();
     }
-    
+
     /**
      * Generate unique magic token
      */
     private function generate_magic_token(): string {
         return bin2hex(random_bytes(16));
     }
-    
+
     /**
      * Generate unique auth code
      */
@@ -41,24 +41,24 @@ class SubmissionHandler {
             $code = \FreeFormCertificate\Core\Utils::generate_auth_code();
             $existing = $this->repository->findByAuthCode($code);
         } while ($existing);
-        
+
         return $code;
     }
-    
+
     /**
      * Get submission by ID
      * @uses Repository::findById()
      */
     public function get_submission(int $id) {
         $submission = $this->repository->findById($id);
-        
+
         if (!$submission) {
             return null;
         }
-        
+
         return $this->decrypt_submission_data($submission);
     }
-    
+
     /**
      * Get submission by magic token
      * @uses Repository::findByToken()
@@ -78,7 +78,7 @@ class SubmissionHandler {
 
         return $this->decrypt_submission_data($submission);
     }
-    
+
     /**
      * Process submission (main method)
      * @uses Repository::insert()
@@ -88,30 +88,30 @@ class SubmissionHandler {
         if (empty($submission_data['auth_code'])) {
             $submission_data['auth_code'] = $this->generate_unique_auth_code();
         }
-        
+
         // 2. Clean mandatory fields
         $clean_auth_code = \FreeFormCertificate\Core\Utils::clean_auth_code($submission_data['auth_code']);
-        
+
         $clean_cpf_rf = null;
         if (isset($submission_data['cpf_rf']) && !empty($submission_data['cpf_rf'])) {
             $clean_cpf_rf = preg_replace('/[^0-9]/', '', $submission_data['cpf_rf']);
         }
-        
+
         // 3. Generate magic token
         $magic_token = $this->generate_magic_token();
-        
+
         // 4. Extract extra data
         $mandatory_keys = ['email', 'cpf_rf', 'auth_code', 'ffc_lgpd_consent'];
         $extra_data = array_diff_key($submission_data, array_flip($mandatory_keys));
-        
+
         $data_json = wp_json_encode($extra_data);
         if ($data_json === 'null' || $data_json === false || empty($data_json)) {
             $data_json = '{}';
         }
-        
+
         // 5. Get user IP
         $user_ip = \FreeFormCertificate\Core\Utils::get_user_ip();
-        
+
         // 6. Encryption
         $email_encrypted = null;
         $email_hash = null;
@@ -119,27 +119,27 @@ class SubmissionHandler {
         $cpf_hash = null;
         $ip_encrypted = null;
         $data_encrypted = null;
-        
+
         if (class_exists('\FreeFormCertificate\Core\Encryption') && \FreeFormCertificate\Core\Encryption::is_configured()) {
             if (!empty($user_email)) {
                 $email_encrypted = \FreeFormCertificate\Core\Encryption::encrypt($user_email);
                 $email_hash = \FreeFormCertificate\Core\Encryption::hash($user_email);
             }
-            
+
             if (!empty($clean_cpf_rf)) {
                 $cpf_encrypted = \FreeFormCertificate\Core\Encryption::encrypt($clean_cpf_rf);
                 $cpf_hash = \FreeFormCertificate\Core\Encryption::hash($clean_cpf_rf);
             }
-            
+
             if (!empty($user_ip)) {
                 $ip_encrypted = \FreeFormCertificate\Core\Encryption::encrypt($user_ip);
             }
-            
+
             if (!empty($data_json) && $data_json !== '{}') {
                 $data_encrypted = \FreeFormCertificate\Core\Encryption::encrypt($data_json);
             }
         }
-        
+
         // 7. LGPD Consent
         $consent_given = isset($submission_data['ffc_lgpd_consent']) && $submission_data['ffc_lgpd_consent'] == '1' ? 1 : 0;
         $consent_date = $consent_given ? current_time('mysql') : null;
@@ -183,7 +183,7 @@ class SubmissionHandler {
             'consent_date' => $consent_date,
             'consent_text' => $consent_text
         ];
-        
+
         // Old columns - only if encryption NOT configured
         if (class_exists('\FreeFormCertificate\Core\Encryption') && \FreeFormCertificate\Core\Encryption::is_configured()) {
             $insert_data['data'] = null;
@@ -196,14 +196,14 @@ class SubmissionHandler {
             $insert_data['email'] = $user_email;
             $insert_data['cpf_rf'] = $clean_cpf_rf;
         }
-        
+
         // 9. Insert using repository
         $submission_id = $this->repository->insert($insert_data);
-        
+
         if (!$submission_id) {
             return new WP_Error('db_error', __('Error saving submission to the database.', 'wp-ffcertificate'));
         }
-        
+
         // 10. Log activity
         if (class_exists('\FreeFormCertificate\Core\ActivityLog')) {
             \FreeFormCertificate\Core\ActivityLog::log_submission_created($submission_id, [
@@ -212,17 +212,17 @@ class SubmissionHandler {
                 'encrypted' => !empty($email_encrypted)
             ]);
         }
-        
+
         return $submission_id;
     }
-    
+
     /**
      * Update submission - FIXED v3.0.1
      * @uses Repository::updateWithEditTracking()
      */
     public function update_submission(int $id, string $new_email, array $clean_data): bool {
         $update_data = [];
-        
+
         // Update email if provided
         if ($new_email !== null) {
             if (class_exists('\FreeFormCertificate\Core\Encryption') && \FreeFormCertificate\Core\Encryption::is_configured()) {
@@ -233,15 +233,15 @@ class SubmissionHandler {
                 $update_data['email'] = $new_email;
             }
         }
-        
+
         // Update data if provided
         if ($clean_data !== null && is_array($clean_data)) {
             // ✅ Remove edit tracking from JSON data (should be in columns)
             unset($clean_data['is_edited']);
             unset($clean_data['edited_at']);
-            
+
             $data_json = wp_json_encode($clean_data, JSON_UNESCAPED_UNICODE);
-            
+
             if (class_exists('\FreeFormCertificate\Core\Encryption') && \FreeFormCertificate\Core\Encryption::is_configured()) {
                 $update_data['data_encrypted'] = \FreeFormCertificate\Core\Encryption::encrypt($data_json);
                 $update_data['data'] = null;
@@ -249,7 +249,7 @@ class SubmissionHandler {
                 $update_data['data'] = $data_json;
             }
         }
-        
+
         // ✅ Use Repository method with automatic edit tracking
         if (method_exists($this->repository, 'updateWithEditTracking')) {
             $result = $this->repository->updateWithEditTracking($id, $update_data);
@@ -259,14 +259,14 @@ class SubmissionHandler {
             $update_data['edited_by'] = get_current_user_id();
             $result = $this->repository->update($id, $update_data);
         }
-        
+
         if ($result !== false && class_exists('\FreeFormCertificate\Core\ActivityLog')) {
             \FreeFormCertificate\Core\ActivityLog::log_submission_updated($id, get_current_user_id());
         }
 
         return (bool) $result;  // Convert int|false to bool
     }
-    
+
     /**
      * Decrypt submission data
      */
@@ -274,38 +274,38 @@ class SubmissionHandler {
         if (!$submission || !class_exists('\FreeFormCertificate\Core\Encryption')) {
             return $submission;
         }
-        
+
         if (!empty($submission['email_encrypted'])) {
             $decrypted = \FreeFormCertificate\Core\Encryption::decrypt($submission['email_encrypted']);
             if ($decrypted !== false) {
                 $submission['email'] = $decrypted;
             }
         }
-        
+
         if (!empty($submission['cpf_rf_encrypted'])) {
             $decrypted = \FreeFormCertificate\Core\Encryption::decrypt($submission['cpf_rf_encrypted']);
             if ($decrypted !== false) {
                 $submission['cpf_rf'] = $decrypted;
             }
         }
-        
+
         if (!empty($submission['user_ip_encrypted'])) {
             $decrypted = \FreeFormCertificate\Core\Encryption::decrypt($submission['user_ip_encrypted']);
             if ($decrypted !== false) {
                 $submission['user_ip'] = $decrypted;
             }
         }
-        
+
         if (!empty($submission['data_encrypted'])) {
             $decrypted = \FreeFormCertificate\Core\Encryption::decrypt($submission['data_encrypted']);
             if ($decrypted !== false) {
                 $submission['data'] = $decrypted;
             }
         }
-        
+
         return $submission;
     }
-    
+
     /**
      * Trash submission
      * @uses Repository::updateStatus()
@@ -443,14 +443,14 @@ class SubmissionHandler {
 
         return $result;
     }
-    
+
     /**
      * Delete all submissions for a form
      * @uses Repository::deleteByFormId()
      */
     /**
      * Delete all submissions (optionally by form_id)
-     * 
+     *
      * @param int|null $form_id Form ID to delete from, or null for all forms
      * @param bool $reset_auto_increment Reset ID counter to 1
      * @return int|false Number of rows deleted or false on error
@@ -458,27 +458,30 @@ class SubmissionHandler {
     public function delete_all_submissions(?int $form_id = null, bool $reset_auto_increment = false): int {
         global $wpdb;
         $table = \FreeFormCertificate\Core\Utils::get_submissions_table();
-        
+
         if ($form_id) {
             // Delete from specific form using repository
             $result = $this->repository->deleteByFormId($form_id);
-            
+
             // Reset AUTO_INCREMENT if table is empty and requested
             if ($reset_auto_increment) {
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
                 $count = $wpdb->get_var("SELECT COUNT(*) FROM {$table}");
                 if ($count == 0) {
+                    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
                     $wpdb->query("ALTER TABLE {$table} AUTO_INCREMENT = 1");
                 }
             }
-            
+
             return $result;
         }
-        
+
         // Delete ALL submissions from ALL forms
         $result = false;
 
         if ($reset_auto_increment) {
             // TRUNCATE resets AUTO_INCREMENT automatically
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
             $result = $wpdb->query("TRUNCATE TABLE {$table}");
 
             // Also reset migration counters when resetting auto increment
@@ -488,6 +491,7 @@ class SubmissionHandler {
             }
         } else {
             // DELETE keeps AUTO_INCREMENT
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
             $result = $wpdb->query("DELETE FROM {$table}");
         }
 
@@ -504,6 +508,7 @@ class SubmissionHandler {
         global $wpdb;
 
         // Delete all migration completion flags
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $wpdb->query(
             "DELETE FROM {$wpdb->options}
              WHERE option_name LIKE 'ffc_migration_%_completed'"
@@ -512,19 +517,20 @@ class SubmissionHandler {
         // Clear object cache for affected options
         wp_cache_delete('alloptions', 'options');
     }
-    
+
     /**
      * Reset AUTO_INCREMENT counter
-     * 
+     *
      * @return int|false Query result
      */
     public function reset_submission_counter(): bool {
         global $wpdb;
         $table = \FreeFormCertificate\Core\Utils::get_submissions_table();
-        
+
         // Get current max ID
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $max_id = $wpdb->get_var("SELECT MAX(id) FROM {$table}");
-        
+
         if ($max_id === null) {
             // Table is empty, reset to 1
             $next_id = 1;
@@ -532,40 +538,42 @@ class SubmissionHandler {
             // Table has data, set to max_id + 1
             $next_id = intval($max_id) + 1;
         }
-        
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
         return $wpdb->query("ALTER TABLE {$table} AUTO_INCREMENT = {$next_id}");
     }
-    
+
     /**
      * Run data cleanup (old submissions)
      */
     public function run_data_cleanup(): array {
         global $wpdb;
         $table = \FreeFormCertificate\Core\Utils::get_submissions_table();
-        
+
         $cleanup_days = absint(get_option('ffc_cleanup_days', 0));
-        
+
         if ($cleanup_days <= 0) {
             return 0;
         }
-        
+
         $cutoff_date = gmdate('Y-m-d H:i:s', strtotime("-{$cleanup_days} days"));
-        
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $deleted = $wpdb->query($wpdb->prepare(
             "DELETE FROM {$table} WHERE submission_date < %s AND status = 'publish'",
             $cutoff_date
         ));
-        
+
         if ($deleted && class_exists('\FreeFormCertificate\Core\ActivityLog')) {
             \FreeFormCertificate\Core\ActivityLog::log('data_cleanup', \FreeFormCertificate\Core\ActivityLog::LEVEL_INFO, [
                 'deleted_count' => $deleted,
                 'cutoff_date' => $cutoff_date
             ]);
         }
-        
+
         return $deleted;
     }
-    
+
     /**
      * Ensure magic token exists
      */
@@ -592,7 +600,7 @@ class SubmissionHandler {
 
         return $magic_token;
     }
-    
+
     /**
      * Migration: Move emails to encrypted column
      */
@@ -600,23 +608,24 @@ class SubmissionHandler {
         if (!class_exists('\FreeFormCertificate\Core\Encryption') || !\FreeFormCertificate\Core\Encryption::is_configured()) {
             return ['success' => false, 'message' => 'Encryption not configured'];
         }
-        
+
         global $wpdb;
         $table = \FreeFormCertificate\Core\Utils::get_submissions_table();
-        
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $submissions = $wpdb->get_results(
             "SELECT id, email FROM {$table} WHERE email IS NOT NULL AND email_encrypted IS NULL LIMIT 100",
             ARRAY_A
         );
-        
+
         $migrated = 0;
-        
+
         foreach ($submissions as $sub) {
             if (empty($sub['email'])) continue;
-            
+
             $encrypted = \FreeFormCertificate\Core\Encryption::encrypt($sub['email']);
             $hash = \FreeFormCertificate\Core\Encryption::hash($sub['email']);
-            
+
             if ($encrypted && $hash) {
                 $this->repository->update((int) $sub['id'], [
                     'email_encrypted' => $encrypted,
@@ -627,7 +636,7 @@ class SubmissionHandler {
                 $migrated++;
             }
         }
-        
+
         return [
             'success' => true,
             'migrated' => $migrated,

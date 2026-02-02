@@ -353,6 +353,7 @@ class IpGeolocation {
         } else {
             // Clear all IP geolocation transients
             $sql = "DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_ffc_ip_geo_%' OR option_name LIKE '_transient_timeout_ffc_ip_geo_%'";
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
             return $wpdb->query($sql);
         }
     }

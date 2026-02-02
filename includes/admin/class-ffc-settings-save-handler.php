@@ -47,12 +47,12 @@ class SettingsSaveHandler {
      */
     public function handle_all_submissions(): void {
         // Handle General/SMTP/QR Settings
-        if ( isset( $_POST['ffc_settings_nonce'] ) && wp_verify_nonce( $_POST['ffc_settings_nonce'], 'ffc_settings_action' ) ) {
+        if ( isset( $_POST['ffc_settings_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ffc_settings_nonce'] ) ), 'ffc_settings_action' ) ) {
             $this->save_general_and_specific_settings();
         }
 
         // Handle User Access Settings (v3.1.0)
-        if ( isset( $_POST['ffc_user_access_nonce'] ) && wp_verify_nonce( $_POST['ffc_user_access_nonce'], 'ffc_user_access_settings' ) ) {
+        if ( isset( $_POST['ffc_user_access_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ffc_user_access_nonce'] ) ), 'ffc_user_access_settings' ) ) {
             $this->save_user_access_settings();
         }
 
@@ -69,7 +69,7 @@ class SettingsSaveHandler {
      */
     private function save_general_and_specific_settings(): void {
         $current = get_option( 'ffc_settings', array() );
-        $new     = isset( $_POST['ffc_settings'] ) ? $_POST['ffc_settings'] : array();
+        $new     = isset( $_POST['ffc_settings'] ) ? array_map( 'sanitize_text_field', wp_unslash( $_POST['ffc_settings'] ) ) : array();
 
         $clean = $current;
 
@@ -97,12 +97,12 @@ class SettingsSaveHandler {
         }
 
         // Activity Log (v3.1.1)
-        if ( isset( $_POST['_ffc_tab'] ) && $_POST['_ffc_tab'] === 'general' ) {
+        if ( isset( $_POST['_ffc_tab'] ) && sanitize_key( wp_unslash( $_POST['_ffc_tab'] ) ) === 'general' ) {
             $clean['enable_activity_log'] = isset( $new['enable_activity_log'] ) ? 1 : 0;
         }
 
         // Form Cache Settings (v3.1.0)
-        if ( isset( $_POST['_ffc_tab'] ) && $_POST['_ffc_tab'] === 'general' ) {
+        if ( isset( $_POST['_ffc_tab'] ) && sanitize_key( wp_unslash( $_POST['_ffc_tab'] ) ) === 'general' ) {
             $clean['cache_enabled'] = isset( $new['cache_enabled'] ) ? 1 : 0;
 
             if ( isset( $new['cache_expiration'] ) ) {
@@ -125,7 +125,7 @@ class SettingsSaveHandler {
             'debug_activity_log'
         );
 
-        if ( isset( $_POST['_ffc_tab'] ) && $_POST['_ffc_tab'] === 'general' ) {
+        if ( isset( $_POST['_ffc_tab'] ) && sanitize_key( wp_unslash( $_POST['_ffc_tab'] ) ) === 'general' ) {
             foreach ( $debug_flags as $flag ) {
                 $clean[ $flag ] = isset( $new[ $flag ] ) ? 1 : 0;
             }
@@ -143,7 +143,7 @@ class SettingsSaveHandler {
      */
     private function save_smtp_settings( array $clean, array $new ): array {
         // Email Status checkbox (only when on SMTP tab to prevent unchecking from other tabs)
-        if ( isset( $_POST['_ffc_tab'] ) && $_POST['_ffc_tab'] === 'smtp' ) {
+        if ( isset( $_POST['_ffc_tab'] ) && sanitize_key( wp_unslash( $_POST['_ffc_tab'] ) ) === 'smtp' ) {
             $clean['disable_all_emails'] = isset( $new['disable_all_emails'] ) ? 1 : 0;
         }
 
@@ -200,7 +200,7 @@ class SettingsSaveHandler {
      */
     private function save_qrcode_settings( array $clean, array $new ): array {
         // QR Cache (checkbox - only set if on QR tab)
-        if ( isset( $_POST['_ffc_tab'] ) && $_POST['_ffc_tab'] === 'qr_code' ) {
+        if ( isset( $_POST['_ffc_tab'] ) && sanitize_key( wp_unslash( $_POST['_ffc_tab'] ) ) === 'qr_code' ) {
             $clean['qr_cache_enabled'] = isset( $new['qr_cache_enabled'] ) ? 1 : 0;
         }
 
@@ -247,13 +247,13 @@ class SettingsSaveHandler {
         $settings = array(
             'block_wp_admin' => isset( $_POST['block_wp_admin'] ),
             'blocked_roles' => isset( $_POST['blocked_roles'] ) && is_array( $_POST['blocked_roles'] )
-                ? array_map( 'sanitize_text_field', $_POST['blocked_roles'] )
+                ? array_map( 'sanitize_text_field', wp_unslash( $_POST['blocked_roles'] ) )
                 : array( 'ffc_user' ),
             'redirect_url' => !empty( $_POST['redirect_url'] )
-                ? esc_url_raw( $_POST['redirect_url'] )
+                ? esc_url_raw( wp_unslash( $_POST['redirect_url'] ) )
                 : home_url( '/dashboard' ),
             'redirect_message' => isset( $_POST['redirect_message'] )
-                ? sanitize_textarea_field( $_POST['redirect_message'] )
+                ? sanitize_textarea_field( wp_unslash( $_POST['redirect_message'] ) )
                 : '',
             'allow_admin_bar' => isset( $_POST['allow_admin_bar'] ),
             'bypass_for_admins' => isset( $_POST['bypass_for_admins'] ),
@@ -274,8 +274,8 @@ class SettingsSaveHandler {
      * @return void
      */
     private function handle_danger_zone(): void {
-        $target = isset( $_POST['delete_target'] ) ? $_POST['delete_target'] : 'all';
-        $reset_counter = isset( $_POST['reset_counter'] ) && $_POST['reset_counter'] == '1';
+        $target = isset( $_POST['delete_target'] ) ? sanitize_text_field( wp_unslash( $_POST['delete_target'] ) ) : 'all';
+        $reset_counter = isset( $_POST['reset_counter'] ) && sanitize_text_field( wp_unslash( $_POST['reset_counter'] ) ) == '1';
 
         $result = $this->submission_handler->delete_all_submissions(
             $target === 'all' ? null : absint( $target ),

@@ -71,9 +71,9 @@ class DashboardShortcode {
 
             <?php
             if ($is_admin_viewing) {
-                echo self::render_admin_viewing_banner($view_as_user_id);
+                echo wp_kses_post( self::render_admin_viewing_banner($view_as_user_id) );
             }
-            echo self::render_redirect_message();
+            echo wp_kses_post( self::render_redirect_message() );
             ?>
 
             <nav class="ffc-dashboard-tabs">
@@ -182,12 +182,12 @@ class DashboardShortcode {
                     <strong>🔍 <?php esc_html_e('Admin View Mode', 'wp-ffcertificate'); ?></strong>
                     <p class="ffc-m-5-0">
                         <?php
-                        printf(
+                        echo wp_kses_post( sprintf(
                             /* translators: 1: Admin name, 2: User name */
                             esc_html__('You (%1$s) are viewing the dashboard as: %2$s', 'wp-ffcertificate'),
                             '<strong>' . esc_html($admin->display_name) . '</strong>',
                             '<strong>' . esc_html($user->display_name) . ' (' . esc_html($user->user_email) . ')</strong>'
-                        );
+                        ) );
                         ?>
                     </p>
                 </div>

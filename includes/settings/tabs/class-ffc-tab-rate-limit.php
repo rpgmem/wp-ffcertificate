@@ -38,10 +38,11 @@ class TabRateLimit extends SettingsTab {
     }
     
     public function render(): void {
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified below via check_admin_referer.
         if ($_POST && isset($_POST['ffc_save_rate_limit'])) {
             check_admin_referer('ffc_rate_limit_nonce');
             $this->save_settings();
-            echo '<div class="notice notice-success"><p>' . __( 'Settings saved!', 'wp-ffcertificate' ) . '</p></div>';
+            echo '<div class="notice notice-success"><p>' . esc_html__( 'Settings saved!', 'wp-ffcertificate' ) . '</p></div>';
         }
         
         $settings = $this->get_settings();
@@ -49,6 +50,7 @@ class TabRateLimit extends SettingsTab {
     }
     
     private function save_settings(): void {
+        // phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce verified in render() via check_admin_referer.
         $settings = array(
             'ip' => array(
                 'enabled' => isset($_POST['ip_enabled']),
@@ -110,7 +112,8 @@ class TabRateLimit extends SettingsTab {
                 'countdown_timer' => isset($_POST['ui_countdown_timer'])
             )
         );
-        
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
+
         update_option('ffc_rate_limit_settings', $settings);
     }
 }

@@ -79,7 +79,7 @@ class MigrationStatusCalculator {
         $this->strategies['user_link'] = new \FreeFormCertificate\Migrations\Strategies\UserLinkMigrationStrategy();
 
         // Allow plugins to register custom strategies
-        $this->strategies = apply_filters( 'ffc_migration_strategies', $this->strategies );
+        $this->strategies = apply_filters( 'wp_ffcertificate_migration_strategies', $this->strategies );
     }
 
     /**

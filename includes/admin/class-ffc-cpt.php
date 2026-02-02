@@ -131,7 +131,7 @@ class CPT {
                 'error' => $new_post_id->get_error_message(),
                 'original_post_id' => $post_id
             ) );
-            wp_die( $new_post_id->get_error_message() );
+            wp_die( esc_html( $new_post_id->get_error_message() ) );
         }
 
         // Copy all metadata

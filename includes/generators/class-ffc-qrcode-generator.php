@@ -299,6 +299,7 @@ class QRCodeGenerator {
             return false;
         }
         
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $qr_code = $wpdb->get_var( $wpdb->prepare(
             "SELECT qr_code_cache FROM {$table_name} WHERE id = %d",
             $submission_id
@@ -323,6 +324,7 @@ class QRCodeGenerator {
             $this->create_cache_column();
         }
         
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
         $result = $wpdb->update(
             $table_name,
             array( 'qr_code_cache' => $qr_base64 ),
@@ -343,6 +345,7 @@ class QRCodeGenerator {
         global $wpdb;
         $table_name = \FreeFormCertificate\Core\Utils::get_submissions_table();
         
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $column = $wpdb->get_results( $wpdb->prepare(
             "SHOW COLUMNS FROM {$table_name} LIKE %s",
             'qr_code_cache'
@@ -365,6 +368,7 @@ class QRCodeGenerator {
             'table' => $table_name
         ) );
         
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $result = $wpdb->query(
             "ALTER TABLE {$table_name} ADD COLUMN qr_code_cache LONGTEXT NULL AFTER magic_token"
         );
@@ -401,6 +405,7 @@ class QRCodeGenerator {
         ) );
         
         if ( $submission_id ) {
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
             $result = $wpdb->update(
                 $table_name,
                 array( 'qr_code_cache' => null ),
@@ -410,6 +415,7 @@ class QRCodeGenerator {
             );
             $cleared = $result !== false ? 1 : 0;
         } else {
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
             $result = $wpdb->query(
                 "UPDATE {$table_name} SET qr_code_cache = NULL WHERE qr_code_cache IS NOT NULL"
             );
@@ -438,6 +444,7 @@ class QRCodeGenerator {
     $table_name = \FreeFormCertificate\Core\Utils::get_submissions_table();
     
     // Get submission magic token
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
     $submission = $wpdb->get_row(
         $wpdb->prepare( "SELECT magic_token FROM {$table_name} WHERE id = %d", $submission_id ),
         ARRAY_A
@@ -495,7 +502,9 @@ class QRCodeGenerator {
             );
         }
         
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $total = $wpdb->get_var( "SELECT COUNT(*) FROM {$table_name}" );
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $cached = $wpdb->get_var( "SELECT COUNT(*) FROM {$table_name} WHERE qr_code_cache IS NOT NULL" );
         
         // ✅ OPTIMIZED v2.9.2: Use \FreeFormCertificate\Core\Utils::format_bytes() for cache size

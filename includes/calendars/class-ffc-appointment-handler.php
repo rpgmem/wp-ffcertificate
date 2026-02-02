@@ -74,8 +74,8 @@ class AppointmentHandler {
 
             // Get and validate input
             $calendar_id = isset($_POST['calendar_id']) ? absint($_POST['calendar_id']) : 0;
-            $date = isset($_POST['date']) ? sanitize_text_field($_POST['date']) : '';
-            $time = isset($_POST['time']) ? sanitize_text_field($_POST['time']) : '';
+            $date = isset($_POST['date']) ? sanitize_text_field(wp_unslash($_POST['date'])) : '';
+            $time = isset($_POST['time']) ? sanitize_text_field(wp_unslash($_POST['time'])) : '';
 
             if (!$calendar_id || !$date || !$time) {
                 wp_send_json_error(array(
@@ -89,15 +89,15 @@ class AppointmentHandler {
                 'calendar_id' => $calendar_id,
                 'appointment_date' => $date,
                 'start_time' => $time,
-                'name' => isset($_POST['name']) ? sanitize_text_field($_POST['name']) : '',
-                'email' => isset($_POST['email']) ? sanitize_email($_POST['email']) : '',
-                'cpf_rf' => isset($_POST['cpf_rf']) ? sanitize_text_field($_POST['cpf_rf']) : '',
-                'user_notes' => isset($_POST['notes']) ? sanitize_textarea_field($_POST['notes']) : '',
-                'custom_data' => isset($_POST['custom_data']) ? $_POST['custom_data'] : array(),
+                'name' => isset($_POST['name']) ? sanitize_text_field(wp_unslash($_POST['name'])) : '',
+                'email' => isset($_POST['email']) ? sanitize_email(wp_unslash($_POST['email'])) : '',
+                'cpf_rf' => isset($_POST['cpf_rf']) ? sanitize_text_field(wp_unslash($_POST['cpf_rf'])) : '',
+                'user_notes' => isset($_POST['notes']) ? sanitize_textarea_field(wp_unslash($_POST['notes'])) : '',
+                'custom_data' => isset($_POST['custom_data']) ? array_map('sanitize_text_field', wp_unslash($_POST['custom_data'])) : array(),
                 'consent_given' => isset($_POST['consent']) ? 1 : 0,
-                'consent_text' => isset($_POST['consent_text']) ? sanitize_textarea_field($_POST['consent_text']) : '',
+                'consent_text' => isset($_POST['consent_text']) ? sanitize_textarea_field(wp_unslash($_POST['consent_text'])) : '',
                 'user_ip' => \FreeFormCertificate\Core\Utils::get_user_ip(),
-                'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? sanitize_text_field($_SERVER['HTTP_USER_AGENT']) : ''
+                'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT'])) : ''
             );
 
             // Add user ID if logged in
@@ -121,6 +121,7 @@ class AppointmentHandler {
                 'confirmation_token' => $result['confirmation_token'] ?? null
             ));
         } catch (\Exception $e) {
+            // phpcs:ignore WordPress.PHP.DevelopmentFunctions
             error_log('FFC Calendar Appointment Error: ' . $e->getMessage());
             wp_send_json_error(array(
                 'message' => __('An unexpected error occurred. Please try again.', 'wp-ffcertificate'),
@@ -138,7 +139,7 @@ class AppointmentHandler {
         check_ajax_referer('ffc_calendar_nonce', 'nonce');
 
         $calendar_id = isset($_POST['calendar_id']) ? absint($_POST['calendar_id']) : 0;
-        $date = isset($_POST['date']) ? sanitize_text_field($_POST['date']) : '';
+        $date = isset($_POST['date']) ? sanitize_text_field(wp_unslash($_POST['date'])) : '';
 
         if (!$calendar_id || !$date) {
             wp_send_json_error(array(
@@ -169,7 +170,7 @@ class AppointmentHandler {
      */
     public function ajax_cancel_appointment(): void {
         // Verify nonce - accept both calendar nonce and wp_rest nonce (for user dashboard)
-        $nonce = isset($_POST['nonce']) ? sanitize_text_field($_POST['nonce']) : '';
+        $nonce = isset($_POST['nonce']) ? sanitize_text_field(wp_unslash($_POST['nonce'])) : '';
 
         $nonce_valid = false;
         if (wp_verify_nonce($nonce, 'ffc_calendar_nonce')) {
@@ -186,8 +187,8 @@ class AppointmentHandler {
         }
 
         $appointment_id = isset($_POST['appointment_id']) ? absint($_POST['appointment_id']) : 0;
-        $token = isset($_POST['token']) ? sanitize_text_field($_POST['token']) : '';
-        $reason = isset($_POST['reason']) ? sanitize_textarea_field($_POST['reason']) : '';
+        $token = isset($_POST['token']) ? sanitize_text_field(wp_unslash($_POST['token'])) : '';
+        $reason = isset($_POST['reason']) ? sanitize_textarea_field(wp_unslash($_POST['reason'])) : '';
 
         if (!$appointment_id) {
             wp_send_json_error(array(
@@ -789,22 +790,22 @@ class AppointmentHandler {
         switch ($event) {
             case 'created':
                 if (!empty($email_config['send_user_confirmation'])) {
-                    do_action('ffc_appointment_created_email', $appointment, $calendar);
+                    do_action('wp_ffcertificate_appointment_created_email', $appointment, $calendar);
                 }
                 if (!empty($email_config['send_admin_notification'])) {
-                    do_action('ffc_appointment_admin_notification', $appointment, $calendar);
+                    do_action('wp_ffcertificate_appointment_admin_notification', $appointment, $calendar);
                 }
                 break;
 
             case 'confirmed':
                 if (!empty($email_config['send_approval_notification'])) {
-                    do_action('ffc_appointment_confirmed_email', $appointment, $calendar);
+                    do_action('wp_ffcertificate_appointment_confirmed_email', $appointment, $calendar);
                 }
                 break;
 
             case 'cancelled':
                 if (!empty($email_config['send_cancellation_notification'])) {
-                    do_action('ffc_appointment_cancelled_email', $appointment, $calendar);
+                    do_action('wp_ffcertificate_appointment_cancelled_email', $appointment, $calendar);
                 }
                 break;
         }

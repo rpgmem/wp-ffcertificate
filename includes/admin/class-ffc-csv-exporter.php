@@ -276,7 +276,7 @@ class CsvExporter {
         $rows = $this->repository->getForExport( $form_ids, $status );
 
         if ( empty( $rows ) ) {
-            wp_die( __( 'No records available for export.', 'wp-ffcertificate' ) );
+            wp_die( esc_html__( 'No records available for export.', 'wp-ffcertificate' ) );
         }
 
         // ✅ Use Repository to check if edit columns exist
@@ -348,12 +348,12 @@ class CsvExporter {
             if ( ! isset( $_POST['ffc_export_csv_action'] ) ||
                  ! wp_verify_nonce( $_POST['ffc_export_csv_action'], 'ffc_export_csv_nonce' ) ) {
                 \FreeFormCertificate\Core\Utils::debug_log( 'CSV export nonce failed' );
-                wp_die( __( 'Security check failed.', 'wp-ffcertificate' ) );
+                wp_die( esc_html__( 'Security check failed.', 'wp-ffcertificate' ) );
             }
 
             if ( ! \FreeFormCertificate\Core\Utils::current_user_can_manage() ) {
                 \FreeFormCertificate\Core\Utils::debug_log( 'CSV export permission denied' );
-                wp_die( __( 'You do not have permission to export data.', 'wp-ffcertificate' ) );
+                wp_die( esc_html__( 'You do not have permission to export data.', 'wp-ffcertificate' ) );
             }
 
             // ✅ Support multiple form IDs or single form_id
@@ -377,7 +377,7 @@ class CsvExporter {
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ) );
-            wp_die( __( 'Error generating CSV: ', 'wp-ffcertificate' ) . $e->getMessage() );
+            wp_die( esc_html__( 'Error generating CSV: ', 'wp-ffcertificate' ) . esc_html( $e->getMessage() ) );
         }
     }
 

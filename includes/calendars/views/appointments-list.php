@@ -87,7 +87,7 @@ class FFC_Appointments_List_Table extends WP_List_Table {
         if ($item['status'] === 'pending') {
             $actions['confirm'] = sprintf(
                 '<a href="?post_type=ffc_calendar&page=%s&action=confirm&appointment=%d&_wpnonce=%s">%s</a>',
-                esc_attr($_REQUEST['page']),
+                esc_attr( sanitize_text_field( wp_unslash( $_REQUEST['page'] ?? '' ) ) ), // phpcs:ignore WordPress.Security.NonceVerification.Recommended
                 $item['id'],
                 wp_create_nonce('ffc_confirm_appointment_' . $item['id']),
                 __('Confirm', 'wp-ffcertificate')
@@ -97,7 +97,7 @@ class FFC_Appointments_List_Table extends WP_List_Table {
         if (in_array($item['status'], ['pending', 'confirmed'])) {
             $actions['cancel'] = sprintf(
                 '<a href="?post_type=ffc_calendar&page=%s&action=cancel&appointment=%d&_wpnonce=%s" style="color: #b32d2e;">%s</a>',
-                esc_attr($_REQUEST['page']),
+                esc_attr( sanitize_text_field( wp_unslash( $_REQUEST['page'] ?? '' ) ) ), // phpcs:ignore WordPress.Security.NonceVerification.Recommended
                 $item['id'],
                 wp_create_nonce('ffc_cancel_appointment_' . $item['id']),
                 __('Cancel', 'wp-ffcertificate')
@@ -106,7 +106,7 @@ class FFC_Appointments_List_Table extends WP_List_Table {
 
         $actions['view'] = sprintf(
             '<a href="?post_type=ffc_calendar&page=%s&action=view&appointment=%d">%s</a>',
-            esc_attr($_REQUEST['page']),
+            esc_attr( sanitize_text_field( wp_unslash( $_REQUEST['page'] ?? '' ) ) ), // phpcs:ignore WordPress.Security.NonceVerification.Recommended
             $item['id'],
             __('View', 'wp-ffcertificate')
         );
@@ -199,8 +199,10 @@ class FFC_Appointments_List_Table extends WP_List_Table {
         $offset = ($current_page - 1) * $per_page;
 
         // Get filter parameters
+        // phpcs:disable WordPress.Security.NonceVerification.Recommended -- Standard WP_List_Table filter parameters.
         $calendar_id = isset($_GET['calendar_id']) ? absint($_GET['calendar_id']) : 0;
         $status = isset($_GET['status']) ? sanitize_text_field($_GET['status']) : '';
+        // phpcs:enable WordPress.Security.NonceVerification.Recommended
 
         // Build conditions
         $conditions = array();
@@ -238,8 +240,10 @@ class FFC_Appointments_List_Table extends WP_List_Table {
             return;
         }
 
+        // phpcs:disable WordPress.Security.NonceVerification.Recommended -- Display filter parameters for dropdown selection.
         $calendar_id = isset($_GET['calendar_id']) ? absint($_GET['calendar_id']) : 0;
         $status = isset($_GET['status']) ? sanitize_text_field($_GET['status']) : '';
+        // phpcs:enable WordPress.Security.NonceVerification.Recommended
 
         // Get all calendars for filter
         $calendars = $this->calendar_repository->getActiveCalendars();
@@ -271,9 +275,11 @@ class FFC_Appointments_List_Table extends WP_List_Table {
 }
 
 // Process actions
+// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Nonce verified in switch cases below via check_admin_referer.
 if (isset($_GET['action']) && isset($_GET['appointment'])) {
     $appointment_id = absint($_GET['appointment']);
     $action = sanitize_text_field($_GET['action']);
+    // phpcs:enable WordPress.Security.NonceVerification.Recommended
 
     // Verify user has admin permissions
     if (!\FreeFormCertificate\Core\Utils::current_user_can_manage()) {
@@ -361,7 +367,7 @@ $wp_ffcertificate_table->prepare_items();
     <hr class="wp-header-end">
 
     <form method="get">
-        <input type="hidden" name="page" value="<?php echo esc_attr($_REQUEST['page']); ?>" />
+        <input type="hidden" name="page" value="<?php echo esc_attr( sanitize_text_field( wp_unslash( $_REQUEST['page'] ?? '' ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>" />
         <?php $wp_ffcertificate_table->display(); ?>
     </form>
 </div>

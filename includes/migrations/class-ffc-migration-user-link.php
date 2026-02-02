@@ -38,6 +38,7 @@ class MigrationUserLink {
         self::add_user_id_column($table);
 
         // 2. Get all submissions without user_id, ordered by date (oldest first)
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $submissions = $wpdb->get_results(
             "SELECT id, cpf_rf_hash, email_encrypted, data_encrypted
              FROM {$table}
@@ -71,6 +72,7 @@ class MigrationUserLink {
                 $user_id = $processed_cpfs[$cpf_rf_hash];
 
                 // Update submission with existing user_id
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
                 $wpdb->update(
                     $table,
                     array('user_id' => $user_id),
@@ -84,6 +86,7 @@ class MigrationUserLink {
             }
 
             // STEP 2: Check if CPF/RF exists in OTHER submissions with user_id
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
             $existing_user_id = $wpdb->get_var($wpdb->prepare(
                 "SELECT user_id FROM {$table}
                  WHERE cpf_rf_hash = %s
@@ -96,6 +99,7 @@ class MigrationUserLink {
                 // CPF/RF already linked → use same user_id
                 $user_id = (int) $existing_user_id;
 
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
                 $wpdb->update(
                     $table,
                     array('user_id' => $user_id),
@@ -199,6 +203,7 @@ class MigrationUserLink {
             }
 
             // STEP 6: Update submission with user_id
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
             $wpdb->update(
                 $table,
                 array('user_id' => $user_id),
@@ -215,6 +220,7 @@ class MigrationUserLink {
 
         // STEP 7: Bulk update all submissions with same CPF/RF
         foreach ($processed_cpfs as $cpf_hash => $user_id) {
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
             $wpdb->query($wpdb->prepare(
                 "UPDATE {$table}
                  SET user_id = %d
@@ -305,6 +311,7 @@ class MigrationUserLink {
         global $wpdb;
 
         // Check if column already exists
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $column_exists = $wpdb->get_results(
             $wpdb->prepare(
                 "SHOW COLUMNS FROM {$table} LIKE %s",
@@ -317,17 +324,20 @@ class MigrationUserLink {
         }
 
         // Add column after form_id
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $wpdb->query(
             "ALTER TABLE {$table}
              ADD COLUMN user_id BIGINT UNSIGNED DEFAULT NULL AFTER form_id"
         );
 
         // Add index for faster queries
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $index_exists = $wpdb->get_results(
             "SHOW INDEX FROM {$table} WHERE Key_name = 'idx_user_id'"
         );
 
         if (empty($index_exists)) {
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
             $wpdb->query(
                 "ALTER TABLE {$table} ADD INDEX idx_user_id (user_id)"
             );

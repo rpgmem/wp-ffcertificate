@@ -58,6 +58,7 @@ class FieldMigrationStrategy implements MigrationStrategyInterface {
         }
 
         // Count total records
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $total = $wpdb->get_var( "SELECT COUNT(*) FROM {$this->table_name}" );
 
         if ( $total == 0 ) {
@@ -72,6 +73,7 @@ class FieldMigrationStrategy implements MigrationStrategyInterface {
 
         // Check for encrypted column equivalent (v2.10.0+)
         $encrypted_column = $column . '_encrypted';
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
         $encrypted_column_exists = $wpdb->get_var( $wpdb->prepare(
             "SELECT COUNT(*) FROM information_schema.COLUMNS
             WHERE TABLE_SCHEMA = %s
@@ -87,6 +89,7 @@ class FieldMigrationStrategy implements MigrationStrategyInterface {
             // If encrypted column exists, count records that have EITHER:
             // 1. Data in encrypted column (migrated with encryption)
             // 2. NULL in both columns (already cleaned up)
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
             $migrated = $wpdb->get_var( $wpdb->prepare(
                 "SELECT COUNT(*) FROM {$this->table_name}
                 WHERE (%i IS NOT NULL AND %i != '')
@@ -96,6 +99,7 @@ class FieldMigrationStrategy implements MigrationStrategyInterface {
             ));
         } else {
             // No encrypted column, use old logic
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
             $migrated = $wpdb->get_var( $wpdb->prepare(
                 "SELECT COUNT(*) FROM {$this->table_name}
                 WHERE %i IS NOT NULL AND %i != ''",
@@ -143,6 +147,7 @@ class FieldMigrationStrategy implements MigrationStrategyInterface {
 
         // Get submissions without migrated field value
         // Always use OFFSET 0 because migrated records won't appear in next query
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $submissions = $wpdb->get_results( $wpdb->prepare(
             "SELECT id, data FROM {$this->table_name}
             WHERE (%i IS NULL OR %i = '')
@@ -181,6 +186,7 @@ class FieldMigrationStrategy implements MigrationStrategyInterface {
             $sanitized_value = \FreeFormCertificate\Migrations\DataSanitizer::sanitize_field_value( $field_value, $field_def );
 
             // Update submission
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
             $updated = $wpdb->update(
                 $this->table_name,
                 array( $column => $sanitized_value ),
@@ -221,6 +227,7 @@ class FieldMigrationStrategy implements MigrationStrategyInterface {
         }
 
         // Check if column exists
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
         $column_exists = $wpdb->get_var( $wpdb->prepare(
             "SELECT COUNT(*) FROM information_schema.COLUMNS
             WHERE TABLE_SCHEMA = %s

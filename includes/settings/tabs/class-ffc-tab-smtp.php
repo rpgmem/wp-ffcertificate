@@ -39,7 +39,7 @@ class TabSMTP extends SettingsTab {
             return;
         }
 
-        $active_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : '';
+        $active_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Tab parameter for conditional script loading.
         if ($active_tab === 'smtp') {
             wp_enqueue_script(
                 'ffc-smtp-settings',

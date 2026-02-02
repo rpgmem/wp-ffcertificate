@@ -136,6 +136,7 @@ class CalendarCPT {
             wp_die(esc_html__('You do not have permission to duplicate this calendar.', 'wp-ffcertificate'));
         }
 
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verified immediately below via check_admin_referer.
         $post_id = (isset($_GET['post']) ? absint($_GET['post']) : 0);
 
         check_admin_referer('ffc_duplicate_calendar_nonce');
@@ -169,7 +170,7 @@ class CalendarCPT {
                 'error' => $new_post_id->get_error_message(),
                 'original_post_id' => $post_id
             ));
-            wp_die($new_post_id->get_error_message());
+            wp_die(esc_html($new_post_id->get_error_message()));
         }
 
         // Copy all calendar metadata
@@ -297,7 +298,7 @@ class CalendarCPT {
      * Cleanup calendar data when post is deleted
      *
      * Deletes the calendar record and optionally cancels all future appointments.
-     * The cancellation behavior can be controlled via the 'ffc_cancel_appointments_on_calendar_delete' filter.
+     * The cancellation behavior can be controlled via the 'wp_ffcertificate_cancel_appointments_on_calendar_delete' filter.
      *
      * @param int $post_id
      * @param object $post
@@ -319,8 +320,8 @@ class CalendarCPT {
 
             // Check if we should cancel future appointments
             // By default, cancel future appointments to prevent orphaned bookings
-            // This can be disabled via filter: add_filter('ffc_cancel_appointments_on_calendar_delete', '__return_false');
-            $cancel_appointments = apply_filters('ffc_cancel_appointments_on_calendar_delete', true, $calendar_id, $post_id);
+            // This can be disabled via filter: add_filter('wp_ffcertificate_cancel_appointments_on_calendar_delete', '__return_false');
+            $cancel_appointments = apply_filters('wp_ffcertificate_cancel_appointments_on_calendar_delete', true, $calendar_id, $post_id);
 
             $cancelled_count = 0;
 
@@ -357,6 +358,7 @@ class CalendarCPT {
         $today = current_time('Y-m-d');
 
         // Get all future appointments (pending or confirmed)
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $future_appointments = $wpdb->get_results($wpdb->prepare(
             "SELECT * FROM {$table}
              WHERE calendar_id = %d
@@ -403,8 +405,8 @@ class CalendarCPT {
      */
     private function send_calendar_deletion_notification(array $appointment, string $calendar_title): void {
         // Check if we should send notifications
-        // Can be disabled via filter: add_filter('ffc_send_calendar_deletion_notification', '__return_false');
-        $send_notification = apply_filters('ffc_send_calendar_deletion_notification', true, $appointment);
+        // Can be disabled via filter: add_filter('wp_ffcertificate_send_calendar_deletion_notification', '__return_false');
+        $send_notification = apply_filters('wp_ffcertificate_send_calendar_deletion_notification', true, $appointment);
 
         if (!$send_notification) {
             return;

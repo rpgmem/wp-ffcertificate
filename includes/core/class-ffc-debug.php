@@ -60,12 +60,14 @@ class Debug {
 
         if ( $data !== null ) {
             if ( is_array( $data ) || is_object( $data ) ) {
+                // phpcs:ignore WordPress.PHP.DevelopmentFunctions
                 $log_message .= ' | Data: ' . print_r( $data, true );
             } else {
                 $log_message .= ' | Data: ' . $data;
             }
         }
 
+        // phpcs:ignore WordPress.PHP.DevelopmentFunctions
         error_log( $log_message );
     }
 

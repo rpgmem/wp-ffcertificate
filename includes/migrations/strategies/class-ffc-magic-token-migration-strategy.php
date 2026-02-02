@@ -43,7 +43,9 @@ class MagicTokenMigrationStrategy implements MigrationStrategyInterface {
     public function calculate_status( string $migration_key, array $migration_config ): array {
         global $wpdb;
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $total = $wpdb->get_var( "SELECT COUNT(*) FROM {$this->table_name}" );
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $with_token = $wpdb->get_var( "SELECT COUNT(*) FROM {$this->table_name} WHERE magic_token IS NOT NULL AND magic_token != ''" );
 
         $pending = $total - $with_token;
@@ -73,6 +75,7 @@ class MagicTokenMigrationStrategy implements MigrationStrategyInterface {
 
         // Get submissions without magic tokens
         // Always use OFFSET 0 because processed records won't appear in next query
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $submissions = $wpdb->get_results( $wpdb->prepare(
             "SELECT id FROM {$this->table_name}
             WHERE (magic_token IS NULL OR magic_token = '')
@@ -95,6 +98,7 @@ class MagicTokenMigrationStrategy implements MigrationStrategyInterface {
             $magic_token = bin2hex( random_bytes( 16 ) ); // 32 character hex string
 
             // Update submission
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
             $updated = $wpdb->update(
                 $this->table_name,
                 array( 'magic_token' => $magic_token ),
@@ -129,6 +133,7 @@ class MagicTokenMigrationStrategy implements MigrationStrategyInterface {
         global $wpdb;
 
         // Check if magic_token column exists
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
         $column_exists = $wpdb->get_var( $wpdb->prepare(
             "SELECT COUNT(*) FROM information_schema.COLUMNS
             WHERE TABLE_SCHEMA = %s

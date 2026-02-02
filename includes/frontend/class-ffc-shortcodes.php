@@ -67,7 +67,7 @@ class Shortcodes {
 
             <div class="ffc-captcha-row">
                 <label for="ffc_captcha_ans">
-                    <?php echo $captcha['label']; ?>
+                    <?php echo wp_kses_post( $captcha['label'] ); ?>
                 </label>
                 <input type="number" name="ffc_captcha_ans" id="ffc_captcha_ans" class="ffc-input" required>
                 <input type="hidden" name="ffc_captcha_hash" value="<?php echo esc_attr( $captcha['hash'] ); ?>">
@@ -188,11 +188,15 @@ class Shortcodes {
             <form class="ffc-submission-form" id="ffc-form-element-<?php echo esc_attr( $form_id ); ?>">
                 <input type="hidden" name="form_id" value="<?php echo esc_attr( $form_id ); ?>">
                 
-                <?php foreach ( $fields as $field ) : 
+                <?php foreach ( $fields as $field ) :
+                    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- render_field() escapes all output internally
                     echo $this->render_field( $field );
                 endforeach; ?>
 
-                <?php echo $this->generate_security_fields(); ?>
+                <?php
+                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- generate_security_fields() escapes all output internally
+                echo $this->generate_security_fields();
+                ?>
 
                 <?php 
                 // ✅ v2.10.0: Dynamic restriction fields (password/ticket)
@@ -251,11 +255,11 @@ class Shortcodes {
                         
                         <span class="ffc-consent-text">
                             <?php 
-                            printf(
+                            echo wp_kses_post( sprintf(
                                 /* translators: %s: Privacy Policy page link */
                                 esc_html__( 'I have read and agree to the %s and authorize the storage of my personal data for certificate issuance.', 'wp-ffcertificate' ),
                                 '<a href="' . esc_url( get_privacy_policy_url() ) . '" target="_blank">' . esc_html__( 'Privacy Policy', 'wp-ffcertificate' ) . '</a>'
-                            ); 
+                            ) ); 
                             ?>
                             <span class="required">*</span>
                         </span>
@@ -305,10 +309,10 @@ class Shortcodes {
             </label>
             
             <?php if ( $type === 'textarea' ) : ?>
-                <textarea class="ffc-input" name="<?php echo esc_attr( $name ); ?>" id="<?php echo esc_attr( $name ); ?>" <?php echo $required_attr; ?>><?php echo esc_textarea($default); ?></textarea>
+                <textarea class="ffc-input" name="<?php echo esc_attr( $name ); ?>" id="<?php echo esc_attr( $name ); ?>" <?php echo esc_attr( $required_attr ); ?>><?php echo esc_textarea($default); ?></textarea>
 
             <?php elseif ( $type === 'select' ) : ?>
-                <select class="ffc-input" name="<?php echo esc_attr( $name ); ?>" id="<?php echo esc_attr( $name ); ?>" <?php echo $required_attr; ?>>
+                <select class="ffc-input" name="<?php echo esc_attr( $name ); ?>" id="<?php echo esc_attr( $name ); ?>" <?php echo esc_attr( $required_attr ); ?>>
                     <option value=""><?php esc_html_e( 'Select...', 'wp-ffcertificate' ); ?></option>
                     <?php foreach ( $options as $opt ) : $opt_val = trim($opt); ?>
                         <option value="<?php echo esc_attr( $opt_val ); ?>" <?php selected($default, $opt_val); ?>><?php echo esc_html( $opt_val ); ?></option>
@@ -318,12 +322,12 @@ class Shortcodes {
             <?php elseif ( $type === 'radio' ) : ?>
                 <div class="ffc-radio-group">
                     <?php foreach ( $options as $opt ) : $opt_val = trim( $opt ); ?>
-                        <label><input type="radio" name="<?php echo esc_attr( $name ); ?>" value="<?php echo esc_attr( $opt_val ); ?>" <?php echo $required_attr; ?> <?php checked($default, $opt_val); ?>> <?php echo esc_html( $opt_val ); ?></label>
+                        <label><input type="radio" name="<?php echo esc_attr( $name ); ?>" value="<?php echo esc_attr( $opt_val ); ?>" <?php echo esc_attr( $required_attr ); ?> <?php checked($default, $opt_val); ?>> <?php echo esc_html( $opt_val ); ?></label>
                     <?php endforeach; ?>
                 </div>
 
             <?php else : ?>
-                <input class="ffc-input" type="<?php echo esc_attr( $type ); ?>" name="<?php echo esc_attr( $name ); ?>" id="<?php echo esc_attr( $name ); ?>" value="<?php echo esc_attr( $default ); ?>" <?php echo $required_attr; ?>>
+                <input class="ffc-input" type="<?php echo esc_attr( $type ); ?>" name="<?php echo esc_attr( $name ); ?>" id="<?php echo esc_attr( $name ); ?>" value="<?php echo esc_attr( $default ); ?>" <?php echo esc_attr( $required_attr ); ?>>
             <?php endif; ?>
         </div>
         <?php

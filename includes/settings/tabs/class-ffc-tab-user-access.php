@@ -39,7 +39,7 @@ class TabUserAccess extends SettingsTab {
             return;
         }
 
-        $active_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : '';
+        $active_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Tab parameter for conditional script loading.
         // ✅ v3.1.0: User access styles consolidated into ffc-admin-settings.css (already loaded)
         // No need to enqueue separate stylesheet anymore
     }
@@ -72,10 +72,13 @@ class TabUserAccess extends SettingsTab {
      * Save settings (called by parent class)
      */
     public function save_settings(): void {
-        if (!isset($_POST['ffc_user_access_nonce']) || !wp_verify_nonce($_POST['ffc_user_access_nonce'], 'ffc_user_access_settings')) {
+        // phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce verified immediately below via wp_verify_nonce.
+        if (!isset($_POST['ffc_user_access_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['ffc_user_access_nonce'])), 'ffc_user_access_settings')) {
+            // phpcs:enable WordPress.Security.NonceVerification.Missing
             return;
         }
 
+        // phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce verified above via wp_verify_nonce.
         $settings = array(
             'block_wp_admin' => isset($_POST['block_wp_admin']),
             'blocked_roles' => isset($_POST['blocked_roles']) && is_array($_POST['blocked_roles']) ? $_POST['blocked_roles'] : array('ffc_user'),
@@ -84,6 +87,7 @@ class TabUserAccess extends SettingsTab {
             'allow_admin_bar' => isset($_POST['allow_admin_bar']),
             'bypass_for_admins' => isset($_POST['bypass_for_admins']),
         );
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
 
         update_option('ffc_user_access_settings', $settings);
 

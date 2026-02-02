@@ -27,13 +27,14 @@ class FormEditorSaveHandler {
      */
     public function save_form_data( int $post_id ): void {
         if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
-        if ( ! isset( $_POST['ffc_form_nonce'] ) || ! wp_verify_nonce( $_POST['ffc_form_nonce'], 'ffc_save_form_data' ) ) return;
+        if ( ! isset( $_POST['ffc_form_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ffc_form_nonce'] ) ), 'ffc_save_form_data' ) ) return;
         if ( ! current_user_can( 'edit_post', $post_id ) ) return;
 
         // 1. Save Form Fields
         if ( isset( $_POST['ffc_fields'] ) && is_array( $_POST['ffc_fields'] ) ) {
             $clean_fields = array();
-            foreach ( $_POST['ffc_fields'] as $index => $field ) {
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each field sanitized individually below.
+            foreach ( wp_unslash( $_POST['ffc_fields'] ) as $index => $field ) {
                 if ( $index === 'TEMPLATE' || (empty($field['label']) && empty($field['name'])) ) continue;
 
                 $clean_fields[] = array(
@@ -51,7 +52,8 @@ class FormEditorSaveHandler {
 
         // 2. Save Configurations
         if ( isset( $_POST['ffc_config'] ) ) {
-            $config = $_POST['ffc_config'];
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each field sanitized individually below.
+            $config = wp_unslash( $_POST['ffc_config'] );
             $allowed_html = method_exists('FFC_Utils', 'get_allowed_html_tags') ? \FreeFormCertificate\Core\Utils::get_allowed_html_tags() : wp_kses_allowed_html('post');
 
             $clean_config = array();
@@ -94,7 +96,8 @@ class FormEditorSaveHandler {
 
         // 3. Save Geofence Configuration
         if ( isset( $_POST['ffc_geofence'] ) ) {
-            $geofence = $_POST['ffc_geofence'];
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each field sanitized individually below.
+            $geofence = wp_unslash( $_POST['ffc_geofence'] );
 
             $clean_geofence = array(
                 // DateTime settings

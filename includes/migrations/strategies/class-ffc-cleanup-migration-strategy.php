@@ -46,6 +46,7 @@ class CleanupMigrationStrategy implements MigrationStrategyInterface {
         global $wpdb;
 
         // Count submissions eligible for cleanup (15+ days old with encrypted data)
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $total_eligible = $wpdb->get_var(
             "SELECT COUNT(*) FROM {$this->table_name}
             WHERE submission_date <= DATE_SUB(NOW(), INTERVAL 15 DAY)
@@ -64,6 +65,7 @@ class CleanupMigrationStrategy implements MigrationStrategyInterface {
         }
 
         // Count how many already have NULL in old columns
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $cleaned = $wpdb->get_var(
             "SELECT COUNT(*) FROM {$this->table_name}
             WHERE submission_date <= DATE_SUB(NOW(), INTERVAL 15 DAY)
@@ -111,6 +113,7 @@ class CleanupMigrationStrategy implements MigrationStrategyInterface {
 
         // STEP 1: Get submissions eligible for cleanup (15+ days old, encrypted, still have plain data)
         // Always use OFFSET 0 because cleaned records won't appear in next query
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $submissions = $wpdb->get_results( $wpdb->prepare(
             "SELECT id FROM {$this->table_name}
             WHERE submission_date <= DATE_SUB(NOW(), INTERVAL 15 DAY)
@@ -134,6 +137,7 @@ class CleanupMigrationStrategy implements MigrationStrategyInterface {
         $ids = array_map( function( $s ) { return intval( $s->id ); }, $submissions );
         $ids_placeholder = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
         $result = $wpdb->query( $wpdb->prepare(
             "UPDATE {$this->table_name}
             SET
@@ -148,6 +152,7 @@ class CleanupMigrationStrategy implements MigrationStrategyInterface {
         $cleaned = ( $result !== false ) ? count( $ids ) : 0;
 
         // Count remaining
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $remaining = $wpdb->get_var(
             "SELECT COUNT(*) FROM {$this->table_name}
             WHERE submission_date <= DATE_SUB(NOW(), INTERVAL 15 DAY)
@@ -178,6 +183,7 @@ class CleanupMigrationStrategy implements MigrationStrategyInterface {
         // Normalize ALL empty strings to NULL (data consistency)
         // This ensures all empty values across ALL columns are truly NULL, not empty strings
         // Using NULLIF is more concise and performant than CASE WHEN
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
         return $wpdb->query(
             "UPDATE {$this->table_name}
             SET

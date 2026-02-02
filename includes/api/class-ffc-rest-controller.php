@@ -60,6 +60,7 @@ class RestController {
             }
 
             // Set error reporting to only show errors, not warnings/notices
+            // phpcs:ignore WordPress.PHP.DevelopmentFunctions.prevent_path_disclosure_error_reporting
             error_reporting(E_ERROR | E_PARSE);
 
             // Clean output buffer before sending response
@@ -879,6 +880,7 @@ class RestController {
             // Note: Email-based search not possible with encrypted emails
             // (each encryption produces different result by design)
             // User must run the "Link Users" migration to associate old certificates
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
             $submissions = $wpdb->get_results($wpdb->prepare(
                 "SELECT s.*, p.post_title as form_title
                  FROM {$table} s

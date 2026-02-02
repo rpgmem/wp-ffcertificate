@@ -53,7 +53,7 @@ class AppointmentReceiptHandler {
         $token = get_query_var('token');
 
         if (!$appointment_id) {
-            wp_die(__('Invalid appointment receipt request.', 'wp-ffcertificate'), 400);
+            wp_die(esc_html__('Invalid appointment receipt request.', 'wp-ffcertificate'), 400);
         }
 
         // Load repositories
@@ -64,7 +64,7 @@ class AppointmentReceiptHandler {
         $appointment = $appointment_repo->findById($appointment_id);
 
         if (!$appointment) {
-            wp_die(__('Appointment not found.', 'wp-ffcertificate'), 404);
+            wp_die(esc_html__('Appointment not found.', 'wp-ffcertificate'), 404);
         }
 
         // Verify access (either logged in user owns it, admin, or has valid token)
@@ -79,7 +79,7 @@ class AppointmentReceiptHandler {
         }
 
         if (!$has_access) {
-            wp_die(__('You do not have permission to view this appointment receipt.', 'wp-ffcertificate'), 403);
+            wp_die(esc_html__('You do not have permission to view this appointment receipt.', 'wp-ffcertificate'), 403);
         }
 
         // Get calendar (may be null if deleted)

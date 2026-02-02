@@ -212,7 +212,7 @@ class CalendarShortcode {
             <!-- Date Picker -->
             <div class="ffc-calendar-datepicker-wrapper">
                 <h3><?php esc_html_e('Select a Date', 'wp-ffcertificate'); ?></h3>
-                <div id="ffc-datepicker-<?php echo $calendar['id']; ?>" class="ffc-datepicker"></div>
+                <div id="ffc-datepicker-<?php echo esc_attr( $calendar['id'] ); ?>" class="ffc-datepicker"></div>
                 <input type="hidden" id="ffc-selected-date" name="selected_date" value="">
             </div>
 
@@ -299,7 +299,7 @@ class CalendarShortcode {
                         <!-- Math Captcha -->
                         <div class="ffc-captcha-row">
                             <label for="ffc_captcha_ans">
-                                <?php echo $captcha['label']; ?>
+                                <?php echo wp_kses_post( $captcha['label'] ); ?>
                             </label>
                             <input type="number" name="ffc_captcha_ans" id="ffc_captcha_ans" class="ffc-input" required>
                             <input type="hidden" name="ffc_captcha_hash" id="ffc_captcha_hash" value="<?php echo esc_attr($captcha['hash']); ?>">
@@ -311,10 +311,10 @@ class CalendarShortcode {
                         <label class="ffc-consent-label">
                             <input type="checkbox" id="ffc-booking-consent" name="consent" value="1" required>
                             <?php
-                            printf(
+                            echo wp_kses_post( sprintf(
                                 __('I agree to the collection and processing of my personal data in accordance with the <a href="%s" target="_blank">Privacy Policy</a> (LGPD).', 'wp-ffcertificate'),
-                                get_privacy_policy_url()
-                            );
+                                esc_url( get_privacy_policy_url() )
+                            ) );
                             ?>
                             <span class="required">*</span>
                         </label>
@@ -362,7 +362,7 @@ class CalendarShortcode {
 
         <script type="text/javascript">
         jQuery(document).ready(function($) {
-            var calendarId = <?php echo $calendar['id']; ?>;
+            var calendarId = <?php echo intval( $calendar['id'] ); ?>;
             var workingDays = <?php echo json_encode(!empty($calendar['working_hours']) && is_array($calendar['working_hours']) ? array_column($calendar['working_hours'], 'day') : []); ?>;
             var minDate = <?php echo isset($calendar['advance_booking_min']) ? intval($calendar['advance_booking_min']) : 0; ?>; // hours
             var maxDate = <?php echo isset($calendar['advance_booking_max']) ? intval($calendar['advance_booking_max']) : 30; ?>; // days

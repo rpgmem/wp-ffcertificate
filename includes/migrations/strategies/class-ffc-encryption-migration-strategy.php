@@ -43,6 +43,7 @@ class EncryptionMigrationStrategy implements MigrationStrategyInterface {
     public function calculate_status( string $migration_key, array $migration_config ): array {
         global $wpdb;
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $total = $wpdb->get_var( "SELECT COUNT(*) FROM {$this->table_name}" );
 
         if ( $total == 0 ) {
@@ -58,6 +59,7 @@ class EncryptionMigrationStrategy implements MigrationStrategyInterface {
         // Count as migrated if:
         // 1. Has encrypted data (email_encrypted OR data_encrypted has data)
         // 2. OR all sensitive columns are NULL (already cleaned)
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $migrated = $wpdb->get_var(
             "SELECT COUNT(*) FROM {$this->table_name}
             WHERE (
@@ -94,6 +96,7 @@ class EncryptionMigrationStrategy implements MigrationStrategyInterface {
 
         // Get submissions that need encryption
         // Always use OFFSET 0 because encrypted records won't appear in next query
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $submissions = $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT * FROM {$this->table_name}
@@ -148,6 +151,7 @@ class EncryptionMigrationStrategy implements MigrationStrategyInterface {
                 }
 
                 // Update database
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
                 $updated = $wpdb->update(
                     $this->table_name,
                     array(
@@ -248,6 +252,7 @@ class EncryptionMigrationStrategy implements MigrationStrategyInterface {
     private function count_pending_encryption(): int {
         global $wpdb;
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         return (int) $wpdb->get_var(
             "SELECT COUNT(*) FROM {$this->table_name}
             WHERE (email_encrypted IS NULL OR email_encrypted = '')

@@ -260,17 +260,17 @@ class CalendarEditor {
                     <?php foreach ($working_hours as $index => $hours): ?>
                         <tr>
                             <td>
-                                <select name="ffc_calendar_working_hours[<?php echo $index; ?>][day]" required>
+                                <select name="ffc_calendar_working_hours[<?php echo esc_attr( $index ); ?>][day]" required>
                                     <?php foreach ($days_of_week as $day_num => $day_name): ?>
-                                        <option value="<?php echo $day_num; ?>" <?php selected($hours['day'], $day_num); ?>><?php echo esc_html($day_name); ?></option>
+                                        <option value="<?php echo esc_attr( $day_num ); ?>" <?php selected($hours['day'], $day_num); ?>><?php echo esc_html($day_name); ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </td>
                             <td>
-                                <input type="time" name="ffc_calendar_working_hours[<?php echo $index; ?>][start]" value="<?php echo esc_attr($hours['start']); ?>" required />
+                                <input type="time" name="ffc_calendar_working_hours[<?php echo esc_attr( $index ); ?>][start]" value="<?php echo esc_attr($hours['start']); ?>" required />
                             </td>
                             <td>
-                                <input type="time" name="ffc_calendar_working_hours[<?php echo $index; ?>][end]" value="<?php echo esc_attr($hours['end']); ?>" required />
+                                <input type="time" name="ffc_calendar_working_hours[<?php echo esc_attr( $index ); ?>][end]" value="<?php echo esc_attr($hours['end']); ?>" required />
                             </td>
                             <td>
                                 <button type="button" class="button ffc-remove-hour"><?php esc_html_e('Remove', 'wp-ffcertificate'); ?></button>
@@ -502,10 +502,10 @@ class CalendarEditor {
             <p><strong><?php esc_html_e('Use this shortcode to display the calendar:', 'wp-ffcertificate'); ?></strong></p>
 
             <?php if ($post->post_status === 'publish'): ?>
-                <input type="text" readonly value='[ffc_calendar id="<?php echo $post->ID; ?>"]' onclick="this.select();" style="width: 100%; padding: 6px; font-family: monospace; background: #f0f0f1;" />
+                <input type="text" readonly value='[ffc_calendar id="<?php echo esc_attr( $post->ID ); ?>"]' onclick="this.select();" style="width: 100%; padding: 6px; font-family: monospace; background: #f0f0f1;" />
 
                 <p style="margin-top: 15px;"><strong><?php esc_html_e('Preview:', 'wp-ffcertificate'); ?></strong></p>
-                <p><a href="<?php echo add_query_arg('calendar_preview', $post->ID, home_url('/')); ?>" target="_blank" class="button button-secondary"><?php esc_html_e('Preview Calendar', 'wp-ffcertificate'); ?></a></p>
+                <p><a href="<?php echo esc_url( add_query_arg('calendar_preview', $post->ID, home_url('/')) ); ?>" target="_blank" class="button button-secondary"><?php esc_html_e('Preview Calendar', 'wp-ffcertificate'); ?></a></p>
             <?php else: ?>
                 <p class="description"><?php esc_html_e('Publish this calendar to generate the shortcode.', 'wp-ffcertificate'); ?></p>
             <?php endif; ?>
@@ -527,7 +527,7 @@ class CalendarEditor {
             return;
         }
 
-        if (!isset($_POST['ffc_calendar_config_nonce']) || !wp_verify_nonce($_POST['ffc_calendar_config_nonce'], 'ffc_calendar_config_nonce')) {
+        if (!isset($_POST['ffc_calendar_config_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['ffc_calendar_config_nonce'])), 'ffc_calendar_config_nonce')) {
             return;
         }
 
@@ -537,7 +537,8 @@ class CalendarEditor {
 
         // Save configuration
         if (isset($_POST['ffc_calendar_config'])) {
-            $config = $_POST['ffc_calendar_config'];
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each field sanitized individually below.
+            $config = wp_unslash($_POST['ffc_calendar_config']);
 
             // Sanitize
             $config['description'] = sanitize_textarea_field($config['description'] ?? '');
@@ -567,7 +568,8 @@ class CalendarEditor {
         // Save working hours
         if (isset($_POST['ffc_calendar_working_hours']) && is_array($_POST['ffc_calendar_working_hours'])) {
             $working_hours = array();
-            foreach ($_POST['ffc_calendar_working_hours'] as $hours) {
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each field sanitized individually below.
+            foreach (wp_unslash($_POST['ffc_calendar_working_hours']) as $hours) {
                 $working_hours[] = array(
                     'day' => absint($hours['day'] ?? 0),
                     'start' => sanitize_text_field($hours['start'] ?? '09:00'),
@@ -579,7 +581,8 @@ class CalendarEditor {
 
         // Save email configuration
         if (isset($_POST['ffc_calendar_email_config'])) {
-            $email_config = $_POST['ffc_calendar_email_config'];
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each field sanitized individually below.
+            $email_config = wp_unslash($_POST['ffc_calendar_email_config']);
 
             $email_config['send_user_confirmation'] = isset($email_config['send_user_confirmation']) ? 1 : 0;
             $email_config['send_admin_notification'] = isset($email_config['send_admin_notification']) ? 1 : 0;
@@ -602,7 +605,7 @@ class CalendarEditor {
      */
     public function handle_cleanup_appointments(): void {
         // Verify nonce
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'ffc_cleanup_appointments_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'ffc_cleanup_appointments_nonce')) {
             wp_send_json_error(array(
                 'message' => __('Security check failed', 'wp-ffcertificate')
             ));
@@ -619,7 +622,7 @@ class CalendarEditor {
 
         // Get parameters
         $calendar_id = isset($_POST['calendar_id']) ? absint($_POST['calendar_id']) : 0;
-        $cleanup_action = isset($_POST['cleanup_action']) ? sanitize_text_field($_POST['cleanup_action']) : '';
+        $cleanup_action = isset($_POST['cleanup_action']) ? sanitize_text_field(wp_unslash($_POST['cleanup_action'])) : '';
 
         if (!$calendar_id || !$cleanup_action) {
             wp_send_json_error(array(
@@ -649,6 +652,7 @@ class CalendarEditor {
         switch ($cleanup_action) {
             case 'all':
                 // Delete all appointments for this calendar
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
                 $deleted = $wpdb->delete($table, ['calendar_id' => $calendar_id], ['%d']);
                 /* translators: %d: number of deleted appointments */
                 $message = sprintf(
@@ -659,6 +663,7 @@ class CalendarEditor {
 
             case 'old':
                 // Delete appointments before today
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
                 $deleted = $wpdb->query($wpdb->prepare(
                     "DELETE FROM {$table} WHERE calendar_id = %d AND appointment_date < %s",
                     $calendar_id,
@@ -673,6 +678,7 @@ class CalendarEditor {
 
             case 'future':
                 // Delete appointments today and after
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
                 $deleted = $wpdb->query($wpdb->prepare(
                     "DELETE FROM {$table} WHERE calendar_id = %d AND appointment_date >= %s",
                     $calendar_id,
@@ -687,6 +693,7 @@ class CalendarEditor {
 
             case 'cancelled':
                 // Delete only cancelled appointments
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
                 $deleted = $wpdb->delete($table, [
                     'calendar_id' => $calendar_id,
                     'status' => 'cancelled'
@@ -753,6 +760,7 @@ class CalendarEditor {
         // Count old appointments (before today)
         global $wpdb;
         $table = $wpdb->prefix . 'ffc_appointments';
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $count_old = (int) $wpdb->get_var($wpdb->prepare(
             "SELECT COUNT(*) FROM {$table} WHERE calendar_id = %d AND appointment_date < %s",
             $calendar_id,
@@ -760,6 +768,7 @@ class CalendarEditor {
         ));
 
         // Count future appointments (today and after)
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $count_future = (int) $wpdb->get_var($wpdb->prepare(
             "SELECT COUNT(*) FROM {$table} WHERE calendar_id = %d AND appointment_date >= %s",
             $calendar_id,

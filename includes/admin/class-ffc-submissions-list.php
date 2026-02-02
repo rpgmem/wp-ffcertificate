@@ -181,6 +181,7 @@ class SubmissionsList extends \WP_List_Table {
     }
 
     protected function get_bulk_actions() {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Status is a display filter parameter.
         $status = isset($_GET['status']) ? $_GET['status'] : 'publish';
         if ($status === 'trash') {
             return [
@@ -201,6 +202,7 @@ class SubmissionsList extends \WP_List_Table {
 
         $per_page = 20;
         $current_page = $this->get_pagenum();
+        // phpcs:disable WordPress.Security.NonceVerification.Recommended -- These are standard WP_List_Table filter/sort parameters.
         $status = isset($_GET['status']) ? sanitize_key($_GET['status']) : 'publish';
         $search = isset($_REQUEST['s']) ? sanitize_text_field($_REQUEST['s']) : '';
         $orderby = (!empty($_GET['orderby'])) ? sanitize_key($_GET['orderby']) : 'id';
@@ -215,6 +217,7 @@ class SubmissionsList extends \WP_List_Table {
                 $filter_form_ids = [ absint( $_GET['filter_form_id'] ) ];
             }
         }
+        // phpcs:enable WordPress.Security.NonceVerification.Recommended
 
         $result = $this->repository->findPaginated([
             'status' => $status,
@@ -242,6 +245,7 @@ class SubmissionsList extends \WP_List_Table {
 
     protected function get_views() {
         $counts = $this->repository->countByStatus();
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display parameter for tab highlighting.
         $current = isset($_GET['status']) ? $_GET['status'] : 'publish';
         
         return [
@@ -289,6 +293,7 @@ class SubmissionsList extends \WP_List_Table {
             return;
         }
 
+        // phpcs:disable WordPress.Security.NonceVerification.Recommended -- Display filter parameter for form selection.
         $selected_form_ids = [];
         if ( !empty( $_GET['filter_form_id'] ) ) {
             if ( is_array( $_GET['filter_form_id'] ) ) {
@@ -297,6 +302,7 @@ class SubmissionsList extends \WP_List_Table {
                 $selected_form_ids = [ absint( $_GET['filter_form_id'] ) ];
             }
         }
+        // phpcs:enable WordPress.Security.NonceVerification.Recommended
 
         ?>
         <div class="alignleft actions">

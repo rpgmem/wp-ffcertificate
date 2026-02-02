@@ -146,7 +146,7 @@ abstract class SettingsTab {
                 <label><?php echo esc_html($label); ?></label>
             </th>
             <td>
-                <?php echo $content; // Already escaped in calling code ?>
+                <?php echo wp_kses_post( $content ); ?>
                 <?php if ( ! empty($description) ) : ?>
                     <p class="description"><?php echo wp_kses_post($description); ?></p>
                 <?php endif; ?>

@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace FreeFormCertificate\Repositories;
 
-if (!defined('ABSPATH')) exit;
+if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 class BlockedDateRepository extends AbstractRepository {
 

@@ -299,7 +299,7 @@ class AppointmentCsvExporter {
         $rows = $this->get_appointments_for_export($calendar_ids, $statuses, $start_date, $end_date);
 
         if (empty($rows)) {
-            wp_die(__('No appointments available for export.', 'wp-ffcertificate'));
+            wp_die(esc_html__('No appointments available for export.', 'wp-ffcertificate'));
         }
 
         // Generate filename
@@ -408,6 +408,7 @@ class AppointmentCsvExporter {
             $sql = $wpdb->prepare($sql, $where_values);
         }
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         return $wpdb->get_results($sql, ARRAY_A);
     }
 
@@ -421,11 +422,11 @@ class AppointmentCsvExporter {
             // Security check
             if (!isset($_POST['ffc_export_appointments_csv_action']) ||
                 !wp_verify_nonce($_POST['ffc_export_appointments_csv_action'], 'ffc_export_appointments_csv_nonce')) {
-                wp_die(__('Security check failed.', 'wp-ffcertificate'));
+                wp_die(esc_html__('Security check failed.', 'wp-ffcertificate'));
             }
 
             if (!\FreeFormCertificate\Core\Utils::current_user_can_manage()) {
-                wp_die(__('You do not have permission to export appointments.', 'wp-ffcertificate'));
+                wp_die(esc_html__('You do not have permission to export appointments.', 'wp-ffcertificate'));
             }
 
             // Get filters
@@ -451,7 +452,7 @@ class AppointmentCsvExporter {
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ));
-            wp_die(__('Error generating CSV: ', 'wp-ffcertificate') . $e->getMessage());
+            wp_die(esc_html__('Error generating CSV: ', 'wp-ffcertificate') . esc_html($e->getMessage()));
         }
     }
 }

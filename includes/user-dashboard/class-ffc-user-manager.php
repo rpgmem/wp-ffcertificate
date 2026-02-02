@@ -47,6 +47,7 @@ class UserManager {
         $table = \FreeFormCertificate\Core\Utils::get_submissions_table();
 
         // STEP 1: Check if CPF/RF already has user_id in submissions
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $existing_user_id = $wpdb->get_var($wpdb->prepare(
             "SELECT user_id FROM {$table}
              WHERE cpf_rf_hash = %s
@@ -230,6 +231,7 @@ class UserManager {
         $table = \FreeFormCertificate\Core\Utils::get_submissions_table();
 
         // Get first submission with CPF/RF
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $cpf_encrypted = $wpdb->get_var($wpdb->prepare(
             "SELECT cpf_rf_encrypted FROM {$table}
              WHERE user_id = %d
@@ -299,6 +301,7 @@ class UserManager {
         $table = \FreeFormCertificate\Core\Utils::get_submissions_table();
 
         // Get distinct encrypted emails
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $encrypted_emails = $wpdb->get_col($wpdb->prepare(
             "SELECT DISTINCT email_encrypted FROM {$table}
              WHERE user_id = %d

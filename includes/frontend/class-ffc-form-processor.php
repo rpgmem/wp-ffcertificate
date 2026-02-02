@@ -60,7 +60,8 @@ class FormProcessor {
         // 1. PASSWORD CHECK (if active)
         // ========================================
         if (!empty($restrictions['password']) && $restrictions['password'] == '1') {
-            $password = isset($_POST['ffc_password']) ? trim($_POST['ffc_password']) : '';
+            // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in handle_submission_ajax() caller.
+            $password = isset($_POST['ffc_password']) ? trim(sanitize_text_field(wp_unslash($_POST['ffc_password']))) : '';
             $valid_password = isset($form_config['validation_code']) ? $form_config['validation_code'] : '';
             
             if (empty($password)) {
@@ -186,6 +187,7 @@ class FormProcessor {
         // ✅ PRIORITY 1: Check by ticket (if provided)
         if ( ! empty( $val_ticket ) ) {
             $like_query = '%' . $wpdb->esc_like( '"ticket":"' . $val_ticket . '"' ) . '%';
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
             $existing_submission = $wpdb->get_row( $wpdb->prepare( 
                 "SELECT * FROM {$table_name} WHERE form_id = %d AND data LIKE %s ORDER BY id DESC LIMIT 1", 
                 $form_id, 
@@ -203,6 +205,7 @@ class FormProcessor {
                 // Use HASH for encrypted data
                 $cpf_hash = \FreeFormCertificate\Core\Encryption::hash($clean_cpf);
                 
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
                 $existing_submission = $wpdb->get_row( $wpdb->prepare( 
                     "SELECT * FROM {$table_name} 
                      WHERE form_id = %d 
@@ -214,6 +217,7 @@ class FormProcessor {
                 ) );
             } else {
                 // Use plain CPF for non-encrypted data
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
                 $existing_submission = $wpdb->get_row( $wpdb->prepare( 
                     "SELECT * FROM {$table_name} 
                      WHERE form_id = %d 
@@ -228,6 +232,7 @@ class FormProcessor {
             // ⚠️ Fallback: If column doesn't exist or is NULL, search in JSON
             if ( ! $existing_submission ) {
                 $like_query = '%' . $wpdb->esc_like( '"cpf_rf":"' . $val_cpf . '"' ) . '%';
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
                 $existing_submission = $wpdb->get_row( $wpdb->prepare( 
                     "SELECT * FROM {$table_name} 
                      WHERE form_id = %d 
@@ -306,19 +311,21 @@ class FormProcessor {
      */
     public function handle_submission_ajax(): void {
         // Verify nonce
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'ffc_frontend_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'ffc_frontend_nonce')) {
             wp_send_json_error(['message' => __('Security check failed. Please refresh the page.', 'wp-ffcertificate')]);
             return;
         }
-        
+
+        // phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce verified above via wp_verify_nonce.
+
         // ===== DEBUG CAPTCHA =====
         \FreeFormCertificate\Core\Debug::log_form('===== CAPTCHA DEBUG =====');
-        \FreeFormCertificate\Core\Debug::log_form('Answer received', isset($_POST['ffc_captcha_ans']) ? $_POST['ffc_captcha_ans'] : 'NOT SET');
-        \FreeFormCertificate\Core\Debug::log_form('Hash received', isset($_POST['ffc_captcha_hash']) ? $_POST['ffc_captcha_hash'] : 'NOT SET');
+        \FreeFormCertificate\Core\Debug::log_form('Answer received', isset($_POST['ffc_captcha_ans']) ? sanitize_text_field(wp_unslash($_POST['ffc_captcha_ans'])) : 'NOT SET');
+        \FreeFormCertificate\Core\Debug::log_form('Hash received', isset($_POST['ffc_captcha_hash']) ? sanitize_text_field(wp_unslash($_POST['ffc_captcha_hash'])) : 'NOT SET');
 
         if (isset($_POST['ffc_captcha_ans']) && isset($_POST['ffc_captcha_hash'])) {
-            $test_answer = trim($_POST['ffc_captcha_ans']);
-            $received_hash = $_POST['ffc_captcha_hash'];
+            $test_answer = trim(sanitize_text_field(wp_unslash($_POST['ffc_captcha_ans'])));
+            $received_hash = sanitize_text_field(wp_unslash($_POST['ffc_captcha_hash']));
             $generated_hash = wp_hash($test_answer . 'ffc_math_salt');
 
             \FreeFormCertificate\Core\Debug::log_form('Trimmed answer', $test_answer);
@@ -367,7 +374,7 @@ class FormProcessor {
         foreach ( $fields_config as $field ) {
             $name = $field['name'];
             if ( isset( $_POST[ $name ] ) ) {
-                $value = \FreeFormCertificate\Core\Utils::recursive_sanitize( $_POST[ $name ] );
+                $value = \FreeFormCertificate\Core\Utils::recursive_sanitize( wp_unslash( $_POST[ $name ] ) );
                 
                 // Special validation for CPF/RF
                 if ( $name === 'cpf_rf' ) {
@@ -405,7 +412,7 @@ class FormProcessor {
             wp_send_json_error( array( 'message' => __( 'Email address is required.', 'wp-ffcertificate' ) ) );
         }
         // ✅ v2.10.0: Validate LGPD consent (mandatory)
-        if ( empty( $_POST['ffc_lgpd_consent'] ) || $_POST['ffc_lgpd_consent'] !== '1' ) {
+        if ( empty( $_POST['ffc_lgpd_consent'] ) || sanitize_text_field( wp_unslash( $_POST['ffc_lgpd_consent'] ) ) !== '1' ) {
             wp_send_json_error( array( 
                 'message' => __( 'You must agree to the Privacy Policy to continue.', 'wp-ffcertificate' ) 
             ) );
@@ -416,8 +423,8 @@ class FormProcessor {
 
         // ✅ v2.10.0: Capture restriction fields (password/ticket) from POST
         // These are NOT in $fields_config, so capture separately
-        $val_password = isset($_POST['ffc_password']) ? trim($_POST['ffc_password']) : '';
-        $val_ticket = isset($_POST['ffc_ticket']) ? strtoupper(trim($_POST['ffc_ticket'])) : '';
+        $val_password = isset($_POST['ffc_password']) ? trim(sanitize_text_field(wp_unslash($_POST['ffc_password']))) : '';
+        $val_ticket = isset($_POST['ffc_ticket']) ? strtoupper(trim(sanitize_text_field(wp_unslash($_POST['ffc_ticket'])))) : '';
         
         $val_cpf = isset($submission_data['cpf_rf']) ? trim($submission_data['cpf_rf']) : '';
 
@@ -531,12 +538,14 @@ class FormProcessor {
             ? __( 'Certificate previously issued (Reprint).', 'wp-ffcertificate' ) 
             : ( ! empty( $custom_message ) ? $custom_message : __( 'Success!', 'wp-ffcertificate' ) );
 
-        wp_send_json_success( array( 
-            'message' => $msg, 
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
+
+        wp_send_json_success( array(
+            'message' => $msg,
             'pdf_data' => $pdf_data,
             'html' => \FreeFormCertificate\Core\Utils::generate_success_html(  // ✅ v2.9.13: Centralized in FFC_Utils
-                $submission_data, 
-                $form_id, 
+                $submission_data,
+                $form_id,
                 $real_submission_date,
                 $msg
             )

@@ -180,7 +180,7 @@ class PageManager {
         $result = self::ensure_verification_page();
         
         if ( is_wp_error( $result ) ) {
-            wp_die( $result->get_error_message() );
+            wp_die( esc_html( $result->get_error_message() ) );
         }
         
         wp_safe_redirect( add_query_arg(

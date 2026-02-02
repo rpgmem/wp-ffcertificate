@@ -55,7 +55,7 @@ class ActivityLog {
 
     /**
      * Log an activity
-     * 
+     *
      * @param string $action Action performed (e.g., 'submission_created', 'pdf_generated')
      * @param string $level Log level (info, warning, error, debug)
      * @param array $context Additional context data
@@ -79,17 +79,17 @@ class ActivityLog {
         if ( self::$logging_disabled ) {
             return false;
         }
-        
+
         // Validate level
         $valid_levels = array( self::LEVEL_INFO, self::LEVEL_WARNING, self::LEVEL_ERROR, self::LEVEL_DEBUG );
         if ( ! in_array( $level, $valid_levels ) ) {
             $level = self::LEVEL_INFO;
         }
-        
+
         // ✅ v2.10.0: Encrypt context if contains sensitive data
         $context_json = wp_json_encode( $context );
         $context_encrypted = null;
-        
+
         if ( class_exists( '\\FreeFormCertificate\\Core\\Encryption' ) && \FreeFormCertificate\Core\Encryption::is_configured() ) {
             // Encrypt context for sensitive operations
             $sensitive_actions = array(
@@ -99,12 +99,12 @@ class ActivityLog {
                 'admin_searched',
                 'encryption_migration_batch'
             );
-            
+
             if ( in_array( $action, $sensitive_actions ) ) {
                 $context_encrypted = \FreeFormCertificate\Core\Encryption::encrypt( $context_json );
             }
         }
-        
+
         // Prepare data
         $log_data = array(
             'action' => sanitize_text_field( $action ),
@@ -114,7 +114,7 @@ class ActivityLog {
             'user_ip' => \FreeFormCertificate\Core\Utils::get_user_ip(),
             'created_at' => current_time( 'mysql' )
         );
-        
+
         // ✅ v2.10.0: Add new fields if columns exist
         $table_name = $wpdb->prefix . 'ffc_activity_log';
 
@@ -128,8 +128,9 @@ class ActivityLog {
         if ( in_array( 'context_encrypted', $columns ) && $context_encrypted !== null ) {
             $log_data['context_encrypted'] = $context_encrypted;
         }
-        
+
         // Insert into database
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
         $result = $wpdb->insert( $table_name, $log_data );
 
         // Also log via debug system if enabled (respects Activity Log setting)
@@ -146,23 +147,24 @@ class ActivityLog {
 
         return $result !== false;
     }
-    
+
     /**
      * Create activity log table
      * Called during plugin activation
-     * 
+     *
      * @return bool Success
      */
     public static function create_table(): bool {
         global $wpdb;
         $table_name = $wpdb->prefix . 'ffc_activity_log';
         $charset_collate = $wpdb->get_charset_collate();
-        
+
         // Check if table already exists
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         if ( $wpdb->get_var( "SHOW TABLES LIKE '{$table_name}'" ) === $table_name ) {
             return true; // Table exists
         }
-        
+
         $sql = "CREATE TABLE {$table_name} (
             id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
             action varchar(100) NOT NULL,
@@ -178,23 +180,24 @@ class ActivityLog {
             KEY created_at (created_at),
             KEY user_ip (user_ip)
         ) {$charset_collate};";
-        
+
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange
         dbDelta( $sql );
-        
+
         return true;
     }
-    
+
     /**
      * Get recent activities with filters
-     * 
+     *
      * @param array $args Query arguments
      * @return array Activities
      */
     public static function get_activities( array $args = array() ): array {
         global $wpdb;
         $table_name = $wpdb->prefix . 'ffc_activity_log';
-        
+
         // Default arguments
         $defaults = array(
             'limit' => 50,
@@ -209,58 +212,59 @@ class ActivityLog {
             'orderby' => 'created_at',
             'order' => 'DESC'
         );
-        
+
         $args = wp_parse_args( $args, $defaults );
-        
+
         // Build WHERE clause
         $where = array( '1=1' );
-        
+
         if ( $args['level'] ) {
             $where[] = $wpdb->prepare( 'level = %s', sanitize_key( $args['level'] ) );
         }
-        
+
         if ( $args['action'] ) {
             $where[] = $wpdb->prepare( 'action = %s', sanitize_text_field( $args['action'] ) );
         }
-        
+
         if ( $args['user_id'] ) {
             $where[] = $wpdb->prepare( 'user_id = %d', absint( $args['user_id'] ) );
         }
-        
+
         if ( $args['user_ip'] ) {
             $where[] = $wpdb->prepare( 'user_ip = %s', sanitize_text_field( $args['user_ip'] ) );
         }
-        
+
         if ( $args['date_from'] ) {
             $where[] = $wpdb->prepare( 'created_at >= %s', sanitize_text_field( $args['date_from'] ) );
         }
-        
+
         if ( $args['date_to'] ) {
             $where[] = $wpdb->prepare( 'created_at <= %s', sanitize_text_field( $args['date_to'] ) );
         }
-        
+
         if ( $args['search'] ) {
             $search = '%' . $wpdb->esc_like( sanitize_text_field( $args['search'] ) ) . '%';
             $where[] = $wpdb->prepare( '(action LIKE %s OR context LIKE %s)', $search, $search );
         }
-        
+
         $where_clause = implode( ' AND ', $where );
-        
+
         // Validate orderby
         $allowed_orderby = array( 'id', 'action', 'level', 'user_id', 'user_ip', 'created_at' );
         $orderby = in_array( $args['orderby'], $allowed_orderby ) ? $args['orderby'] : 'created_at';
-        
+
         // Validate order
         $order = strtoupper( $args['order'] ) === 'ASC' ? 'ASC' : 'DESC';
-        
+
         // Execute query
-        $query = "SELECT * FROM {$table_name} 
-                  WHERE {$where_clause} 
-                  ORDER BY {$orderby} {$order} 
+        $query = "SELECT * FROM {$table_name}
+                  WHERE {$where_clause}
+                  ORDER BY {$orderby} {$order}
                   LIMIT {$args['offset']}, {$args['limit']}";
-        
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $results = $wpdb->get_results( $query, ARRAY_A );
-        
+
         // Decode context JSON
         foreach ( $results as &$result ) {
             $result['context'] = json_decode( $result['context'], true );
@@ -268,20 +272,20 @@ class ActivityLog {
                 $result['context'] = array();
             }
         }
-        
+
         return $results;
     }
-    
+
     /**
      * Get activity count with filters
-     * 
+     *
      * @param array $args Same as get_activities()
      * @return int Count
      */
     public static function count_activities( array $args = array() ): int {
         global $wpdb;
         $table_name = $wpdb->prefix . 'ffc_activity_log';
-        
+
         // Use same WHERE logic as get_activities
         $defaults = array(
             'level' => null,
@@ -292,111 +296,117 @@ class ActivityLog {
             'date_to' => null,
             'search' => null
         );
-        
+
         $args = wp_parse_args( $args, $defaults );
-        
+
         $where = array( '1=1' );
-        
+
         if ( $args['level'] ) {
             $where[] = $wpdb->prepare( 'level = %s', sanitize_key( $args['level'] ) );
         }
-        
+
         if ( $args['action'] ) {
             $where[] = $wpdb->prepare( 'action = %s', sanitize_text_field( $args['action'] ) );
         }
-        
+
         if ( $args['user_id'] ) {
             $where[] = $wpdb->prepare( 'user_id = %d', absint( $args['user_id'] ) );
         }
-        
+
         if ( $args['user_ip'] ) {
             $where[] = $wpdb->prepare( 'user_ip = %s', sanitize_text_field( $args['user_ip'] ) );
         }
-        
+
         if ( $args['date_from'] ) {
             $where[] = $wpdb->prepare( 'created_at >= %s', sanitize_text_field( $args['date_from'] ) );
         }
-        
+
         if ( $args['date_to'] ) {
             $where[] = $wpdb->prepare( 'created_at <= %s', sanitize_text_field( $args['date_to'] ) );
         }
-        
+
         if ( $args['search'] ) {
             $search = '%' . $wpdb->esc_like( sanitize_text_field( $args['search'] ) ) . '%';
             $where[] = $wpdb->prepare( '(action LIKE %s OR context LIKE %s)', $search, $search );
         }
-        
+
         $where_clause = implode( ' AND ', $where );
-        
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         return (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table_name} WHERE {$where_clause}" );
     }
-    
+
     /**
      * Clean old logs
-     * 
+     *
      * @param int $days Keep logs from last N days (default: 90)
      * @return int Number of deleted rows
      */
     public static function cleanup( int $days = 90 ): int {
         global $wpdb;
         $table_name = $wpdb->prefix . 'ffc_activity_log';
-        
+
         $cutoff_date = gmdate( 'Y-m-d H:i:s', strtotime( "-{$days} days" ) );
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $deleted = $wpdb->query( $wpdb->prepare(
             "DELETE FROM {$table_name} WHERE created_at < %s",
             $cutoff_date
         ) );
-        
+
         return (int) $deleted;
     }
-    
+
     /**
      * Get statistics
-     * 
+     *
      * @param int $days Number of days to analyze (default: 30)
      * @return array Statistics
      */
     public static function get_stats( int $days = 30 ): array {
         global $wpdb;
         $table_name = $wpdb->prefix . 'ffc_activity_log';
-        
+
         $date_from = gmdate( 'Y-m-d H:i:s', strtotime( "-{$days} days" ) );
-        
+
         // Total activities
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $total = $wpdb->get_var( $wpdb->prepare(
             "SELECT COUNT(*) FROM {$table_name} WHERE created_at >= %s",
             $date_from
         ) );
-        
+
         // By level
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $by_level = $wpdb->get_results( $wpdb->prepare(
-            "SELECT level, COUNT(*) as count FROM {$table_name} 
-             WHERE created_at >= %s 
+            "SELECT level, COUNT(*) as count FROM {$table_name}
+             WHERE created_at >= %s
              GROUP BY level",
             $date_from
         ), ARRAY_A );
-        
+
         // Top actions
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $top_actions = $wpdb->get_results( $wpdb->prepare(
-            "SELECT action, COUNT(*) as count FROM {$table_name} 
-             WHERE created_at >= %s 
-             GROUP BY action 
-             ORDER BY count DESC 
+            "SELECT action, COUNT(*) as count FROM {$table_name}
+             WHERE created_at >= %s
+             GROUP BY action
+             ORDER BY count DESC
              LIMIT 10",
             $date_from
         ), ARRAY_A );
-        
+
         // Top users
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $top_users = $wpdb->get_results( $wpdb->prepare(
-            "SELECT user_id, COUNT(*) as count FROM {$table_name} 
+            "SELECT user_id, COUNT(*) as count FROM {$table_name}
              WHERE created_at >= %s AND user_id > 0
-             GROUP BY user_id 
-             ORDER BY count DESC 
+             GROUP BY user_id
+             ORDER BY count DESC
              LIMIT 10",
             $date_from
         ), ARRAY_A );
-        
+
         return array(
             'total' => (int) $total,
             'by_level' => $by_level,
@@ -405,7 +415,7 @@ class ActivityLog {
             'period_days' => $days
         );
     }
-    
+
     // ============================================
     // CONVENIENCE METHODS FOR COMMON ACTIONS
     // ✅ v3.1.1: Kept only 6 actively used methods
@@ -522,10 +532,10 @@ class ActivityLog {
             'setting' => $setting_key
         ), $admin_user_id );
     }
-    
+
     /**
      * ✅ v2.10.0: Get logs for specific submission (LGPD audit trail)
-     * 
+     *
      * @param int $submission_id Submission ID
      * @param int $limit Maximum number of logs to retrieve
      * @return array Logs related to this submission
@@ -533,25 +543,27 @@ class ActivityLog {
     public static function get_submission_logs( int $submission_id, int $limit = 100 ): array {
         global $wpdb;
         $table_name = $wpdb->prefix . 'ffc_activity_log';
-        
+
         // Check if submission_id column exists
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $columns = $wpdb->get_col( "DESCRIBE {$table_name}", 0 );
         if ( ! in_array( 'submission_id', $columns ) ) {
             return array(); // Column doesn't exist yet
         }
-        
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $logs = $wpdb->get_results(
             $wpdb->prepare(
-                "SELECT * FROM {$table_name} 
-                 WHERE submission_id = %d 
-                 ORDER BY created_at DESC 
+                "SELECT * FROM {$table_name}
+                 WHERE submission_id = %d
+                 ORDER BY created_at DESC
                  LIMIT %d",
                 $submission_id,
                 $limit
             ),
             ARRAY_A
         );
-        
+
         // Decrypt encrypted contexts if available
         if ( class_exists( '\\FreeFormCertificate\\Core\\Encryption' ) && \FreeFormCertificate\Core\Encryption::is_configured() ) {
             foreach ( $logs as &$log ) {
@@ -563,7 +575,7 @@ class ActivityLog {
                 }
             }
         }
-        
+
         return $logs;
     }
 
@@ -583,6 +595,7 @@ class ActivityLog {
         }
 
         // Query columns and cache result
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         self::$table_columns_cache = $wpdb->get_col( "DESCRIBE {$table_name}", 0 );
 
         return self::$table_columns_cache;

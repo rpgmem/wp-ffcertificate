@@ -549,15 +549,15 @@ class FormEditorMetaboxRenderer {
             <div class="ffc-field-row-grid">
                 <div class="ffc-grid-item">
                     <label><?php esc_html_e('Label', 'wp-ffcertificate'); ?></label>
-                    <input type="text" name="ffc_fields[<?php echo $index; ?>][label]" value="<?php echo esc_attr( $label ); ?>" class="ffc-w100">
+                    <input type="text" name="ffc_fields[<?php echo esc_attr( $index ); ?>][label]" value="<?php echo esc_attr( $label ); ?>" class="ffc-w100">
                 </div>
                 <div class="ffc-grid-item">
                     <label><?php esc_html_e('Variable Name (Tag)', 'wp-ffcertificate'); ?></label>
-                    <input type="text" name="ffc_fields[<?php echo $index; ?>][name]" value="<?php echo esc_attr( $name ); ?>" placeholder="<?php esc_attr_e('ex: course_name', 'wp-ffcertificate'); ?>" class="ffc-w100">
+                    <input type="text" name="ffc_fields[<?php echo esc_attr( $index ); ?>][name]" value="<?php echo esc_attr( $name ); ?>" placeholder="<?php esc_attr_e('ex: course_name', 'wp-ffcertificate'); ?>" class="ffc-w100">
                 </div>
                 <div class="ffc-grid-item">
                     <label><?php esc_html_e('Type', 'wp-ffcertificate'); ?></label>
-                    <select name="ffc_fields[<?php echo $index; ?>][type]" class="ffc-field-type-selector ffc-w100">
+                    <select name="ffc_fields[<?php echo esc_attr( $index ); ?>][type]" class="ffc-field-type-selector ffc-w100">
                         <option value="text" <?php selected($type, 'text'); ?>><?php esc_html_e('Text', 'wp-ffcertificate'); ?></option>
                         <option value="email" <?php selected($type, 'email'); ?>><?php esc_html_e('Email', 'wp-ffcertificate'); ?></option>
                         <option value="number" <?php selected($type, 'number'); ?>><?php esc_html_e('Number', 'wp-ffcertificate'); ?></option>
@@ -570,17 +570,17 @@ class FormEditorMetaboxRenderer {
                 </div>
                 <div class="ffc-grid-item ffc-flex-center">
                     <label class="ffc-req-label">
-                        <input type="checkbox" name="ffc_fields[<?php echo $index; ?>][required]" value="1" <?php checked($req, '1'); ?>>
+                        <input type="checkbox" name="ffc_fields[<?php echo esc_attr( $index ); ?>][required]" value="1" <?php checked($req, '1'); ?>>
                         <?php esc_html_e('Required?', 'wp-ffcertificate'); ?>
                     </label>
                 </div>
             </div>
 
-            <div class="ffc-options-field <?php echo $options_visible_class; ?>">
+            <div class="ffc-options-field <?php echo esc_attr( $options_visible_class ); ?>">
                 <p class="description ffc-options-desc">
                     <?php esc_html_e('Options (separate with commas):', 'wp-ffcertificate'); ?>
                 </p>
-                <input type="text" name="ffc_fields[<?php echo $index; ?>][options]" value="<?php echo esc_attr( $opts ); ?>" placeholder="<?php esc_attr_e('Ex: Option 1, Option 2, Option 3', 'wp-ffcertificate'); ?>" class="ffc-w100">
+                <input type="text" name="ffc_fields[<?php echo esc_attr( $index ); ?>][options]" value="<?php echo esc_attr( $opts ); ?>" placeholder="<?php esc_attr_e('Ex: Option 1, Option 2, Option 3', 'wp-ffcertificate'); ?>" class="ffc-w100">
             </div>
         </div>
         <?php

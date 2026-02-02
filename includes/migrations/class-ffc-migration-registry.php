@@ -73,7 +73,7 @@ class MigrationRegistry {
         );
 
         // Allow plugins to add custom fields
-        $this->field_definitions = apply_filters( 'ffc_migratable_fields', $this->field_definitions );
+        $this->field_definitions = apply_filters( 'wp_ffcertificate_migratable_fields', $this->field_definitions );
     }
 
     /**
@@ -154,7 +154,7 @@ class MigrationRegistry {
         );
 
         // Allow plugins to add custom migrations
-        $this->migrations = apply_filters( 'ffc_migrations_registry', $this->migrations );
+        $this->migrations = apply_filters( 'wp_ffcertificate_migrations_registry', $this->migrations );
     }
 
     /**

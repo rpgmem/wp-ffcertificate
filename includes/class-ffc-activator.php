@@ -46,6 +46,7 @@ class Activator {
         $table_name = \FreeFormCertificate\Core\Utils::get_submissions_table();
         $charset_collate = $wpdb->get_charset_collate();
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         if ($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") == $table_name) {
             return;
         }
@@ -72,6 +73,7 @@ class Activator {
         ) {$charset_collate};";
 
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange
         dbDelta($sql);
     }
 
@@ -100,22 +102,28 @@ class Activator {
         );
 
         foreach ($columns as $column_name => $config) {
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
             $exists = $wpdb->get_results($wpdb->prepare("SHOW COLUMNS FROM {$table_name} LIKE %s", $column_name));
             if (!empty($exists)) continue;
 
             $after = isset($config['after']) ? "AFTER {$config['after']}" : '';
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
             $wpdb->query("ALTER TABLE {$table_name} ADD COLUMN {$column_name} {$config['type']} {$after}");
 
             if (isset($config['index'])) {
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
                 $index_exists = $wpdb->get_results("SHOW INDEX FROM {$table_name} WHERE Key_name = 'idx_{$config['index']}'");
                 if (empty($index_exists)) {
+                    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
                     $wpdb->query("ALTER TABLE {$table_name} ADD INDEX idx_{$config['index']} ({$column_name})");
                 }
             }
         }
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $composite_index = $wpdb->get_results("SHOW INDEX FROM {$table_name} WHERE Key_name = 'idx_form_cpf'");
         if (empty($composite_index)) {
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
             $wpdb->query("ALTER TABLE {$table_name} ADD INDEX idx_form_cpf (form_id, cpf_rf)");
         }
     }
@@ -125,6 +133,7 @@ class Activator {
         $table_name = $wpdb->prefix . 'ffc_activity_log';
         $charset_collate = $wpdb->get_charset_collate();
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         if ($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") == $table_name) {
             return;
         }
@@ -146,6 +155,7 @@ class Activator {
         ) {$charset_collate};";
 
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange
         dbDelta($sql);
     }
 

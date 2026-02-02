@@ -69,7 +69,7 @@ class AdminSubmissionEditPage {
         $sub = $this->submission_handler->get_submission( $submission_id );
 
         if ( ! $sub ) {
-            echo '<div class="wrap"><p>' . __( 'Submission not found.', 'wp-ffcertificate' ) . '</p></div>';
+            echo '<div class="wrap"><p>' . esc_html__( 'Submission not found.', 'wp-ffcertificate' ) . '</p></div>';
             return;
         }
 
@@ -81,13 +81,13 @@ class AdminSubmissionEditPage {
         // Render page
         ?>
         <div class="wrap">
-            <h1><?php printf( __( 'Edit Submission #%s', 'wp-ffcertificate' ), $this->sub_array['id'] ); ?></h1>
+            <h1><?php echo esc_html( sprintf( __( 'Edit Submission #%s', 'wp-ffcertificate' ), $this->sub_array['id'] ) ); ?></h1>
 
             <?php $this->render_edit_warning(); ?>
 
             <form method="POST" class="ffc-edit-submission-form">
                 <?php wp_nonce_field( 'ffc_edit_submission_nonce', 'ffc_edit_submission_action' ); ?>
-                <input type="hidden" name="submission_id" value="<?php echo $this->sub_array['id']; ?>">
+                <input type="hidden" name="submission_id" value="<?php echo esc_attr( $this->sub_array['id'] ); ?>">
 
                 <table class="form-table ffc-edit-table">
                     <?php
@@ -101,7 +101,7 @@ class AdminSubmissionEditPage {
 
                 <p class="submit">
                     <button type="submit" name="ffc_save_edit" class="button button-primary"><?php esc_html_e( 'Save Changes', 'wp-ffcertificate' ); ?></button>
-                    <a href="<?php echo admin_url('edit.php?post_type=ffc_form&page=ffc-submissions'); ?>" class="button"><?php esc_html_e( 'Cancel', 'wp-ffcertificate' ); ?></a>
+                    <a href="<?php echo esc_url( admin_url('edit.php?post_type=ffc_form&page=ffc-submissions') ); ?>" class="button"><?php esc_html_e( 'Cancel', 'wp-ffcertificate' ); ?></a>
                 </p>
             </form>
         </div>
@@ -134,13 +134,13 @@ class AdminSubmissionEditPage {
             <p>
                 <strong><?php esc_html_e( '⚠️ Warning:', 'wp-ffcertificate' ); ?></strong>
                 <?php
-                printf(
+                echo wp_kses_post( sprintf(
                     __( 'This record was manually edited on <strong>%s</strong>', 'wp-ffcertificate' ),
-                    date_i18n( get_option('date_format') . ' ' . get_option('time_format'), strtotime($edited_at) )
-                );
+                    esc_html( date_i18n( get_option('date_format') . ' ' . get_option('time_format'), strtotime($edited_at) ) )
+                ) );
                 ?>
                 <?php if ( $edited_by_name ): ?>
-                    <?php printf( __( ' by <strong>%s</strong>', 'wp-ffcertificate' ), esc_html($edited_by_name) ); ?>
+                    <?php echo wp_kses_post( sprintf( __( ' by <strong>%s</strong>', 'wp-ffcertificate' ), esc_html($edited_by_name) ) ); ?>
                 <?php endif; ?>.
             </p>
         </div>
@@ -199,7 +199,7 @@ class AdminSubmissionEditPage {
                     <input type="text" value="<?php echo esc_attr( $magic_token ); ?>" class="regular-text ffc-input-readonly" readonly>
                     <p class="description">
                         <?php esc_html_e( 'Unique token for certificate access (read-only).', 'wp-ffcertificate' ); ?>
-                        <?php echo \FreeFormCertificate\Generators\MagicLinkHelper::get_magic_link_html( $magic_token ); ?>
+                        <?php echo wp_kses_post( \FreeFormCertificate\Generators\MagicLinkHelper::get_magic_link_html( $magic_token ) ); ?>
                     </p>
                 <?php else: ?>
                     <p class="description"><?php esc_html_e( 'Submission created before magic links', 'wp-ffcertificate' ); ?></p>
@@ -288,13 +288,13 @@ class AdminSubmissionEditPage {
                         </p>
                         <?php if ( $consent_date ): ?>
                             <p class="description">
-                                📅 <?php printf( __( 'Date: %s', 'wp-ffcertificate' ), esc_html( $consent_date ) ); ?>
+                                📅 <?php echo esc_html( sprintf( __( 'Date: %s', 'wp-ffcertificate' ), $consent_date ) ); ?>
                             </p>
                         <?php endif; ?>
 
                         <?php if ( $consent_ip ): ?>
                             <p class="description">
-                                🌐 <?php printf( __( 'IP: %s', 'wp-ffcertificate' ), esc_html( $consent_ip ) ); ?>
+                                🌐 <?php echo esc_html( sprintf( __( 'IP: %s', 'wp-ffcertificate' ), $consent_ip ) ); ?>
                             </p>
                         <?php endif; ?>
 
@@ -408,7 +408,7 @@ class AdminSubmissionEditPage {
             <tr>
                 <th><?php echo esc_html( $lbl ); ?></th>
                 <td>
-                    <input type="text" name="data[<?php echo esc_attr($k); ?>]" value="<?php echo esc_attr($display_value); ?>" class="<?php echo esc_attr($field_class); ?>" <?php echo $readonly_attr; ?>>
+                    <input type="text" name="data[<?php echo esc_attr($k); ?>]" value="<?php echo esc_attr($display_value); ?>" class="<?php echo esc_attr($field_class); ?>" <?php echo esc_attr( $readonly_attr ); ?>>
                     <?php if ( $is_protected ): ?>
                         <p class="description"><?php esc_html_e('Protected internal field.', 'wp-ffcertificate'); ?></p>
                     <?php endif; ?>
@@ -424,6 +424,7 @@ class AdminSubmissionEditPage {
      * Processes submission edit form POST request.
      */
     public function handle_save(): void {
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified below via check_admin_referer.
         if ( ! isset( $_POST['ffc_save_edit'] ) ) {
             return;
         }
@@ -432,6 +433,7 @@ class AdminSubmissionEditPage {
             return;
         }
 
+        // phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce verified above via check_admin_referer.
         $id = absint( $_POST['submission_id'] );
         $new_email = sanitize_email( $_POST['user_email'] );
         $raw_data = isset( $_POST['data'] ) ? $_POST['data'] : array();
@@ -440,6 +442,8 @@ class AdminSubmissionEditPage {
         foreach ( $raw_data as $k => $v ) {
             $clean_data[ sanitize_key( $k ) ] = wp_kses( $v, \FreeFormCertificate\Core\Utils::get_allowed_html_tags() );
         }
+
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
 
         $this->submission_handler->update_submission( $id, $new_email, $clean_data );
 

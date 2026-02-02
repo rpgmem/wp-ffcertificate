@@ -31,12 +31,13 @@ class AdminAjax {
         $nonce_verified = false;
 
         if ( isset( $_POST['nonce'] ) ) {
+            $nonce_value = sanitize_text_field( wp_unslash( $_POST['nonce'] ) );
             // Try ffc_form_nonce first
-            if ( wp_verify_nonce( $_POST['nonce'], 'ffc_form_nonce' ) ) {
+            if ( wp_verify_nonce( $nonce_value, 'ffc_form_nonce' ) ) {
                 $nonce_verified = true;
             }
             // Try ffc_admin_nonce
-            elseif ( wp_verify_nonce( $_POST['nonce'], 'ffc_admin_nonce' ) ) {
+            elseif ( wp_verify_nonce( $nonce_value, 'ffc_admin_nonce' ) ) {
                 $nonce_verified = true;
             }
         }
@@ -85,12 +86,13 @@ class AdminAjax {
         $nonce_verified = false;
 
         if ( isset( $_POST['nonce'] ) ) {
+            $nonce_value = sanitize_text_field( wp_unslash( $_POST['nonce'] ) );
             // Try ffc_form_nonce first
-            if ( wp_verify_nonce( $_POST['nonce'], 'ffc_form_nonce' ) ) {
+            if ( wp_verify_nonce( $nonce_value, 'ffc_form_nonce' ) ) {
                 $nonce_verified = true;
             }
             // Try ffc_admin_nonce
-            elseif ( wp_verify_nonce( $_POST['nonce'], 'ffc_admin_nonce' ) ) {
+            elseif ( wp_verify_nonce( $nonce_value, 'ffc_admin_nonce' ) ) {
                 $nonce_verified = true;
             }
         }

@@ -72,6 +72,7 @@ class TabGeolocation extends SettingsTab {
      */
     public function render(): void {
         // Handle form submission
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified below via check_admin_referer.
         if ($_POST && isset($_POST['ffc_save_geolocation'])) {
             check_admin_referer('ffc_geolocation_nonce');
             $this->save_settings();
@@ -86,6 +87,7 @@ class TabGeolocation extends SettingsTab {
      * Save settings
      */
     private function save_settings(): void {
+        // phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce verified in render() via check_admin_referer.
         $settings = array(
             'ip_api_enabled' => isset($_POST['ip_api_enabled']),
             'ip_api_service' => in_array($_POST['ip_api_service'] ?? '', array('ip-api', 'ipinfo'))
@@ -113,6 +115,7 @@ class TabGeolocation extends SettingsTab {
 
             'debug_enabled' => isset($_POST['debug_enabled']),
         );
+        // phpcs:enable WordPress.Security.NonceVerification.Missing
 
         update_option('ffc_geolocation_settings', $settings);
 

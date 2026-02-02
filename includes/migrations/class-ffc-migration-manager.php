@@ -163,7 +163,7 @@ class MigrationManager {
         $batch_number = ( $limit > 0 ) ? floor( $offset / $limit ) + 1 : 1;
 
         // Update migration config with custom limit
-        add_filter( 'ffc_migrations_registry', function( $migrations ) use ( $limit ) {
+        add_filter( 'wp_ffcertificate_migrations_registry', function( $migrations ) use ( $limit ) {
             if ( isset( $migrations['encrypt_sensitive_data'] ) ) {
                 $migrations['encrypt_sensitive_data']['batch_size'] = $limit;
             }
@@ -188,7 +188,7 @@ class MigrationManager {
         $batch_number = ( $limit > 0 ) ? floor( $offset / $limit ) + 1 : 1;
 
         // Update migration config with custom limit
-        add_filter( 'ffc_migrations_registry', function( $migrations ) use ( $limit ) {
+        add_filter( 'wp_ffcertificate_migrations_registry', function( $migrations ) use ( $limit ) {
             if ( isset( $migrations['cleanup_unencrypted'] ) ) {
                 $migrations['cleanup_unencrypted']['batch_size'] = $limit;
             }
@@ -307,6 +307,7 @@ class MigrationManager {
         $errors = array();
 
         foreach ( $columns_to_drop as $column ) {
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
             $result = $wpdb->query( "ALTER TABLE {$this->table_name} DROP COLUMN {$column}" );
 
             if ( $result !== false ) {

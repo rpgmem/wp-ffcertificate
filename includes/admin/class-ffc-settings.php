@@ -84,7 +84,7 @@ class Settings {
         });
 
         // Allow plugins to add custom tabs
-        $this->tabs = apply_filters( 'ffc_settings_tabs', $this->tabs );
+        $this->tabs = apply_filters( 'wp_ffcertificate_settings_tabs', $this->tabs );
     }
     
     public function add_settings_page(): void {
@@ -160,17 +160,20 @@ class Settings {
      * Handle QR Code cache clearing
      */
     public function handle_clear_qr_cache(): void {
+        // phpcs:disable WordPress.Security.NonceVerification.Recommended -- Nonce verified below via wp_verify_nonce.
         if ( ! isset( $_GET['ffc_clear_qr_cache'] ) || ! isset( $_GET['_wpnonce'] ) ) {
             return;
         }
-        
-        if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'ffc_clear_qr_cache' ) ) {
+        // phpcs:enable WordPress.Security.NonceVerification.Recommended
+
+        if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'ffc_clear_qr_cache' ) ) {
             return;
         }
         
         global $wpdb;
         $table_name = $wpdb->prefix . 'ffc_submissions';
         
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
         $cleared = $wpdb->query( "UPDATE {$table_name} SET qr_code_cache = NULL WHERE qr_code_cache IS NOT NULL" );
         
         wp_safe_redirect( add_query_arg( array(
@@ -187,21 +190,22 @@ class Settings {
      * Display settings page with modular tabs
      */
     public function display_settings_page(): void {
+        // phpcs:disable WordPress.Security.NonceVerification.Recommended -- These are display-only URL parameters from redirects.
         // Handle messages
         if ( isset( $_GET['msg'] ) ) {
-            $msg = $_GET['msg'];
-            
+            $msg = sanitize_key( wp_unslash( $_GET['msg'] ) );
+
             if ( $msg === 'qr_cache_cleared' ) {
                 $cleared = isset( $_GET['cleared'] ) ? intval( $_GET['cleared'] ) : 0;
                 echo '<div class="notice notice-success is-dismissible">';
                 /* translators: %d: number of QR codes cleared */
-                echo '<p>' . sprintf( __( '%d QR Code(s) cleared from cache successfully.', 'wp-ffcertificate' ), $cleared ) . '</p>';
+                echo '<p>' . esc_html( sprintf( __( '%d QR Code(s) cleared from cache successfully.', 'wp-ffcertificate' ), $cleared ) ) . '</p>';
                 echo '</div>';
             }
         }
         
         // Get active tab (default to first tab)
-        $active_tab = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : '';
+        $active_tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : '';
         
         // If no tab specified, use first tab
         if ( empty( $active_tab ) && ! empty( $this->tabs ) ) {
@@ -211,22 +215,22 @@ class Settings {
         }
 
         if (isset($_GET['msg'])) {
-            $msg = $_GET['msg'];
-            
+            $msg = sanitize_key( wp_unslash( $_GET['msg'] ) );
+
             if ($msg === 'cache_warmed') {
                 $count = isset($_GET['count']) ? intval($_GET['count']) : 0;
                 echo '<div class="notice notice-success is-dismissible">';
-                echo '<p>' . sprintf(
+                echo '<p>' . esc_html( sprintf(
                     /* translators: %d: number of forms pre-loaded */
                     __( '✅ Cache warmed! %d form(s) pre-loaded.', 'wp-ffcertificate' ),
                     $count
-                ) . '</p>';
+                ) ) . '</p>';
                 echo '</div>';
             }
 
             if ($msg === 'cache_cleared') {
                 echo '<div class="notice notice-success is-dismissible">';
-                echo '<p>' . __( '✅ Cache cleared successfully!', 'wp-ffcertificate' ) . '</p>';
+                echo '<p>' . esc_html__( '✅ Cache cleared successfully!', 'wp-ffcertificate' ) . '</p>';
                 echo '</div>';
             }
         }
@@ -239,10 +243,10 @@ class Settings {
             <?php
             // Display migration messages
             if ( isset( $_GET['migration_success'] ) ) {
-                echo '<div class="notice notice-success is-dismissible"><p>' . esc_html( urldecode( $_GET['migration_success'] ) ) . '</p></div>';
+                echo '<div class="notice notice-success is-dismissible"><p>' . esc_html( sanitize_text_field( wp_unslash( urldecode( $_GET['migration_success'] ) ) ) ) . '</p></div>';
             }
             if ( isset( $_GET['migration_error'] ) ) {
-                echo '<div class="notice notice-error is-dismissible"><p>' . esc_html( urldecode( $_GET['migration_error'] ) ) . '</p></div>';
+                echo '<div class="notice notice-error is-dismissible"><p>' . esc_html( sanitize_text_field( wp_unslash( urldecode( $_GET['migration_error'] ) ) ) ) . '</p></div>';
             }
             ?>
             
@@ -250,7 +254,7 @@ class Settings {
                 <?php foreach ( $this->tabs as $tab_id => $tab_obj ) : ?>
                     <a href="?post_type=ffc_form&page=ffc-settings&tab=<?php echo esc_attr( $tab_id ); ?>" 
                        class="nav-tab <?php echo $active_tab === $tab_id ? 'nav-tab-active' : ''; ?>">
-                        <?php echo $tab_obj->get_icon(); ?> 
+                        <?php echo wp_kses_post( $tab_obj->get_icon() ); ?>
                         <?php echo esc_html( $tab_obj->get_title() ); ?>
                     </a>
                 <?php endforeach; ?>
@@ -272,21 +276,24 @@ class Settings {
             </div>
         </div>
         <?php
+        // phpcs:enable WordPress.Security.NonceVerification.Recommended
     }
     
     /**
      * Handle migration execution from settings page
      */
     public function handle_migration_execution(): void {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verified below after extracting migration key.
         if ( ! isset( $_GET['ffc_run_migration'] ) ) {
             return;
         }
-        
-        $migration_key = sanitize_key( $_GET['ffc_run_migration'] );
-        
+
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verified immediately below.
+        $migration_key = sanitize_key( wp_unslash( $_GET['ffc_run_migration'] ) );
+
         // Verify nonce
-        if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'ffc_migration_' . $migration_key ) ) {
-            wp_die( __( 'Security check failed.', 'wp-ffcertificate' ) );
+        if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'ffc_migration_' . $migration_key ) ) {
+            wp_die( esc_html__( 'Security check failed.', 'wp-ffcertificate' ) );
         }
 
         // Autoloader handles class loading
@@ -328,9 +335,11 @@ class Settings {
      */
     public function ajax_preview_date_format(): void {
         check_ajax_referer( 'ffc_preview_date', 'nonce' );
-        
-        $format = isset( $_POST['format'] ) ? sanitize_text_field( $_POST['format'] ) : 'F j, Y';
-        $custom_format = isset( $_POST['custom_format'] ) ? sanitize_text_field( $_POST['custom_format'] ) : '';
+
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified above via check_ajax_referer.
+        $format = isset( $_POST['format'] ) ? sanitize_text_field( wp_unslash( $_POST['format'] ) ) : 'F j, Y';
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified above via check_ajax_referer.
+        $custom_format = isset( $_POST['custom_format'] ) ? sanitize_text_field( wp_unslash( $_POST['custom_format'] ) ) : '';
         
         // Sample date for preview
         $sample_date = '2026-01-04 15:30:45';
@@ -350,7 +359,8 @@ class Settings {
 
     public function handle_cache_actions(): void {
         // Warm Cache
-        if (isset($_GET['action']) && $_GET['action'] === 'warm_cache') {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verified below via check_admin_referer.
+        if (isset($_GET['action']) && sanitize_key( wp_unslash( $_GET['action'] ) ) === 'warm_cache') {
             check_admin_referer('ffc_warm_cache');
 
             // Autoloader handles class loading
@@ -367,7 +377,8 @@ class Settings {
         }
         
         // Clear Cache
-        if (isset($_GET['action']) && $_GET['action'] === 'clear_cache') {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verified below via check_admin_referer.
+        if (isset($_GET['action']) && sanitize_key( wp_unslash( $_GET['action'] ) ) === 'clear_cache') {
             check_admin_referer('ffc_clear_cache');
 
             // Autoloader handles class loading
