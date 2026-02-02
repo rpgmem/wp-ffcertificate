@@ -1257,6 +1257,7 @@ class RestController {
 
             return new \WP_Error(
                 'get_appointments_error',
+                /* translators: %s: error message */
                 sprintf(__('Error loading appointments: %s', 'wp-ffcertificate'), $e->getMessage()),
                 array('status' => 500)
             );
@@ -1453,6 +1454,7 @@ class RestController {
                 if (empty($params[$field])) {
                     return new \WP_Error(
                         'missing_field',
+                        /* translators: %s: field name */
                         sprintf(__('Missing required field: %s', 'wp-ffcertificate'), $field),
                         array('status' => 400)
                     );

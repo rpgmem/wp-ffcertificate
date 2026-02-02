@@ -232,7 +232,7 @@ class AppointmentHandler {
         // Calculate end time based on slot duration
         $start_datetime = $data['appointment_date'] . ' ' . $data['start_time'];
         $end_timestamp = strtotime($start_datetime) + ($calendar['slot_duration'] * 60);
-        $data['end_time'] = date('H:i:s', $end_timestamp);
+        $data['end_time'] = gmdate('H:i:s', $end_timestamp);
 
         // Run validations
         $validation = $this->validate_appointment($data, $calendar);
@@ -348,6 +348,7 @@ class AppointmentHandler {
                 return new \WP_Error(
                     'too_soon',
                     sprintf(
+                        /* translators: %d: minimum number of hours for advance booking */
                         __('Appointments must be booked at least %d hours in advance.', 'wp-ffcertificate'),
                         $calendar['advance_booking_min']
                     )
@@ -362,6 +363,7 @@ class AppointmentHandler {
                 return new \WP_Error(
                     'too_far',
                     sprintf(
+                        /* translators: %d: maximum number of days for advance booking */
                         __('Appointments cannot be booked more than %d days in advance.', 'wp-ffcertificate'),
                         $calendar['advance_booking_max']
                     )
@@ -524,7 +526,8 @@ class AppointmentHandler {
                 return new \WP_Error(
                     'booking_too_soon',
                     sprintf(
-                        __('You already have an appointment scheduled within the next %d hours. You can book again after %s.', 'wp-ffcertificate'),
+                        /* translators: %1$d: number of hours, %2$s: next available date/time */
+                        __('You already have an appointment scheduled within the next %1$d hours. You can book again after %2$s.', 'wp-ffcertificate'),
                         $interval_hours,
                         $next_available
                     )
@@ -544,7 +547,7 @@ class AppointmentHandler {
      * @return bool
      */
     private function is_within_working_hours(string $date, string $time, array $calendar): bool {
-        $day_of_week = (int)date('w', strtotime($date));
+        $day_of_week = (int)gmdate('w', strtotime($date));
         $working_hours = json_decode($calendar['working_hours'], true);
 
         if (empty($working_hours) || !is_array($working_hours)) {
@@ -592,7 +595,7 @@ class AppointmentHandler {
         }
 
         // Get day of week
-        $day_of_week = (int)date('w', strtotime($date));
+        $day_of_week = (int)gmdate('w', strtotime($date));
 
         // Get working hours for this day
         $working_hours = $calendar['working_hours'] ?? array();
@@ -618,7 +621,7 @@ class AppointmentHandler {
             $end_time = strtotime($date . ' ' . $hours['end']);
 
             while ($current_time < $end_time) {
-                $slot_time = date('H:i:s', $current_time);
+                $slot_time = gmdate('H:i:s', $current_time);
 
                 // Check if slot is not blocked by time-range blocks
                 if (!$this->blocked_date_repository->isDateBlocked($calendar_id, $date, $slot_time)) {
@@ -634,7 +637,7 @@ class AppointmentHandler {
                     if ($count < $max_per_slot) {
                         $slots[] = array(
                             'time' => $slot_time,
-                            'display' => date('H:i', $current_time),
+                            'display' => gmdate('H:i', $current_time),
                             'available' => $max_per_slot - $count,
                             'total' => $max_per_slot
                         );
@@ -719,6 +722,7 @@ class AppointmentHandler {
                 return new \WP_Error(
                     'deadline_passed',
                     sprintf(
+                        /* translators: %d: minimum number of hours before appointment for cancellation */
                         __('Cancellation deadline has passed. Appointments must be cancelled at least %d hours in advance.', 'wp-ffcertificate'),
                         $calendar['cancellation_min_hours']
                     )

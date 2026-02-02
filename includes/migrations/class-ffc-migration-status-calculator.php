@@ -133,6 +133,7 @@ class MigrationStatusCalculator {
         if ( ! isset( $this->strategies[ $migration_key ] ) ) {
             return new WP_Error(
                 'strategy_not_found',
+                /* translators: %s: migration key */
                 sprintf( __( 'No strategy found for migration: %s', 'wp-ffcertificate' ), $migration_key )
             );
         }

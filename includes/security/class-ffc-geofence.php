@@ -94,8 +94,8 @@ class Geofence {
      */
     public static function validate_datetime(array $config): array {
         $now = current_time('timestamp');
-        $current_date = date('Y-m-d', $now);
-        $current_time = date('H:i', $now);
+        $current_date = gmdate('Y-m-d', $now);
+        $current_time = gmdate('H:i', $now);
         $time_mode = $config['time_mode'] ?? 'daily';
 
         // Determine if time validation is needed

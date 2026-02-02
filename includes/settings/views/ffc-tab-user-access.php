@@ -11,10 +11,10 @@ if (!defined('ABSPATH')) {
 }
 
 // Get current settings
-$ffc_current_settings = get_option('ffc_user_access_settings', array());
+$wp_ffcertificate_current_settings = get_option('ffc_user_access_settings', array());
 
 // Defaults
-$ffc_defaults = array(
+$wp_ffcertificate_defaults = array(
     'block_wp_admin' => false,
     'blocked_roles' => array('ffc_user'),
     'redirect_url' => home_url('/dashboard'),
@@ -23,15 +23,15 @@ $ffc_defaults = array(
     'bypass_for_admins' => true,
 );
 
-$ffc_settings = wp_parse_args($ffc_current_settings, $ffc_defaults);
+$wp_ffcertificate_settings = wp_parse_args($wp_ffcertificate_current_settings, $wp_ffcertificate_defaults);
 
 // Get all WordPress roles
-$ffc_wp_roles = wp_roles();
-$ffc_available_roles = $ffc_wp_roles->get_names();
+$wp_ffcertificate_wp_roles = wp_roles();
+$wp_ffcertificate_available_roles = $wp_ffcertificate_wp_roles->get_names();
 
 // Get dashboard page URL
-$ffc_dashboard_page_id = get_option('ffc_dashboard_page_id');
-$ffc_dashboard_url = $ffc_dashboard_page_id ? get_permalink($ffc_dashboard_page_id) : home_url('/dashboard');
+$wp_ffcertificate_dashboard_page_id = get_option('ffc_dashboard_page_id');
+$wp_ffcertificate_dashboard_url = $wp_ffcertificate_dashboard_page_id ? get_permalink($wp_ffcertificate_dashboard_page_id) : home_url('/dashboard');
 ?>
 
 <div class="wrap ffc-settings-page">
@@ -54,7 +54,7 @@ $ffc_dashboard_url = $ffc_dashboard_page_id ? get_permalink($ffc_dashboard_page_
                                    name="block_wp_admin"
                                    id="block_wp_admin"
                                    value="1"
-                                   <?php checked($ffc_settings['block_wp_admin'], true); ?>>
+                                   <?php checked($wp_ffcertificate_settings['block_wp_admin'], true); ?>>
                             <?php esc_html_e('Prevent selected roles from accessing /wp-admin', 'wp-ffcertificate'); ?>
                         </label>
                         <p class="description">
@@ -71,14 +71,14 @@ $ffc_dashboard_url = $ffc_dashboard_page_id ? get_permalink($ffc_dashboard_page_
                     </th>
                     <td>
                         <fieldset>
-                            <?php foreach ($ffc_available_roles as $ffc_role_slug => $ffc_role_name) : ?>
+                            <?php foreach ($wp_ffcertificate_available_roles as $wp_ffcertificate_role_slug => $wp_ffcertificate_role_name) : ?>
                                 <label class="ffc-checkbox-label">
                                     <input type="checkbox"
                                            name="blocked_roles[]"
-                                           value="<?php echo esc_attr($ffc_role_slug); ?>"
-                                           <?php checked(in_array($ffc_role_slug, $ffc_settings['blocked_roles'])); ?>>
-                                    <?php echo esc_html($ffc_role_name); ?>
-                                    <?php if ($ffc_role_slug === 'ffc_user') : ?>
+                                           value="<?php echo esc_attr($wp_ffcertificate_role_slug); ?>"
+                                           <?php checked(in_array($wp_ffcertificate_role_slug, $wp_ffcertificate_settings['blocked_roles'])); ?>>
+                                    <?php echo esc_html($wp_ffcertificate_role_name); ?>
+                                    <?php if ($wp_ffcertificate_role_slug === 'ffc_user') : ?>
                                         <em>(<?php esc_html_e('recommended', 'wp-ffcertificate'); ?>)</em>
                                     <?php endif; ?>
                                 </label>
@@ -102,7 +102,7 @@ $ffc_dashboard_url = $ffc_dashboard_page_id ? get_permalink($ffc_dashboard_page_
                                    name="bypass_for_admins"
                                    id="bypass_for_admins"
                                    value="1"
-                                   <?php checked($ffc_settings['bypass_for_admins'], true); ?>>
+                                   <?php checked($wp_ffcertificate_settings['bypass_for_admins'], true); ?>>
                             <?php esc_html_e('Allow administrators to bypass the block (recommended)', 'wp-ffcertificate'); ?>
                         </label>
                         <p class="description">
@@ -127,15 +127,15 @@ $ffc_dashboard_url = $ffc_dashboard_page_id ? get_permalink($ffc_dashboard_page_
                         <input type="url"
                                name="redirect_url"
                                id="redirect_url"
-                               value="<?php echo esc_attr($ffc_settings['redirect_url']); ?>"
+                               value="<?php echo esc_attr($wp_ffcertificate_settings['redirect_url']); ?>"
                                class="regular-text"
-                               placeholder="<?php echo esc_attr($ffc_dashboard_url); ?>">
+                               placeholder="<?php echo esc_attr($wp_ffcertificate_dashboard_url); ?>">
                         <p class="description">
                             <?php
                             printf(
                                 /* translators: %s: Dashboard page URL */
                                 esc_html__('Where to redirect blocked users. Default: %s', 'wp-ffcertificate'),
-                                '<code>' . esc_html($ffc_dashboard_url) . '</code>'
+                                '<code>' . esc_html($wp_ffcertificate_dashboard_url) . '</code>'
                             );
                             ?>
                         </p>
@@ -152,7 +152,7 @@ $ffc_dashboard_url = $ffc_dashboard_page_id ? get_permalink($ffc_dashboard_page_
                         <textarea name="redirect_message"
                                   id="redirect_message"
                                   rows="3"
-                                  class="large-text"><?php echo esc_textarea($ffc_settings['redirect_message']); ?></textarea>
+                                  class="large-text"><?php echo esc_textarea($wp_ffcertificate_settings['redirect_message']); ?></textarea>
                         <p class="description">
                             <?php esc_html_e('Message shown to users after being redirected (appears on the dashboard page).', 'wp-ffcertificate'); ?>
                         </p>
@@ -177,7 +177,7 @@ $ffc_dashboard_url = $ffc_dashboard_page_id ? get_permalink($ffc_dashboard_page_
                                    name="allow_admin_bar"
                                    id="allow_admin_bar"
                                    value="1"
-                                   <?php checked($ffc_settings['allow_admin_bar'], true); ?>>
+                                   <?php checked($wp_ffcertificate_settings['allow_admin_bar'], true); ?>>
                             <?php esc_html_e('Show admin bar on frontend for blocked roles', 'wp-ffcertificate'); ?>
                         </label>
                         <p class="description">
@@ -205,11 +205,11 @@ $ffc_dashboard_url = $ffc_dashboard_page_id ? get_permalink($ffc_dashboard_page_
             </p>
             <p>
                 <?php
-                if ($ffc_dashboard_page_id) {
+                if ($wp_ffcertificate_dashboard_page_id) {
                     printf(
                         /* translators: %s: Dashboard page URL */
                         esc_html__('Dashboard page: %s', 'wp-ffcertificate'),
-                        '<a href="' . esc_url($ffc_dashboard_url) . '" target="_blank">' . esc_html($ffc_dashboard_url) . '</a>'
+                        '<a href="' . esc_url($wp_ffcertificate_dashboard_url) . '" target="_blank">' . esc_html($wp_ffcertificate_dashboard_url) . '</a>'
                     );
                 } else {
                     printf(

@@ -207,7 +207,7 @@ class Admin {
 
     private function redirect_with_msg( string $msg ): void {
         $url = remove_query_arg(array('action', 'action2', 'submission_id', 'submission', '_wpnonce'), $_SERVER['REQUEST_URI']);
-        wp_redirect( add_query_arg('msg', $msg, $url) );
+        wp_safe_redirect( add_query_arg('msg', $msg, $url) );
         exit;
     }
 
@@ -236,7 +236,8 @@ class Admin {
             case 'migration_success':
                 $migrated = isset($_GET['migrated']) ? intval($_GET['migrated']) : 0;
                 $migration_name = isset($_GET['migration_name']) ? urldecode($_GET['migration_name']) : __('Migration', 'wp-ffcertificate');
-                $text = sprintf(__('%s: %d records migrated successfully.', 'wp-ffcertificate'), $migration_name, $migrated);
+                /* translators: 1: migration name, 2: number of records migrated */
+                $text = sprintf(__('%1$s: %2$d records migrated successfully.', 'wp-ffcertificate'), $migration_name, $migrated);
                 break;
             case 'migration_error':
                 $error_msg = isset($_GET['error_msg']) ? urldecode($_GET['error_msg']) : __('Unknown error', 'wp-ffcertificate');
@@ -320,7 +321,7 @@ class Admin {
             );
         }
 
-        wp_redirect( $redirect_url );
+        wp_safe_redirect( $redirect_url );
         exit;
     }
 

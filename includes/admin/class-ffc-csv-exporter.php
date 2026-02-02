@@ -291,7 +291,7 @@ class CsvExporter {
             $form_title = 'all-forms';
         }
 
-        $filename = \FreeFormCertificate\Core\Utils::sanitize_filename( $form_title ) . '-' . date( 'Y-m-d' ) . '.csv';
+        $filename = \FreeFormCertificate\Core\Utils::sanitize_filename( $form_title ) . '-' . gmdate( 'Y-m-d' ) . '.csv';
         
         header( 'Content-Type: text/csv; charset=utf-8' );
         header( "Content-Disposition: attachment; filename={$filename}" );

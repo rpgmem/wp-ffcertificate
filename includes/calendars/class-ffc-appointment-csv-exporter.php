@@ -312,7 +312,7 @@ class AppointmentCsvExporter {
             $calendar_title = 'all-calendars';
         }
 
-        $filename = \FreeFormCertificate\Core\Utils::sanitize_filename($calendar_title) . '-appointments-' . date('Y-m-d') . '.csv';
+        $filename = \FreeFormCertificate\Core\Utils::sanitize_filename($calendar_title) . '-appointments-' . gmdate('Y-m-d') . '.csv';
 
         header('Content-Type: text/csv; charset=utf-8');
         header("Content-Disposition: attachment; filename={$filename}");

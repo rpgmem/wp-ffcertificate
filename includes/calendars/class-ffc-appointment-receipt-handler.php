@@ -451,7 +451,9 @@ class AppointmentReceiptHandler {
                 <?php endif; ?>
 
                 <div class="footer">
-                    <p><?php echo esc_html(sprintf(__('Generated on %s', 'wp-ffcertificate'), date_i18n(get_option('date_format') . ' ' . get_option('time_format')))); ?></p>
+                    <p><?php
+                    /* translators: %s: date and time of generation */
+                    echo esc_html(sprintf(__('Generated on %s', 'wp-ffcertificate'), date_i18n(get_option('date_format') . ' ' . get_option('time_format')))); ?></p>
                     <p><?php bloginfo('name'); ?> - <?php bloginfo('url'); ?></p>
                 </div>
             </div>

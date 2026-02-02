@@ -160,7 +160,7 @@ class RateLimiter {
         $max_per_hour = 10;
         $max_per_day = 30;
         
-        $hour_key = 'ffc_verify_ip_' . md5($ip) . '_hour_' . date('YmdH');
+        $hour_key = 'ffc_verify_ip_' . md5($ip) . '_hour_' . gmdate('YmdH');
         // v3.2.0: Use Object Cache API
         $hour_count = wp_cache_get($hour_key, self::CACHE_GROUP);
 
@@ -173,12 +173,13 @@ class RateLimiter {
 
             return array(
                 'allowed' => false,
+                /* translators: %s: formatted wait time */
                 'message' => sprintf(__('Too many verification attempts. Please wait %s.', 'wp-ffcertificate'), self::format_wait_time($wait_seconds)),
                 'wait_seconds' => $wait_seconds
             );
         }
 
-        $day_key = 'ffc_verify_ip_' . md5($ip) . '_day_' . date('Ymd');
+        $day_key = 'ffc_verify_ip_' . md5($ip) . '_day_' . gmdate('Ymd');
         $day_count = wp_cache_get($day_key, self::CACHE_GROUP);
 
         if ($day_count === false) {
@@ -207,15 +208,18 @@ class RateLimiter {
     
     private static function format_wait_time(int $seconds): string {
         if ($seconds < 60) {
+            /* translators: %d: number of seconds */
             return sprintf(_n('%d second', '%d seconds', $seconds, 'wp-ffcertificate'), $seconds);
         }
         
         $minutes = ceil($seconds / 60);
         if ($minutes < 60) {
+            /* translators: %d: number of minutes */
             return sprintf(_n('%d minute', '%d minutes', $minutes, 'wp-ffcertificate'), $minutes);
         }
         
         $hours = ceil($minutes / 60);
+        /* translators: %d: number of hours */
         return sprintf(_n('%d hour', '%d hours', $hours, 'wp-ffcertificate'), $hours);
     }
     public static function record_attempt(string $type, string $identifier, ?int $form_id = null): void {
@@ -334,7 +338,7 @@ class RateLimiter {
     
     private static function block_temporarily(string $type, string $identifier, ?int $form_id, int $hours): void {
         global $wpdb;
-        $wpdb->insert($wpdb->prefix . 'ffc_rate_limits', array('type' => $type, 'identifier' => $identifier, 'form_id' => $form_id, 'count' => 999, 'window_type' => 'hour', 'window_start' => current_time('mysql'), 'window_end' => date('Y-m-d H:i:s', strtotime("+$hours hours")), 'last_attempt' => current_time('mysql'), 'is_blocked' => 1, 'blocked_until' => date('Y-m-d H:i:s', strtotime("+$hours hours")), 'blocked_reason' => 'abuse'), array('%s', '%s', '%d', '%d', '%s', '%s', '%s', '%s', '%d', '%s', '%s'));
+        $wpdb->insert($wpdb->prefix . 'ffc_rate_limits', array('type' => $type, 'identifier' => $identifier, 'form_id' => $form_id, 'count' => 999, 'window_type' => 'hour', 'window_start' => current_time('mysql'), 'window_end' => gmdate('Y-m-d H:i:s', strtotime("+$hours hours")), 'last_attempt' => current_time('mysql'), 'is_blocked' => 1, 'blocked_until' => gmdate('Y-m-d H:i:s', strtotime("+$hours hours")), 'blocked_reason' => 'abuse'), array('%s', '%s', '%d', '%d', '%s', '%s', '%s', '%s', '%d', '%s', '%s'));
     }
     
     public static function log_attempt(string $type, string $identifier, string $action, string $reason, ?int $form_id): void {
@@ -377,25 +381,25 @@ class RateLimiter {
     
     private static function get_window_start(string $window): string {
         switch ($window) {
-            case 'minute': return date('Y-m-d H:i:00');
-            case 'hour': return date('Y-m-d H:00:00');
-            case 'day': return date('Y-m-d 00:00:00');
-            case 'week': return date('Y-m-d 00:00:00', strtotime('monday this week'));
-            case 'month': return date('Y-m-01 00:00:00');
-            case 'year': return date('Y-01-01 00:00:00');
-            default: return date('Y-m-d H:i:s');
+            case 'minute': return gmdate('Y-m-d H:i:00');
+            case 'hour': return gmdate('Y-m-d H:00:00');
+            case 'day': return gmdate('Y-m-d 00:00:00');
+            case 'week': return gmdate('Y-m-d 00:00:00', strtotime('monday this week'));
+            case 'month': return gmdate('Y-m-01 00:00:00');
+            case 'year': return gmdate('Y-01-01 00:00:00');
+            default: return gmdate('Y-m-d H:i:s');
         }
     }
     
     private static function get_window_end(string $window): string {
         switch ($window) {
-            case 'minute': return date('Y-m-d H:i:59');
-            case 'hour': return date('Y-m-d H:59:59');
-            case 'day': return date('Y-m-d 23:59:59');
-            case 'week': return date('Y-m-d 23:59:59', strtotime('sunday this week'));
-            case 'month': return date('Y-m-t 23:59:59');
-            case 'year': return date('Y-12-31 23:59:59');
-            default: return date('Y-m-d H:i:s', strtotime('+1 hour'));
+            case 'minute': return gmdate('Y-m-d H:i:59');
+            case 'hour': return gmdate('Y-m-d H:59:59');
+            case 'day': return gmdate('Y-m-d 23:59:59');
+            case 'week': return gmdate('Y-m-d 23:59:59', strtotime('sunday this week'));
+            case 'month': return gmdate('Y-m-t 23:59:59');
+            case 'year': return gmdate('Y-12-31 23:59:59');
+            default: return gmdate('Y-m-d H:i:s', strtotime('+1 hour'));
         }
     }
     

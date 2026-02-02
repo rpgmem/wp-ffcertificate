@@ -170,8 +170,8 @@ class FFC_Appointments_List_Table extends WP_List_Table {
      * Time column
      */
     public function column_time($item): string {
-        $start = date('H:i', strtotime($item['start_time']));
-        $end = date('H:i', strtotime($item['end_time']));
+        $start = gmdate('H:i', strtotime($item['start_time']));
+        $end = gmdate('H:i', strtotime($item['end_time']));
         return esc_html($start . ' - ' . $end);
     }
 
@@ -342,17 +342,17 @@ if (isset($_GET['action']) && isset($_GET['appointment'])) {
 }
 
 // Display admin notices from transients
-$ffc_admin_notice = get_transient('ffc_admin_notice_' . get_current_user_id());
-if ($ffc_admin_notice && is_array($ffc_admin_notice)) {
-    $ffc_notice_type = $ffc_admin_notice['type'] === 'error' ? 'notice-error' : 'notice-success';
-    echo '<div class="notice ' . esc_attr($ffc_notice_type) . ' is-dismissible"><p>' . esc_html($ffc_admin_notice['message']) . '</p></div>';
+$wp_ffcertificate_admin_notice = get_transient('ffc_admin_notice_' . get_current_user_id());
+if ($wp_ffcertificate_admin_notice && is_array($wp_ffcertificate_admin_notice)) {
+    $wp_ffcertificate_notice_type = $wp_ffcertificate_admin_notice['type'] === 'error' ? 'notice-error' : 'notice-success';
+    echo '<div class="notice ' . esc_attr($wp_ffcertificate_notice_type) . ' is-dismissible"><p>' . esc_html($wp_ffcertificate_admin_notice['message']) . '</p></div>';
     // Delete transient after displaying
     delete_transient('ffc_admin_notice_' . get_current_user_id());
 }
 
 // Create and display table
-$ffc_table = new FFC_Appointments_List_Table();
-$ffc_table->prepare_items();
+$wp_ffcertificate_table = new FFC_Appointments_List_Table();
+$wp_ffcertificate_table->prepare_items();
 
 ?>
 <div class="wrap">
@@ -362,7 +362,7 @@ $ffc_table->prepare_items();
 
     <form method="get">
         <input type="hidden" name="page" value="<?php echo esc_attr($_REQUEST['page']); ?>" />
-        <?php $ffc_table->display(); ?>
+        <?php $wp_ffcertificate_table->display(); ?>
     </form>
 </div>
 

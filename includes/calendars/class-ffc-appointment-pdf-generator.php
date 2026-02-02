@@ -293,7 +293,9 @@ class AppointmentPdfGenerator {
             </div>
 
             <div class="footer">
-                <p><?php echo esc_html(sprintf(__('Generated on %s', 'wp-ffcertificate'), date_i18n(get_option('date_format') . ' ' . get_option('time_format')))); ?></p>
+                <p><?php
+                /* translators: %s: date and time of generation */
+                echo esc_html(sprintf(__('Generated on %s', 'wp-ffcertificate'), date_i18n(get_option('date_format') . ' ' . get_option('time_format')))); ?></p>
                 <p><?php echo esc_html($data['site_name']); ?> - <?php echo esc_html($data['site_url']); ?></p>
             </div>
         </body>
@@ -318,7 +320,7 @@ class AppointmentPdfGenerator {
             'appointment-%s-%d-%s.pdf',
             $safe_title,
             $appointment_id,
-            date('Y-m-d')
+            gmdate('Y-m-d')
         );
     }
 }

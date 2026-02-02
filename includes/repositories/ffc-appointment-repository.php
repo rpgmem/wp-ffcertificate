@@ -317,9 +317,9 @@ class AppointmentRepository extends AbstractRepository {
      * @return array
      */
     public function getUpcomingForReminders(int $hours_before = 24): array {
-        $target_datetime = date('Y-m-d H:i:s', strtotime("+{$hours_before} hours"));
-        $target_date = date('Y-m-d', strtotime("+{$hours_before} hours"));
-        $target_time = date('H:i:s', strtotime("+{$hours_before} hours"));
+        $target_datetime = gmdate('Y-m-d H:i:s', strtotime("+{$hours_before} hours"));
+        $target_date = gmdate('Y-m-d', strtotime("+{$hours_before} hours"));
+        $target_time = gmdate('H:i:s', strtotime("+{$hours_before} hours"));
 
         $sql = $this->wpdb->prepare(
             "SELECT a.*, c.title as calendar_title, c.email_config

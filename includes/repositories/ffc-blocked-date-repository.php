@@ -214,7 +214,7 @@ class BlockedDateRepository extends AbstractRepository {
      * @return int|false Number of deleted rows
      */
     public function deleteExpiredBlocks(int $days_old = 30) {
-        $cutoff_date = date('Y-m-d', strtotime("-{$days_old} days"));
+        $cutoff_date = gmdate('Y-m-d', strtotime("-{$days_old} days"));
 
         $sql = $this->wpdb->prepare(
             "DELETE FROM {$this->table}
@@ -241,7 +241,7 @@ class BlockedDateRepository extends AbstractRepository {
         }
 
         $timestamp = strtotime($date);
-        $day_of_week = (int)date('w', $timestamp);
+        $day_of_week = (int)gmdate('w', $timestamp);
 
         switch ($pattern['type']) {
             case 'weekly':
@@ -254,7 +254,7 @@ class BlockedDateRepository extends AbstractRepository {
             case 'monthly':
                 // Block specific day of month (e.g., 1st, 15th)
                 if (!empty($pattern['days']) && is_array($pattern['days'])) {
-                    $day_of_month = (int)date('j', $timestamp);
+                    $day_of_month = (int)gmdate('j', $timestamp);
                     return in_array($day_of_month, $pattern['days']);
                 }
                 break;
@@ -262,7 +262,7 @@ class BlockedDateRepository extends AbstractRepository {
             case 'yearly':
                 // Block specific dates annually (e.g., holidays)
                 if (!empty($pattern['dates']) && is_array($pattern['dates'])) {
-                    $month_day = date('m-d', $timestamp);
+                    $month_day = gmdate('m-d', $timestamp);
                     return in_array($month_day, $pattern['dates']);
                 }
                 break;
@@ -279,8 +279,8 @@ class BlockedDateRepository extends AbstractRepository {
      * @return array
      */
     public function getUpcomingBlocks(int $calendar_id, int $days = 30): array {
-        $start_date = date('Y-m-d');
-        $end_date = date('Y-m-d', strtotime("+{$days} days"));
+        $start_date = gmdate('Y-m-d');
+        $end_date = gmdate('Y-m-d', strtotime("+{$days} days"));
 
         return $this->getBlockedDatesInRange($calendar_id, $start_date, $end_date);
     }

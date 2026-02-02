@@ -176,7 +176,7 @@ class AdminAjax {
         $result = '';
 
         for ( $i = 0; $i < $length; $i++ ) {
-            $result .= $letters[ rand( 0, strlen( $letters ) - 1 ) ];
+            $result .= $letters[ wp_rand( 0, strlen( $letters ) - 1 ) ];
         }
 
         return $result;
@@ -189,7 +189,7 @@ class AdminAjax {
         $result = '';
 
         for ( $i = 0; $i < $length; $i++ ) {
-            $result .= rand( 0, 9 );
+            $result .= wp_rand( 0, 9 );
         }
 
         return $result;

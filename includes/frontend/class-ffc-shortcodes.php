@@ -43,10 +43,11 @@ class Shortcodes {
      * Generate new captcha data (math question + hash)
      */
     public function get_new_captcha_data(): array {
-        $n1 = rand( 1, 9 );
-        $n2 = rand( 1, 9 );
+        $n1 = wp_rand( 1, 9 );
+        $n2 = wp_rand( 1, 9 );
         return array(
-            'label' => sprintf( esc_html__( 'Security: How much is %d + %d?', 'wp-ffcertificate' ), $n1, $n2 ) . ' <span class="required">*</span>',
+            /* translators: 1: first number, 2: second number */
+            'label' => sprintf( esc_html__( 'Security: How much is %1$d + %2$d?', 'wp-ffcertificate' ), $n1, $n2 ) . ' <span class="required">*</span>',
             'hash'  => wp_hash( ($n1 + $n2) . 'ffc_math_salt' )
         );
     }

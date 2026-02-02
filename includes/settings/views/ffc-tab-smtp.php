@@ -6,7 +6,7 @@
 
 if (!defined('ABSPATH')) exit;
 
-$get_option = function($key, $default = '') {
+$wp_ffcertificate_get_option = function($key, $default = '') {
     $settings = get_option('ffc_settings', array());
     return isset($settings[$key]) ? $settings[$key] : $default;
 };
@@ -29,7 +29,7 @@ $get_option = function($key, $default = '') {
                     </th>
                     <td>
                         <label>
-                            <input type="checkbox" name="ffc_settings[disable_all_emails]" id="disable_all_emails" value="1" <?php checked('1', $get_option('disable_all_emails')); ?>>
+                            <input type="checkbox" name="ffc_settings[disable_all_emails]" id="disable_all_emails" value="1" <?php checked('1', $wp_ffcertificate_get_option('disable_all_emails')); ?>>
                             <strong class="ffc-text-error"><?php esc_html_e('Disable ALL emails from this plugin globally', 'wp-ffcertificate'); ?></strong>
                         </label>
                         <p class="description">
@@ -45,12 +45,12 @@ $get_option = function($key, $default = '') {
                     <td>
                         <fieldset>
                             <label>
-                                <input type="radio" name="ffc_settings[send_wp_user_email_submission]" value="1" <?php checked('1', $get_option('send_wp_user_email_submission', '1')); ?>>
+                                <input type="radio" name="ffc_settings[send_wp_user_email_submission]" value="1" <?php checked('1', $wp_ffcertificate_get_option('send_wp_user_email_submission', '1')); ?>>
                                 <strong><?php esc_html_e('Enabled', 'wp-ffcertificate'); ?></strong>
                             </label>
                             <br>
                             <label>
-                                <input type="radio" name="ffc_settings[send_wp_user_email_submission]" value="0" <?php checked('0', $get_option('send_wp_user_email_submission', '1')); ?>>
+                                <input type="radio" name="ffc_settings[send_wp_user_email_submission]" value="0" <?php checked('0', $wp_ffcertificate_get_option('send_wp_user_email_submission', '1')); ?>>
                                 <strong><?php esc_html_e('Disabled', 'wp-ffcertificate'); ?></strong>
                             </label>
                         </fieldset>
@@ -67,12 +67,12 @@ $get_option = function($key, $default = '') {
                     <td>
                         <fieldset>
                             <label>
-                                <input type="radio" name="ffc_settings[send_wp_user_email_migration]" value="1" <?php checked('1', $get_option('send_wp_user_email_migration', '0')); ?>>
+                                <input type="radio" name="ffc_settings[send_wp_user_email_migration]" value="1" <?php checked('1', $wp_ffcertificate_get_option('send_wp_user_email_migration', '0')); ?>>
                                 <strong><?php esc_html_e('Enabled', 'wp-ffcertificate'); ?></strong>
                             </label>
                             <br>
                             <label>
-                                <input type="radio" name="ffc_settings[send_wp_user_email_migration]" value="0" <?php checked('0', $get_option('send_wp_user_email_migration', '0')); ?>>
+                                <input type="radio" name="ffc_settings[send_wp_user_email_migration]" value="0" <?php checked('0', $wp_ffcertificate_get_option('send_wp_user_email_migration', '0')); ?>>
                                 <strong><?php esc_html_e('Disabled (Recommended)', 'wp-ffcertificate'); ?></strong>
                             </label>
                         </fieldset>
@@ -89,7 +89,7 @@ $get_option = function($key, $default = '') {
                     <td>
                         <fieldset id="smtp-mode-options">
                             <label>
-                                <input type="radio" name="ffc_settings[smtp_mode]" value="wp" <?php checked('wp', $get_option('smtp_mode')); ?>>
+                                <input type="radio" name="ffc_settings[smtp_mode]" value="wp" <?php checked('wp', $wp_ffcertificate_get_option('smtp_mode')); ?>>
                                 <strong><?php esc_html_e('WP Default (PHPMail)', 'wp-ffcertificate'); ?></strong>
                             </label>
                             <p class="description">
@@ -97,7 +97,7 @@ $get_option = function($key, $default = '') {
                             </p>
 
                             <label>
-                                <input type="radio" name="ffc_settings[smtp_mode]" value="custom" <?php checked('custom', $get_option('smtp_mode')); ?>>
+                                <input type="radio" name="ffc_settings[smtp_mode]" value="custom" <?php checked('custom', $wp_ffcertificate_get_option('smtp_mode')); ?>>
                                 <strong><?php esc_html_e('Custom SMTP', 'wp-ffcertificate'); ?></strong>
                             </label>
                             <p class="description">
@@ -109,7 +109,7 @@ $get_option = function($key, $default = '') {
             </tbody>
         </table>
         
-        <div id="smtp-options" class="ffc-collapsible-section <?php echo ($get_option('smtp_mode') === 'custom') ? '' : 'ffc-hidden'; ?>">
+        <div id="smtp-options" class="ffc-collapsible-section <?php echo ($wp_ffcertificate_get_option('smtp_mode') === 'custom') ? '' : 'ffc-hidden'; ?>">
             <div class="ffc-collapsible-content active">
                 <h3><?php esc_html_e('SMTP Server Configuration', 'wp-ffcertificate'); ?></h3>
                 
@@ -118,28 +118,28 @@ $get_option = function($key, $default = '') {
                         <tr>
                             <th scope="row"><label for="smtp_host"><?php esc_html_e('SMTP Host', 'wp-ffcertificate'); ?></label></th>
                             <td>
-                                <input type="text" name="ffc_settings[smtp_host]" id="smtp_host" value="<?php echo esc_attr($get_option('smtp_host')); ?>" class="regular-text" placeholder="smtp.gmail.com">
+                                <input type="text" name="ffc_settings[smtp_host]" id="smtp_host" value="<?php echo esc_attr($wp_ffcertificate_get_option('smtp_host')); ?>" class="regular-text" placeholder="smtp.gmail.com">
                                 <p class="description"><?php esc_html_e('Your SMTP server address', 'wp-ffcertificate'); ?></p>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><label for="smtp_port"><?php esc_html_e('SMTP Port', 'wp-ffcertificate'); ?></label></th>
                             <td>
-                                <input type="number" name="ffc_settings[smtp_port]" id="smtp_port" value="<?php echo esc_attr($get_option('smtp_port')); ?>" class="small-text" placeholder="587">
+                                <input type="number" name="ffc_settings[smtp_port]" id="smtp_port" value="<?php echo esc_attr($wp_ffcertificate_get_option('smtp_port')); ?>" class="small-text" placeholder="587">
                                 <p class="description"><?php esc_html_e('Common ports: 587 (TLS), 465 (SSL), 25 (unencrypted)', 'wp-ffcertificate'); ?></p>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><label for="smtp_user"><?php esc_html_e('Username', 'wp-ffcertificate'); ?></label></th>
                             <td>
-                                <input type="text" name="ffc_settings[smtp_user]" id="smtp_user" value="<?php echo esc_attr($get_option('smtp_user')); ?>" class="regular-text" autocomplete="username">
+                                <input type="text" name="ffc_settings[smtp_user]" id="smtp_user" value="<?php echo esc_attr($wp_ffcertificate_get_option('smtp_user')); ?>" class="regular-text" autocomplete="username">
                                 <p class="description"><?php esc_html_e('Your SMTP username (usually your email)', 'wp-ffcertificate'); ?></p>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><label for="smtp_pass"><?php esc_html_e('Password', 'wp-ffcertificate'); ?></label></th>
                             <td>
-                                <input type="password" name="ffc_settings[smtp_pass]" id="smtp_pass" value="<?php echo esc_attr($get_option('smtp_pass')); ?>" class="regular-text" autocomplete="current-password">
+                                <input type="password" name="ffc_settings[smtp_pass]" id="smtp_pass" value="<?php echo esc_attr($wp_ffcertificate_get_option('smtp_pass')); ?>" class="regular-text" autocomplete="current-password">
                                 <p class="description"><?php esc_html_e('Your SMTP password or app-specific password', 'wp-ffcertificate'); ?></p>
                             </td>
                         </tr>
@@ -147,9 +147,9 @@ $get_option = function($key, $default = '') {
                             <th scope="row"><label for="smtp_secure"><?php esc_html_e('Encryption', 'wp-ffcertificate'); ?></label></th>
                             <td>
                                 <select name="ffc_settings[smtp_secure]" id="smtp_secure">
-                                    <option value="tls" <?php selected('tls', $get_option('smtp_secure')); ?>>TLS (recommended)</option>
-                                    <option value="ssl" <?php selected('ssl', $get_option('smtp_secure')); ?>>SSL</option>
-                                    <option value="none" <?php selected('none', $get_option('smtp_secure')); ?>>None (not recommended)</option>
+                                    <option value="tls" <?php selected('tls', $wp_ffcertificate_get_option('smtp_secure')); ?>>TLS (recommended)</option>
+                                    <option value="ssl" <?php selected('ssl', $wp_ffcertificate_get_option('smtp_secure')); ?>>SSL</option>
+                                    <option value="none" <?php selected('none', $wp_ffcertificate_get_option('smtp_secure')); ?>>None (not recommended)</option>
                                 </select>
                                 <p class="description"><?php esc_html_e('TLS is recommended for port 587, SSL for port 465', 'wp-ffcertificate'); ?></p>
                             </td>
@@ -157,14 +157,14 @@ $get_option = function($key, $default = '') {
                         <tr>
                             <th scope="row"><label for="smtp_from_email"><?php esc_html_e('From Email', 'wp-ffcertificate'); ?></label></th>
                             <td>
-                                <input type="email" name="ffc_settings[smtp_from_email]" id="smtp_from_email" value="<?php echo esc_attr($get_option('smtp_from_email')); ?>" class="regular-text">
+                                <input type="email" name="ffc_settings[smtp_from_email]" id="smtp_from_email" value="<?php echo esc_attr($wp_ffcertificate_get_option('smtp_from_email')); ?>" class="regular-text">
                                 <p class="description"><?php esc_html_e('Email address to send from', 'wp-ffcertificate'); ?></p>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><label for="smtp_from_name"><?php esc_html_e('From Name', 'wp-ffcertificate'); ?></label></th>
                             <td>
-                                <input type="text" name="ffc_settings[smtp_from_name]" id="smtp_from_name" value="<?php echo esc_attr($get_option('smtp_from_name')); ?>" class="regular-text">
+                                <input type="text" name="ffc_settings[smtp_from_name]" id="smtp_from_name" value="<?php echo esc_attr($wp_ffcertificate_get_option('smtp_from_name')); ?>" class="regular-text">
                                 <p class="description"><?php esc_html_e('Name to display as sender', 'wp-ffcertificate'); ?></p>
                             </td>
                         </tr>

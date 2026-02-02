@@ -549,7 +549,7 @@ class SubmissionHandler {
             return 0;
         }
         
-        $cutoff_date = date('Y-m-d H:i:s', strtotime("-{$cleanup_days} days"));
+        $cutoff_date = gmdate('Y-m-d H:i:s', strtotime("-{$cleanup_days} days"));
         
         $deleted = $wpdb->query($wpdb->prepare(
             "DELETE FROM {$table} WHERE submission_date < %s AND status = 'publish'",

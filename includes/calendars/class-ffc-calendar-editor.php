@@ -650,6 +650,7 @@ class CalendarEditor {
             case 'all':
                 // Delete all appointments for this calendar
                 $deleted = $wpdb->delete($table, ['calendar_id' => $calendar_id], ['%d']);
+                /* translators: %d: number of deleted appointments */
                 $message = sprintf(
                     __('Successfully deleted %d appointment(s).', 'wp-ffcertificate'),
                     $deleted
@@ -663,6 +664,7 @@ class CalendarEditor {
                     $calendar_id,
                     $today
                 ));
+                /* translators: %d: number of deleted past appointments */
                 $message = sprintf(
                     __('Successfully deleted %d past appointment(s).', 'wp-ffcertificate'),
                     $deleted
@@ -676,6 +678,7 @@ class CalendarEditor {
                     $calendar_id,
                     $today
                 ));
+                /* translators: %d: number of deleted future appointments */
                 $message = sprintf(
                     __('Successfully deleted %d future appointment(s).', 'wp-ffcertificate'),
                     $deleted
@@ -688,6 +691,7 @@ class CalendarEditor {
                     'calendar_id' => $calendar_id,
                     'status' => 'cancelled'
                 ], ['%d', '%s']);
+                /* translators: %d: number of deleted cancelled appointments */
                 $message = sprintf(
                     __('Successfully deleted %d cancelled appointment(s).', 'wp-ffcertificate'),
                     $deleted
@@ -806,7 +810,9 @@ class CalendarEditor {
                                 data-action="cancelled"
                                 data-calendar-id="<?php echo esc_attr($calendar_id); ?>"
                                 style="width: 100%; margin-bottom: 5px;">
-                            🗑️ <?php printf(esc_html__('Cancelled (%d)', 'wp-ffcertificate'), $count_cancelled); ?>
+                            🗑️ <?php
+                            /* translators: %d: number of cancelled appointments */
+                            printf(esc_html__('Cancelled (%d)', 'wp-ffcertificate'), $count_cancelled); ?>
                         </button>
                     <?php endif; ?>
 
@@ -816,7 +822,9 @@ class CalendarEditor {
                                 data-action="old"
                                 data-calendar-id="<?php echo esc_attr($calendar_id); ?>"
                                 style="width: 100%; margin-bottom: 5px;">
-                            📅 <?php printf(esc_html__('Past (%d)', 'wp-ffcertificate'), $count_old); ?>
+                            📅 <?php
+                            /* translators: %d: number of past appointments */
+                            printf(esc_html__('Past (%d)', 'wp-ffcertificate'), $count_old); ?>
                         </button>
                     <?php endif; ?>
 
@@ -826,7 +834,9 @@ class CalendarEditor {
                                 data-action="future"
                                 data-calendar-id="<?php echo esc_attr($calendar_id); ?>"
                                 style="width: 100%; margin-bottom: 5px;">
-                            ⏭️ <?php printf(esc_html__('Future (%d)', 'wp-ffcertificate'), $count_future); ?>
+                            ⏭️ <?php
+                            /* translators: %d: number of future appointments */
+                            printf(esc_html__('Future (%d)', 'wp-ffcertificate'), $count_future); ?>
                         </button>
                     <?php endif; ?>
 

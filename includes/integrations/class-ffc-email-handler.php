@@ -110,6 +110,7 @@ class EmailHandler {
         // Email subject
         $subject = ! empty( $form_config['email_subject'] )
             ? $form_config['email_subject']
+            /* translators: %s: form title */
             : sprintf( __( 'Your Certificate: %s', 'wp-ffcertificate' ), $form_title );
 
         // Generate magic link URL
@@ -195,6 +196,7 @@ class EmailHandler {
             : array( get_option( 'admin_email' ) );
 
         // Email subject
+        /* translators: %s: form title */
         $subject = sprintf( __( 'New Issuance: %s', 'wp-ffcertificate' ), $form_title );
 
         // Build email body with data table

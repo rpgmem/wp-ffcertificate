@@ -194,6 +194,7 @@ class Settings {
             if ( $msg === 'qr_cache_cleared' ) {
                 $cleared = isset( $_GET['cleared'] ) ? intval( $_GET['cleared'] ) : 0;
                 echo '<div class="notice notice-success is-dismissible">';
+                /* translators: %d: number of QR codes cleared */
                 echo '<p>' . sprintf( __( '%d QR Code(s) cleared from cache successfully.', 'wp-ffcertificate' ), $cleared ) . '</p>';
                 echo '</div>';
             }
@@ -308,6 +309,7 @@ class Settings {
         if ( is_wp_error( $result ) ) {
             $redirect_url = add_query_arg( 'migration_error', urlencode( $result->get_error_message() ), $redirect_url );
         } else {
+            /* translators: %d: number of records processed */
             $message = sprintf(
                 __( 'Migration executed: %d records processed.', 'wp-ffcertificate' ),
                 isset( $result['processed'] ) ? $result['processed'] : 0
@@ -315,7 +317,7 @@ class Settings {
             $redirect_url = add_query_arg( 'migration_success', urlencode( $message ), $redirect_url );
         }
         
-        wp_redirect( $redirect_url );
+        wp_safe_redirect( $redirect_url );
         exit;
     }
 
@@ -354,7 +356,7 @@ class Settings {
             // Autoloader handles class loading
             $warmed = \FreeFormCertificate\Submissions\FormCache::warm_all_forms();
             
-            wp_redirect(add_query_arg(array(
+            wp_safe_redirect(add_query_arg(array(
                 'post_type' => 'ffc_form',
                 'page' => 'ffc-settings',
                 'tab' => 'general',
@@ -371,7 +373,7 @@ class Settings {
             // Autoloader handles class loading
             \FreeFormCertificate\Submissions\FormCache::clear_all_cache();
             
-            wp_redirect(add_query_arg(array(
+            wp_safe_redirect(add_query_arg(array(
                 'post_type' => 'ffc_form',
                 'page' => 'ffc-settings',
                 'tab' => 'general',

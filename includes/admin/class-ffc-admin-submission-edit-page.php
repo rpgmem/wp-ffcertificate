@@ -443,7 +443,7 @@ class AdminSubmissionEditPage {
 
         $this->submission_handler->update_submission( $id, $new_email, $clean_data );
 
-        wp_redirect( admin_url( 'edit.php?post_type=ffc_form&page=ffc-submissions&msg=updated' ) );
+        wp_safe_redirect( admin_url( 'edit.php?post_type=ffc_form&page=ffc-submissions&msg=updated' ) );
         exit;
     }
 }

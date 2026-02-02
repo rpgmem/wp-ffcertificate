@@ -436,7 +436,7 @@ class Utils {
         $chars_length = strlen( $chars );
         
         for ( $i = 0; $i < $length; $i++ ) {
-            $string .= $chars[ rand( 0, $chars_length - 1 ) ];
+            $string .= $chars[ wp_rand( 0, $chars_length - 1 ) ];
         }
         
         return $string;
@@ -589,12 +589,13 @@ class Utils {
      * @return array Array with 'label' and 'hash'
      */
     public static function generate_simple_captcha(): array {
-        $n1 = rand( 1, 9 );
-        $n2 = rand( 1, 9 );
+        $n1 = wp_rand( 1, 9 );
+        $n2 = wp_rand( 1, 9 );
         $answer = $n1 + $n2;
         
         return array(
-            'label' => sprintf( esc_html__( 'Security: How much is %d + %d?', 'wp-ffcertificate' ), $n1, $n2 ) . ' <span class="required">*</span>',
+            /* translators: 1: first number, 2: second number */
+            'label' => sprintf( esc_html__( 'Security: How much is %1$d + %2$d?', 'wp-ffcertificate' ), $n1, $n2 ) . ' <span class="required">*</span>',
             'hash'  => wp_hash( $answer . 'ffc_math_salt' ),
             'answer' => $answer  // For internal use only
         );

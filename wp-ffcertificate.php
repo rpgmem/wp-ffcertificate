@@ -46,8 +46,8 @@ define( 'FFC_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 require_once FFC_PLUGIN_DIR . 'includes/class-ffc-autoloader.php';
 
 // Register the autoloader
-$ffc_autoloader = new FFC_Autoloader( FFC_PLUGIN_DIR . 'includes' );
-$ffc_autoloader->register();
+$wp_ffcertificate_autoloader = new FFC_Autoloader( FFC_PLUGIN_DIR . 'includes' );
+$wp_ffcertificate_autoloader->register();
 
 /**
  * Register activation hook

@@ -341,8 +341,8 @@ class ActivityLog {
         global $wpdb;
         $table_name = $wpdb->prefix . 'ffc_activity_log';
         
-        $cutoff_date = date( 'Y-m-d H:i:s', strtotime( "-{$days} days" ) );
-        
+        $cutoff_date = gmdate( 'Y-m-d H:i:s', strtotime( "-{$days} days" ) );
+
         $deleted = $wpdb->query( $wpdb->prepare(
             "DELETE FROM {$table_name} WHERE created_at < %s",
             $cutoff_date
@@ -361,7 +361,7 @@ class ActivityLog {
         global $wpdb;
         $table_name = $wpdb->prefix . 'ffc_activity_log';
         
-        $date_from = date( 'Y-m-d H:i:s', strtotime( "-{$days} days" ) );
+        $date_from = gmdate( 'Y-m-d H:i:s', strtotime( "-{$days} days" ) );
         
         // Total activities
         $total = $wpdb->get_var( $wpdb->prepare(

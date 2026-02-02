@@ -88,9 +88,11 @@ class MigrationRegistry {
         $order = 1;
         foreach ( $this->field_definitions as $field_key => $field_config ) {
             $this->migrations[ $field_key ] = array(
+                /* translators: %s: field description */
                 'name'            => sprintf( __( '%s Migration', 'wp-ffcertificate' ), $field_config['description'] ),
+                /* translators: 1: field description, 2: column name */
                 'description'     => sprintf(
-                    __( 'Migrate %s from JSON data to dedicated %s column', 'wp-ffcertificate' ),
+                    __( 'Migrate %1$s from JSON data to dedicated %2$s column', 'wp-ffcertificate' ),
                     strtolower( $field_config['description'] ),
                     $field_config['column_name']
                 ),

@@ -61,7 +61,8 @@ class AdminNoticeManager {
             case 'migration_success':
                 $migrated = isset( $_GET['migrated'] ) ? intval( $_GET['migrated'] ) : 0;
                 $migration_name = isset( $_GET['migration_name'] ) ? urldecode( $_GET['migration_name'] ) : __( 'Migration', 'wp-ffcertificate' );
-                $text = sprintf( __( '%s: %d records migrated successfully.', 'wp-ffcertificate' ), $migration_name, $migrated );
+                /* translators: 1: migration name, 2: number of records migrated */
+                $text = sprintf( __( '%1$s: %2$d records migrated successfully.', 'wp-ffcertificate' ), $migration_name, $migrated );
                 break;
 
             case 'migration_error':
@@ -89,7 +90,7 @@ class AdminNoticeManager {
             $_SERVER['REQUEST_URI']
         );
 
-        wp_redirect( add_query_arg( 'msg', $msg, $url ) );
+        wp_safe_redirect( add_query_arg( 'msg', $msg, $url ) );
         exit;
     }
 }

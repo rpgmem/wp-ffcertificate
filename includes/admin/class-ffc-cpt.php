@@ -113,6 +113,7 @@ class CPT {
 
         // ✅ OPTIMIZED v2.9.2: Use \FreeFormCertificate\Core\Utils::sanitize_filename() for title
         $original_title = $post->post_title;
+        /* translators: %s: original post title */
         $new_title = sprintf( __( '%s (Copy)', 'wp-ffcertificate' ), $original_title );
 
         // Create new post
@@ -166,7 +167,7 @@ class CPT {
         ) );
 
         // Redirect to forms list
-        wp_redirect( admin_url( 'edit.php?post_type=ffc_form' ) );
+        wp_safe_redirect( admin_url( 'edit.php?post_type=ffc_form' ) );
         exit;
     }
 }
