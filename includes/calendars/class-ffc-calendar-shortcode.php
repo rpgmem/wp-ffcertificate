@@ -232,7 +232,7 @@ class CalendarShortcode {
             <div class="ffc-booking-form-wrapper" style="display: none;">
                 <h3><?php esc_html_e('Your Information', 'wp-ffcertificate'); ?></h3>
 
-                <form id="ffc-booking-form" class="ffc-booking-form">
+                <form id="ffc-booking-form" class="ffc-booking-form" autocomplete="off">
                     <?php wp_nonce_field('ffc_calendar_nonce', 'nonce'); ?>
                     <input type="hidden" name="action" value="ffc_book_appointment">
                     <input type="hidden" name="calendar_id" value="<?php echo esc_attr($calendar['id']); ?>">
