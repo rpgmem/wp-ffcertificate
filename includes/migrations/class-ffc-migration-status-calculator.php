@@ -78,6 +78,9 @@ class MigrationStatusCalculator {
         // ✅ v3.1.1: User link strategy (uses strategy pattern) - autoloader handles loading
         $this->strategies['user_link'] = new \FreeFormCertificate\Migrations\Strategies\UserLinkMigrationStrategy();
 
+        // ✅ v4.3.0: Name normalization strategy
+        $this->strategies['name_normalization'] = new \FreeFormCertificate\Migrations\Strategies\NameNormalizationMigrationStrategy();
+
         // Allow plugins to register custom strategies
         $this->strategies = apply_filters( 'wp_ffcertificate_migration_strategies', $this->strategies );
     }
