@@ -143,6 +143,16 @@ class MigrationRegistry {
             'requires_column' => true
         );
 
+        // v4.3.0: Name normalization migration
+        $this->migrations['name_normalization'] = array(
+            'name'            => __( 'Normalize Names', 'wp-ffcertificate' ),
+            'description'     => __( 'Normalize name fields to proper Brazilian capitalization (e.g., "ALEX DA SILVA" → "Alex da Silva")', 'wp-ffcertificate' ),
+            'icon'            => '✍️',
+            'batch_size'      => 100,
+            'order'           => $order++,
+            'requires_column' => false
+        );
+
         // Data cleanup (option-based, not batch)
         $this->migrations['data_cleanup'] = array(
             'name'            => __( 'Data Cleanup', 'wp-ffcertificate' ),
@@ -218,7 +228,7 @@ class MigrationRegistry {
         }
 
         // Special migrations that are always available
-        $special_migrations = array( 'magic_tokens', 'data_cleanup', 'user_link', 'encrypt_sensitive_data', 'cleanup_unencrypted' );
+        $special_migrations = array( 'magic_tokens', 'data_cleanup', 'user_link', 'encrypt_sensitive_data', 'cleanup_unencrypted', 'name_normalization' );
 
         if ( in_array( $migration_key, $special_migrations ) ) {
             return true;
