@@ -225,6 +225,87 @@ class AdminSubmissionEditPage {
             </td>
         </tr>
         <?php endif; ?>
+
+        <?php $this->render_user_link_section(); ?>
+        <?php
+    }
+
+    /**
+     * Render user link section
+     *
+     * Allows linking/unlinking submission to a WordPress user.
+     *
+     * @since 4.3.0
+     */
+    private function render_user_link_section(): void {
+        $current_user_id = isset( $this->sub_array['user_id'] ) ? (int) $this->sub_array['user_id'] : 0;
+        $current_user = $current_user_id ? get_userdata( $current_user_id ) : null;
+
+        ?>
+        <tr>
+            <th><label for="linked_user_id"><?php esc_html_e( 'Linked User', 'wp-ffcertificate' ); ?></label></th>
+            <td>
+                <div class="ffc-user-link-container">
+                    <?php if ( $current_user ): ?>
+                        <div class="ffc-current-user">
+                            <span class="ffc-user-info">
+                                <?php echo get_avatar( $current_user_id, 32 ); ?>
+                                <strong><?php echo esc_html( $current_user->display_name ); ?></strong>
+                                <span class="ffc-user-email">(<?php echo esc_html( $current_user->user_email ); ?>)</span>
+                                <span class="ffc-user-id">ID: <?php echo esc_html( $current_user_id ); ?></span>
+                            </span>
+                            <a href="<?php echo esc_url( get_edit_user_link( $current_user_id ) ); ?>" target="_blank" class="button button-small">
+                                <?php esc_html_e( 'View Profile', 'wp-ffcertificate' ); ?>
+                            </a>
+                        </div>
+                    <?php else: ?>
+                        <p class="ffc-no-user">
+                            <em><?php esc_html_e( 'No user linked to this submission.', 'wp-ffcertificate' ); ?></em>
+                        </p>
+                    <?php endif; ?>
+
+                    <div class="ffc-user-link-actions">
+                        <label for="linked_user_id">
+                            <?php esc_html_e( 'Change linked user:', 'wp-ffcertificate' ); ?>
+                        </label>
+                        <select name="linked_user_id" id="linked_user_id" class="regular-text">
+                            <option value=""><?php esc_html_e( '— No user (unlink) —', 'wp-ffcertificate' ); ?></option>
+                            <option value="__keep__" <?php selected( true ); ?>><?php esc_html_e( '— Keep current —', 'wp-ffcertificate' ); ?></option>
+                            <?php
+                            // Get users with ffc_user role or administrators
+                            $users = get_users( array(
+                                'role__in' => array( 'administrator', 'ffc_user' ),
+                                'orderby' => 'display_name',
+                                'order' => 'ASC',
+                                'number' => 100,
+                            ) );
+
+                            foreach ( $users as $user ):
+                                if ( $user->ID === $current_user_id ) continue; // Skip current user (already shown)
+                            ?>
+                                <option value="<?php echo esc_attr( $user->ID ); ?>">
+                                    <?php echo esc_html( $user->display_name . ' (' . $user->user_email . ')' ); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+
+                        <p class="description">
+                            <?php esc_html_e( 'Link this submission to a WordPress user. The user will see this certificate in their dashboard.', 'wp-ffcertificate' ); ?>
+                        </p>
+
+                        <?php if ( count( $users ) >= 100 ): ?>
+                            <p class="description">
+                                <strong><?php esc_html_e( 'Note:', 'wp-ffcertificate' ); ?></strong>
+                                <?php esc_html_e( 'Only the first 100 users are shown. To link to another user, enter their ID directly:', 'wp-ffcertificate' ); ?>
+                                <br>
+                                <input type="number" name="linked_user_id_manual" id="linked_user_id_manual" min="1" placeholder="<?php esc_attr_e( 'User ID', 'wp-ffcertificate' ); ?>" class="small-text">
+                                <span class="description"><?php esc_html_e( '(overrides dropdown if filled)', 'wp-ffcertificate' ); ?></span>
+                            </p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </td>
+        </tr>
         <?php
     }
 
@@ -457,9 +538,35 @@ class AdminSubmissionEditPage {
             $clean_data[ sanitize_key( $k ) ] = wp_kses( $v, \FreeFormCertificate\Core\Utils::get_allowed_html_tags() );
         }
 
+        // Process user link change
+        $linked_user_id = isset( $_POST['linked_user_id'] ) ? sanitize_text_field( wp_unslash( $_POST['linked_user_id'] ) ) : '__keep__';
+        $linked_user_id_manual = isset( $_POST['linked_user_id_manual'] ) ? absint( wp_unslash( $_POST['linked_user_id_manual'] ) ) : 0;
+
+        // Manual ID overrides dropdown if provided
+        if ( $linked_user_id_manual > 0 ) {
+            $linked_user_id = $linked_user_id_manual;
+        }
+
         // phpcs:enable WordPress.Security.NonceVerification.Missing
 
+        // Update submission data (email + custom fields)
         $this->submission_handler->update_submission( $id, $new_email, $clean_data );
+
+        // Update user link if changed (not __keep__)
+        if ( $linked_user_id !== '__keep__' ) {
+            $new_user_id = $linked_user_id === '' ? null : (int) $linked_user_id;
+
+            // Validate user exists if linking to a user
+            if ( $new_user_id !== null && ! get_userdata( $new_user_id ) ) {
+                // Invalid user ID - skip user link update
+                \FreeFormCertificate\Core\Utils::debug_log( 'Invalid user ID for linking', array(
+                    'submission_id' => $id,
+                    'user_id' => $new_user_id,
+                ) );
+            } else {
+                $this->submission_handler->update_user_link( $id, $new_user_id );
+            }
+        }
 
         wp_safe_redirect( admin_url( 'edit.php?post_type=ffc_form&page=ffc-submissions&msg=updated' ) );
         exit;
