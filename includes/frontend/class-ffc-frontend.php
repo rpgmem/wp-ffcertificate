@@ -178,11 +178,16 @@ class Frontend {
                 // Geolocation messages
                 'detectingLocation' => __('Detecting your location...', 'wp-ffcertificate'),
                 'browserNoSupport' => __('Your browser does not support geolocation.', 'wp-ffcertificate'),
+                'httpsRequired' => __('This form requires a secure connection (HTTPS) to access your location. Please contact the site administrator.', 'wp-ffcertificate'),
                 'locationError' => __('Unable to determine your location.', 'wp-ffcertificate'),
                 'permissionDenied' => __('Location permission denied. Please enable location services.', 'wp-ffcertificate'),
                 'positionUnavailable' => __('Location information is unavailable.', 'wp-ffcertificate'),
                 'timeout' => __('Location request timed out.', 'wp-ffcertificate'),
                 'outsideArea' => __('You are outside the allowed area for this form.', 'wp-ffcertificate'),
+                // Safari/iOS specific messages
+                'safariPermissionDenied' => __('Location access was denied. On Safari/iOS, go to Settings > Privacy & Security > Location Services and ensure it is enabled for your browser.', 'wp-ffcertificate'),
+                'safariPositionUnavailable' => __('Unable to determine your location. On Safari/iOS, ensure Location Services is enabled in Settings > Privacy & Security > Location Services.', 'wp-ffcertificate'),
+                'safariTimeout' => __('Location request timed out. On Safari/iOS, ensure Location Services is enabled in Settings > Privacy & Security > Location Services.', 'wp-ffcertificate'),
 
                 // DateTime messages
                 'formNotYetAvailable' => __('This form is not yet available.', 'wp-ffcertificate'),

@@ -186,7 +186,7 @@ class Shortcodes {
         ?>
         <div class="<?php echo esc_attr( $wrapper_class ); ?>" id="ffc-form-<?php echo esc_attr( $form_id ); ?>">
             <h2 class="ffc-form-title"><?php echo esc_html( $form_title ); ?></h2>
-            <form class="ffc-submission-form" id="ffc-form-element-<?php echo esc_attr( $form_id ); ?>">
+            <form class="ffc-submission-form" id="ffc-form-element-<?php echo esc_attr( $form_id ); ?>" autocomplete="off">
                 <input type="hidden" name="form_id" value="<?php echo esc_attr( $form_id ); ?>">
                 
                 <?php foreach ( $fields as $field ) :
