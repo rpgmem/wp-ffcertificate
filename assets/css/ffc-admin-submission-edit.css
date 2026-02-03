@@ -91,3 +91,60 @@
 .ffc-edit-table td[colspan="2"] {
     padding: 0;
 }
+
+/* User link section */
+.ffc-user-link-container {
+    padding: 10px 0;
+}
+
+.ffc-current-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #f0f6fc;
+    border-left: 4px solid #2271b1;
+    border-radius: 4px;
+}
+
+.ffc-user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.ffc-user-info img {
+    border-radius: 50%;
+}
+
+.ffc-user-email {
+    color: #666;
+    font-size: 12px;
+}
+
+.ffc-user-id {
+    color: #999;
+    font-size: 11px;
+    margin-left: 5px;
+}
+
+.ffc-no-user {
+    margin: 0 0 10px 0;
+    color: #666;
+}
+
+.ffc-user-link-actions {
+    margin-top: 10px;
+}
+
+.ffc-user-link-actions label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.ffc-user-link-actions select {
+    min-width: 300px;
+}

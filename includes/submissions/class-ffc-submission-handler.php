@@ -270,6 +270,35 @@ class SubmissionHandler {
     }
 
     /**
+     * Update user link for a submission
+     *
+     * @since 4.3.0
+     * @param int $id Submission ID
+     * @param int|null $user_id WordPress user ID or null to unlink
+     * @return bool True on success
+     */
+    public function update_user_link(int $id, ?int $user_id): bool {
+        $update_data = array(
+            'user_id' => $user_id,
+            'edited_at' => current_time('mysql'),
+            'edited_by' => get_current_user_id(),
+        );
+
+        $result = $this->repository->update($id, $update_data);
+
+        if ($result !== false && class_exists('\FreeFormCertificate\Core\ActivityLog')) {
+            $action = $user_id ? 'user_linked' : 'user_unlinked';
+            \FreeFormCertificate\Core\ActivityLog::log('submission', $action, array(
+                'submission_id' => $id,
+                'user_id' => $user_id,
+                'admin_id' => get_current_user_id(),
+            ));
+        }
+
+        return (bool) $result;
+    }
+
+    /**
      * Decrypt submission data
      */
     public function decrypt_submission_data($submission): array {
