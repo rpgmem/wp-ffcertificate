@@ -30,21 +30,28 @@ if (!defined('ABSPATH')) exit;
 class UserManager {
 
     /**
+     * Context constants for capability granting
+     */
+    public const CONTEXT_CERTIFICATE = 'certificate';
+    public const CONTEXT_APPOINTMENT = 'appointment';
+
+    /**
      * Get or create WordPress user based on CPF/RF and email
      *
      * Flow:
      * 1. Check if CPF/RF hash already has user_id in submissions table
-     * 2. If yes: return existing user_id
+     * 2. If yes: return existing user_id (and add context-specific capabilities)
      * 3. If no: check if email exists in WordPress
-     * 4. If yes: link to existing user (add role/capabilities)
-     * 5. If no: create new user
+     * 4. If yes: link to existing user (add role + context-specific capabilities)
+     * 5. If no: create new user (with only context-specific capabilities)
      *
      * @param string $cpf_rf_hash Hash of CPF or RF
      * @param string $email Plain email address
      * @param array $submission_data Optional submission data for user creation
+     * @param string $context Context for capability granting ('certificate' or 'appointment')
      * @return int|WP_Error User ID or error
      */
-    public static function get_or_create_user(string $cpf_rf_hash, string $email, array $submission_data = array()) {
+    public static function get_or_create_user(string $cpf_rf_hash, string $email, array $submission_data = array(), string $context = self::CONTEXT_CERTIFICATE) {
         global $wpdb;
         $table = \FreeFormCertificate\Core\Utils::get_submissions_table();
 
@@ -59,7 +66,8 @@ class UserManager {
         ));
 
         if ($existing_user_id) {
-            // CPF/RF already linked → return existing user_id
+            // CPF/RF already linked → grant context-specific capabilities and return
+            self::grant_context_capabilities((int) $existing_user_id, $context);
             return (int) $existing_user_id;
         }
 
@@ -67,11 +75,14 @@ class UserManager {
         $existing_user = get_user_by('email', $email);
 
         if ($existing_user) {
-            // Email exists → add FFC capabilities (keep existing roles)
+            // Email exists → add FFC role + context-specific capabilities
             $user_id = $existing_user->ID;
 
             // Add ffc_user role (keeps other roles)
             $existing_user->add_role('ffc_user');
+
+            // Grant context-specific capabilities
+            self::grant_context_capabilities($user_id, $context);
 
             // Update display name if empty (username as fallback is not user-friendly)
             if (empty($existing_user->display_name) || $existing_user->display_name === $existing_user->user_login) {
@@ -81,8 +92,8 @@ class UserManager {
             return $user_id;
         }
 
-        // STEP 3: Email is also new → create new user
-        $user_id = self::create_ffc_user($email, $submission_data);
+        // STEP 3: Email is also new → create new user with context-specific capabilities
+        $user_id = self::create_ffc_user($email, $submission_data, $context);
 
         if (is_wp_error($user_id)) {
             return $user_id;
@@ -92,13 +103,35 @@ class UserManager {
     }
 
     /**
+     * Grant capabilities based on context
+     *
+     * @since 4.4.0
+     * @param int $user_id WordPress user ID
+     * @param string $context Context ('certificate' or 'appointment')
+     * @return void
+     */
+    private static function grant_context_capabilities(int $user_id, string $context): void {
+        switch ($context) {
+            case self::CONTEXT_CERTIFICATE:
+                self::grant_certificate_capabilities($user_id);
+                break;
+            case self::CONTEXT_APPOINTMENT:
+                self::grant_appointment_capabilities($user_id);
+                break;
+        }
+    }
+
+    /**
      * Create new WordPress user for FFC
+     *
+     * Creates user with ffc_user role but only grants context-specific capabilities.
      *
      * @param string $email Email address (used as username and email)
      * @param array $submission_data Submission data for user metadata
+     * @param string $context Context for capability granting ('certificate' or 'appointment')
      * @return int|WP_Error User ID or error
      */
-    private static function create_ffc_user(string $email, array $submission_data = array()) {
+    private static function create_ffc_user(string $email, array $submission_data = array(), string $context = self::CONTEXT_CERTIFICATE) {
         // Generate strong random password
         $password = wp_generate_password(24, true, true);
 
@@ -119,9 +152,14 @@ class UserManager {
             return $user_id;
         }
 
-        // Set role
-        $user = new WP_User($user_id);
+        // Set ffc_user role (provides base capabilities from role)
+        $user = new \WP_User($user_id);
         $user->set_role('ffc_user');
+
+        // Remove all FFC capabilities first (role grants all by default)
+        // Then grant only context-specific capabilities
+        self::reset_user_ffc_capabilities($user_id);
+        self::grant_context_capabilities($user_id, $context);
 
         // Sync user metadata from submission (only on creation)
         self::sync_user_metadata($user_id, $submission_data);
@@ -143,6 +181,34 @@ class UserManager {
         }
 
         return $user_id;
+    }
+
+    /**
+     * Reset all FFC capabilities for a user to false
+     *
+     * Used when creating a new user to remove role-granted capabilities
+     * before adding context-specific ones.
+     *
+     * @since 4.4.0
+     * @param int $user_id WordPress user ID
+     * @return void
+     */
+    private static function reset_user_ffc_capabilities(int $user_id): void {
+        $user = get_userdata($user_id);
+
+        if (!$user) {
+            return;
+        }
+
+        // Set all certificate capabilities to false
+        foreach (self::CERTIFICATE_CAPABILITIES as $cap) {
+            $user->add_cap($cap, false);
+        }
+
+        // Set all appointment capabilities to false
+        foreach (self::APPOINTMENT_CAPABILITIES as $cap) {
+            $user->add_cap($cap, false);
+        }
     }
 
     /**
@@ -184,31 +250,95 @@ class UserManager {
     }
 
     /**
+     * All certificate-related capabilities
+     */
+    public const CERTIFICATE_CAPABILITIES = array(
+        'view_own_certificates',
+        'download_own_certificates',
+        'view_certificate_history',
+    );
+
+    /**
+     * All appointment-related capabilities
+     */
+    public const APPOINTMENT_CAPABILITIES = array(
+        'ffc_book_appointments',
+        'ffc_view_own_appointments',
+        'ffc_cancel_own_appointments',
+    );
+
+    /**
      * Register ffc_user role on plugin activation
      *
      * @return void
      */
     public static function register_role(): void {
         // Check if role already exists
-        if (get_role('ffc_user')) {
+        $existing_role = get_role('ffc_user');
+
+        if ($existing_role) {
+            // Role exists - upgrade it with new capabilities if missing
+            self::upgrade_role($existing_role);
             return;
         }
 
-        // Add ffc_user role
+        // Add ffc_user role with all capabilities
         add_role(
             'ffc_user',
             __('FFC User', 'wp-ffcertificate'),
             array(
                 'read' => true,
+
+                // Certificate capabilities (enabled by default)
                 'view_own_certificates' => true,
                 'download_own_certificates' => true,
                 'view_certificate_history' => true,
+
+                // Appointment capabilities (enabled by default)
+                'ffc_book_appointments' => true,
+                'ffc_view_own_appointments' => true,
+                'ffc_cancel_own_appointments' => true,
 
                 // Future capabilities (disabled by default)
                 'ffc_reregistration' => false,
                 'ffc_certificate_update' => false,
             )
         );
+    }
+
+    /**
+     * Upgrade existing ffc_user role with new capabilities
+     *
+     * Called when role exists but may be missing newer capabilities.
+     *
+     * @since 4.4.0
+     * @param \WP_Role $role Existing role object
+     * @return void
+     */
+    private static function upgrade_role(\WP_Role $role): void {
+        // Define all capabilities that should exist in the role
+        $all_capabilities = array(
+            // Certificate capabilities
+            'view_own_certificates' => true,
+            'download_own_certificates' => true,
+            'view_certificate_history' => true,
+
+            // Appointment capabilities
+            'ffc_book_appointments' => true,
+            'ffc_view_own_appointments' => true,
+            'ffc_cancel_own_appointments' => true,
+
+            // Future capabilities
+            'ffc_reregistration' => false,
+            'ffc_certificate_update' => false,
+        );
+
+        // Add any missing capabilities to the role
+        foreach ($all_capabilities as $cap => $grant) {
+            if (!isset($role->capabilities[$cap])) {
+                $role->add_cap($cap, $grant);
+            }
+        }
     }
 
     /**
@@ -425,5 +555,218 @@ class UserManager {
         }
 
         return $names;
+    }
+
+    /**
+     * Grant certificate capabilities to a user
+     *
+     * Adds certificate-related capabilities without removing existing capabilities.
+     * Used when user submits a certificate form.
+     *
+     * @since 4.4.0
+     * @param int $user_id WordPress user ID
+     * @return void
+     */
+    public static function grant_certificate_capabilities(int $user_id): void {
+        $user = get_userdata($user_id);
+
+        if (!$user) {
+            return;
+        }
+
+        // Grant each certificate capability
+        foreach (self::CERTIFICATE_CAPABILITIES as $cap) {
+            if (!$user->has_cap($cap)) {
+                $user->add_cap($cap, true);
+            }
+        }
+
+        // Log capability grant
+        if (class_exists('\FreeFormCertificate\Core\Debug')) {
+            \FreeFormCertificate\Core\Debug::log_user_manager(
+                'Granted certificate capabilities',
+                array(
+                    'user_id' => $user_id,
+                    'capabilities' => self::CERTIFICATE_CAPABILITIES,
+                )
+            );
+        }
+    }
+
+    /**
+     * Grant appointment capabilities to a user
+     *
+     * Adds appointment-related capabilities without removing existing capabilities.
+     * Used when user creates an appointment.
+     *
+     * @since 4.4.0
+     * @param int $user_id WordPress user ID
+     * @return void
+     */
+    public static function grant_appointment_capabilities(int $user_id): void {
+        $user = get_userdata($user_id);
+
+        if (!$user) {
+            return;
+        }
+
+        // Grant each appointment capability
+        foreach (self::APPOINTMENT_CAPABILITIES as $cap) {
+            if (!$user->has_cap($cap)) {
+                $user->add_cap($cap, true);
+            }
+        }
+
+        // Log capability grant
+        if (class_exists('\FreeFormCertificate\Core\Debug')) {
+            \FreeFormCertificate\Core\Debug::log_user_manager(
+                'Granted appointment capabilities',
+                array(
+                    'user_id' => $user_id,
+                    'capabilities' => self::APPOINTMENT_CAPABILITIES,
+                )
+            );
+        }
+    }
+
+    /**
+     * Check if user has any certificate capabilities
+     *
+     * @since 4.4.0
+     * @param int $user_id WordPress user ID
+     * @return bool True if user has any certificate capability
+     */
+    public static function has_certificate_access(int $user_id): bool {
+        $user = get_userdata($user_id);
+
+        if (!$user) {
+            return false;
+        }
+
+        // Admin always has access
+        if (user_can($user_id, 'manage_options')) {
+            return true;
+        }
+
+        // Check each certificate capability
+        foreach (self::CERTIFICATE_CAPABILITIES as $cap) {
+            if ($user->has_cap($cap)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if user has any appointment capabilities
+     *
+     * @since 4.4.0
+     * @param int $user_id WordPress user ID
+     * @return bool True if user has any appointment capability
+     */
+    public static function has_appointment_access(int $user_id): bool {
+        $user = get_userdata($user_id);
+
+        if (!$user) {
+            return false;
+        }
+
+        // Admin always has access
+        if (user_can($user_id, 'manage_options')) {
+            return true;
+        }
+
+        // Check each appointment capability
+        foreach (self::APPOINTMENT_CAPABILITIES as $cap) {
+            if ($user->has_cap($cap)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get all FFC capabilities for a user
+     *
+     * Returns an array of all FFC-related capabilities and their status.
+     *
+     * @since 4.4.0
+     * @param int $user_id WordPress user ID
+     * @return array Associative array of capability => boolean
+     */
+    public static function get_user_ffc_capabilities(int $user_id): array {
+        $user = get_userdata($user_id);
+
+        if (!$user) {
+            return array();
+        }
+
+        $capabilities = array();
+
+        // Certificate capabilities
+        foreach (self::CERTIFICATE_CAPABILITIES as $cap) {
+            $capabilities[$cap] = $user->has_cap($cap);
+        }
+
+        // Appointment capabilities
+        foreach (self::APPOINTMENT_CAPABILITIES as $cap) {
+            $capabilities[$cap] = $user->has_cap($cap);
+        }
+
+        // Future capabilities
+        $capabilities['ffc_reregistration'] = $user->has_cap('ffc_reregistration');
+        $capabilities['ffc_certificate_update'] = $user->has_cap('ffc_certificate_update');
+
+        return $capabilities;
+    }
+
+    /**
+     * Set a specific FFC capability for a user
+     *
+     * @since 4.4.0
+     * @param int $user_id WordPress user ID
+     * @param string $capability Capability name
+     * @param bool $grant Whether to grant (true) or revoke (false)
+     * @return bool True on success, false on failure
+     */
+    public static function set_user_capability(int $user_id, string $capability, bool $grant): bool {
+        $user = get_userdata($user_id);
+
+        if (!$user) {
+            return false;
+        }
+
+        // Validate capability is an FFC capability
+        $all_ffc_caps = array_merge(
+            self::CERTIFICATE_CAPABILITIES,
+            self::APPOINTMENT_CAPABILITIES,
+            array('ffc_reregistration', 'ffc_certificate_update')
+        );
+
+        if (!in_array($capability, $all_ffc_caps, true)) {
+            return false;
+        }
+
+        if ($grant) {
+            $user->add_cap($capability, true);
+        } else {
+            $user->add_cap($capability, false);
+        }
+
+        // Log capability change
+        if (class_exists('\FreeFormCertificate\Core\Debug')) {
+            \FreeFormCertificate\Core\Debug::log_user_manager(
+                'User capability changed',
+                array(
+                    'user_id' => $user_id,
+                    'capability' => $capability,
+                    'granted' => $grant,
+                )
+            );
+        }
+
+        return true;
     }
 }

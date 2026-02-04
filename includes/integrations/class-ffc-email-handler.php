@@ -247,6 +247,20 @@ class EmailHandler {
     public function send_wp_user_notification( int $user_id, string $context = 'submission' ): bool {
         $settings = get_option( 'ffc_settings', array() );
 
+        // Debug logging
+        if ( class_exists( '\FreeFormCertificate\Core\Debug' ) ) {
+            \FreeFormCertificate\Core\Debug::log_user_manager(
+                'send_wp_user_notification called',
+                array(
+                    'user_id' => $user_id,
+                    'context' => $context,
+                    'disable_all_emails' => isset( $settings['disable_all_emails'] ) ? $settings['disable_all_emails'] : 'NOT SET',
+                    'send_wp_user_email_submission' => isset( $settings['send_wp_user_email_submission'] ) ? $settings['send_wp_user_email_submission'] : 'NOT SET',
+                    'send_wp_user_email_migration' => isset( $settings['send_wp_user_email_migration'] ) ? $settings['send_wp_user_email_migration'] : 'NOT SET',
+                )
+            );
+        }
+
         // Check global disable
         if ( ! empty( $settings['disable_all_emails'] ) ) {
             return false;
@@ -264,12 +278,32 @@ class EmailHandler {
                 && absint( $settings['send_wp_user_email_migration'] ) === 1;
         }
 
+        // Debug logging
+        if ( class_exists( '\FreeFormCertificate\Core\Debug' ) ) {
+            \FreeFormCertificate\Core\Debug::log_user_manager(
+                'send_wp_user_notification enabled check',
+                array(
+                    'enabled' => $enabled ? 'YES' : 'NO',
+                    'will_send' => $enabled ? 'YES' : 'NO',
+                )
+            );
+        }
+
         if ( ! $enabled ) {
             return false;
         }
 
         // Send WordPress notification (welcome email with password reset link)
         wp_new_user_notification( $user_id, null, 'user' );
+
+        // Debug logging
+        if ( class_exists( '\FreeFormCertificate\Core\Debug' ) ) {
+            \FreeFormCertificate\Core\Debug::log_user_manager(
+                'wp_new_user_notification called',
+                array( 'user_id' => $user_id )
+            );
+        }
+
         return true;
     }
 }

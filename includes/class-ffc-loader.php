@@ -18,6 +18,7 @@ use FreeFormCertificate\Admin\CsvExporter;
 use FreeFormCertificate\Admin\CPT;
 use FreeFormCertificate\Admin\Admin;
 use FreeFormCertificate\Admin\AdminUserColumns;
+use FreeFormCertificate\Admin\AdminUserCapabilities;
 use FreeFormCertificate\Frontend\Frontend;
 use FreeFormCertificate\Admin\AdminAjax;
 use FreeFormCertificate\API\RestController;
@@ -75,6 +76,9 @@ class Loader {
 
         // ✅ v3.1.0: Initialize Admin User Columns (adds "View Dashboard" link to users list)
         AdminUserColumns::init();
+
+        // ✅ v4.4.0: Initialize Admin User Capabilities (FFC capability management on user profile)
+        AdminUserCapabilities::init();
 
         // ✅ v3.1.0: Initialize Dashboard Shortcode ([user_dashboard_personal])
         DashboardShortcode::init();
