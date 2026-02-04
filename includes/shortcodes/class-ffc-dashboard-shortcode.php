@@ -47,15 +47,14 @@ class DashboardShortcode {
         $user_id = $view_as_user_id ?: get_current_user_id();
         $user = get_user_by('id', $user_id);
 
-        // Check if user has FFC permissions
+        // Check if user has FFC permissions (based on capabilities, not just role)
         $can_view_certificates = $user && (
             user_can($user, 'view_own_certificates') ||
-            in_array('ffc_user', $user->roles) ||
             user_can($user, 'manage_options')
         );
 
         $can_view_appointments = $user && (
-            in_array('ffc_user', $user->roles) ||
+            user_can($user, 'ffc_view_own_appointments') ||
             user_can($user, 'manage_options')
         );
 
@@ -254,18 +253,17 @@ class DashboardShortcode {
      * @param int|false $view_as_user_id User ID in view-as mode
      */
     private static function enqueue_assets($view_as_user_id = false): void {
-        // Get user permissions
+        // Get user permissions (based on capabilities, not just role)
         $user_id = $view_as_user_id ?: get_current_user_id();
         $user = get_user_by('id', $user_id);
 
         $can_view_certificates = $user && (
             user_can($user, 'view_own_certificates') ||
-            in_array('ffc_user', $user->roles) ||
             user_can($user, 'manage_options')
         );
 
         $can_view_appointments = $user && (
-            in_array('ffc_user', $user->roles) ||
+            user_can($user, 'ffc_view_own_appointments') ||
             user_can($user, 'manage_options')
         );
 

@@ -865,6 +865,15 @@ class RestController {
                 $user_id = absint($view_as_user_id);
             }
 
+            // Check capability (admin always has access)
+            if (!current_user_can('manage_options') && !current_user_can('view_own_certificates')) {
+                return new \WP_Error(
+                    'capability_denied',
+                    __('You do not have permission to view certificates', 'wp-ffcertificate'),
+                    array('status' => 403)
+                );
+            }
+
             global $wpdb;
 
             // Safety check for FFC_Utils
@@ -1090,6 +1099,15 @@ class RestController {
             $view_as_user_id = $request->get_param('viewAsUserId');
             if ($view_as_user_id && current_user_can('manage_options')) {
                 $user_id = absint($view_as_user_id);
+            }
+
+            // Check capability (admin always has access)
+            if (!current_user_can('manage_options') && !current_user_can('ffc_view_own_appointments')) {
+                return new \WP_Error(
+                    'capability_denied',
+                    __('You do not have permission to view appointments', 'wp-ffcertificate'),
+                    array('status' => 403)
+                );
             }
 
             // Get appointment repository

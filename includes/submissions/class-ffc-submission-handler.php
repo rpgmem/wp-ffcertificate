@@ -159,7 +159,12 @@ class SubmissionHandler {
             }
 
             if (class_exists('\FreeFormCertificate\UserDashboard\UserManager')) {
-                $user_result = \FreeFormCertificate\UserDashboard\UserManager::get_or_create_user($cpf_hash, $user_email, $submission_data);
+                $user_result = \FreeFormCertificate\UserDashboard\UserManager::get_or_create_user(
+                    $cpf_hash,
+                    $user_email,
+                    $submission_data,
+                    \FreeFormCertificate\UserDashboard\UserManager::CONTEXT_CERTIFICATE
+                );
 
                 if (!is_wp_error($user_result)) {
                     $user_id = $user_result;

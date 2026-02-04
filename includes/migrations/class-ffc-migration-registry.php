@@ -153,6 +153,16 @@ class MigrationRegistry {
             'requires_column' => false
         );
 
+        // v4.4.0: User capabilities migration
+        $this->migrations['user_capabilities'] = array(
+            'name'            => __( 'User Capabilities', 'wp-ffcertificate' ),
+            'description'     => __( 'Set user capabilities based on submission/appointment history', 'wp-ffcertificate' ),
+            'icon'            => '🔑',
+            'batch_size'      => 50,
+            'order'           => $order++,
+            'requires_column' => false
+        );
+
         // Data cleanup (option-based, not batch)
         $this->migrations['data_cleanup'] = array(
             'name'            => __( 'Data Cleanup', 'wp-ffcertificate' ),
@@ -228,7 +238,7 @@ class MigrationRegistry {
         }
 
         // Special migrations that are always available
-        $special_migrations = array( 'magic_tokens', 'data_cleanup', 'user_link', 'encrypt_sensitive_data', 'cleanup_unencrypted', 'name_normalization' );
+        $special_migrations = array( 'magic_tokens', 'data_cleanup', 'user_link', 'encrypt_sensitive_data', 'cleanup_unencrypted', 'name_normalization', 'user_capabilities' );
 
         if ( in_array( $migration_key, $special_migrations ) ) {
             return true;

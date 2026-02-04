@@ -81,6 +81,9 @@ class MigrationStatusCalculator {
         // ✅ v4.3.0: Name normalization strategy
         $this->strategies['name_normalization'] = new \FreeFormCertificate\Migrations\Strategies\NameNormalizationMigrationStrategy();
 
+        // ✅ v4.4.0: User capabilities strategy
+        $this->strategies['user_capabilities'] = new \FreeFormCertificate\Migrations\Strategies\UserCapabilitiesMigrationStrategy();
+
         // Allow plugins to register custom strategies
         $this->strategies = apply_filters( 'wp_ffcertificate_migration_strategies', $this->strategies );
     }

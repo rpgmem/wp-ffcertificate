@@ -427,19 +427,37 @@ class AppointmentHandler {
             }
         }
 
-        // 12. Validate user permissions (if login required)
+        // 12. Validate user permissions (capability AND calendar config)
+        // Check user capability first (if logged in)
+        if (is_user_logged_in()) {
+            $current_user_id = get_current_user_id();
+
+            // Admin always has access
+            if (!current_user_can('manage_options')) {
+                // Check ffc_book_appointments capability
+                if (!current_user_can('ffc_book_appointments')) {
+                    return new \WP_Error(
+                        'capability_denied',
+                        __('You do not have permission to book appointments.', 'wp-ffcertificate')
+                    );
+                }
+            }
+        }
+
+        // Calendar-specific login requirement
         if ($calendar['require_login']) {
             if (!is_user_logged_in()) {
                 return new \WP_Error('login_required', __('You must be logged in to book this calendar.', 'wp-ffcertificate'));
             }
 
-            // Check allowed roles
+            // Check allowed roles (calendar-specific restriction)
             if (!empty($calendar['allowed_roles'])) {
                 $allowed_roles = json_decode($calendar['allowed_roles'], true);
                 if (is_array($allowed_roles) && !empty($allowed_roles)) {
                     $user = wp_get_current_user();
                     $has_role = array_intersect($user->roles, $allowed_roles);
-                    if (empty($has_role)) {
+                    // Admin bypasses role check
+                    if (empty($has_role) && !current_user_can('manage_options')) {
                         return new \WP_Error('insufficient_permissions', __('You do not have permission to book this calendar.', 'wp-ffcertificate'));
                     }
                 }
@@ -689,7 +707,7 @@ class AppointmentHandler {
             return new \WP_Error('calendar_not_found', __('Calendar not found.', 'wp-ffcertificate'));
         }
 
-        // Verify ownership (user must own appointment or be admin)
+        // Verify ownership and capability (user must own appointment + have capability, or be admin)
         $can_cancel = false;
         $cancelled_by = null;
 
@@ -698,9 +716,16 @@ class AppointmentHandler {
             $can_cancel = true;
             $cancelled_by = get_current_user_id();
         } elseif (is_user_logged_in() && $appointment['user_id'] == get_current_user_id()) {
-            // User owns appointment
-            $can_cancel = true;
-            $cancelled_by = get_current_user_id();
+            // User owns appointment - check capability
+            if (current_user_can('ffc_cancel_own_appointments')) {
+                $can_cancel = true;
+                $cancelled_by = get_current_user_id();
+            } else {
+                return new \WP_Error(
+                    'capability_denied',
+                    __('You do not have permission to cancel appointments.', 'wp-ffcertificate')
+                );
+            }
         } elseif (!empty($token) && $appointment['confirmation_token'] === $token) {
             // Guest with valid token
             $can_cancel = true;
@@ -848,7 +873,8 @@ class AppointmentHandler {
                 $user_id = \FreeFormCertificate\UserDashboard\UserManager::get_or_create_user(
                     $cpf_rf_hash,
                     $data['email'],
-                    $submission_data
+                    $submission_data,
+                    \FreeFormCertificate\UserDashboard\UserManager::CONTEXT_APPOINTMENT
                 );
 
                 if (!is_wp_error($user_id) && $user_id > 0) {
