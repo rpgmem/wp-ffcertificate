@@ -472,7 +472,11 @@ class SelfSchedulingShortcode {
                 var monthKey = year + '-' + month;
 
                 // Prevent duplicate fetches
-                if (isFetching || lastFetchedMonth === monthKey) {
+                if (isFetching) {
+                    if (callback) callback();
+                    return;
+                }
+                if (lastFetchedMonth === monthKey) {
                     if (callback) callback();
                     return;
                 }
@@ -516,9 +520,9 @@ class SelfSchedulingShortcode {
                 disabledDays: disabledDays,
                 strings: ffcCalendar.strings,
                 legendItems: [
-                    { class: 'ffc-available', label: ffcCalendar.strings.available || 'Available' },
-                    { class: 'ffc-booked', label: ffcCalendar.strings.booked || 'Booked' },
-                    { class: 'ffc-closed', label: ffcCalendar.strings.closed || 'Closed' }
+                    { class: 'ffc-available', label: ffcCalendar.strings.available ? ffcCalendar.strings.available : 'Available' },
+                    { class: 'ffc-booked', label: ffcCalendar.strings.booked ? ffcCalendar.strings.booked : 'Booked' },
+                    { class: 'ffc-closed', label: ffcCalendar.strings.closed ? ffcCalendar.strings.closed : 'Closed' }
                 ],
                 getDayClasses: function(dateStr, date) {
                     var classes = [];
@@ -541,9 +545,11 @@ class SelfSchedulingShortcode {
                     return classes;
                 },
                 getDayContent: function(dateStr, date, isHoliday) {
-                    var count = bookingCounts[dateStr] || 0;
+                    var count = bookingCounts[dateStr] ? bookingCounts[dateStr] : 0;
                     if (count > 0) {
-                        var label = count === 1 ? (ffcCalendar.strings.booking || 'booking') : (ffcCalendar.strings.bookings || 'bookings');
+                        var singularLabel = ffcCalendar.strings.booking ? ffcCalendar.strings.booking : 'booking';
+                        var pluralLabel = ffcCalendar.strings.bookings ? ffcCalendar.strings.bookings : 'bookings';
+                        var label = count === 1 ? singularLabel : pluralLabel;
                         return '<span class="ffc-day-badge ffc-badge-bookings">' + count + ' ' + label + '</span>';
                     }
                     return '';
