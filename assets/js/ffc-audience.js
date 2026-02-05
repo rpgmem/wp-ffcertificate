@@ -10,16 +10,36 @@
 
     // Ensure ffcAudience is defined with defaults
     if (typeof ffcAudience === 'undefined') {
-        window.ffcAudience = {};
+        window.ffcAudience = {
+            ajaxUrl: '/wp-admin/admin-ajax.php',
+            restUrl: '/wp-json/ffc/v1/audience/',
+            nonce: ''
+        };
     }
     if (!ffcAudience.strings) {
         ffcAudience.strings = {};
     }
-    if (!ffcAudience.strings.months) {
-        ffcAudience.strings.months = [
-            'January', 'February', 'March', 'April', 'May', 'June',
-            'July', 'August', 'September', 'October', 'November', 'December'
-        ];
+    // Default strings fallback
+    var defaultStrings = {
+        months: ['January', 'February', 'March', 'April', 'May', 'June',
+                 'July', 'August', 'September', 'October', 'November', 'December'],
+        loading: 'Loading...',
+        error: 'An error occurred. Please try again.',
+        noBookings: 'No bookings for this day.',
+        bookingCreated: 'Booking created successfully!',
+        bookingCancelled: 'Booking cancelled successfully.',
+        confirmCancel: 'Are you sure you want to cancel this booking?',
+        cancelReason: 'Please provide a reason for cancellation:',
+        invalidTime: 'End time must be after start time.',
+        selectAudience: 'Please select at least one audience.',
+        selectUser: 'Please select at least one user.',
+        descriptionRequired: 'Description is required (15-300 characters).',
+        conflictWarning: 'Warning: Conflicts detected with existing bookings.'
+    };
+    for (var key in defaultStrings) {
+        if (!ffcAudience.strings[key]) {
+            ffcAudience.strings[key] = defaultStrings[key];
+        }
     }
 
     // Calendar state
