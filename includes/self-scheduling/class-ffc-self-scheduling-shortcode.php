@@ -419,6 +419,12 @@ class SelfSchedulingShortcode {
 
         <script type="text/javascript">
         jQuery(document).ready(function($) {
+            // Ensure ffcCalendar is defined
+            if (typeof ffcCalendar === 'undefined') {
+                console.error('ffcCalendar not defined');
+                return;
+            }
+
             var calendarId = <?php echo intval( $calendar['id'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- intval() is safe ?>;
             var workingDays = <?php echo wp_json_encode(!empty($calendar['working_hours']) && is_array($calendar['working_hours']) ? array_column($calendar['working_hours'], 'day') : []); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_json_encode() is safe for JS context ?>;
             var minDateHours = <?php echo intval( isset($calendar['advance_booking_min']) ? $calendar['advance_booking_min'] : 0 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- intval() is safe ?>; // hours

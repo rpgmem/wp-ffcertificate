@@ -16,6 +16,12 @@
      * @param {Object} options - Configuration options
      */
     window.FFCCalendarCore = function($container, options) {
+        // Validate container
+        if (!$container || !$container.length) {
+            console.error('FFCCalendarCore: Container element not found');
+            return;
+        }
+
         this.$container = $container;
 
         // Default options
