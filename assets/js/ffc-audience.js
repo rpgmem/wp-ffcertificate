@@ -8,6 +8,20 @@
 (function($) {
     'use strict';
 
+    // Ensure ffcAudience is defined with defaults
+    if (typeof ffcAudience === 'undefined') {
+        window.ffcAudience = {};
+    }
+    if (!ffcAudience.strings) {
+        ffcAudience.strings = {};
+    }
+    if (!ffcAudience.strings.months) {
+        ffcAudience.strings.months = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+    }
+
     // Calendar state
     var state = {
         currentDate: new Date(),
