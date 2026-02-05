@@ -551,18 +551,40 @@
         $('#booking-date').val(date);
         $('.ffc-booking-date-display').text(dateDisplay);
 
-        // Set environment
-        if (environmentId) {
-            $('#booking-environment-id').val(environmentId);
-            var envName = getEnvironmentName(environmentId);
-            $('.ffc-booking-environment-display').text(envName);
-        } else {
-            // Use selected environment
-            var selEnv = state.selectedEnvironment || (state.config.schedules[0]?.environments[0]?.id || 0);
-            $('#booking-environment-id').val(selEnv);
-            var envName2 = getEnvironmentName(selEnv);
-            $('.ffc-booking-environment-display').text(envName2);
+        // Populate environment select
+        var $envSelect = $('#booking-environment-id');
+        $envSelect.empty();
+
+        var schedules = state.config.schedules || [];
+        var allEnvironments = [];
+
+        // Get all environments from all schedules
+        for (var i = 0; i < schedules.length; i++) {
+            var envs = schedules[i].environments || [];
+            for (var j = 0; j < envs.length; j++) {
+                allEnvironments.push({
+                    id: envs[j].id,
+                    name: envs[j].name,
+                    scheduleName: schedules[i].name
+                });
+            }
         }
+
+        // Add options to select
+        if (allEnvironments.length > 1) {
+            // Group by schedule if there are multiple schedules
+            var hasMultipleSchedules = schedules.length > 1;
+            allEnvironments.forEach(function(env) {
+                var label = hasMultipleSchedules ? env.scheduleName + ' - ' + env.name : env.name;
+                $envSelect.append('<option value="' + env.id + '">' + label + '</option>');
+            });
+        } else if (allEnvironments.length === 1) {
+            $envSelect.append('<option value="' + allEnvironments[0].id + '">' + allEnvironments[0].name + '</option>');
+        }
+
+        // Set selected environment
+        var selectedEnv = environmentId || state.selectedEnvironment || (allEnvironments.length > 0 ? allEnvironments[0].id : 0);
+        $envSelect.val(selectedEnv);
 
         // Show audience select by default
         $('#booking-type').val('audience').trigger('change');

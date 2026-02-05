@@ -162,7 +162,6 @@ class AudienceShortcode {
                 </div>
                 <div class="ffc-modal-body">
                     <form id="ffc-booking-form">
-                        <input type="hidden" name="environment_id" id="booking-environment-id">
                         <input type="hidden" name="booking_date" id="booking-date">
 
                         <div class="ffc-form-group">
@@ -171,8 +170,10 @@ class AudienceShortcode {
                         </div>
 
                         <div class="ffc-form-group">
-                            <label><?php esc_html_e('Environment', 'wp-ffcertificate'); ?></label>
-                            <p class="ffc-booking-environment-display"></p>
+                            <label for="booking-environment-id"><?php esc_html_e('Environment', 'wp-ffcertificate'); ?> *</label>
+                            <select name="environment_id" id="booking-environment-id" required>
+                                <!-- Populated by JavaScript -->
+                            </select>
                         </div>
 
                         <div class="ffc-form-row">
