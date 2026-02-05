@@ -26,6 +26,7 @@
         loading: 'Loading...',
         error: 'An error occurred. Please try again.',
         noBookings: 'No bookings for this day.',
+        noActiveBookings: 'No active bookings for this day.',
         bookingCreated: 'Booking created successfully!',
         bookingCancelled: 'Booking cancelled successfully.',
         confirmCancel: 'Are you sure you want to cancel this booking?',
@@ -34,7 +35,10 @@
         selectAudience: 'Please select at least one audience.',
         selectUser: 'Please select at least one user.',
         descriptionRequired: 'Description is required (15-300 characters).',
-        conflictWarning: 'Warning: Conflicts detected with existing bookings.'
+        conflictWarning: 'Warning: Conflicts detected with existing bookings.',
+        holiday: 'Holiday',
+        closed: 'Closed',
+        cancelled: 'Cancelled'
     };
     for (var key in defaultStrings) {
         if (!ffcAudience.strings[key]) {
@@ -329,6 +333,13 @@
                         classes.push('ffc-holiday');
                     }
 
+                    // Check for closed weekdays
+                    var weekday = cellDate.getDay();
+                    var isClosed = state.closedWeekdays && state.closedWeekdays.indexOf(weekday) !== -1;
+                    if (isClosed && !isHoliday) {
+                        classes.push('ffc-closed');
+                    }
+
                     // Get booking count
                     var bookingCount = getBookingCount(dateStr);
 
@@ -337,7 +348,9 @@
                     html += '<div class="ffc-day-content">';
 
                     if (isHoliday) {
-                        html += '<span class="ffc-day-badge ffc-badge-holiday">' + ffcAudience.strings.holiday + '</span>';
+                        html += '<span class="ffc-day-badge ffc-badge-holiday">' + (typeof isHoliday === 'string' ? isHoliday : ffcAudience.strings.holiday) + '</span>';
+                    } else if (isClosed) {
+                        html += '<span class="ffc-day-badge ffc-badge-closed">' + ffcAudience.strings.closed + '</span>';
                     } else if (bookingCount > 0) {
                         html += '<span class="ffc-day-badge ffc-badge-bookings">' + bookingCount + ' ' + (bookingCount === 1 ? 'booking' : 'bookings') + '</span>';
                     }
@@ -381,6 +394,7 @@
             success: function(response) {
                 state.bookings = {};
                 state.holidays = {};
+                state.closedWeekdays = [];
 
                 if (response.bookings) {
                     response.bookings.forEach(function(booking) {
@@ -395,6 +409,10 @@
                     response.holidays.forEach(function(holiday) {
                         state.holidays[holiday.holiday_date] = holiday.description || true;
                     });
+                }
+
+                if (response.closed_weekdays) {
+                    state.closedWeekdays = response.closed_weekdays;
                 }
 
                 if (callback) callback();

@@ -304,7 +304,21 @@ class AudienceRestController {
         // Get holidays for the date range
         $holidays = array();
         if ($schedule_id) {
-            $holidays = AudienceEnvironmentRepository::get_holidays($schedule_id, $start_date, $end_date);
+            $holidays = AudienceEnvironmentRepository::get_holidays((int) $schedule_id, $start_date, $end_date);
+        }
+
+        // Get closed weekdays from environment working hours
+        $closed_weekdays = array();
+        if ($environment_id) {
+            $working_hours = AudienceEnvironmentRepository::get_working_hours((int) $environment_id);
+            if ($working_hours) {
+                $day_map = array('sun' => 0, 'mon' => 1, 'tue' => 2, 'wed' => 3, 'thu' => 4, 'fri' => 5, 'sat' => 6);
+                foreach ($working_hours as $day => $hours) {
+                    if (isset($hours['closed']) && $hours['closed']) {
+                        $closed_weekdays[] = $day_map[$day] ?? -1;
+                    }
+                }
+            }
         }
 
         return new \WP_REST_Response(array(
@@ -316,6 +330,7 @@ class AudienceRestController {
                     'description' => $h->description,
                 );
             }, $holidays),
+            'closed_weekdays' => $closed_weekdays,
         ), 200);
     }
 
