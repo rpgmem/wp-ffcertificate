@@ -575,26 +575,28 @@
         $('#ffc-check-conflicts-btn').prop('disabled', true).text(ffcAudience.strings.loading);
 
         $.ajax({
-            url: ffcAudience.ajaxUrl,
+            url: ffcAudience.restUrl + 'conflicts',
             method: 'POST',
-            data: {
-                action: 'ffc_audience_check_conflicts',
-                nonce: ffcAudience.nonce,
+            contentType: 'application/json',
+            data: JSON.stringify({
                 environment_id: data.environment_id,
                 booking_date: data.booking_date,
                 start_time: data.start_time,
                 end_time: data.end_time,
                 audience_ids: data.audience_ids,
                 user_ids: data.user_ids
+            }),
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader('X-WP-Nonce', ffcAudience.nonce);
             },
             success: function(response) {
                 $('#ffc-check-conflicts-btn').prop('disabled', false).text('Check Conflicts');
 
                 if (response.success) {
-                    var conflicts = response.data.conflicts || [];
+                    var conflicts = response.conflicts || {};
                     if (conflicts.bookings && conflicts.bookings.length > 0) {
                         $('#ffc-conflict-warning').show();
-                        var details = conflicts.affected_users.length + ' member(s) have overlapping bookings.';
+                        var details = (conflicts.affected_users ? conflicts.affected_users.length : 0) + ' member(s) have overlapping bookings.';
                         $('#ffc-conflict-details').text(details);
                     } else {
                         $('#ffc-conflict-warning').hide();
@@ -604,12 +606,13 @@
                     $('#ffc-check-conflicts-btn').hide();
                     $('#ffc-create-booking-btn').show();
                 } else {
-                    alert(response.data.message || ffcAudience.strings.error);
+                    alert(response.message || ffcAudience.strings.error);
                 }
             },
-            error: function() {
+            error: function(xhr) {
                 $('#ffc-check-conflicts-btn').prop('disabled', false).text('Check Conflicts');
-                alert(ffcAudience.strings.error);
+                var message = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : ffcAudience.strings.error;
+                alert(message);
             }
         });
     }
