@@ -70,6 +70,9 @@ class AudienceLoader {
 
         // Initialize REST API
         $this->init_api();
+
+        // Initialize notifications (email + ICS)
+        $this->init_notifications();
     }
 
     /**
@@ -138,6 +141,17 @@ class AudienceLoader {
      */
     private function init_api(): void {
         add_action('rest_api_init', array($this, 'register_rest_routes'));
+    }
+
+    /**
+     * Initialize notifications (email + ICS)
+     *
+     * @return void
+     */
+    private function init_notifications(): void {
+        if (class_exists('\FreeFormCertificate\Audience\AudienceNotificationHandler')) {
+            AudienceNotificationHandler::init();
+        }
     }
 
     /**
