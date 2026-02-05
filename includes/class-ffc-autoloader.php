@@ -103,7 +103,7 @@ class FFC_Autoloader {
                 $file_path = $this->base_dir . $dir . ($sub_dir ? '/' . strtolower($sub_dir) : '');
 
                 // Try multiple file naming conventions
-                $possible_files = $this->get_possible_filenames($class_name);
+                $possible_files = $this->get_possible_filenames($class_name, $namespace_path);
 
                 foreach ($possible_files as $filename) {
                     $full_path = $file_path . '/' . $filename;
@@ -123,9 +123,10 @@ class FFC_Autoloader {
      * Supports WordPress conventions: class-ffc-name.php and class-name.php
      *
      * @param string $class_name Class name
+     * @param string $namespace_path Namespace path for context-specific naming
      * @return array<string> Possible filenames
      */
-    private function get_possible_filenames(string $class_name): array {
+    private function get_possible_filenames(string $class_name, string $namespace_path = ''): array {
         $filenames = [];
 
         // Convert camelCase or PascalCase to kebab-case
@@ -133,6 +134,13 @@ class FFC_Autoloader {
 
         // WordPress style: class-ffc-name.php
         $filenames[] = "class-ffc-{$kebab}.php";
+
+        // For SelfScheduling namespace, also try with self-scheduling- prefix
+        // This handles files like class-ffc-self-scheduling-appointment-handler.php
+        // for classes like AppointmentHandler in the SelfScheduling namespace
+        if ($namespace_path === 'SelfScheduling') {
+            $filenames[] = "class-ffc-self-scheduling-{$kebab}.php";
+        }
 
         // Alternative: class-name.php (for repositories and some files)
         $filenames[] = "ffc-{$kebab}.php";
