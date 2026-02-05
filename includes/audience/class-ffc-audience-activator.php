@@ -49,6 +49,30 @@ class AudienceActivator {
         self::create_bookings_table();
         self::create_booking_audiences_table();
         self::create_booking_users_table();
+        self::register_capabilities();
+    }
+
+    /**
+     * Register audience booking capabilities
+     *
+     * Adds the ffc_view_audience_bookings capability to appropriate roles.
+     *
+     * @return void
+     */
+    public static function register_capabilities(): void {
+        // Get the ffc_user role
+        $ffc_user_role = get_role('ffc_user');
+        if ($ffc_user_role) {
+            $ffc_user_role->add_cap('ffc_view_audience_bookings');
+        }
+
+        // Also add to subscriber role
+        $subscriber_role = get_role('subscriber');
+        if ($subscriber_role) {
+            $subscriber_role->add_cap('ffc_view_audience_bookings');
+        }
+
+        // Administrator already has all caps via manage_options
     }
 
     /**

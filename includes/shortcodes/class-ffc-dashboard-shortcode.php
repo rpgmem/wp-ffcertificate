@@ -58,8 +58,13 @@ class DashboardShortcode {
             user_can($user, 'manage_options')
         );
 
+        $can_view_audience_bookings = $user && (
+            user_can($user, 'ffc_view_audience_bookings') ||
+            user_can($user, 'manage_options')
+        );
+
         // Get current tab - default to first available tab
-        $default_tab = $can_view_certificates ? 'certificates' : ($can_view_appointments ? 'appointments' : 'profile');
+        $default_tab = $can_view_certificates ? 'certificates' : ($can_view_appointments ? 'appointments' : ($can_view_audience_bookings ? 'audience' : 'profile'));
         $current_tab = isset($_GET['tab']) ? sanitize_text_field(wp_unslash($_GET['tab'])) : $default_tab; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Tab parameter for display only.
 
         // Start output buffering
@@ -90,6 +95,13 @@ class DashboardShortcode {
                     </button>
                 <?php endif; ?>
 
+                <?php if ($can_view_audience_bookings) : ?>
+                    <button class="ffc-tab <?php echo esc_attr( $current_tab === 'audience' ? 'active' : '' ); ?>"
+                            data-tab="audience">
+                        👥 <?php esc_html_e('My Scheduled Activities', 'wp-ffcertificate'); ?>
+                    </button>
+                <?php endif; ?>
+
                 <button class="ffc-tab <?php echo esc_attr( $current_tab === 'profile' ? 'active' : '' ); ?>"
                         data-tab="profile">
                     👤 <?php esc_html_e('My Profile', 'wp-ffcertificate'); ?>
@@ -110,6 +122,15 @@ class DashboardShortcode {
                      id="tab-appointments">
                     <div class="ffc-loading">
                         <?php esc_html_e('Loading appointments...', 'wp-ffcertificate'); ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($can_view_audience_bookings) : ?>
+                <div class="ffc-tab-content <?php echo esc_attr( $current_tab === 'audience' ? 'active' : '' ); ?>"
+                     id="tab-audience">
+                    <div class="ffc-loading">
+                        <?php esc_html_e('Loading scheduled activities...', 'wp-ffcertificate'); ?>
                     </div>
                 </div>
             <?php endif; ?>
@@ -267,6 +288,11 @@ class DashboardShortcode {
             user_can($user, 'manage_options')
         );
 
+        $can_view_audience_bookings = $user && (
+            user_can($user, 'ffc_view_audience_bookings') ||
+            user_can($user, 'manage_options')
+        );
+
         // Enqueue CSS
         wp_enqueue_style( 'ffc-dashboard', FFC_PLUGIN_URL . 'assets/css/ffc-user-dashboard.css', array(), FFC_VERSION );
 
@@ -282,11 +308,13 @@ class DashboardShortcode {
             'isAdminViewing' => $view_as_user_id && $view_as_user_id !== get_current_user_id(),
             'canViewCertificates' => $can_view_certificates,
             'canViewAppointments' => $can_view_appointments,
+            'canViewAudienceBookings' => $can_view_audience_bookings,
             'strings' => array(
                 'loading' => __('Loading...', 'wp-ffcertificate'),
                 'error' => __('Error loading data', 'wp-ffcertificate'),
                 'noCertificates' => __('No certificates found', 'wp-ffcertificate'),
                 'noAppointments' => __('No appointments found', 'wp-ffcertificate'),
+                'noAudienceBookings' => __('No scheduled activities found', 'wp-ffcertificate'),
                 'downloadPdf' => __('View PDF', 'wp-ffcertificate'),
                 'yes' => __('Yes', 'wp-ffcertificate'),
                 'no' => __('No', 'wp-ffcertificate'),
@@ -314,6 +342,12 @@ class DashboardShortcode {
                 'cancelSuccess' => __('Appointment cancelled successfully', 'wp-ffcertificate'),
                 'cancelError' => __('Error cancelling appointment', 'wp-ffcertificate'),
                 'noPermission' => __('You do not have permission to view this content.', 'wp-ffcertificate'),
+                // Audience bookings
+                'environment' => __('Environment', 'wp-ffcertificate'),
+                'description' => __('Description', 'wp-ffcertificate'),
+                'audiences' => __('Audiences', 'wp-ffcertificate'),
+                'upcoming' => __('Upcoming', 'wp-ffcertificate'),
+                'past' => __('Past', 'wp-ffcertificate'),
             ),
         ));
     }

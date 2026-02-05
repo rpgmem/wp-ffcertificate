@@ -296,6 +296,61 @@
     background: #c82333;
 }
 
+/* Audience Bookings Table */
+.ffc-audience-bookings-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+.ffc-audience-bookings-table th {
+    background: #f5f5f5;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid #e0e0e0;
+    font-size: 13px;
+}
+
+.ffc-audience-bookings-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e0e0e0;
+    vertical-align: middle;
+    font-size: 14px;
+}
+
+.ffc-audience-bookings-table tr:hover {
+    background: #f9f9f9;
+}
+
+.ffc-audience-bookings-table.past-bookings {
+    opacity: 0.8;
+}
+
+.ffc-audience-bookings-table.past-bookings td {
+    color: #666;
+}
+
+.ffc-audience-bookings-table .past-row {
+    background: #f9f9f9;
+}
+
+.ffc-audience-bookings-table .ffc-audience-tag {
+    display: inline-block;
+    margin: 2px 4px 2px 0;
+}
+
+#tab-audience h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #333;
+    font-size: 16px;
+    font-weight: 600;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 8px;
+}
+
 /* Profile Section */
 .ffc-profile-info {
     background: #f9f9f9;

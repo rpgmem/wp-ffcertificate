@@ -33,6 +33,8 @@
                 this.loadCertificates();
             } else if (activeTab === 'appointments') {
                 this.loadAppointments();
+            } else if (activeTab === 'audience') {
+                this.loadAudienceBookings();
             } else if (activeTab === 'profile') {
                 this.loadProfile();
             }
@@ -66,6 +68,8 @@
                 this.loadCertificates();
             } else if (tab === 'appointments') {
                 this.loadAppointments();
+            } else if (tab === 'audience') {
+                this.loadAudienceBookings();
             } else if (tab === 'profile') {
                 this.loadProfile();
             }
@@ -278,6 +282,132 @@
                 const appointmentId = $(this).data('id');
                 FFCDashboard.cancelAppointment(appointmentId);
             });
+        },
+
+        /**
+         * Load audience bookings via API
+         */
+        loadAudienceBookings: function() {
+            const $container = $('#tab-audience');
+
+            // Check if container exists (permission check)
+            if ($container.length === 0) {
+                return; // User doesn't have permission
+            }
+
+            // Check if user has permission
+            if (typeof ffcDashboard.canViewAudienceBookings !== 'undefined' && !ffcDashboard.canViewAudienceBookings) {
+                $container.html('<div class="ffc-error">' + ffcDashboard.strings.noPermission + '</div>');
+                return;
+            }
+
+            // Check if already loaded
+            if ($container.find('.ffc-audience-bookings-table').length > 0) {
+                return; // Already loaded
+            }
+
+            $container.html('<div class="ffc-loading">' + ffcDashboard.strings.loading + '</div>');
+
+            // Build URL with viewAsUserId if in admin mode
+            let url = ffcDashboard.restUrl + 'user/audience-bookings';
+            if (ffcDashboard.viewAsUserId) {
+                url += '?viewAsUserId=' + ffcDashboard.viewAsUserId;
+            }
+
+            $.ajax({
+                url: url,
+                method: 'GET',
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('X-WP-Nonce', ffcDashboard.nonce);
+                },
+                success: function(response) {
+                    FFCDashboard.renderAudienceBookings(response.bookings);
+                },
+                error: function(xhr) {
+                    $container.html('<div class="ffc-error">' + ffcDashboard.strings.error + '</div>');
+                }
+            });
+        },
+
+        /**
+         * Render audience bookings table
+         */
+        renderAudienceBookings: function(bookings) {
+            const $container = $('#tab-audience');
+
+            if (!bookings || bookings.length === 0) {
+                $container.html(
+                    '<div class="ffc-empty-state">' +
+                    '<p>👥</p>' +
+                    '<p>' + ffcDashboard.strings.noAudienceBookings + '</p>' +
+                    '</div>'
+                );
+                return;
+            }
+
+            // Separate upcoming and past bookings
+            const upcoming = bookings.filter(b => !b.is_past);
+            const past = bookings.filter(b => b.is_past);
+
+            let html = '';
+
+            // Upcoming bookings
+            if (upcoming.length > 0) {
+                html += '<h3>' + (ffcDashboard.strings.upcoming || 'Upcoming') + '</h3>';
+                html += FFCDashboard.buildAudienceBookingsTable(upcoming);
+            }
+
+            // Past bookings
+            if (past.length > 0) {
+                html += '<h3 style="margin-top: 30px;">' + (ffcDashboard.strings.past || 'Past') + '</h3>';
+                html += FFCDashboard.buildAudienceBookingsTable(past, true);
+            }
+
+            $container.html(html);
+        },
+
+        /**
+         * Build audience bookings table HTML
+         */
+        buildAudienceBookingsTable: function(bookings, isPast) {
+            let html = '<table class="ffc-audience-bookings-table' + (isPast ? ' past-bookings' : '') + '">';
+            html += '<thead>';
+            html += '<tr>';
+            html += '<th>' + (ffcDashboard.strings.environment || 'Environment') + '</th>';
+            html += '<th>' + (ffcDashboard.strings.date || 'Date') + '</th>';
+            html += '<th>' + (ffcDashboard.strings.time || 'Time') + '</th>';
+            html += '<th>' + (ffcDashboard.strings.description || 'Description') + '</th>';
+            html += '<th>' + (ffcDashboard.strings.audiences || 'Audiences') + '</th>';
+            html += '</tr>';
+            html += '</thead>';
+            html += '<tbody>';
+
+            bookings.forEach(function(booking) {
+                html += '<tr' + (isPast ? ' class="past-row"' : '') + '>';
+                html += '<td>' + booking.environment_name;
+                if (booking.schedule_name) {
+                    html += '<br><small style="color: #666;">' + booking.schedule_name + '</small>';
+                }
+                html += '</td>';
+                html += '<td>' + booking.booking_date + '</td>';
+                html += '<td>' + booking.start_time + ' - ' + booking.end_time + '</td>';
+                html += '<td>' + booking.description + '</td>';
+                html += '<td>';
+                if (booking.audiences && booking.audiences.length > 0) {
+                    booking.audiences.forEach(function(audience) {
+                        html += '<span class="ffc-audience-tag" style="background-color: ' + audience.color + '; color: #fff; padding: 2px 8px; border-radius: 3px; margin-right: 5px; font-size: 12px;">';
+                        html += audience.name;
+                        html += '</span>';
+                    });
+                }
+                html += '</td>';
+                html += '</tr>';
+            });
+
+            html += '</tbody>';
+            html += '</table>';
+
+            return html;
         },
 
         /**

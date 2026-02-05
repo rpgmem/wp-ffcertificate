@@ -283,6 +283,13 @@ class RestController {
                 ),
             ),
         ));
+
+        // GET /user/audience-bookings - Get bookings where current user is affected (v4.5.0)
+        register_rest_route($this->namespace, '/user/audience-bookings', array(
+            'methods' => \WP_REST_Server::READABLE,
+            'callback' => array($this, 'get_user_audience_bookings'),
+            'permission_callback' => 'is_user_logged_in',
+        ));
     }
     
     /**
@@ -1703,6 +1710,166 @@ class RestController {
         }
 
         return (int) $appointment['user_id'] === get_current_user_id();
+    }
+
+    /**
+     * GET /user/audience-bookings
+     * Get bookings where current user is affected (member of an audience or individually selected)
+     *
+     * @since 4.5.0
+     * @param \WP_REST_Request $request
+     * @return \WP_REST_Response|\WP_Error
+     */
+    public function get_user_audience_bookings($request) {
+        try {
+            $user_id = get_current_user_id();
+
+            if (!$user_id) {
+                return new \WP_Error(
+                    'not_logged_in',
+                    __('You must be logged in to view bookings', 'wp-ffcertificate'),
+                    array('status' => 401)
+                );
+            }
+
+            // Check for admin view-as mode
+            $view_as_user_id = $request->get_param('viewAsUserId');
+            if ($view_as_user_id && current_user_can('manage_options')) {
+                $user_id = absint($view_as_user_id);
+            }
+
+            // Check capability (admin always has access)
+            if (!current_user_can('manage_options') && !current_user_can('ffc_view_audience_bookings')) {
+                return new \WP_Error(
+                    'capability_denied',
+                    __('You do not have permission to view audience bookings', 'wp-ffcertificate'),
+                    array('status' => 403)
+                );
+            }
+
+            global $wpdb;
+
+            // Get date format from settings
+            $settings = get_option('ffc_settings', array());
+            $date_format = $settings['date_format'] ?? 'F j, Y';
+
+            // Get bookings where user is affected (via booking_users table)
+            $bookings_table = $wpdb->prefix . 'ffc_audience_bookings';
+            $users_table = $wpdb->prefix . 'ffc_audience_booking_users';
+            $audiences_table = $wpdb->prefix . 'ffc_audience_booking_audiences';
+            $audience_names_table = $wpdb->prefix . 'ffc_audience_audiences';
+            $environments_table = $wpdb->prefix . 'ffc_audience_environments';
+            $schedules_table = $wpdb->prefix . 'ffc_audience_schedules';
+
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+            $bookings = $wpdb->get_results($wpdb->prepare(
+                "SELECT DISTINCT b.*, e.name as environment_name, s.name as schedule_name
+                 FROM {$bookings_table} b
+                 INNER JOIN {$users_table} bu ON b.id = bu.booking_id
+                 LEFT JOIN {$environments_table} e ON b.environment_id = e.id
+                 LEFT JOIN {$schedules_table} s ON e.schedule_id = s.id
+                 WHERE bu.user_id = %d
+                 AND b.status != 'cancelled'
+                 ORDER BY b.booking_date DESC, b.start_time DESC",
+                $user_id
+            ), ARRAY_A);
+
+            // Ensure bookings is an array
+            if (!is_array($bookings)) {
+                $bookings = array();
+            }
+
+            // Format response
+            $bookings_formatted = array();
+
+            foreach ($bookings as $booking) {
+                // Get audiences for this booking
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+                $audiences = $wpdb->get_results($wpdb->prepare(
+                    "SELECT a.name, a.color
+                     FROM {$audiences_table} ba
+                     INNER JOIN {$audience_names_table} a ON ba.audience_id = a.id
+                     WHERE ba.booking_id = %d",
+                    $booking['id']
+                ), ARRAY_A);
+
+                // Format date
+                $date_formatted = '';
+                if (!empty($booking['booking_date'])) {
+                    $timestamp = strtotime($booking['booking_date']);
+                    $date_formatted = ($timestamp !== false) ? date_i18n($date_format, $timestamp) : $booking['booking_date'];
+                }
+
+                // Format time
+                $time_formatted = '';
+                if (!empty($booking['start_time'])) {
+                    $time_timestamp = strtotime($booking['start_time']);
+                    $time_formatted = ($time_timestamp !== false) ? date_i18n('H:i', $time_timestamp) : $booking['start_time'];
+                }
+
+                // Format end time
+                $end_time_formatted = '';
+                if (!empty($booking['end_time'])) {
+                    $end_timestamp = strtotime($booking['end_time']);
+                    $end_time_formatted = ($end_timestamp !== false) ? date_i18n('H:i', $end_timestamp) : '';
+                }
+
+                // Status badge
+                $status_labels = array(
+                    'active' => __('Confirmed', 'wp-ffcertificate'),
+                    'cancelled' => __('Cancelled', 'wp-ffcertificate'),
+                );
+
+                $status = $booking['status'] ?? 'active';
+
+                // Determine if booking is upcoming or past
+                $is_past = strtotime($booking['booking_date']) < strtotime('today');
+
+                $bookings_formatted[] = array(
+                    'id' => (int) $booking['id'],
+                    'environment_id' => (int) ($booking['environment_id'] ?? 0),
+                    'environment_name' => $booking['environment_name'] ?? __('Unknown', 'wp-ffcertificate'),
+                    'schedule_name' => $booking['schedule_name'] ?? '',
+                    'booking_date' => $date_formatted,
+                    'booking_date_raw' => $booking['booking_date'] ?? '',
+                    'start_time' => $time_formatted,
+                    'end_time' => $end_time_formatted,
+                    'description' => $booking['description'] ?? '',
+                    'status' => $status,
+                    'status_label' => $status_labels[$status] ?? $status,
+                    'is_past' => $is_past,
+                    'audiences' => array_map(function($a) {
+                        return array(
+                            'name' => $a['name'],
+                            'color' => $a['color'] ?? '#2271b1',
+                        );
+                    }, $audiences ?: array()),
+                );
+            }
+
+            return rest_ensure_response(array(
+                'bookings' => $bookings_formatted,
+                'total' => count($bookings_formatted),
+            ));
+
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            if (class_exists('\FreeFormCertificate\Core\Utils')) {
+                \FreeFormCertificate\Core\Utils::debug_log('get_user_audience_bookings error', array(
+                    'message' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'trace' => $e->getTraceAsString()
+                ));
+            }
+
+            return new \WP_Error(
+                'get_audience_bookings_error',
+                /* translators: %s: error message */
+                sprintf(__('Error loading audience bookings: %s', 'wp-ffcertificate'), $e->getMessage()),
+                array('status' => 500)
+            );
+        }
     }
 
     /**
