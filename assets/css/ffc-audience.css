@@ -3,33 +3,18 @@
  *
  * @since 4.5.0
  * @package FreeFormCertificate\Audience
+ *
+ * Uses shared CSS variables from ffc-common.css
  */
-
-/* Variables */
-:root {
-    --ffc-primary: #2271b1;
-    --ffc-primary-hover: #135e96;
-    --ffc-success: #00a32a;
-    --ffc-warning: #dba617;
-    --ffc-danger: #d63638;
-    --ffc-gray-100: #f6f7f7;
-    --ffc-gray-200: #e7e8ea;
-    --ffc-gray-300: #c3c4c7;
-    --ffc-gray-400: #8c8f94;
-    --ffc-gray-600: #50575e;
-    --ffc-gray-800: #1d2327;
-    --ffc-border-radius: 4px;
-    --ffc-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
 
 /* Calendar Container */
 .ffc-audience-calendar {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    font-family: var(--ffc-font-family);
     max-width: 1000px;
     margin: 0 auto;
     background: #fff;
     border: 1px solid var(--ffc-gray-200);
-    border-radius: var(--ffc-border-radius);
+    border-radius: var(--ffc-radius-sm);
     overflow: hidden;
 }
 
@@ -62,7 +47,7 @@
 .ffc-nav-btn {
     background: #fff;
     border: 1px solid var(--ffc-gray-300);
-    border-radius: var(--ffc-border-radius);
+    border-radius: var(--ffc-radius-sm);
     padding: 8px 12px;
     cursor: pointer;
     font-size: 16px;
@@ -88,7 +73,7 @@
 .ffc-calendar-filters select {
     padding: 8px 12px;
     border: 1px solid var(--ffc-gray-300);
-    border-radius: var(--ffc-border-radius);
+    border-radius: var(--ffc-radius-sm);
     font-size: 14px;
     background: #fff;
     min-width: 150px;
@@ -125,7 +110,7 @@
 .ffc-day {
     min-height: 80px;
     border: 1px solid var(--ffc-gray-200);
-    border-radius: var(--ffc-border-radius);
+    border-radius: var(--ffc-radius-sm);
     padding: 5px;
     background: #fff;
     cursor: pointer;
@@ -135,7 +120,7 @@
 
 .ffc-day:hover {
     border-color: var(--ffc-primary);
-    box-shadow: var(--ffc-shadow);
+    box-shadow: var(--ffc-shadow-sm);
 }
 
 .ffc-day.ffc-other-month {
@@ -259,7 +244,7 @@
 /* Notice Messages */
 .ffc-audience-notice {
     padding: 20px;
-    border-radius: var(--ffc-border-radius);
+    border-radius: var(--ffc-radius-sm);
     margin: 20px 0;
     text-align: center;
 }
@@ -279,7 +264,7 @@
     display: inline-block;
     padding: 10px 20px;
     border: none;
-    border-radius: var(--ffc-border-radius);
+    border-radius: var(--ffc-radius-sm);
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
@@ -353,7 +338,7 @@
 .ffc-modal-content {
     position: relative;
     background: #fff;
-    border-radius: var(--ffc-border-radius);
+    border-radius: var(--ffc-radius-sm);
     box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
     max-width: 500px;
     width: 90%;
@@ -422,7 +407,7 @@
     width: 100%;
     padding: 10px;
     border: 1px solid var(--ffc-gray-300);
-    border-radius: var(--ffc-border-radius);
+    border-radius: var(--ffc-radius-sm);
     font-size: 14px;
 }
 
@@ -452,7 +437,7 @@
     max-height: 150px;
     overflow-y: auto;
     border: 1px solid var(--ffc-gray-200);
-    border-radius: var(--ffc-border-radius);
+    border-radius: var(--ffc-radius-sm);
     display: none;
     margin-top: 5px;
 }
@@ -508,7 +493,7 @@
 .ffc-conflict-warning {
     background: #fff8e5;
     border: 1px solid var(--ffc-warning);
-    border-radius: var(--ffc-border-radius);
+    border-radius: var(--ffc-radius-sm);
     padding: 15px;
     margin-top: 15px;
 }
@@ -538,7 +523,7 @@
 
 .ffc-booking-item {
     border: 1px solid var(--ffc-gray-200);
-    border-radius: var(--ffc-border-radius);
+    border-radius: var(--ffc-radius-sm);
     padding: 15px;
     margin-bottom: 10px;
     background: var(--ffc-gray-100);
