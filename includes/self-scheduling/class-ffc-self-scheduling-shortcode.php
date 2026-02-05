@@ -471,13 +471,11 @@ class SelfSchedulingShortcode {
             function fetchBookingCounts(year, month, callback) {
                 var monthKey = year + '-' + month;
 
-                // Prevent duplicate fetches
+                // Prevent duplicate fetches - DON'T call callback to avoid infinite loop
                 if (isFetching) {
-                    if (callback) callback();
                     return;
                 }
                 if (lastFetchedMonth === monthKey) {
-                    if (callback) callback();
                     return;
                 }
 
