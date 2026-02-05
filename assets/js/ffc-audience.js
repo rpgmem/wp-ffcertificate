@@ -439,7 +439,7 @@
      */
     function openDayModal(date) {
         var $modal = $('#ffc-day-modal');
-        var dateObj = new Date(date);
+        var dateObj = parseDate(date);
         var dateDisplay = dateObj.toLocaleDateString(ffcAudience.locale, {
             weekday: 'long',
             year: 'numeric',
@@ -533,7 +533,7 @@
      */
     function openBookingModal(date, environmentId) {
         var $modal = $('#ffc-booking-modal');
-        var dateObj = new Date(date);
+        var dateObj = parseDate(date);
         var dateDisplay = dateObj.toLocaleDateString(ffcAudience.locale, {
             weekday: 'long',
             year: 'numeric',
@@ -861,6 +861,15 @@
      */
     function formatDate(date) {
         return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate());
+    }
+
+    /**
+     * Parse date string (YYYY-MM-DD) to Date object in local timezone
+     * This avoids timezone issues when using new Date(string) which interprets as UTC
+     */
+    function parseDate(dateStr) {
+        var parts = dateStr.split('-');
+        return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
     }
 
     /**
