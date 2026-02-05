@@ -490,8 +490,10 @@ class SelfSchedulingShortcode {
                         month: month
                     },
                     success: function(response) {
-                        if (response.success && response.data.counts) {
-                            bookingCounts = response.data.counts;
+                        if (response.success) {
+                            if (response.data.counts) {
+                                bookingCounts = response.data.counts;
+                            }
                         }
                         lastFetchedMonth = monthKey;
                         isFetching = false;
@@ -523,11 +525,17 @@ class SelfSchedulingShortcode {
                     var weekday = date.getDay();
 
                     // Check if date is within booking window
-                    var isWithinWindow = date >= minDate && date <= maxDate;
+                    var isAfterMin = date >= minDate;
+                    var isBeforeMax = date <= maxDate;
+                    var isWorkingDay = workingDays.indexOf(weekday) !== -1;
 
                     // Mark working days as available (only if within booking window)
-                    if (workingDays.indexOf(weekday) !== -1 && isWithinWindow) {
-                        classes.push('ffc-available');
+                    if (isWorkingDay) {
+                        if (isAfterMin) {
+                            if (isBeforeMax) {
+                                classes.push('ffc-available');
+                            }
+                        }
                     }
 
                     return classes;
