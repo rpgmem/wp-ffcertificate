@@ -392,6 +392,27 @@ class AudienceAdminPage {
             <input type="hidden" name="ffc_action" value="save_schedule">
 
             <table class="form-table">
+                <?php if ($id > 0) : ?>
+                <tr>
+                    <th scope="row">
+                        <label><?php esc_html_e('Calendar ID', 'wp-ffcertificate'); ?></label>
+                    </th>
+                    <td>
+                        <code><?php echo esc_html($id); ?></code>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        <label><?php esc_html_e('Shortcode', 'wp-ffcertificate'); ?></label>
+                    </th>
+                    <td>
+                        <code>[ffc_audience_calendar schedule_id="<?php echo esc_attr($id); ?>"]</code>
+                        <p class="description">
+                            <?php esc_html_e('Use this shortcode to display the calendar on any page or post.', 'wp-ffcertificate'); ?>
+                        </p>
+                    </td>
+                </tr>
+                <?php endif; ?>
                 <tr>
                     <th scope="row">
                         <label for="schedule_name"><?php esc_html_e('Name', 'wp-ffcertificate'); ?> <span class="required">*</span></label>
