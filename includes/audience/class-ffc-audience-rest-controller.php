@@ -513,12 +513,20 @@ class AudienceRestController {
      * @return \WP_REST_Response
      */
     public function check_conflicts(\WP_REST_Request $request): \WP_REST_Response {
-        $environment_id = $request->get_param('environment_id');
-        $booking_date = $request->get_param('booking_date');
-        $start_time = $request->get_param('start_time');
-        $end_time = $request->get_param('end_time');
-        $audience_ids = $request->get_param('audience_ids') ?: array();
-        $user_ids = $request->get_param('user_ids') ?: array();
+        $environment_id = (int) $request->get_param('environment_id');
+        $booking_date = sanitize_text_field($request->get_param('booking_date'));
+        $start_time = sanitize_text_field($request->get_param('start_time'));
+        $end_time = sanitize_text_field($request->get_param('end_time'));
+        $audience_ids = array_map('intval', (array) ($request->get_param('audience_ids') ?: array()));
+        $user_ids = array_map('intval', (array) ($request->get_param('user_ids') ?: array()));
+
+        // Validate required parameters
+        if (!$environment_id || !$booking_date || !$start_time || !$end_time) {
+            return new \WP_REST_Response(array(
+                'success' => false,
+                'message' => __('Missing required parameters.', 'wp-ffcertificate'),
+            ), 400);
+        }
 
         // Check environment time slot conflicts
         $env_conflicts = AudienceBookingRepository::get_conflicts($environment_id, $booking_date, $start_time, $end_time);
