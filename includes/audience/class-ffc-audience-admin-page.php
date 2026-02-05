@@ -845,7 +845,7 @@ class AudienceAdminPage {
      * @return void
      */
     private function render_audience_row(object $audience, int $level): void {
-        $member_count = AudienceRepository::get_member_count($audience->id);
+        $member_count = AudienceRepository::get_member_count((int) $audience->id);
         $edit_url = admin_url('admin.php?page=' . self::MENU_SLUG . '-audiences&action=edit&id=' . $audience->id);
         $members_url = admin_url('admin.php?page=' . self::MENU_SLUG . '-audiences&action=members&id=' . $audience->id);
         $delete_url = wp_nonce_url(
@@ -984,7 +984,7 @@ class AudienceAdminPage {
             wp_die(__('Audience not found.', 'wp-ffcertificate'));
         }
 
-        $members = AudienceRepository::get_members($audience->id);
+        $members = AudienceRepository::get_members((int) $audience->id);
         $back_url = admin_url('admin.php?page=' . self::MENU_SLUG . '-audiences');
 
         ?>

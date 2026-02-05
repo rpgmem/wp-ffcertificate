@@ -277,7 +277,7 @@ class AudienceRestController {
 
         // Transform bookings for response
         $bookings_data = array_map(function($booking) use ($user_id, $is_admin) {
-            $audiences = AudienceBookingRepository::get_booking_audiences($booking->id);
+            $audiences = AudienceBookingRepository::get_booking_audiences((int) $booking->id);
 
             return array(
                 'id' => $booking->id,
@@ -346,7 +346,7 @@ class AudienceRestController {
 
         // Check user permission on this schedule
         $user_id = get_current_user_id();
-        if (!current_user_can('manage_options') && !AudienceScheduleRepository::user_can_book($environment->schedule_id, $user_id)) {
+        if (!current_user_can('manage_options') && !AudienceScheduleRepository::user_can_book((int) $environment->schedule_id, $user_id)) {
             return new \WP_REST_Response(array(
                 'success' => false,
                 'message' => __('You do not have permission to book on this calendar.', 'wp-ffcertificate'),

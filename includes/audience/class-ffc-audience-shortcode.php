@@ -360,7 +360,7 @@ class AudienceShortcode {
         }
 
         foreach ($schedules as $schedule) {
-            if (AudienceScheduleRepository::user_can_book($schedule->id, $user_id)) {
+            if (AudienceScheduleRepository::user_can_book((int) $schedule->id, $user_id)) {
                 return true;
             }
         }

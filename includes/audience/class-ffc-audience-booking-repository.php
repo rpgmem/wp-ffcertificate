@@ -653,7 +653,7 @@ class AudienceBookingRepository {
         // Get users from audiences
         $audiences = self::get_booking_audiences($booking_id);
         foreach ($audiences as $audience) {
-            $audience_users = AudienceRepository::get_members($audience->id, true);
+            $audience_users = AudienceRepository::get_members((int) $audience->id, true);
             $users = array_merge($users, $audience_users);
         }
 
