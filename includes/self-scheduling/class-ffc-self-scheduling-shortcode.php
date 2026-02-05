@@ -53,24 +53,35 @@ class SelfSchedulingShortcode {
             return;
         }
 
-        // Enqueue jQuery UI Datepicker
-        wp_enqueue_script('jquery-ui-datepicker');
-        // phpcs:ignore PluginCheck.CodeAnalysis.EnqueuedResourceOffloading.OffloadedContent -- jQuery UI CSS from official CDN, standard practice.
-        wp_enqueue_style('jquery-ui-theme', '//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css', array(), '1.12.1');
-
-        // Enqueue FFC common styles (includes honeypot, captcha, etc.)
+        // Enqueue FFC common styles (includes CSS variables, honeypot, captcha, etc.)
         wp_enqueue_style(
-            'ffc-frontend',
-            FFC_PLUGIN_URL . 'assets/css/ffc-frontend.css',
+            'ffc-common',
+            FFC_PLUGIN_URL . 'assets/css/ffc-common.css',
             array(),
             FFC_VERSION
         );
 
-        // Enqueue calendar frontend styles
+        // Enqueue FFC frontend styles
+        wp_enqueue_style(
+            'ffc-frontend',
+            FFC_PLUGIN_URL . 'assets/css/ffc-frontend.css',
+            array('ffc-common'),
+            FFC_VERSION
+        );
+
+        // Enqueue shared calendar styles (same as ffc-audience)
+        wp_enqueue_style(
+            'ffc-audience',
+            FFC_PLUGIN_URL . 'assets/css/ffc-audience.css',
+            array('ffc-common'),
+            FFC_VERSION
+        );
+
+        // Enqueue calendar frontend styles (timeslots, form, confirmation)
         wp_enqueue_style(
             'ffc-calendar-frontend',
             FFC_PLUGIN_URL . 'assets/css/calendar-frontend.css',
-            array('ffc-frontend'),
+            array('ffc-audience'),
             FFC_VERSION
         );
 
@@ -83,11 +94,20 @@ class SelfSchedulingShortcode {
             true
         );
 
+        // Enqueue shared calendar core component
+        wp_enqueue_script(
+            'ffc-calendar-core',
+            FFC_PLUGIN_URL . 'assets/js/ffc-calendar-core.js',
+            array('jquery'),
+            FFC_VERSION,
+            true
+        );
+
         // Enqueue calendar frontend scripts
         wp_enqueue_script(
             'ffc-calendar-frontend',
             FFC_PLUGIN_URL . 'assets/js/calendar-frontend.js',
-            array('jquery', 'jquery-ui-datepicker', 'ffc-frontend-helpers'),
+            array('jquery', 'ffc-calendar-core', 'ffc-frontend-helpers'),
             FFC_VERSION,
             true
         );
@@ -105,6 +125,34 @@ class SelfSchedulingShortcode {
                 'noSlots' => __('No available slots for this date', 'wp-ffcertificate'),
                 'success' => __('Appointment booked successfully!', 'wp-ffcertificate'),
                 'error' => __('An error occurred. Please try again.', 'wp-ffcertificate'),
+                // Calendar strings
+                'months' => array(
+                    __('January', 'wp-ffcertificate'),
+                    __('February', 'wp-ffcertificate'),
+                    __('March', 'wp-ffcertificate'),
+                    __('April', 'wp-ffcertificate'),
+                    __('May', 'wp-ffcertificate'),
+                    __('June', 'wp-ffcertificate'),
+                    __('July', 'wp-ffcertificate'),
+                    __('August', 'wp-ffcertificate'),
+                    __('September', 'wp-ffcertificate'),
+                    __('October', 'wp-ffcertificate'),
+                    __('November', 'wp-ffcertificate'),
+                    __('December', 'wp-ffcertificate'),
+                ),
+                'weekdays' => array(
+                    __('Sun', 'wp-ffcertificate'),
+                    __('Mon', 'wp-ffcertificate'),
+                    __('Tue', 'wp-ffcertificate'),
+                    __('Wed', 'wp-ffcertificate'),
+                    __('Thu', 'wp-ffcertificate'),
+                    __('Fri', 'wp-ffcertificate'),
+                    __('Sat', 'wp-ffcertificate'),
+                ),
+                'today' => __('Today', 'wp-ffcertificate'),
+                'holiday' => __('Holiday', 'wp-ffcertificate'),
+                'closed' => __('Closed', 'wp-ffcertificate'),
+                'available' => __('Available', 'wp-ffcertificate'),
                 // Confirmation screen
                 'date' => __('Date', 'wp-ffcertificate'),
                 'time' => __('Time', 'wp-ffcertificate'),
@@ -202,8 +250,14 @@ class SelfSchedulingShortcode {
         $user = wp_get_current_user();
         $is_logged_in = is_user_logged_in();
 
+        // Calculate disabled weekdays (non-working days)
+        $working_days = !empty($calendar['working_hours']) && is_array($calendar['working_hours'])
+            ? array_column($calendar['working_hours'], 'day')
+            : array();
+        $disabled_days = array_diff(array(0, 1, 2, 3, 4, 5, 6), $working_days);
+
         ?>
-        <div class="ffc-calendar-wrapper" data-calendar-id="<?php echo esc_attr($calendar['id']); ?>">
+        <div class="ffc-audience-calendar ffc-calendar-wrapper" data-calendar-id="<?php echo esc_attr($calendar['id']); ?>">
 
             <?php if (!empty($calendar['description'])): ?>
                 <div class="ffc-calendar-description">
@@ -211,12 +265,9 @@ class SelfSchedulingShortcode {
                 </div>
             <?php endif; ?>
 
-            <!-- Date Picker -->
-            <div class="ffc-calendar-datepicker-wrapper">
-                <h3><?php esc_html_e('Select a Date', 'wp-ffcertificate'); ?></h3>
-                <div id="ffc-datepicker-<?php echo esc_attr( $calendar['id'] ); ?>" class="ffc-datepicker"></div>
-                <input type="hidden" id="ffc-selected-date" name="selected_date" value="">
-            </div>
+            <!-- Calendar Grid (using shared component) -->
+            <div id="ffc-calendar-container-<?php echo esc_attr($calendar['id']); ?>" class="ffc-calendar-container"></div>
+            <input type="hidden" id="ffc-selected-date" name="selected_date" value="">
 
             <!-- Time Slots -->
             <div class="ffc-timeslots-wrapper" style="display: none;">
@@ -367,25 +418,59 @@ class SelfSchedulingShortcode {
         jQuery(document).ready(function($) {
             var calendarId = <?php echo intval( $calendar['id'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- intval() is safe ?>;
             var workingDays = <?php echo wp_json_encode(!empty($calendar['working_hours']) && is_array($calendar['working_hours']) ? array_column($calendar['working_hours'], 'day') : []); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_json_encode() is safe for JS context ?>;
-            var minDate = <?php echo intval( isset($calendar['advance_booking_min']) ? $calendar['advance_booking_min'] : 0 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- intval() is safe ?>; // hours
-            var maxDate = <?php echo intval( isset($calendar['advance_booking_max']) ? $calendar['advance_booking_max'] : 30 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- intval() is safe ?>; // days
+            var minDateHours = <?php echo intval( isset($calendar['advance_booking_min']) ? $calendar['advance_booking_min'] : 0 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- intval() is safe ?>; // hours
+            var maxDateDays = <?php echo intval( isset($calendar['advance_booking_max']) ? $calendar['advance_booking_max'] : 30 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- intval() is safe ?>; // days
 
-            // Initialize datepicker
-            $('#ffc-datepicker-' + calendarId).datepicker({
-                dateFormat: 'yy-mm-dd',
-                minDate: minDate > 0 ? '+' + Math.ceil(minDate / 24) + 'd' : 0,
-                maxDate: '+' + maxDate + 'd',
-                firstDay: 0,
-                beforeShowDay: function(date) {
-                    var day = date.getDay();
-                    var isWorkingDay = workingDays.indexOf(day) !== -1;
-                    return [isWorkingDay, isWorkingDay ? 'ffc-available-day' : 'ffc-unavailable-day'];
+            // Calculate disabled days (weekdays not in workingDays)
+            var disabledDays = [];
+            for (var i = 0; i < 7; i++) {
+                if (workingDays.indexOf(i) === -1) {
+                    disabledDays.push(i);
+                }
+            }
+
+            // Calculate min/max dates
+            var minDate = new Date();
+            if (minDateHours > 0) {
+                minDate.setHours(minDate.getHours() + minDateHours);
+            }
+            minDate.setHours(0, 0, 0, 0);
+
+            var maxDate = new Date();
+            maxDate.setDate(maxDate.getDate() + maxDateDays);
+            maxDate.setHours(23, 59, 59, 999);
+
+            // Initialize shared calendar component
+            var $container = $('#ffc-calendar-container-' + calendarId);
+            var calendar = new FFCCalendarCore($container, {
+                showLegend: false,
+                showTodayButton: true,
+                minDate: minDate,
+                maxDate: maxDate,
+                disabledDays: disabledDays,
+                strings: ffcCalendar.strings,
+                getDayClasses: function(dateStr, date) {
+                    var classes = [];
+                    var weekday = date.getDay();
+
+                    // Mark working days as available
+                    if (workingDays.indexOf(weekday) !== -1) {
+                        classes.push('ffc-available');
+                    }
+
+                    return classes;
                 },
-                onSelect: function(dateText) {
-                    $('#ffc-selected-date').val(dateText);
-                    ffcCalendarFrontend.loadTimeSlots(calendarId, dateText);
+                onDayClick: function(dateStr, $day) {
+                    // Update hidden field
+                    $('#ffc-selected-date').val(dateStr);
+
+                    // Load time slots
+                    ffcCalendarFrontend.loadTimeSlots(calendarId, dateStr);
                 }
             });
+
+            // Store calendar instance for later access
+            $container.data('calendar', calendar);
         });
         </script>
         <?php

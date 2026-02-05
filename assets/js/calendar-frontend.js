@@ -285,7 +285,7 @@
             // Hide form
             $('.ffc-booking-form-wrapper').hide();
             $('.ffc-timeslots-wrapper').hide();
-            $('.ffc-calendar-datepicker-wrapper').hide();
+            $('.ffc-calendar-container').hide();
 
             // Build appointment details
             var detailsHtml = '<div class="ffc-appointment-info">';
@@ -367,11 +367,11 @@
          * Reset calendar to initial state
          */
         resetCalendar: function() {
-            // Hide all sections except datepicker
+            // Hide all sections except calendar
             $('.ffc-booking-form-wrapper').hide();
             $('.ffc-timeslots-wrapper').hide();
             $('.ffc-confirmation-wrapper').hide();
-            $('.ffc-calendar-datepicker-wrapper').show();
+            $('.ffc-calendar-container').show();
 
             // Reset form
             $('#ffc-booking-form')[0].reset();
