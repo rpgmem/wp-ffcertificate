@@ -38,7 +38,10 @@
         conflictWarning: 'Warning: Conflicts detected with existing bookings.',
         holiday: 'Holiday',
         closed: 'Closed',
-        cancelled: 'Cancelled'
+        cancelled: 'Cancelled',
+        cancel: 'Cancel',
+        available: 'Available',
+        booked: 'Booked'
     };
     for (var key in defaultStrings) {
         if (!ffcAudience.strings[key]) {
