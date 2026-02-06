@@ -201,7 +201,15 @@ $.ajax({
                     if (response.data && response.data.refresh_captcha) {
                         FFC.Frontend.UI.refreshCaptcha($form, response.data.new_label, response.data.new_hash);
                     }
-                    showVerificationError(response.data ? response.data.message : 'Invalid code', $form.closest('.ffc-verification-container'));
+
+                    // Show error inline without destroying the form
+                    var errorMsg = response.data ? response.data.message : (ffc_ajax.strings.error || 'Error');
+                    var $errorDiv = $form.find('.ffc-verify-error');
+                    if (!$errorDiv.length) {
+                        $form.find('.ffc-verify-input-group').before('<div class="ffc-verify-error"></div>');
+                        $errorDiv = $form.find('.ffc-verify-error');
+                    }
+                    $errorDiv.html('<p class="ffc-message ffc-message-error">' + errorMsg + '</p>');
                 }
             },
             error: function() {
@@ -211,37 +219,12 @@ $.ajax({
     });
 
     /**
-     * Handle manual verify button (in error state)
+     * Handle manual verify button (in error state - magic link failures)
+     * Re-renders the full verification form so user can enter code with captcha
      */
     $(document).on('click', '.ffc-manual-verify-btn', function() {
-        var authCode = $(this).siblings('.ffc-manual-auth-code').val().trim();
-        var $container = $(this).closest('.ffc-verification-error').parent();
-        
-        if (!authCode) {
-            alert(ffc_ajax.strings.enterCode || 'Please enter the code');
-            return;
-        }
-        
-        $.ajax({
-            url: ffc_ajax.ajax_url,
-            type: 'POST',
-            data: {
-                action: 'ffc_verify_certificate',
-                nonce: ffc_ajax.nonce,
-                ffc_auth_code: authCode,
-                skip_captcha: true
-            },
-            success: function(response) {
-                if (response.success) {
-                    displayVerificationResult(response.data, $container);
-                } else {
-                    showVerificationError(response.data ? response.data.message : 'Invalid code', $container);
-                }
-            },
-            error: function() {
-                alert(ffc_ajax.strings.connectionError || 'Connection error');
-            }
-        });
+        // Reload the page to get a fresh form with captcha
+        window.location.href = window.location.pathname;
     });
 
     /**
