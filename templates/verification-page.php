@@ -1,11 +1,14 @@
 <?php
 /**
- * Template: Certificate Verification Page
+ * Template: Document Verification Page
+ *
+ * Handles both certificate and appointment receipt verification.
  *
  * Variables available:
  * @var string $security_fields Generated security fields HTML
  *
  * @since 3.1.0
+ * @since 3.4.0 - Restructured layout: code → captcha → button. Generic "Document" text.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,30 +20,37 @@ if ( ! defined( 'ABSPATH' ) ) {
     <!-- Loading (hidden initially, shown by JS if hash token found) -->
     <div class="ffc-verify-loading" style="display:none;">
         <div class="ffc-spinner"></div>
-        <p><?php esc_html_e( 'Verifying certificate...', 'wp-ffcertificate' ); ?></p>
+        <p><?php esc_html_e( 'Verifying document...', 'wp-ffcertificate' ); ?></p>
     </div>
 
     <!-- Manual verification form -->
     <div class="ffc-verification-manual">
         <div class="ffc-verification-header">
-            <h2><?php esc_html_e( 'Verify Certificate', 'wp-ffcertificate' ); ?></h2>
-            <p><?php esc_html_e( 'Enter the authentication code to verify the certificate authenticity.', 'wp-ffcertificate' ); ?></p>
+            <h2><?php esc_html_e( 'Verify Document', 'wp-ffcertificate' ); ?></h2>
+            <p><?php esc_html_e( 'Enter the authentication code to verify document authenticity.', 'wp-ffcertificate' ); ?></p>
         </div>
 
         <form method="POST" class="ffc-verification-form">
-            <div class="ffc-verify-input-group">
+            <div class="ffc-form-field">
+                <label for="ffc_auth_code">
+                    <?php esc_html_e( 'Authentication Code', 'wp-ffcertificate' ); ?> <span class="required">*</span>
+                </label>
                 <input
                     type="text"
                     name="ffc_auth_code"
+                    id="ffc_auth_code"
                     class="ffc-input ffc-verify-input"
                     placeholder="<?php esc_attr_e( 'XXXX-XXXX-XXXX', 'wp-ffcertificate' ); ?>"
                     required
                     maxlength="14"
                     pattern="[A-Za-z0-9\-]+"
                 >
-                <button type="submit" class="ffc-submit-btn"><?php esc_html_e( 'Verify', 'wp-ffcertificate' ); ?></button>
             </div>
+
+            <?php // Security fields (captcha + honeypot) - rendered BEFORE the button ?>
             <div class="ffc-no-js-security"><?php echo wp_kses_post( $security_fields ); ?></div>
+
+            <button type="submit" class="ffc-submit-btn"><?php esc_html_e( 'Verify', 'wp-ffcertificate' ); ?></button>
         </form>
     </div>
 

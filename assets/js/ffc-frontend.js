@@ -60,15 +60,15 @@
         }
         
         if (!token) {
-            // No token found - show manual form
-            $container.find('.ffc-manual-verification-form').show();
+            // No token found - show manual form (already visible by default)
             return;
         }
 
-        // Auto-verify with token
-        // console.log('[FFC] Auto-verifying with token:', token.substring(0, 8) + '...');
+        // Auto-verify with token - hide manual form, show loading
+        $container.find('.ffc-verification-manual').hide();
+        $container.find('.ffc-verify-loading').show();
 
-$.ajax({
+        $.ajax({
             url: ffc_ajax.ajax_url,
             type: 'POST',
             data: {
@@ -113,7 +113,7 @@ $.ajax({
         
         // Fallback: Legacy format
         var html = '<div class="ffc-verification-success">';
-        html += '<h3>' + (ffc_ajax.strings.certificateValid || 'Certificate Valid!') + '</h3>';
+        html += '<h3>' + (ffc_ajax.strings.certificateValid || 'Document Valid!') + '</h3>';
         
         if (data.html_preview) {
             html += '<div class="ffc-certificate-preview">' + data.html_preview + '</div>';
@@ -153,7 +153,7 @@ $.ajax({
      */
     function showVerificationError(message, $container) {
         var html = '<div class="ffc-verification-error">';
-        html += '<h3>' + (ffc_ajax.strings.certificateInvalid || 'Certificate Invalid') + '</h3>';
+        html += '<h3>' + (ffc_ajax.strings.certificateInvalid || 'Document Invalid') + '</h3>';
         html += '<p>' + message + '</p>';
         html += '<div class="ffc-manual-verification-form">';
         html += '<p>' + (ffc_ajax.strings.tryManually || 'Or try manual verification') + ':</p>';
@@ -206,7 +206,7 @@ $.ajax({
                     var errorMsg = response.data ? response.data.message : (ffc_ajax.strings.error || 'Error');
                     var $errorDiv = $form.find('.ffc-verify-error');
                     if (!$errorDiv.length) {
-                        $form.find('.ffc-verify-input-group').before('<div class="ffc-verify-error"></div>');
+                        $form.find('.ffc-form-field').first().before('<div class="ffc-verify-error"></div>');
                         $errorDiv = $form.find('.ffc-verify-error');
                     }
                     $errorDiv.html('<p class="ffc-message ffc-message-error">' + errorMsg + '</p>');

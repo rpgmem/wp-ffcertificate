@@ -97,9 +97,9 @@ class Frontend {
             'generating'            => __( 'Generating...', 'wp-ffcertificate' ),
             'downloadAgain'         => __( 'Download Again', 'wp-ffcertificate' ),
 
-            // Certificate Display
-            'certificateValid'      => __( 'Certificate Valid!', 'wp-ffcertificate' ),
-            'certificateInvalid'    => __( 'Certificate Invalid', 'wp-ffcertificate' ),
+            // Document Verification Display
+            'certificateValid'      => __( 'Document Valid!', 'wp-ffcertificate' ),
+            'certificateInvalid'    => __( 'Document Invalid', 'wp-ffcertificate' ),
             'formTitle'             => __( 'Form', 'wp-ffcertificate' ),
             'authCode'              => __( 'Auth Code', 'wp-ffcertificate' ),
             'issueDate'             => __( 'Issue Date', 'wp-ffcertificate' ),
