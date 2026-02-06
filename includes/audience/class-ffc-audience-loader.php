@@ -219,9 +219,15 @@ class AudienceLoader {
 
         // Frontend CSS
         wp_enqueue_style(
+            'ffc-common',
+            FFC_PLUGIN_URL . 'assets/css/ffc-common.css',
+            array(),
+            FFC_VERSION
+        );
+        wp_enqueue_style(
             'ffc-audience',
             FFC_PLUGIN_URL . 'assets/css/ffc-audience.css',
-            array(),
+            array('ffc-common'),
             FFC_VERSION
         );
 

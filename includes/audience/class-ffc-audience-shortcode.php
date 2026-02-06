@@ -52,6 +52,9 @@ class AudienceShortcode {
             'view' => 'month', // month, week
         ), $atts, 'ffc_audience');
 
+        // Always enqueue CSS so styles are consistent regardless of login state
+        self::enqueue_styles();
+
         // Check if user is logged in
         if (!is_user_logged_in()) {
             return self::render_login_required();
@@ -66,7 +69,7 @@ class AudienceShortcode {
             return self::render_no_access();
         }
 
-        // Enqueue assets
+        // Enqueue JS and localization (only for logged-in users who have access)
         self::enqueue_assets();
 
         // Build configuration for JavaScript
@@ -423,14 +426,27 @@ class AudienceShortcode {
      *
      * @return void
      */
-    private static function enqueue_assets(): void {
-        // CSS
+    /**
+     * Enqueue CSS only (safe for all users)
+     */
+    private static function enqueue_styles(): void {
         wp_enqueue_style(
-            'ffc-audience',
-            FFC_PLUGIN_URL . 'assets/css/ffc-audience.css',
+            'ffc-common',
+            FFC_PLUGIN_URL . 'assets/css/ffc-common.css',
             array(),
             FFC_VERSION
         );
+        wp_enqueue_style(
+            'ffc-audience',
+            FFC_PLUGIN_URL . 'assets/css/ffc-audience.css',
+            array('ffc-common'),
+            FFC_VERSION
+        );
+    }
+
+    private static function enqueue_assets(): void {
+        // CSS (in case enqueue_styles wasn't called yet)
+        self::enqueue_styles();
 
         // JavaScript
         wp_enqueue_script(
