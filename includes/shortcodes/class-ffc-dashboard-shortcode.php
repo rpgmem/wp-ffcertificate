@@ -84,27 +84,27 @@ class DashboardShortcode {
                 <?php if ($can_view_certificates) : ?>
                     <button class="ffc-tab <?php echo esc_attr( $current_tab === 'certificates' ? 'active' : '' ); ?>"
                             data-tab="certificates">
-                        📜 <?php esc_html_e('My Certificates', 'wp-ffcertificate'); ?>
+                        📜 <?php esc_html_e('Certificates', 'wp-ffcertificate'); ?>
                     </button>
                 <?php endif; ?>
 
                 <?php if ($can_view_appointments) : ?>
                     <button class="ffc-tab <?php echo esc_attr( $current_tab === 'appointments' ? 'active' : '' ); ?>"
                             data-tab="appointments">
-                        📅 <?php esc_html_e('My Appointments', 'wp-ffcertificate'); ?>
+                        📅 <?php esc_html_e('Personal Schedule', 'wp-ffcertificate'); ?>
                     </button>
                 <?php endif; ?>
 
                 <?php if ($can_view_audience_bookings) : ?>
                     <button class="ffc-tab <?php echo esc_attr( $current_tab === 'audience' ? 'active' : '' ); ?>"
                             data-tab="audience">
-                        👥 <?php esc_html_e('My Scheduled Activities', 'wp-ffcertificate'); ?>
+                        👥 <?php esc_html_e('Group Schedule', 'wp-ffcertificate'); ?>
                     </button>
                 <?php endif; ?>
 
                 <button class="ffc-tab <?php echo esc_attr( $current_tab === 'profile' ? 'active' : '' ); ?>"
                         data-tab="profile">
-                    👤 <?php esc_html_e('My Profile', 'wp-ffcertificate'); ?>
+                    👤 <?php esc_html_e('Profile', 'wp-ffcertificate'); ?>
                 </button>
             </nav>
 
