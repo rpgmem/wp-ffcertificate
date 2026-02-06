@@ -1146,9 +1146,8 @@ class RestController {
                 $appointments = array();
             }
 
-            // Get date format from settings
-            $settings = get_option('ffc_settings', array());
-            $date_format = $settings['date_format'] ?? 'F j, Y';
+            // Use WordPress date-only format (no time)
+            $date_format = get_option('date_format', 'F j, Y');
 
             // Format response
             $appointments_formatted = array();
