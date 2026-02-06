@@ -68,20 +68,20 @@ class AudienceAdminPage {
             26
         );
 
-        // Submenu: Dashboard (unified overview)
+        // --- Self-Scheduling items are auto-registered here by CPT (Personal Calendars, New)
+        // --- and by SelfSchedulingAdmin (Appointments) at priority 25
+
+        // --- Audience section ---
+
+        // Submenu: Dashboard (audience overview — placed within audience section)
         add_submenu_page(
             self::MENU_SLUG,
             __('Dashboard', 'wp-ffcertificate'),
             __('Dashboard', 'wp-ffcertificate'),
             'manage_options',
-            self::MENU_SLUG,
+            self::MENU_SLUG . '-dashboard',
             array($this, 'render_dashboard_page')
         );
-
-        // --- Self-Scheduling items are auto-registered here by CPT (All Calendars, Add New)
-        // --- and by SelfSchedulingAdmin (Appointments) at priority 25
-
-        // --- Audience section ---
 
         // Submenu: Audience Calendars
         add_submenu_page(
@@ -163,13 +163,27 @@ class AudienceAdminPage {
 
         $items = &$submenu[self::MENU_SLUG];
 
+        // Remove the auto-generated first submenu item (WP duplicates the parent page)
+        foreach ($items as $index => $item) {
+            if ($item[2] === self::MENU_SLUG) {
+                unset($items[$index]);
+                break;
+            }
+        }
+        $items = array_values($items);
+
         // Find positions to insert separators
+        $self_pos = null;
         $audience_pos = null;
         $tools_pos = null;
 
         foreach ($items as $index => $item) {
             // $item[2] is the menu slug
-            if ($item[2] === self::MENU_SLUG . '-calendars') {
+            // First CPT item = Personal Calendars (slug contains post_type=ffc_self_scheduling)
+            if ($self_pos === null && strpos($item[2] ?? '', 'ffc_self_scheduling') !== false) {
+                $self_pos = $index;
+            }
+            if ($item[2] === self::MENU_SLUG . '-dashboard') {
                 $audience_pos = $index;
             }
             if ($item[2] === self::MENU_SLUG . '-import') {
@@ -179,10 +193,13 @@ class AudienceAdminPage {
 
         // Insert separators (in reverse order to preserve positions)
         if ($tools_pos !== null) {
-            $this->insert_submenu_separator($items, $tools_pos, __('Tools', 'wp-ffcertificate'));
+            $this->insert_submenu_separator($items, $tools_pos, 'tools');
         }
         if ($audience_pos !== null) {
-            $this->insert_submenu_separator($items, $audience_pos, __('Audience', 'wp-ffcertificate'));
+            $this->insert_submenu_separator($items, $audience_pos, 'audience');
+        }
+        if ($self_pos !== null) {
+            $this->insert_submenu_separator($items, $self_pos, 'self');
         }
     }
 
@@ -194,15 +211,19 @@ class AudienceAdminPage {
      * @param string $label Section label
      * @return void
      */
-    private function insert_submenu_separator(array &$items, int $before_index, string $label): void {
-        // Build a non-functional submenu entry styled as a separator
-        $separator = array(
-            $label,                                     // [0] menu title
-            'manage_options',                           // [1] capability
-            '#ffc-separator-' . sanitize_key($label),  // [2] slug (non-navigable)
+    private function insert_submenu_separator(array &$items, int $before_index, string $key): void {
+        $labels = array(
+            'self'     => __('Self', 'wp-ffcertificate'),
+            'audience' => __('Audience', 'wp-ffcertificate'),
+            'tools'    => __('Tools', 'wp-ffcertificate'),
         );
 
-        // Re-index and insert
+        $separator = array(
+            $labels[$key] ?? $key,
+            'manage_options',
+            '#ffc-separator-' . $key,
+        );
+
         $new_items = array();
         foreach ($items as $index => $item) {
             if ($index === $before_index) {
@@ -215,7 +236,7 @@ class AudienceAdminPage {
     }
 
     /**
-     * Print CSS to style menu separators
+     * Print CSS to style menu separators with dashicons
      *
      * @return void
      */
@@ -237,6 +258,23 @@ class AudienceAdminPage {
             #adminmenu .wp-submenu a[href^="#ffc-separator-"]:hover {
                 color: #a7aaad !important;
                 background: none !important;
+            }
+            #adminmenu .wp-submenu a[href^="#ffc-separator-"]::before {
+                font-family: dashicons;
+                font-size: 14px;
+                margin-right: 4px;
+                vertical-align: middle;
+                position: relative;
+                top: -1px;
+            }
+            #adminmenu .wp-submenu a[href="#ffc-separator-self"]::before {
+                content: "\f110"; /* dashicons-admin-users */
+            }
+            #adminmenu .wp-submenu a[href="#ffc-separator-audience"]::before {
+                content: "\f307"; /* dashicons-groups */
+            }
+            #adminmenu .wp-submenu a[href="#ffc-separator-tools"]::before {
+                content: "\f107"; /* dashicons-admin-tools */
             }
         </style>
         <?php
