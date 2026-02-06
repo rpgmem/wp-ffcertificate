@@ -47,8 +47,8 @@ if ( ! defined( 'ABSPATH' ) ) {
                 >
             </div>
 
-            <?php // Security fields (captcha + honeypot) - rendered BEFORE the button ?>
-            <div class="ffc-no-js-security"><?php echo wp_kses_post( $security_fields ); ?></div>
+            <?php // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- generate_security_fields() escapes all output internally ?>
+            <div class="ffc-no-js-security"><?php echo $security_fields; ?></div>
 
             <button type="submit" class="ffc-submit-btn"><?php esc_html_e( 'Verify', 'wp-ffcertificate' ); ?></button>
         </form>
