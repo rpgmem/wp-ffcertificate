@@ -305,7 +305,7 @@ class SelfSchedulingShortcode {
             <input type="hidden" id="ffc-selected-date" name="selected_date" value="">
 
             <!-- Booking Modal (time slots + form) -->
-            <div class="ffc-modal" id="ffc-booking-modal" style="display: none;">
+            <div class="ffc-modal" id="ffc-self-scheduling-modal" style="display: none;">
                 <div class="ffc-modal-backdrop"></div>
                 <div class="ffc-modal-content ffc-modal-lg">
                     <div class="ffc-modal-header">
