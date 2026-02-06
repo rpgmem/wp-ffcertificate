@@ -169,6 +169,8 @@ class AudienceAdminPage {
 
         // Define the desired order with separators
         $ordered_slugs = array(
+            // Dashboard at top
+            self::MENU_SLUG . '-dashboard',                          // Dashboard
             // Self section
             '#ffc-separator-self',
             'edit.php?post_type=ffc_self_scheduling',               // Personal Calendars
@@ -176,7 +178,6 @@ class AudienceAdminPage {
             'ffc-appointments',                                      // Appointments
             // Audience section
             '#ffc-separator-audience',
-            self::MENU_SLUG . '-dashboard',                          // Dashboard
             self::MENU_SLUG . '-calendars',                          // Audience Calendars
             self::MENU_SLUG . '-environments',                       // Environments
             self::MENU_SLUG . '-audiences',                          // Audiences
@@ -412,12 +413,12 @@ class AudienceAdminPage {
             .ffc-scheduling-dashboard > h2 { margin: 25px 0 15px; padding-bottom: 8px; border-bottom: 1px solid #c3c4c7; }
             .ffc-scheduling-dashboard > h2:first-of-type { margin-top: 0; }
             .ffc-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 20px; }
-            .ffc-stat-card { background: #fff; border: 1px solid #c3c4c7; border-radius: 4px; padding: 20px; display: flex; flex-direction: column; }
-            .ffc-stat-icon { font-size: 32px; color: #2271b1; margin-bottom: 10px; }
-            .ffc-stat-content { flex-grow: 1; }
-            .ffc-stat-value { font-size: 36px; font-weight: 600; display: block; color: #1d2327; }
+            .ffc-stat-card { background: #fff; border: 1px solid #c3c4c7; border-radius: 4px; padding: 20px; display: flex; flex-direction: row; align-items: flex-start; gap: 15px; flex-wrap: wrap; }
+            .ffc-stat-icon { font-size: 32px; color: #2271b1; flex-shrink: 0; line-height: 1; }
+            .ffc-stat-content { flex: 1 1 0; min-width: 0; }
+            .ffc-stat-value { font-size: 28px; font-weight: 600; display: block; color: #1d2327; word-break: break-word; }
             .ffc-stat-label { color: #50575e; font-size: 14px; }
-            .ffc-stat-link { margin-top: 15px; color: #2271b1; text-decoration: none; }
+            .ffc-stat-link { width: 100%; color: #2271b1; text-decoration: none; }
             .ffc-stat-link:hover { text-decoration: underline; }
             .ffc-quick-actions { background: #fff; border: 1px solid #c3c4c7; border-radius: 4px; padding: 20px; margin-top: 10px; }
             .ffc-quick-actions h2 { margin-top: 0; }
