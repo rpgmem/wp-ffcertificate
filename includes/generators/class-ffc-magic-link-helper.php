@@ -131,8 +131,8 @@ class MagicLinkHelper {
      * @return bool True if valid format
      */
     public static function is_valid_token( string $token ): bool {
-        // Magic token should be 32 hex characters
-        return ! empty( $token ) && preg_match( '/^[a-f0-9]{32}$/i', $token );
+        // Accept both 32-char (certificate magic_token) and 64-char (appointment confirmation_token)
+        return ! empty( $token ) && preg_match( '/^[a-f0-9]{32}([a-f0-9]{32})?$/i', $token );
     }
     
     /**

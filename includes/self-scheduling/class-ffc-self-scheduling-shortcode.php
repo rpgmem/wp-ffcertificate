@@ -103,11 +103,36 @@ class SelfSchedulingShortcode {
             true
         );
 
+        // PDF Libraries for auto-download receipt on booking
+        wp_enqueue_script(
+            'html2canvas',
+            FFC_PLUGIN_URL . 'libs/js/html2canvas.min.js',
+            array(),
+            defined( 'FFC_HTML2CANVAS_VERSION' ) ? FFC_HTML2CANVAS_VERSION : '1.4.1',
+            true
+        );
+
+        wp_enqueue_script(
+            'jspdf',
+            FFC_PLUGIN_URL . 'libs/js/jspdf.umd.min.js',
+            array(),
+            defined( 'FFC_JSPDF_VERSION' ) ? FFC_JSPDF_VERSION : '2.5.1',
+            true
+        );
+
+        wp_enqueue_script(
+            'ffc-pdf-generator',
+            FFC_PLUGIN_URL . 'assets/js/ffc-pdf-generator.js',
+            array('jquery', 'html2canvas', 'jspdf'),
+            FFC_VERSION,
+            true
+        );
+
         // Enqueue calendar frontend scripts
         wp_enqueue_script(
             'ffc-calendar-frontend',
             FFC_PLUGIN_URL . 'assets/js/calendar-frontend.js',
-            array('jquery', 'ffc-calendar-core', 'ffc-frontend-helpers'),
+            array('jquery', 'ffc-calendar-core', 'ffc-frontend-helpers', 'ffc-pdf-generator'),
             FFC_VERSION,
             true
         );
@@ -167,6 +192,8 @@ class SelfSchedulingShortcode {
                 'confirmationCode' => __('Confirmation Code', 'wp-ffcertificate'),
                 'confirmationCodeHelp' => __('Save this code to manage your appointment.', 'wp-ffcertificate'),
                 'downloadReceipt' => __('Download Receipt', 'wp-ffcertificate'),
+                'generatingReceipt' => __('Generating receipt in the background, please wait...', 'wp-ffcertificate'),
+                'validationCode' => __('Validation Code', 'wp-ffcertificate'),
                 'submit' => __('Book Appointment', 'wp-ffcertificate'),
                 'timeout' => __('Connection timeout. Please try again.', 'wp-ffcertificate'),
                 'networkError' => __('Network error. Please check your connection and try again.', 'wp-ffcertificate'),

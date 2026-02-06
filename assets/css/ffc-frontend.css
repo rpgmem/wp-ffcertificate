@@ -611,6 +611,51 @@
 }
 
 /* ============================================
+   APPOINTMENT VERIFICATION (on /valid/ page)
+   ============================================ */
+.ffc-appointment-verification .ffc-certificate-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.ffc-appointment-verification .ffc-auth-code-display {
+    margin: 10px 0;
+}
+
+.ffc-appointment-verification .ffc-auth-code-display span {
+    font-family: 'Courier New', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    color: #0073aa;
+    letter-spacing: 2px;
+}
+
+.ffc-appointment-status {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.ffc-status-pending { background: #f0f0f1; color: #646970; }
+.ffc-status-confirmed { background: #d5e8d4; color: #2e7d32; }
+.ffc-status-cancelled { background: #f8d7da; color: #b32d2e; }
+.ffc-status-completed { background: #cfe2ff; color: #004085; }
+.ffc-status-no_show { background: #fff3cd; color: #856404; }
+
+.ffc-appointment-verification .ffc-detail-row .ffc-detail-label {
+    font-weight: 600;
+    color: #555;
+    min-width: 120px;
+}
+
+.ffc-appointment-verification .ffc-detail-row .ffc-detail-value {
+    color: #333;
+}
+
+/* ============================================
    PREVIEW ACTIONS (Download Button)
    ============================================ */
 .ffc-preview-actions {

@@ -49,7 +49,7 @@ class VerificationHandler {
     private function search_certificate( string $auth_code ): array {
         $repository = new SubmissionRepository();
         $clean_code = \FreeFormCertificate\Core\Utils::clean_auth_code($auth_code);
-        
+
         if (empty($clean_code)) {
             return [
                 'found' => false,
@@ -57,47 +57,164 @@ class VerificationHandler {
                 'data' => []
             ];
         }
-        
+
         $submission = $repository->findByAuthCode($clean_code);
-        
+
+        // Fallback: search appointments by validation_code
         if (!$submission) {
-            return [
-                'found' => false,
-                'submission' => null,
-                'data' => []
-            ];
+            return $this->search_appointment_by_code( $clean_code );
         }
-        
+
         // Decrypt
         $submission = $this->submission_handler->decrypt_submission_data($submission);
-        
+
         // Rebuild data
         $data = [
             'email' => $submission['email'],
         ];
-        
+
         if (!empty($submission['auth_code'])) {
             $data['auth_code'] = $submission['auth_code'];
         }
-        
+
         if (!empty($submission['cpf_rf'])) {
             $data['cpf_rf'] = $submission['cpf_rf'];
         }
-        
+
         $extra_data = json_decode($submission['data'], true);
         if (!is_array($extra_data)) {
             $extra_data = json_decode(stripslashes($submission['data']), true);
         }
-        
+
         if (is_array($extra_data) && !empty($extra_data)) {
             $data = array_merge($extra_data, $data);
         }
-        
+
         return [
             'found' => true,
             'submission' => (object) $submission,
             'data' => $data
         ];
+    }
+
+    /**
+     * Search for appointment by validation code
+     *
+     * @since 4.2.0
+     * @param string $code Cleaned validation code (no hyphens)
+     * @return array Result array with 'found', 'submission', 'data', 'type'
+     */
+    private function search_appointment_by_code( string $code ): array {
+        if ( ! class_exists( '\\FreeFormCertificate\\Repositories\\AppointmentRepository' ) ) {
+            return array( 'found' => false, 'submission' => null, 'data' => array() );
+        }
+
+        $repo = new \FreeFormCertificate\Repositories\AppointmentRepository();
+        $appointment = $repo->findByValidationCode( $code );
+
+        if ( ! $appointment ) {
+            return array( 'found' => false, 'submission' => null, 'data' => array() );
+        }
+
+        return $this->build_appointment_result( $appointment );
+    }
+
+    /**
+     * Search for appointment by confirmation token (magic link)
+     *
+     * @since 4.2.0
+     * @param string $token Confirmation token (64 hex chars)
+     * @return array Result array with 'found', 'submission', 'data', 'type'
+     */
+    private function search_appointment_by_token( string $token ): array {
+        if ( ! class_exists( '\\FreeFormCertificate\\Repositories\\AppointmentRepository' ) ) {
+            return array( 'found' => false, 'submission' => null, 'data' => array() );
+        }
+
+        $repo = new \FreeFormCertificate\Repositories\AppointmentRepository();
+        $appointment = $repo->findByConfirmationToken( $token );
+
+        if ( ! $appointment ) {
+            return array( 'found' => false, 'submission' => null, 'data' => array() );
+        }
+
+        return $this->build_appointment_result( $appointment );
+    }
+
+    /**
+     * Build result array from appointment data
+     *
+     * @since 4.2.0
+     * @param array $appointment Appointment data from database
+     * @return array Standardized result array
+     */
+    private function build_appointment_result( array $appointment ): array {
+        // Decrypt sensitive fields
+        $email = $appointment['email'] ?? '';
+        if ( empty( $email ) && ! empty( $appointment['email_encrypted'] ) ) {
+            if ( class_exists( '\\FreeFormCertificate\\Core\\Encryption' ) ) {
+                try {
+                    $email = \FreeFormCertificate\Core\Encryption::decrypt( $appointment['email_encrypted'] );
+                } catch ( \Exception $e ) {
+                    $email = '';
+                }
+            }
+        }
+
+        $cpf_rf = $appointment['cpf_rf'] ?? '';
+        if ( empty( $cpf_rf ) && ! empty( $appointment['cpf_rf_encrypted'] ) ) {
+            if ( class_exists( '\\FreeFormCertificate\\Core\\Encryption' ) ) {
+                try {
+                    $cpf_rf = \FreeFormCertificate\Core\Encryption::decrypt( $appointment['cpf_rf_encrypted'] );
+                } catch ( \Exception $e ) {
+                    $cpf_rf = '';
+                }
+            }
+        }
+
+        // Build data array
+        $data = array(
+            'name'            => $appointment['name'] ?? '',
+            'email'           => $email,
+            'cpf_rf'          => $cpf_rf,
+            'auth_code'       => $appointment['validation_code'] ?? '',
+            'calendar_title'  => '',
+            'appointment_date' => $appointment['appointment_date'] ?? '',
+            'start_time'      => $appointment['start_time'] ?? '',
+            'end_time'        => $appointment['end_time'] ?? '',
+            'status'          => $appointment['status'] ?? 'pending',
+            'magic_token'     => $appointment['confirmation_token'] ?? '',
+        );
+
+        // Get calendar title
+        if ( ! empty( $appointment['calendar_id'] ) ) {
+            $calendar_repo = new \FreeFormCertificate\Repositories\CalendarRepository();
+            $calendar = $calendar_repo->findById( (int) $appointment['calendar_id'] );
+            if ( $calendar ) {
+                $data['calendar_title'] = $calendar['title'] ?? '';
+            }
+        }
+
+        // Build a pseudo-submission object for compatibility with format methods
+        $pseudo_submission = array(
+            'id'              => $appointment['id'],
+            'form_id'         => 0,
+            'submission_date' => $appointment['created_at'] ?? '',
+            'auth_code'       => $appointment['validation_code'] ?? '',
+            'email'           => $email,
+            'cpf_rf'          => $cpf_rf,
+            'data'            => '{}',
+            'magic_token'     => $appointment['confirmation_token'] ?? '',
+        );
+
+        return array(
+            'found'      => true,
+            'submission' => (object) $pseudo_submission,
+            'data'       => $data,
+            'type'       => 'appointment',
+            'appointment' => $appointment,
+            'magic_token' => $appointment['confirmation_token'] ?? '',
+        );
     }
 
     /**
@@ -150,7 +267,13 @@ class VerificationHandler {
             'submission_id' => $submission ? $submission['id'] : null
         ) );
 
+        // Fallback: search appointments by confirmation_token
         if ( ! $submission ) {
+            $appointment_result = $this->search_appointment_by_token( $token );
+            if ( $appointment_result['found'] ) {
+                return $appointment_result;
+            }
+
             return array(
                 'found' => false,
                 'submission' => null,
@@ -329,29 +452,33 @@ class VerificationHandler {
      */
     public function verify_certificate( string $auth_code ): array {
         $result = $this->search_certificate( $auth_code );
-        if ( $result['found'] && isset( $result['submission']['id'] ) ) {
-        // ✅ v2.10.0: Log access for LGPD compliance
-        if ( class_exists( '\\FreeFormCertificate\\Core\\ActivityLog' ) ) {
-            \FreeFormCertificate\Core\ActivityLog::log_data_accessed(
-                (int) $result['submission']['id'],  // Convert to int (wpdb returns strings)
-                array(
-                    'method' => 'manual_verification',
-                    'auth_code' => substr( $auth_code, 0, 4 ) . '...',
-                    'ip' => \FreeFormCertificate\Core\Utils::get_user_ip()
-                )
-            );
+        if ( $result['found'] && isset( $result['submission']->id ) ) {
+            // Log access for LGPD compliance
+            if ( class_exists( '\\FreeFormCertificate\\Core\\ActivityLog' ) ) {
+                \FreeFormCertificate\Core\ActivityLog::log_data_accessed(
+                    (int) $result['submission']->id,
+                    array(
+                        'method' => 'manual_verification',
+                        'auth_code' => substr( $auth_code, 0, 4 ) . '...',
+                        'ip' => \FreeFormCertificate\Core\Utils::get_user_ip()
+                    )
+                );
+            }
         }
-        }
-        
+
         if ( ! $result['found'] ) {
             return array(
                 'success' => false,
                 'html' => '',
-                'message' => __( 'Certificate not found or invalid code.', 'wp-ffcertificate' )
+                'message' => __( 'Document not found or invalid code.', 'wp-ffcertificate' )
             );
         }
 
-        $html = $this->format_verification_response( $result['submission'], $result['data'], true );
+        if ( ! empty( $result['type'] ) && $result['type'] === 'appointment' ) {
+            $html = $this->format_appointment_verification_response( $result );
+        } else {
+            $html = $this->format_verification_response( $result['submission'], $result['data'], true );
+        }
 
         return array(
             'success' => true,
@@ -389,38 +516,48 @@ class VerificationHandler {
 
         // Verify by magic token
         $result = $this->verify_by_magic_token( $token );
-        
+
         if ( isset( $result['error'] ) && $result['error'] === 'rate_limited' ) {
-            wp_send_json_error( array( 
-                'message' => __( 'Too many attempts. Please try again in 1 minute.', 'wp-ffcertificate' ) 
-            ) );
-        }
-        
-        if ( ! $result['found'] ) {
-            wp_send_json_error( array( 
-                'message' => '❌ ' . __( 'Certificate not found or invalid link.', 'wp-ffcertificate' ) 
+            wp_send_json_error( array(
+                'message' => __( 'Too many attempts. Please try again in 1 minute.', 'wp-ffcertificate' )
             ) );
         }
 
-        // ✅ v2.9.2: Use centralized PDF generator
-        $pdf_generator = new \FreeFormCertificate\Generators\PdfGenerator( $this->email_handler );
-        $pdf_data = $pdf_generator->generate_pdf_data(
-            (int) $result['submission']->id,  // Convert to int (wpdb returns strings)
-            $this->submission_handler
-        );
-        
+        if ( ! $result['found'] ) {
+            wp_send_json_error( array(
+                'message' => '❌ ' . __( 'Document not found or invalid link.', 'wp-ffcertificate' )
+            ) );
+        }
+
+        $pdf_generator = new \FreeFormCertificate\Generators\PdfGenerator();
+
+        // Check if this is an appointment result
+        if ( ! empty( $result['type'] ) && $result['type'] === 'appointment' && ! empty( $result['appointment'] ) ) {
+            $pdf_data = $this->generate_appointment_verification_pdf( $result, $pdf_generator );
+        } else {
+            // Certificate: use standard PDF generator
+            $pdf_data = $pdf_generator->generate_pdf_data(
+                (int) $result['submission']->id,
+                $this->submission_handler
+            );
+        }
+
         if ( is_wp_error( $pdf_data ) ) {
             wp_send_json_error( array( 'message' => $pdf_data->get_error_message() ) );
         }
 
         // Format response HTML with download button
-        $html = $this->format_verification_response( 
-            $result['submission'], 
-            $result['data'], 
-            true  // Show download button
-        );
-        
-        wp_send_json_success( array( 
+        if ( ! empty( $result['type'] ) && $result['type'] === 'appointment' ) {
+            $html = $this->format_appointment_verification_response( $result );
+        } else {
+            $html = $this->format_verification_response(
+                $result['submission'],
+                $result['data'],
+                true
+            );
+        }
+
+        wp_send_json_success( array(
             'html' => $html,
             'submission_id' => $result['submission']->id,
             'pdf_data' => $pdf_data
@@ -464,40 +601,200 @@ class VerificationHandler {
         $auth_code = isset($_POST['ffc_auth_code']) ? sanitize_text_field(wp_unslash($_POST['ffc_auth_code'])) : '';
         // phpcs:enable WordPress.Security.NonceVerification.Missing
         $result = $this->search_certificate( $auth_code );
-        
+
         if ( ! $result['found'] ) {
             $new_captcha = \FreeFormCertificate\Core\Utils::generate_simple_captcha();
-            wp_send_json_error( array( 
-                'message' => '❌ ' . __( 'Certificate not found or invalid code.', 'wp-ffcertificate' ),
+            wp_send_json_error( array(
+                'message' => '❌ ' . __( 'Document not found or invalid code.', 'wp-ffcertificate' ),
                 'refresh_captcha' => true,
                 'new_label' => $new_captcha['label'],
                 'new_hash' => $new_captcha['hash']
             ) );
         }
-        
-        // Get form data for PDF
-        
-        // ✅ v2.9.2: Use centralized PDF generator
-        $pdf_generator = new \FreeFormCertificate\Generators\PdfGenerator( $this->email_handler );
-        $pdf_data = $pdf_generator->generate_pdf_data(
-            (int) $result['submission']->id,  // Convert to int (wpdb returns strings)
-            $this->submission_handler
-        );
-        
+
+        $pdf_generator = new \FreeFormCertificate\Generators\PdfGenerator();
+
+        // Check if this is an appointment result
+        if ( ! empty( $result['type'] ) && $result['type'] === 'appointment' && ! empty( $result['appointment'] ) ) {
+            $pdf_data = $this->generate_appointment_verification_pdf( $result, $pdf_generator );
+        } else {
+            // Certificate: use standard PDF generator
+            $pdf_data = $pdf_generator->generate_pdf_data(
+                (int) $result['submission']->id,
+                $this->submission_handler
+            );
+        }
+
         if ( is_wp_error( $pdf_data ) ) {
             wp_send_json_error( array( 'message' => $pdf_data->get_error_message() ) );
         }
-        
-        $html = $this->format_verification_response( 
-            $result['submission'], 
-            $result['data'], 
-            true 
-        );
-        
-        wp_send_json_success( array( 
+
+        if ( ! empty( $result['type'] ) && $result['type'] === 'appointment' ) {
+            $html = $this->format_appointment_verification_response( $result );
+        } else {
+            $html = $this->format_verification_response(
+                $result['submission'],
+                $result['data'],
+                true
+            );
+        }
+
+        wp_send_json_success( array(
             'html' => $html,
             'submission_id' => $result['submission']->id,
             'pdf_data' => $pdf_data
         ) );
+    }
+
+    /**
+     * Generate appointment PDF data for verification context
+     *
+     * @since 4.2.0
+     * @param array $result Search result array
+     * @param \FreeFormCertificate\Generators\PdfGenerator $pdf_generator PDF generator instance
+     * @return array PDF data array
+     */
+    private function generate_appointment_verification_pdf( array $result, \FreeFormCertificate\Generators\PdfGenerator $pdf_generator ): array {
+        $appointment = $result['appointment'];
+        $calendar = array( 'title' => $result['data']['calendar_title'] ?? __( 'N/A', 'wp-ffcertificate' ) );
+
+        // Get full calendar data if available
+        if ( ! empty( $appointment['calendar_id'] ) ) {
+            $calendar_repo = new \FreeFormCertificate\Repositories\CalendarRepository();
+            $full_calendar = $calendar_repo->findById( (int) $appointment['calendar_id'] );
+            if ( $full_calendar ) {
+                $calendar = $full_calendar;
+            }
+        }
+
+        return $pdf_generator->generate_appointment_pdf_data( $appointment, $calendar );
+    }
+
+    /**
+     * Format appointment verification response HTML
+     *
+     * Displays appointment details in the same verification page layout
+     *
+     * @since 4.2.0
+     * @param array $result Appointment search result
+     * @return string HTML output
+     */
+    private function format_appointment_verification_response( array $result ): string {
+        $data = $result['data'];
+        $appointment = $result['appointment'];
+
+        $date_format = get_option( 'date_format' );
+        $time_format = get_option( 'time_format' );
+
+        // Format date
+        $formatted_date = __( 'N/A', 'wp-ffcertificate' );
+        if ( ! empty( $appointment['appointment_date'] ) ) {
+            $ts = strtotime( $appointment['appointment_date'] );
+            if ( $ts !== false ) {
+                $formatted_date = date_i18n( $date_format, $ts );
+            }
+        }
+
+        // Format time
+        $formatted_time = __( 'N/A', 'wp-ffcertificate' );
+        if ( ! empty( $appointment['start_time'] ) ) {
+            $ts = strtotime( $appointment['start_time'] );
+            if ( $ts !== false ) {
+                $formatted_time = date_i18n( $time_format, $ts );
+            }
+            if ( ! empty( $appointment['end_time'] ) ) {
+                $ts2 = strtotime( $appointment['end_time'] );
+                if ( $ts2 !== false ) {
+                    $formatted_time .= ' - ' . date_i18n( $time_format, $ts2 );
+                }
+            }
+        }
+
+        // Format created_at
+        $formatted_created = __( 'N/A', 'wp-ffcertificate' );
+        if ( ! empty( $appointment['created_at'] ) ) {
+            $ts = strtotime( $appointment['created_at'] );
+            if ( $ts !== false ) {
+                $formatted_created = date_i18n( $date_format . ' ' . $time_format, $ts );
+            }
+        }
+
+        // Status labels
+        $status_labels = array(
+            'pending'   => __( 'Pending Approval', 'wp-ffcertificate' ),
+            'confirmed' => __( 'Confirmed', 'wp-ffcertificate' ),
+            'cancelled' => __( 'Cancelled', 'wp-ffcertificate' ),
+            'completed' => __( 'Completed', 'wp-ffcertificate' ),
+            'no_show'   => __( 'No Show', 'wp-ffcertificate' ),
+        );
+        $status = $appointment['status'] ?? 'pending';
+        $status_label = $status_labels[ $status ] ?? $status;
+
+        // Format validation code
+        $display_code = '';
+        if ( ! empty( $appointment['validation_code'] ) ) {
+            $display_code = \FreeFormCertificate\Core\Utils::format_auth_code( $appointment['validation_code'] );
+        }
+
+        // Format CPF/RF
+        $cpf_rf_display = '';
+        if ( ! empty( $data['cpf_rf'] ) ) {
+            $cpf_rf_display = \FreeFormCertificate\Core\Utils::format_document( $data['cpf_rf'] );
+        }
+
+        // Build HTML
+        $html = '<div class="ffc-verification-success ffc-appointment-verification">';
+        $html .= '<div class="ffc-certificate-header">';
+        $html .= '<h3>' . esc_html__( 'Appointment Receipt Valid', 'wp-ffcertificate' ) . '</h3>';
+
+        if ( ! empty( $display_code ) ) {
+            $html .= '<div class="ffc-auth-code-display"><span>' . esc_html( $display_code ) . '</span></div>';
+        }
+
+        $html .= '<span class="ffc-appointment-status ffc-status-' . esc_attr( $status ) . '">' . esc_html( $status_label ) . '</span>';
+        $html .= '</div>';
+
+        $html .= '<div class="ffc-certificate-details">';
+
+        // Event
+        if ( ! empty( $data['calendar_title'] ) ) {
+            $html .= '<div class="ffc-detail-row"><span class="ffc-detail-label">' . esc_html__( 'Event', 'wp-ffcertificate' ) . '</span>';
+            $html .= '<span class="ffc-detail-value">' . esc_html( $data['calendar_title'] ) . '</span></div>';
+        }
+
+        // Date
+        $html .= '<div class="ffc-detail-row"><span class="ffc-detail-label">' . esc_html__( 'Date', 'wp-ffcertificate' ) . '</span>';
+        $html .= '<span class="ffc-detail-value">' . esc_html( $formatted_date ) . '</span></div>';
+
+        // Time
+        $html .= '<div class="ffc-detail-row"><span class="ffc-detail-label">' . esc_html__( 'Time', 'wp-ffcertificate' ) . '</span>';
+        $html .= '<span class="ffc-detail-value">' . esc_html( $formatted_time ) . '</span></div>';
+
+        // Name
+        if ( ! empty( $data['name'] ) ) {
+            $html .= '<div class="ffc-detail-row"><span class="ffc-detail-label">' . esc_html__( 'Name', 'wp-ffcertificate' ) . '</span>';
+            $html .= '<span class="ffc-detail-value">' . esc_html( $data['name'] ) . '</span></div>';
+        }
+
+        // CPF/RF
+        if ( ! empty( $cpf_rf_display ) ) {
+            $html .= '<div class="ffc-detail-row"><span class="ffc-detail-label">' . esc_html__( 'CPF/RF', 'wp-ffcertificate' ) . '</span>';
+            $html .= '<span class="ffc-detail-value">' . esc_html( $cpf_rf_display ) . '</span></div>';
+        }
+
+        // Booked on
+        $html .= '<div class="ffc-detail-row"><span class="ffc-detail-label">' . esc_html__( 'Booked on', 'wp-ffcertificate' ) . '</span>';
+        $html .= '<span class="ffc-detail-value">' . esc_html( $formatted_created ) . '</span></div>';
+
+        $html .= '</div>';
+
+        // Download button
+        $html .= '<div class="ffc-certificate-actions">';
+        $html .= '<button class="ffc-download-pdf-btn ffc-btn ffc-btn-primary">' . esc_html__( 'Download PDF', 'wp-ffcertificate' ) . '</button>';
+        $html .= '</div>';
+
+        $html .= '</div>';
+
+        return $html;
     }
 }
