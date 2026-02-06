@@ -70,18 +70,18 @@
             });
 
             // Modal close handlers
-            $(document).on('click', '#ffc-booking-modal .ffc-modal-close, #ffc-booking-modal .ffc-modal-backdrop', function() {
+            $(document).on('click', '#ffc-self-scheduling-modal .ffc-modal-close, #ffc-self-scheduling-modal .ffc-modal-backdrop', function() {
                 self.closeModal();
             });
 
             // Prevent clicks inside modal content from closing
-            $(document).on('click', '#ffc-booking-modal .ffc-modal-content', function(e) {
+            $(document).on('click', '#ffc-self-scheduling-modal .ffc-modal-content', function(e) {
                 e.stopPropagation();
             });
 
             // Close modal on Escape key
             $(document).on('keydown', function(e) {
-                if (e.key === 'Escape' && $('#ffc-booking-modal').is(':visible')) {
+                if (e.key === 'Escape' && $('#ffc-self-scheduling-modal').is(':visible')) {
                     self.closeModal();
                 }
             });
@@ -101,7 +101,7 @@
          * Open booking modal
          */
         openModal: function() {
-            var $modal = $('#ffc-booking-modal');
+            var $modal = $('#ffc-self-scheduling-modal');
             $modal.show();
             $('body').css('overflow', 'hidden');
         },
@@ -110,7 +110,7 @@
          * Close booking modal
          */
         closeModal: function() {
-            var $modal = $('#ffc-booking-modal');
+            var $modal = $('#ffc-self-scheduling-modal');
             $modal.hide();
             $('body').css('overflow', '');
 
@@ -133,7 +133,7 @@
             var $loading = $('.ffc-timeslots-loading');
 
             // Update modal title with selected date
-            var $modal = $('#ffc-booking-modal');
+            var $modal = $('#ffc-self-scheduling-modal');
             $modal.find('.ffc-modal-title').text(
                 (ffcCalendar.strings.availableTimes || 'Available Times') + ' — ' + self.formatDate(date)
             );
@@ -228,7 +228,7 @@
             $('.ffc-booking-form-wrapper').show();
 
             // Update modal title
-            $('#ffc-booking-modal .ffc-modal-title').text(
+            $('#ffc-self-scheduling-modal .ffc-modal-title').text(
                 ffcCalendar.strings.yourInformation || 'Your Information'
             );
 
@@ -238,7 +238,7 @@
             }
 
             // Scroll modal body to top
-            $('#ffc-booking-modal .ffc-modal-content').scrollTop(0);
+            $('#ffc-self-scheduling-modal .ffc-modal-content').scrollTop(0);
         },
 
         /**
@@ -331,7 +331,7 @@
             $messages.html('<div class="ffc-message ffc-message-error">' + message + '</div>');
 
             // Scroll modal body to bottom to show the message
-            var $modalContent = $('#ffc-booking-modal .ffc-modal-content');
+            var $modalContent = $('#ffc-self-scheduling-modal .ffc-modal-content');
             $modalContent.scrollTop($modalContent[0].scrollHeight);
         },
 
@@ -342,7 +342,7 @@
             var self = this;
 
             // Close modal
-            $('#ffc-booking-modal').hide();
+            $('#ffc-self-scheduling-modal').hide();
             $('body').css('overflow', '');
 
             // Build appointment details
@@ -433,12 +433,12 @@
             this.selectedTime = null;
 
             // Restore modal title
-            $('#ffc-booking-modal .ffc-modal-title').text(
+            $('#ffc-self-scheduling-modal .ffc-modal-title').text(
                 (ffcCalendar.strings.availableTimes || 'Available Times') + ' — ' + self.formatDate(self.selectedDate)
             );
 
             // Scroll modal to top
-            $('#ffc-booking-modal .ffc-modal-content').scrollTop(0);
+            $('#ffc-self-scheduling-modal .ffc-modal-content').scrollTop(0);
         },
 
         /**
