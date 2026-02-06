@@ -1753,10 +1753,11 @@ class RestController {
             $settings = get_option('ffc_settings', array());
             $date_format = $settings['date_format'] ?? 'F j, Y';
 
-            // Get bookings where user is affected (via booking_users table)
+            // Get bookings where user is affected (directly or via audience membership)
             $bookings_table = $wpdb->prefix . 'ffc_audience_bookings';
             $users_table = $wpdb->prefix . 'ffc_audience_booking_users';
-            $audiences_table = $wpdb->prefix . 'ffc_audience_booking_audiences';
+            $booking_audiences_table = $wpdb->prefix . 'ffc_audience_booking_audiences';
+            $members_table = $wpdb->prefix . 'ffc_audience_members';
             $audience_names_table = $wpdb->prefix . 'ffc_audience_audiences';
             $environments_table = $wpdb->prefix . 'ffc_audience_environments';
             $schedules_table = $wpdb->prefix . 'ffc_audience_schedules';
@@ -1765,12 +1766,15 @@ class RestController {
             $bookings = $wpdb->get_results($wpdb->prepare(
                 "SELECT DISTINCT b.*, e.name as environment_name, s.name as schedule_name
                  FROM {$bookings_table} b
-                 INNER JOIN {$users_table} bu ON b.id = bu.booking_id
+                 LEFT JOIN {$users_table} bu ON b.id = bu.booking_id
+                 LEFT JOIN {$booking_audiences_table} ba ON b.id = ba.booking_id
+                 LEFT JOIN {$members_table} am ON ba.audience_id = am.audience_id
                  LEFT JOIN {$environments_table} e ON b.environment_id = e.id
                  LEFT JOIN {$schedules_table} s ON e.schedule_id = s.id
-                 WHERE bu.user_id = %d
+                 WHERE (bu.user_id = %d OR am.user_id = %d)
                  AND b.status != 'cancelled'
                  ORDER BY b.booking_date DESC, b.start_time DESC",
+                $user_id,
                 $user_id
             ), ARRAY_A);
 
