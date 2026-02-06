@@ -326,12 +326,15 @@ class AppointmentHandler {
         // Schedule email notifications
         $this->schedule_email_notifications($appointment, $calendar, 'created');
 
-        // Generate receipt URL
+        // Generate receipt URL (magic link to /valid/ page)
         $receipt_url = '';
-        if (class_exists('\FreeFormCertificate\SelfScheduling\AppointmentReceiptHandler')) {
+        $confirmation_token = $appointment['confirmation_token'] ?? '';
+        if ( ! empty( $confirmation_token ) && class_exists( '\\FreeFormCertificate\\Generators\\MagicLinkHelper' ) ) {
+            $receipt_url = \FreeFormCertificate\Generators\MagicLinkHelper::generate_magic_link( $confirmation_token );
+        } elseif (class_exists('\FreeFormCertificate\SelfScheduling\AppointmentReceiptHandler')) {
             $receipt_url = \FreeFormCertificate\SelfScheduling\AppointmentReceiptHandler::get_receipt_url(
                 $appointment_id,
-                $appointment['confirmation_token'] ?? ''
+                $confirmation_token
             );
         }
 
