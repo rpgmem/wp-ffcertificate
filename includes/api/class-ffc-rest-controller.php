@@ -1778,7 +1778,7 @@ class RestController {
             $users_table = $wpdb->prefix . 'ffc_audience_booking_users';
             $booking_audiences_table = $wpdb->prefix . 'ffc_audience_booking_audiences';
             $members_table = $wpdb->prefix . 'ffc_audience_members';
-            $audience_names_table = $wpdb->prefix . 'ffc_audience_audiences';
+            $audience_names_table = $wpdb->prefix . 'ffc_audiences';
             $environments_table = $wpdb->prefix . 'ffc_audience_environments';
             $schedules_table = $wpdb->prefix . 'ffc_audience_schedules';
 
