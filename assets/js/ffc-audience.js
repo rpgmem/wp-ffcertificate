@@ -19,6 +19,10 @@
     if (!ffcAudience.strings) {
         ffcAudience.strings = {};
     }
+    // Convert WordPress locale (pt_BR) to BCP 47 format (pt-BR)
+    if (ffcAudience.locale) {
+        ffcAudience.locale = ffcAudience.locale.replace('_', '-');
+    }
     // Default strings fallback
     var defaultStrings = {
         months: ['January', 'February', 'March', 'April', 'May', 'June',
