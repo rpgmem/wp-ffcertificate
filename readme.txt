@@ -3,7 +3,7 @@ Contributors: alexmeusburger
 Tags: certificate, form builder, pdf generation, verification, validation
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 4.3.0
+Stable tag: 4.6.0
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -22,13 +22,22 @@ Free Form Certificate is a complete WordPress solution for creating dynamic form
 * **Verification System** - Certificate authenticity validation via unique code or magic token.
 * **QR Codes** - Auto-generated QR codes on certificates linking to the verification page.
 
-= Appointment Calendar =
+= Self-Scheduling (Personal Calendars) =
 
 * **Calendar Management** - Create multiple calendars with configurable time slots, durations, and business hours.
 * **Appointment Booking** - Frontend booking widget with real-time slot availability.
 * **Email Notifications** - Confirmation, approval, cancellation, and reminder emails.
 * **PDF Receipts** - Downloadable appointment receipts generated client-side.
 * **Admin Dashboard** - Manage, approve, and export appointments.
+
+= Audience Scheduling (Group Bookings) =
+
+* **Audience Management** - Create audiences (groups) with hierarchical structure and color coding.
+* **Environment Management** - Configure physical spaces with calendars, working hours, and capacity.
+* **Group Bookings** - Schedule activities for entire audiences or individual users.
+* **CSV Import** - Import audiences and members from CSV files with user creation.
+* **Conflict Detection** - Real-time conflict checking before booking confirmation.
+* **Email Notifications** - Automatic notifications for new bookings and cancellations.
 
 = Security & Restrictions =
 
@@ -119,8 +128,13 @@ Displays an appointment calendar with booking widget.
 
 Example: `[ffc_calendar id="456"]`
 
+= [ffc_audience_calendar] =
+Displays the audience scheduling calendar for group bookings.
+
+Example: `[ffc_audience_calendar]`
+
 = [user_dashboard_personal] =
-Displays the user's personal dashboard with their certificates and appointments.
+Displays the user's personal dashboard with certificates, appointments, audience bookings, and profile.
 
 Example: `[user_dashboard_personal]`
 
@@ -140,6 +154,73 @@ In the certificate layout editor, use these dynamic tags:
 * Common examples: `{{name}}`, `{{email}}`, `{{cpf_rf}}`, `{{ticket}}`
 
 == Changelog ==
+
+= 4.6.0 (2026-02-06) =
+
+Scheduling consolidation, user dashboard improvements, and bug fixes.
+
+* Added: Unified scheduling admin menu with visual separators between Self-Scheduling and Audience sections
+* Added: Scheduling Dashboard with stats cards (calendars, appointments, environments, audiences, bookings)
+* Added: Unified Settings page with tabs for Self-Scheduling, Audience, and Global Holidays
+* Added: Global holidays system blocking bookings across all calendars in both scheduling systems
+* Added: Pagination to user dashboard (certificates, appointments, audience bookings)
+* Added: Audience groups display on user profile tab
+* Added: Upcoming/Past/Cancelled section separators on appointments tab (matching audience tab)
+* Added: Holiday and Closed legend/display on self-scheduling calendar frontend
+* Added: Dashboard icon in admin submenu
+* Improved: Cancel button only visible for future appointments respecting cancellation deadline
+* Improved: Audience tab column alignment with fixed-width layout and one-tag-per-line
+* Improved: Calendar frontend styles consistent for logged-in and anonymous users
+* Improved: Tab labels renamed for clarity (Personal Schedule, Group Schedule, Profile)
+* Improved: Stat card labels moved to top of each card
+* Fixed: 500 error on profile endpoint (missing `global $wpdb`)
+* Fixed: SyntaxError on calendar page (`&&` mangled by `wptexturize`; moved to external JS with JSON config)
+* Fixed: Self-scheduling calendar not rendering (wp_localize_script timing issue; switched to JSON script tag)
+* Fixed: Empty audiences column (wrong table name `ffc_audience_audiences` → `ffc_audiences`)
+* Fixed: Cancel appointment 500 error (TypeError: string given to `findById()` expecting int)
+* Fixed: Error handling in AJAX handlers (use `\Throwable` instead of `\Exception`)
+* Fixed: Appointments tab showing time in date column
+* Fixed: Dashboard tab font consistency
+* Fixed: Missing `ffc-audience-admin.js` and calendar-admin assets causing 404s
+* Updated: 278 missing pt_BR translations for audience/scheduling system
+* Fixed: Incorrect translation for `{{submission_date}}` format description
+
+= 4.5.0 (2026-02-05) =
+
+Audience scheduling system and unified calendar component.
+
+* Added: Complete audience scheduling system for group bookings (`[ffc_audience_calendar]` shortcode)
+* Added: Audience management with hierarchical groups (2-level), color coding, and member management
+* Added: Environment management (physical spaces) with per-environment calendars and working hours
+* Added: Group booking modal with audience/individual user selection and conflict detection
+* Added: CSV import for audiences (name, color, parent) and members (email, name, audience)
+* Added: Email notifications for new bookings and cancellations with audience details
+* Added: Admin bookings list page with filters by schedule, environment, status, and date range
+* Added: Audience bookings tab in user dashboard with monthly calendar view
+* Added: Shared `FFCCalendarCore` JavaScript component for both calendar systems
+* Added: Unified visual styles (`ffc-common.css`) shared between Self-Scheduling and Audience calendars
+* Added: Calendar ID and Shortcode fields on calendar edit page
+* Added: Holidays management interface with closed days display in calendar
+* Added: Environment selector dropdown in booking modal
+* Added: Filter to show/hide cancelled bookings in day modal
+* Added: REST API endpoints for audience bookings with conflict checking
+* Fixed: Autoloader for `SelfScheduling` namespace file naming
+* Fixed: Multiple int cast issues for repository method calls with database values
+* Fixed: Date parsing timezone offset issues in calendar frontend
+* Fixed: AJAX loop prevention in booking counts fetch
+* New tables: `ffc_audiences`, `ffc_audience_members`, `ffc_environments`, `ffc_audience_bookings`, `ffc_audience_booking_targets`
+* New classes: `AudienceAdminPage`, `AudienceShortcode`, `AudienceLoader`, `AudienceRestController`, `AudienceCsvImporter`, `AudienceNotificationHandler`, `AudienceRepository`, `EnvironmentRepository`, `AudienceBookingRepository`, `EmailTemplateService`
+
+= 4.4.0 (2026-02-04) =
+
+Per-user capability system and self-scheduling rename.
+
+* Added: Per-user capability system for certificates and appointments (`ffc_view_own_certificates`, `ffc_cancel_own_appointments`, etc.)
+* Added: User Access settings tab for configuring default capabilities per role
+* Added: Capability migration for existing users based on submission/appointment history
+* Renamed: Calendar system to "Self-Scheduling" (Personal Calendars) for clarity
+* Renamed: CPT labels from "FFC Calendar" to "Personal Calendar" / "Personal Calendars"
+* Improved: Self-scheduling hooks and capabilities prefixed with `ffc_self_scheduling_`
 
 = 4.3.0 (2026-02-02) =
 
@@ -383,6 +464,15 @@ Bug fixes for strict types introduction.
 * Verification shortcode `[ffc_verification]`
 
 == Upgrade Notice ==
+
+= 4.6.0 =
+Scheduling consolidation with unified admin menu and settings. Global holidays system. User dashboard pagination and improvements. Multiple bug fixes. Translation update with 278 new pt_BR strings.
+
+= 4.5.0 =
+New audience scheduling system for group bookings. 5 new database tables created automatically. Backup recommended before update.
+
+= 4.4.0 =
+Per-user capability system. Self-scheduling rename. Capability migration runs automatically.
 
 = 4.3.0 =
 WordPress Plugin Check compliance. Text domain changed to `wp-ffcertificate`. Translation files renamed. CDN scripts replaced with bundled copies. Recommended update.
