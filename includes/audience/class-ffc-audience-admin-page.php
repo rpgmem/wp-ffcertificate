@@ -4,14 +4,25 @@ declare(strict_types=1);
 /**
  * Audience Admin Page
  *
- * Main admin page handler for audience scheduling system.
- * Provides unified menu under "Agendamentos" (Scheduling) with subpages for:
- * - Schedules (Calendários)
- * - Environments (Ambientes)
- * - Audiences (Públicos)
- * - Bookings (Agendamentos)
+ * Main admin page handler for the unified scheduling menu.
+ * Registers the top-level "Scheduling" menu and audience-specific subpages.
+ * Self-Scheduling CPT items (All Calendars, Add New) and Appointments are
+ * registered under the same menu by SelfSchedulingCPT and SelfSchedulingAdmin.
+ *
+ * Menu structure:
+ * - Dashboard (overview of both systems)
+ * - All Calendars (CPT - self-scheduling, auto-registered)
+ * - Add New (CPT - self-scheduling, auto-registered)
+ * - Appointments (self-scheduling, registered by SelfSchedulingAdmin)
+ * - Audience Calendars
+ * - Environments
+ * - Audiences
+ * - Audience Bookings
+ * - Import
+ * - Settings
  *
  * @since 4.5.0
+ * @version 4.6.0 - Unified scheduling menu with self-scheduling integration
  * @package FreeFormCertificate\Audience
  */
 
@@ -44,7 +55,7 @@ class AudienceAdminPage {
      * @return void
      */
     public function add_admin_menus(): void {
-        // Main menu: Agendamentos (Scheduling)
+        // Main menu: Agendamentos (Scheduling) — unified for both systems
         add_menu_page(
             __('Scheduling', 'wp-ffcertificate'),
             __('Scheduling', 'wp-ffcertificate'),
@@ -52,10 +63,10 @@ class AudienceAdminPage {
             self::MENU_SLUG,
             array($this, 'render_dashboard_page'),
             'dashicons-calendar-alt',
-            30
+            26
         );
 
-        // Submenu: Dashboard (Overview)
+        // Submenu: Dashboard (unified overview)
         add_submenu_page(
             self::MENU_SLUG,
             __('Dashboard', 'wp-ffcertificate'),
@@ -65,11 +76,16 @@ class AudienceAdminPage {
             array($this, 'render_dashboard_page')
         );
 
-        // Submenu: Calendars (Schedules)
+        // --- Self-Scheduling items are auto-registered here by CPT (All Calendars, Add New)
+        // --- and by SelfSchedulingAdmin (Appointments) at priority 25
+
+        // --- Audience section ---
+
+        // Submenu: Audience Calendars
         add_submenu_page(
             self::MENU_SLUG,
-            __('Calendars', 'wp-ffcertificate'),
-            __('Calendars', 'wp-ffcertificate'),
+            __('Audience Calendars', 'wp-ffcertificate'),
+            __('Audience Calendars', 'wp-ffcertificate'),
             'manage_options',
             self::MENU_SLUG . '-calendars',
             array($this, 'render_calendars_page')
@@ -95,15 +111,17 @@ class AudienceAdminPage {
             array($this, 'render_audiences_page')
         );
 
-        // Submenu: Bookings
+        // Submenu: Audience Bookings
         add_submenu_page(
             self::MENU_SLUG,
-            __('Bookings', 'wp-ffcertificate'),
-            __('Bookings', 'wp-ffcertificate'),
+            __('Audience Bookings', 'wp-ffcertificate'),
+            __('Audience Bookings', 'wp-ffcertificate'),
             'manage_options',
             self::MENU_SLUG . '-bookings',
             array($this, 'render_bookings_page')
         );
+
+        // --- Tools section ---
 
         // Submenu: Import
         add_submenu_page(
@@ -157,8 +175,8 @@ class AudienceAdminPage {
      * @return void
      */
     public function render_dashboard_page(): void {
-        // Get statistics
-        $stats = array(
+        // Audience statistics
+        $audience_stats = array(
             'schedules' => AudienceScheduleRepository::count(array('status' => 'active')),
             'environments' => AudienceEnvironmentRepository::count(array('status' => 'active')),
             'audiences' => AudienceRepository::count(array('status' => 'active')),
@@ -168,16 +186,48 @@ class AudienceAdminPage {
             )),
         );
 
+        // Self-scheduling statistics
+        $self_stats = $this->get_self_scheduling_stats();
+
         ?>
         <div class="wrap">
             <h1><?php esc_html_e('Scheduling Dashboard', 'wp-ffcertificate'); ?></h1>
 
-            <div class="ffc-audience-dashboard">
+            <div class="ffc-scheduling-dashboard">
+
+                <!-- Self-Scheduling Section -->
+                <h2><?php esc_html_e('Self-Scheduling (Personal)', 'wp-ffcertificate'); ?></h2>
+                <div class="ffc-stats-grid">
+                    <div class="ffc-stat-card">
+                        <span class="ffc-stat-icon dashicons dashicons-calendar"></span>
+                        <div class="ffc-stat-content">
+                            <span class="ffc-stat-value"><?php echo esc_html($self_stats['calendars']); ?></span>
+                            <span class="ffc-stat-label"><?php esc_html_e('Active Calendars', 'wp-ffcertificate'); ?></span>
+                        </div>
+                        <a href="<?php echo esc_url(admin_url('edit.php?post_type=ffc_self_scheduling')); ?>" class="ffc-stat-link">
+                            <?php esc_html_e('Manage', 'wp-ffcertificate'); ?> &rarr;
+                        </a>
+                    </div>
+
+                    <div class="ffc-stat-card">
+                        <span class="ffc-stat-icon dashicons dashicons-clock"></span>
+                        <div class="ffc-stat-content">
+                            <span class="ffc-stat-value"><?php echo esc_html($self_stats['upcoming_appointments']); ?></span>
+                            <span class="ffc-stat-label"><?php esc_html_e('Upcoming Appointments', 'wp-ffcertificate'); ?></span>
+                        </div>
+                        <a href="<?php echo esc_url(admin_url('admin.php?page=ffc-appointments')); ?>" class="ffc-stat-link">
+                            <?php esc_html_e('View All', 'wp-ffcertificate'); ?> &rarr;
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Audience Section -->
+                <h2><?php esc_html_e('Audience Scheduling', 'wp-ffcertificate'); ?></h2>
                 <div class="ffc-stats-grid">
                     <div class="ffc-stat-card">
                         <span class="ffc-stat-icon dashicons dashicons-calendar-alt"></span>
                         <div class="ffc-stat-content">
-                            <span class="ffc-stat-value"><?php echo esc_html($stats['schedules']); ?></span>
+                            <span class="ffc-stat-value"><?php echo esc_html($audience_stats['schedules']); ?></span>
                             <span class="ffc-stat-label"><?php esc_html_e('Active Calendars', 'wp-ffcertificate'); ?></span>
                         </div>
                         <a href="<?php echo esc_url(admin_url('admin.php?page=' . self::MENU_SLUG . '-calendars')); ?>" class="ffc-stat-link">
@@ -188,7 +238,7 @@ class AudienceAdminPage {
                     <div class="ffc-stat-card">
                         <span class="ffc-stat-icon dashicons dashicons-building"></span>
                         <div class="ffc-stat-content">
-                            <span class="ffc-stat-value"><?php echo esc_html($stats['environments']); ?></span>
+                            <span class="ffc-stat-value"><?php echo esc_html($audience_stats['environments']); ?></span>
                             <span class="ffc-stat-label"><?php esc_html_e('Active Environments', 'wp-ffcertificate'); ?></span>
                         </div>
                         <a href="<?php echo esc_url(admin_url('admin.php?page=' . self::MENU_SLUG . '-environments')); ?>" class="ffc-stat-link">
@@ -199,7 +249,7 @@ class AudienceAdminPage {
                     <div class="ffc-stat-card">
                         <span class="ffc-stat-icon dashicons dashicons-groups"></span>
                         <div class="ffc-stat-content">
-                            <span class="ffc-stat-value"><?php echo esc_html($stats['audiences']); ?></span>
+                            <span class="ffc-stat-value"><?php echo esc_html($audience_stats['audiences']); ?></span>
                             <span class="ffc-stat-label"><?php esc_html_e('Active Audiences', 'wp-ffcertificate'); ?></span>
                         </div>
                         <a href="<?php echo esc_url(admin_url('admin.php?page=' . self::MENU_SLUG . '-audiences')); ?>" class="ffc-stat-link">
@@ -210,7 +260,7 @@ class AudienceAdminPage {
                     <div class="ffc-stat-card">
                         <span class="ffc-stat-icon dashicons dashicons-clock"></span>
                         <div class="ffc-stat-content">
-                            <span class="ffc-stat-value"><?php echo esc_html($stats['upcoming_bookings']); ?></span>
+                            <span class="ffc-stat-value"><?php echo esc_html($audience_stats['upcoming_bookings']); ?></span>
                             <span class="ffc-stat-label"><?php esc_html_e('Upcoming Bookings', 'wp-ffcertificate'); ?></span>
                         </div>
                         <a href="<?php echo esc_url(admin_url('admin.php?page=' . self::MENU_SLUG . '-bookings')); ?>" class="ffc-stat-link">
@@ -222,8 +272,11 @@ class AudienceAdminPage {
                 <div class="ffc-quick-actions">
                     <h2><?php esc_html_e('Quick Actions', 'wp-ffcertificate'); ?></h2>
                     <div class="ffc-action-buttons">
+                        <a href="<?php echo esc_url(admin_url('post-new.php?post_type=ffc_self_scheduling')); ?>" class="button button-primary">
+                            <?php esc_html_e('New Personal Calendar', 'wp-ffcertificate'); ?>
+                        </a>
                         <a href="<?php echo esc_url(admin_url('admin.php?page=' . self::MENU_SLUG . '-calendars&action=new')); ?>" class="button button-primary">
-                            <?php esc_html_e('Create Calendar', 'wp-ffcertificate'); ?>
+                            <?php esc_html_e('New Audience Calendar', 'wp-ffcertificate'); ?>
                         </a>
                         <a href="<?php echo esc_url(admin_url('admin.php?page=' . self::MENU_SLUG . '-environments&action=new')); ?>" class="button">
                             <?php esc_html_e('Add Environment', 'wp-ffcertificate'); ?>
@@ -237,8 +290,10 @@ class AudienceAdminPage {
         </div>
 
         <style>
-            .ffc-audience-dashboard { margin-top: 20px; }
-            .ffc-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+            .ffc-scheduling-dashboard { margin-top: 20px; }
+            .ffc-scheduling-dashboard > h2 { margin: 25px 0 15px; padding-bottom: 8px; border-bottom: 1px solid #c3c4c7; }
+            .ffc-scheduling-dashboard > h2:first-of-type { margin-top: 0; }
+            .ffc-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 20px; }
             .ffc-stat-card { background: #fff; border: 1px solid #c3c4c7; border-radius: 4px; padding: 20px; display: flex; flex-direction: column; }
             .ffc-stat-icon { font-size: 32px; color: #2271b1; margin-bottom: 10px; }
             .ffc-stat-content { flex-grow: 1; }
@@ -246,11 +301,49 @@ class AudienceAdminPage {
             .ffc-stat-label { color: #50575e; font-size: 14px; }
             .ffc-stat-link { margin-top: 15px; color: #2271b1; text-decoration: none; }
             .ffc-stat-link:hover { text-decoration: underline; }
-            .ffc-quick-actions { background: #fff; border: 1px solid #c3c4c7; border-radius: 4px; padding: 20px; }
+            .ffc-quick-actions { background: #fff; border: 1px solid #c3c4c7; border-radius: 4px; padding: 20px; margin-top: 10px; }
             .ffc-quick-actions h2 { margin-top: 0; }
             .ffc-action-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
         </style>
         <?php
+    }
+
+    /**
+     * Get self-scheduling statistics for dashboard
+     *
+     * @return array{calendars: int, upcoming_appointments: int}
+     */
+    private function get_self_scheduling_stats(): array {
+        global $wpdb;
+
+        $calendars = 0;
+        $upcoming = 0;
+
+        // Count published self-scheduling calendars
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $calendars = (int) $wpdb->get_var(
+            "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'ffc_self_scheduling' AND post_status = 'publish'"
+        );
+
+        // Count upcoming appointments (today or future, not cancelled)
+        $appointments_table = $wpdb->prefix . 'ffc_self_scheduling_appointments';
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+        $table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$appointments_table}'") === $appointments_table;
+
+        if ($table_exists) {
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+            $upcoming = (int) $wpdb->get_var(
+                $wpdb->prepare(
+                    "SELECT COUNT(*) FROM {$appointments_table} WHERE appointment_date >= %s AND status IN ('pending', 'confirmed')",
+                    current_time('Y-m-d')
+                )
+            );
+        }
+
+        return array(
+            'calendars' => $calendars,
+            'upcoming_appointments' => $upcoming,
+        );
     }
 
     /**

@@ -84,13 +84,11 @@ class SelfSchedulingCPT {
             'labels'             => $labels,
             'public'             => false,
             'show_ui'            => true,
-            'show_in_menu'       => true, // Independent menu (not under Forms)
+            'show_in_menu'       => 'ffc-scheduling', // Unified Scheduling menu
             'query_var'          => true,
             'capability_type'    => 'post',
             'has_archive'        => false,
             'hierarchical'       => false,
-            'menu_icon'          => 'dashicons-calendar-alt',
-            'menu_position'      => 26, // Position below FFC Forms (which is usually 25)
             'supports'           => array('title'),
             'rewrite'            => array('slug' => 'ffc-calendar'),
         );

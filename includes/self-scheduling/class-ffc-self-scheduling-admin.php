@@ -4,14 +4,11 @@ declare(strict_types=1);
 /**
  * Self-Scheduling Admin
  *
- * Manages admin interface for calendars, including submenu pages.
- * Creates submenu structure:
- * - All Calendars (automatically created by CPT)
- * - Add New (automatically created by CPT)
- * - Appointments (custom submenu page)
+ * Manages admin interface for self-scheduling appointments.
+ * Registers "Appointments" submenu under the unified Scheduling menu.
  *
  * @since 4.1.0
- * @version 4.1.0
+ * @version 4.6.0 - Migrated to unified Scheduling menu
  */
 
 namespace FreeFormCertificate\SelfScheduling;
@@ -24,41 +21,37 @@ class SelfSchedulingAdmin {
      * Constructor
      */
     public function __construct() {
-        add_action('admin_menu', array($this, 'add_submenu_pages'), 20);
+        add_action('admin_menu', array($this, 'add_submenu_pages'), 25);
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_assets'));
     }
 
     /**
-     * Add submenu pages to Calendar menu
+     * Add submenu pages to unified Scheduling menu
      *
      * @return void
      */
     public function add_submenu_pages(): void {
-        // Add Appointments submenu page
+        // Add Appointments submenu under unified Scheduling menu
         add_submenu_page(
-            'edit.php?post_type=ffc_self_scheduling', // Parent slug (Self-Scheduling CPT menu)
-            __('Appointments', 'wp-ffcertificate'),          // Page title
-            __('Appointments', 'wp-ffcertificate'),          // Menu title
-            'edit_posts',                        // Capability
-            'ffc-appointments',                  // Menu slug
-            array($this, 'render_appointments_page') // Callback
+            'ffc-scheduling',
+            __('Appointments', 'wp-ffcertificate'),
+            __('Appointments', 'wp-ffcertificate'),
+            'edit_posts',
+            'ffc-appointments',
+            array($this, 'render_appointments_page')
         );
     }
 
     /**
      * Render Appointments page
      *
-     * This page will list all appointments with filters and export options.
-     *
      * @return void
      */
     public function render_appointments_page(): void {
-        // Check permissions
         if (!\FreeFormCertificate\Core\Utils::current_user_can_manage()) {
             wp_die(esc_html__('You do not have permission to access this page.', 'wp-ffcertificate'));
         }
 
-        // Include appointments list table
         require_once plugin_dir_path(__FILE__) . 'views/appointments-list.php';
     }
 
@@ -69,19 +62,21 @@ class SelfSchedulingAdmin {
      * @return void
      */
     public function enqueue_admin_assets(string $hook): void {
-        // Only load on calendar and appointment pages
-        $calendar_screens = array(
-            'ffc_self_scheduling',
-            'edit-ffc_self_scheduling',
-            'ffc-calendars_page_ffc-appointments'
-        );
-
         $screen = get_current_screen();
-        if (!$screen || !in_array($screen->id, $calendar_screens)) {
+        if (!$screen) {
             return;
         }
 
-        // Enqueue styles
+        // Match self-scheduling screens (CPT edit/list + appointments page)
+        $is_self_scheduling = (
+            $screen->post_type === 'ffc_self_scheduling' ||
+            strpos($screen->id, 'ffc-appointments') !== false
+        );
+
+        if (!$is_self_scheduling) {
+            return;
+        }
+
         wp_enqueue_style(
             'ffc-calendar-admin',
             plugins_url('assets/css/calendar-admin.css', dirname(__FILE__, 2)),
@@ -89,7 +84,6 @@ class SelfSchedulingAdmin {
             '4.1.0'
         );
 
-        // Enqueue scripts
         wp_enqueue_script(
             'ffc-calendar-admin',
             plugins_url('assets/js/calendar-admin.js', dirname(__FILE__, 2)),
@@ -98,7 +92,6 @@ class SelfSchedulingAdmin {
             true
         );
 
-        // Localize script
         wp_localize_script('ffc-calendar-admin', 'ffcSelfSchedulingAdmin', array(
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('ffc_self_scheduling_admin_nonce'),
@@ -111,7 +104,6 @@ class SelfSchedulingAdmin {
             )
         ));
 
-        // Enqueue jQuery UI theme for datepicker
         // phpcs:ignore PluginCheck.CodeAnalysis.EnqueuedResourceOffloading.OffloadedContent -- jQuery UI CSS from official CDN, standard practice.
         wp_enqueue_style('jquery-ui-theme', '//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css', array(), '1.12.1');
     }
