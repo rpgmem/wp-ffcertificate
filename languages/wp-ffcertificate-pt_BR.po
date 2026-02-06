@@ -8061,3 +8061,31 @@ msgstr "O editor HTML está vazio. Adicione um template primeiro."
 #: includes/admin/class-ffc-admin-assets-manager.php
 msgid "Placeholders replaced with sample data. QR code shown as placeholder."
 msgstr "Placeholders substituídos por dados de exemplo. QR code exibido como placeholder."
+
+#: includes/frontend/class-ffc-verification-handler.php
+msgid "Appointment Receipt Valid"
+msgstr "Comprovante de Agendamento Válido"
+
+#: includes/frontend/class-ffc-verification-handler.php
+msgid "Document not found or invalid code."
+msgstr "Documento não encontrado ou código inválido."
+
+#: includes/frontend/class-ffc-verification-handler.php
+msgid "Document not found or invalid link."
+msgstr "Documento não encontrado ou link inválido."
+
+#: includes/frontend/class-ffc-verification-handler.php
+msgid "Booked on"
+msgstr "Agendado em"
+
+#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php
+msgid "Generating receipt in the background, please wait..."
+msgstr "Gerando comprovante em segundo plano, por favor aguarde..."
+
+#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php
+msgid "Validation Code"
+msgstr "Código de Validação"
+
+#: includes/generators/class-ffc-pdf-generator.php
+msgid "Appointment_Receipt"
+msgstr "Comprovante_Agendamento"

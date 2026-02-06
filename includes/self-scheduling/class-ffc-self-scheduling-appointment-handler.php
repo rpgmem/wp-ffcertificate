@@ -118,11 +118,35 @@ class AppointmentHandler {
                 return;
             }
 
-            wp_send_json_success(array(
+            // Generate receipt PDF data for auto-download
+            $pdf_data = null;
+            $appointment = null;
+            try {
+                $appointment = $this->appointment_repository->findById($result['appointment_id']);
+                $calendar = $this->calendar_repository->findById((int) $appointment_data['calendar_id']);
+                if ( $appointment && $calendar ) {
+                    $pdf_generator = new \FreeFormCertificate\Generators\PdfGenerator();
+                    $pdf_data = $pdf_generator->generate_appointment_pdf_data( $appointment, $calendar );
+                }
+            } catch ( \Exception $e ) {
+                // PDF generation failure should not block the booking response
+                // phpcs:ignore WordPress.PHP.DevelopmentFunctions
+                error_log( 'FFC Appointment PDF Error: ' . $e->getMessage() );
+            }
+
+            $response = array(
                 'message' => __('Appointment booked successfully!', 'wp-ffcertificate'),
                 'appointment_id' => $result['appointment_id'],
-                'confirmation_token' => $result['confirmation_token'] ?? null
-            ));
+                'confirmation_token' => $result['confirmation_token'] ?? null,
+                'validation_code' => $appointment ? ( $appointment['validation_code'] ?? null ) : null,
+                'receipt_url' => $result['receipt_url'] ?? '',
+            );
+
+            if ( $pdf_data && ! is_wp_error( $pdf_data ) ) {
+                $response['pdf_data'] = $pdf_data;
+            }
+
+            wp_send_json_success( $response );
         } catch (\Exception $e) {
             // phpcs:ignore WordPress.PHP.DevelopmentFunctions
             error_log('FFC Calendar Appointment Error: ' . $e->getMessage());

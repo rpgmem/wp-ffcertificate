@@ -72,6 +72,16 @@
                 e.preventDefault();
                 self.resetCalendar();
             });
+
+            // Manual receipt PDF download button
+            $(document).on('click', '.ffc-download-receipt-btn', function(e) {
+                e.preventDefault();
+                var pdfData = $(this).data('pdfData');
+                if (pdfData && typeof window.ffcGeneratePDF === 'function') {
+                    var filename = pdfData.filename || 'appointment_receipt.pdf';
+                    window.ffcGeneratePDF(pdfData, filename);
+                }
+            });
         },
 
         /**
@@ -290,7 +300,7 @@
             // Build appointment details
             var detailsHtml = '<div class="ffc-appointment-info">';
             detailsHtml += '<p><strong>' + ffcCalendar.strings.date + ':</strong> ' + self.selectedDate + '</p>';
-            detailsHtml += '<p><strong>' + ffcCalendar.strings.time + ':</strong> ' + $('#ffc-form-time option:selected').text() + '</p>';
+            detailsHtml += '<p><strong>' + ffcCalendar.strings.time + ':</strong> ' + (self.selectedTime || '') + '</p>';
             detailsHtml += '<p><strong>' + ffcCalendar.strings.name + ':</strong> ' + $('#ffc-booking-name').val() + '</p>';
             detailsHtml += '<p><strong>' + ffcCalendar.strings.email + ':</strong> ' + $('#ffc-booking-email').val() + '</p>';
 
@@ -301,25 +311,35 @@
             }
             detailsHtml += '</div>';
 
-            // Add confirmation code/token if available
-            if (data.confirmation_token) {
+            // Show validation code if available
+            if (data.validation_code) {
                 detailsHtml += '<div class="ffc-confirmation-code">';
-                detailsHtml += '<p><strong>' + ffcCalendar.strings.confirmationCode + ':</strong></p>';
-                detailsHtml += '<p class="ffc-code-value">' + data.confirmation_token + '</p>';
+                detailsHtml += '<p><strong>' + (ffcCalendar.strings.validationCode || 'Validation Code') + ':</strong></p>';
+                detailsHtml += '<p class="ffc-code-value">' + data.validation_code + '</p>';
                 detailsHtml += '<p class="ffc-code-help">' + ffcCalendar.strings.confirmationCodeHelp + '</p>';
                 detailsHtml += '</div>';
             }
 
-            // Add receipt download button if available
-            if (data.receipt_url) {
-                detailsHtml += '<div class="ffc-receipt-actions">';
-                detailsHtml += '<a href="' + data.receipt_url + '" class="ffc-btn ffc-btn-secondary" target="_blank">';
-                detailsHtml += '📄 ' + ffcCalendar.strings.downloadReceipt;
-                detailsHtml += '</a>';
-                detailsHtml += '</div>';
+            // Add receipt actions (download PDF + view receipt)
+            detailsHtml += '<div class="ffc-receipt-actions">';
+            if (data.pdf_data) {
+                detailsHtml += '<button type="button" class="ffc-btn ffc-btn-primary ffc-download-receipt-btn">';
+                detailsHtml += ffcCalendar.strings.downloadReceipt;
+                detailsHtml += '</button>';
             }
+            if (data.receipt_url) {
+                detailsHtml += ' <a href="' + data.receipt_url + '" class="ffc-btn ffc-btn-secondary" target="_blank">';
+                detailsHtml += ffcCalendar.strings.downloadReceipt;
+                detailsHtml += '</a>';
+            }
+            detailsHtml += '</div>';
 
             $('.ffc-appointment-details').html(detailsHtml);
+
+            // Attach pdf_data to download button
+            if (data.pdf_data) {
+                $('.ffc-download-receipt-btn').data('pdfData', data.pdf_data);
+            }
 
             // Show confirmation
             $('.ffc-confirmation-wrapper').show();
@@ -328,6 +348,14 @@
             $('html, body').animate({
                 scrollTop: $('.ffc-confirmation-wrapper').offset().top - 100
             }, 500);
+
+            // Auto-download PDF receipt if available
+            if (data.pdf_data && typeof window.ffcGeneratePDF === 'function') {
+                setTimeout(function() {
+                    var filename = data.pdf_data.filename || 'appointment_receipt.pdf';
+                    window.ffcGeneratePDF(data.pdf_data, filename);
+                }, 500);
+            }
         },
 
         /**

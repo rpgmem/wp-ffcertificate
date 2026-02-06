@@ -609,4 +609,174 @@ class PdfGenerator {
             'bg_image'   => $bg_image_url
         );
     }
+
+    /**
+     * Generate PDF data for appointment receipt
+     *
+     * Uses the same HTML→canvas→PDF pipeline as certificates.
+     * Template loaded from plugin default or overridden via filter.
+     *
+     * @since 4.2.0
+     * @param array $appointment Appointment data array from database
+     * @param array $calendar Calendar data array from database
+     * @return array PDF data array (html, template, filename, bg_image)
+     */
+    public function generate_appointment_pdf_data( array $appointment, array $calendar ): array {
+        // Get date/time format settings
+        $date_format = get_option( 'date_format' );
+        $time_format = get_option( 'time_format' );
+
+        // Format appointment date
+        $formatted_date = __( 'N/A', 'wp-ffcertificate' );
+        if ( ! empty( $appointment['appointment_date'] ) ) {
+            $ts = strtotime( $appointment['appointment_date'] );
+            if ( $ts !== false ) {
+                $formatted_date = date_i18n( $date_format, $ts );
+            }
+        }
+
+        // Format time range
+        $formatted_time = __( 'N/A', 'wp-ffcertificate' );
+        if ( ! empty( $appointment['start_time'] ) ) {
+            $ts = strtotime( $appointment['start_time'] );
+            if ( $ts !== false ) {
+                $formatted_time = date_i18n( $time_format, $ts );
+            }
+            if ( ! empty( $appointment['end_time'] ) ) {
+                $ts2 = strtotime( $appointment['end_time'] );
+                if ( $ts2 !== false ) {
+                    $formatted_time .= ' - ' . date_i18n( $time_format, $ts2 );
+                }
+            }
+        }
+
+        // Format created_at
+        $formatted_created = __( 'N/A', 'wp-ffcertificate' );
+        if ( ! empty( $appointment['created_at'] ) ) {
+            $ts = strtotime( $appointment['created_at'] );
+            if ( $ts !== false ) {
+                $formatted_created = date_i18n( $date_format . ' ' . $time_format, $ts );
+            }
+        }
+
+        // Decrypt sensitive data if needed
+        $email = $appointment['email'] ?? '';
+        if ( empty( $email ) && ! empty( $appointment['email_encrypted'] ) ) {
+            if ( class_exists( '\\FreeFormCertificate\\Core\\Encryption' ) ) {
+                try {
+                    $email = \FreeFormCertificate\Core\Encryption::decrypt( $appointment['email_encrypted'] );
+                } catch ( \Exception $e ) {
+                    $email = '';
+                }
+            }
+        }
+
+        $cpf_rf = $appointment['cpf_rf'] ?? '';
+        if ( empty( $cpf_rf ) && ! empty( $appointment['cpf_rf_encrypted'] ) ) {
+            if ( class_exists( '\\FreeFormCertificate\\Core\\Encryption' ) ) {
+                try {
+                    $cpf_rf = \FreeFormCertificate\Core\Encryption::decrypt( $appointment['cpf_rf_encrypted'] );
+                } catch ( \Exception $e ) {
+                    $cpf_rf = '';
+                }
+            }
+        }
+
+        // Status labels
+        $status_labels = array(
+            'pending'   => __( 'Pending Approval', 'wp-ffcertificate' ),
+            'confirmed' => __( 'Confirmed', 'wp-ffcertificate' ),
+            'cancelled' => __( 'Cancelled', 'wp-ffcertificate' ),
+            'completed' => __( 'Completed', 'wp-ffcertificate' ),
+            'no_show'   => __( 'No Show', 'wp-ffcertificate' ),
+        );
+        $status = $appointment['status'] ?? 'pending';
+        $status_label = $status_labels[ $status ] ?? $status;
+
+        // Build data array for placeholder replacement
+        $data = array(
+            'name'              => $appointment['name'] ?? '',
+            'email'             => $email,
+            'cpf_rf'            => $cpf_rf,
+            'calendar_title'    => $calendar['title'] ?? __( 'N/A', 'wp-ffcertificate' ),
+            'appointment_date'  => $formatted_date,
+            'appointment_time'  => $formatted_time,
+            'created_at'        => $formatted_created,
+            'status'            => $status_label,
+            'validation_code'   => ! empty( $appointment['validation_code'] )
+                ? \FreeFormCertificate\Core\Utils::format_auth_code( $appointment['validation_code'] )
+                : '',
+            'auth_code'         => ! empty( $appointment['validation_code'] )
+                ? $appointment['validation_code']
+                : '',
+            'site_name'         => get_bloginfo( 'name' ),
+        );
+
+        // Add magic_token (confirmation_token) for QR code / validation URL
+        if ( ! empty( $appointment['confirmation_token'] ) ) {
+            $data['magic_token'] = $appointment['confirmation_token'];
+        }
+
+        // Load receipt template
+        $template = $this->get_appointment_receipt_template();
+
+        // Build form_config-like structure for generate_html
+        $form_config = array(
+            'pdf_layout' => $template,
+        );
+
+        // Generate HTML using the existing generate_html() method
+        $calendar_title = $calendar['title'] ?? __( 'Appointment Receipt', 'wp-ffcertificate' );
+        $html = $this->generate_html( $data, $calendar_title, $form_config, $appointment['created_at'] ?? null );
+
+        // Generate filename
+        $validation_code = $appointment['validation_code'] ?? '';
+        $safe_title = __( 'Appointment_Receipt', 'wp-ffcertificate' );
+        $filename = $this->generate_filename( $safe_title, $validation_code );
+
+        // Allow background image customization via filter
+        $bg_image = apply_filters( 'ffc_appointment_receipt_bg_image', '', $appointment, $calendar );
+
+        return array(
+            'html'       => $html,
+            'template'   => $html,
+            'filename'   => $filename,
+            'form_title' => $calendar_title,
+            'bg_image'   => $bg_image,
+            'type'       => 'appointment_receipt',
+        );
+    }
+
+    /**
+     * Get appointment receipt HTML template
+     *
+     * Loads from plugin default file. Can be overridden via filter.
+     *
+     * @since 4.2.0
+     * @return string HTML template with placeholders
+     */
+    private function get_appointment_receipt_template(): string {
+        $template_file = FFC_PLUGIN_DIR . 'html/default_appointment_receipt_1.html';
+
+        // Allow override via filter
+        $template_file = apply_filters( 'ffc_appointment_receipt_template_file', $template_file );
+
+        if ( file_exists( $template_file ) ) {
+            // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Reading local template file.
+            $template = file_get_contents( $template_file );
+            if ( ! empty( $template ) ) {
+                return $template;
+            }
+        }
+
+        // Fallback: minimal receipt template
+        return '<div style="width:1123px;height:794px;padding:60px;box-sizing:border-box;font-family:Arial,sans-serif">'
+            . '<h1 style="text-align:center;color:#0073aa">' . esc_html__( 'Appointment Receipt', 'wp-ffcertificate' ) . '</h1>'
+            . '<p><strong>' . esc_html__( 'Name:', 'wp-ffcertificate' ) . '</strong> {{name}}</p>'
+            . '<p><strong>' . esc_html__( 'Event:', 'wp-ffcertificate' ) . '</strong> {{calendar_title}}</p>'
+            . '<p><strong>' . esc_html__( 'Date:', 'wp-ffcertificate' ) . '</strong> {{appointment_date}}</p>'
+            . '<p><strong>' . esc_html__( 'Time:', 'wp-ffcertificate' ) . '</strong> {{appointment_time}}</p>'
+            . '<p><strong>' . esc_html__( 'Validation Code:', 'wp-ffcertificate' ) . '</strong> {{validation_code}}</p>'
+            . '</div>';
+    }
 }
