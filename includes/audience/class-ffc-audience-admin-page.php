@@ -259,6 +259,15 @@ class AudienceAdminPage {
             #adminmenu .wp-submenu a[href="#ffc-separator-tools"]::before {
                 content: "\f107"; /* dashicons-admin-tools */
             }
+            #adminmenu .wp-submenu a[href$="ffc-scheduling-dashboard"]::before {
+                font-family: dashicons;
+                font-size: 14px;
+                margin-right: 4px;
+                vertical-align: middle;
+                position: relative;
+                top: -1px;
+                content: "\f226"; /* dashicons-dashboard */
+            }
         </style>
         <?php
     }
@@ -318,10 +327,10 @@ class AudienceAdminPage {
                 <h2><?php esc_html_e('Self-Scheduling (Personal)', 'wp-ffcertificate'); ?></h2>
                 <div class="ffc-stats-grid">
                     <div class="ffc-stat-card">
-                        <span class="ffc-stat-icon dashicons dashicons-calendar"></span>
-                        <div class="ffc-stat-content">
+                        <span class="ffc-stat-label"><?php esc_html_e('Active Calendars', 'wp-ffcertificate'); ?></span>
+                        <div class="ffc-stat-number">
+                            <span class="ffc-stat-icon dashicons dashicons-calendar"></span>
                             <span class="ffc-stat-value"><?php echo esc_html($self_stats['calendars']); ?></span>
-                            <span class="ffc-stat-label"><?php esc_html_e('Active Calendars', 'wp-ffcertificate'); ?></span>
                         </div>
                         <a href="<?php echo esc_url(admin_url('edit.php?post_type=ffc_self_scheduling')); ?>" class="ffc-stat-link">
                             <?php esc_html_e('Manage', 'wp-ffcertificate'); ?> &rarr;
@@ -329,10 +338,10 @@ class AudienceAdminPage {
                     </div>
 
                     <div class="ffc-stat-card">
-                        <span class="ffc-stat-icon dashicons dashicons-clock"></span>
-                        <div class="ffc-stat-content">
+                        <span class="ffc-stat-label"><?php esc_html_e('Upcoming Appointments', 'wp-ffcertificate'); ?></span>
+                        <div class="ffc-stat-number">
+                            <span class="ffc-stat-icon dashicons dashicons-clock"></span>
                             <span class="ffc-stat-value"><?php echo esc_html($self_stats['upcoming_appointments']); ?></span>
-                            <span class="ffc-stat-label"><?php esc_html_e('Upcoming Appointments', 'wp-ffcertificate'); ?></span>
                         </div>
                         <a href="<?php echo esc_url(admin_url('admin.php?page=ffc-appointments')); ?>" class="ffc-stat-link">
                             <?php esc_html_e('View All', 'wp-ffcertificate'); ?> &rarr;
@@ -344,10 +353,10 @@ class AudienceAdminPage {
                 <h2><?php esc_html_e('Audience Scheduling', 'wp-ffcertificate'); ?></h2>
                 <div class="ffc-stats-grid">
                     <div class="ffc-stat-card">
-                        <span class="ffc-stat-icon dashicons dashicons-calendar-alt"></span>
-                        <div class="ffc-stat-content">
+                        <span class="ffc-stat-label"><?php esc_html_e('Active Calendars', 'wp-ffcertificate'); ?></span>
+                        <div class="ffc-stat-number">
+                            <span class="ffc-stat-icon dashicons dashicons-calendar-alt"></span>
                             <span class="ffc-stat-value"><?php echo esc_html($audience_stats['schedules']); ?></span>
-                            <span class="ffc-stat-label"><?php esc_html_e('Active Calendars', 'wp-ffcertificate'); ?></span>
                         </div>
                         <a href="<?php echo esc_url(admin_url('admin.php?page=' . self::MENU_SLUG . '-calendars')); ?>" class="ffc-stat-link">
                             <?php esc_html_e('Manage', 'wp-ffcertificate'); ?> &rarr;
@@ -355,10 +364,10 @@ class AudienceAdminPage {
                     </div>
 
                     <div class="ffc-stat-card">
-                        <span class="ffc-stat-icon dashicons dashicons-building"></span>
-                        <div class="ffc-stat-content">
+                        <span class="ffc-stat-label"><?php esc_html_e('Active Environments', 'wp-ffcertificate'); ?></span>
+                        <div class="ffc-stat-number">
+                            <span class="ffc-stat-icon dashicons dashicons-building"></span>
                             <span class="ffc-stat-value"><?php echo esc_html($audience_stats['environments']); ?></span>
-                            <span class="ffc-stat-label"><?php esc_html_e('Active Environments', 'wp-ffcertificate'); ?></span>
                         </div>
                         <a href="<?php echo esc_url(admin_url('admin.php?page=' . self::MENU_SLUG . '-environments')); ?>" class="ffc-stat-link">
                             <?php esc_html_e('Manage', 'wp-ffcertificate'); ?> &rarr;
@@ -366,10 +375,10 @@ class AudienceAdminPage {
                     </div>
 
                     <div class="ffc-stat-card">
-                        <span class="ffc-stat-icon dashicons dashicons-groups"></span>
-                        <div class="ffc-stat-content">
+                        <span class="ffc-stat-label"><?php esc_html_e('Active Audiences', 'wp-ffcertificate'); ?></span>
+                        <div class="ffc-stat-number">
+                            <span class="ffc-stat-icon dashicons dashicons-groups"></span>
                             <span class="ffc-stat-value"><?php echo esc_html($audience_stats['audiences']); ?></span>
-                            <span class="ffc-stat-label"><?php esc_html_e('Active Audiences', 'wp-ffcertificate'); ?></span>
                         </div>
                         <a href="<?php echo esc_url(admin_url('admin.php?page=' . self::MENU_SLUG . '-audiences')); ?>" class="ffc-stat-link">
                             <?php esc_html_e('Manage', 'wp-ffcertificate'); ?> &rarr;
@@ -377,10 +386,10 @@ class AudienceAdminPage {
                     </div>
 
                     <div class="ffc-stat-card">
-                        <span class="ffc-stat-icon dashicons dashicons-clock"></span>
-                        <div class="ffc-stat-content">
+                        <span class="ffc-stat-label"><?php esc_html_e('Upcoming Bookings', 'wp-ffcertificate'); ?></span>
+                        <div class="ffc-stat-number">
+                            <span class="ffc-stat-icon dashicons dashicons-clock"></span>
                             <span class="ffc-stat-value"><?php echo esc_html($audience_stats['upcoming_bookings']); ?></span>
-                            <span class="ffc-stat-label"><?php esc_html_e('Upcoming Bookings', 'wp-ffcertificate'); ?></span>
                         </div>
                         <a href="<?php echo esc_url(admin_url('admin.php?page=' . self::MENU_SLUG . '-bookings')); ?>" class="ffc-stat-link">
                             <?php esc_html_e('View All', 'wp-ffcertificate'); ?> &rarr;
@@ -413,12 +422,12 @@ class AudienceAdminPage {
             .ffc-scheduling-dashboard > h2 { margin: 25px 0 15px; padding-bottom: 8px; border-bottom: 1px solid #c3c4c7; }
             .ffc-scheduling-dashboard > h2:first-of-type { margin-top: 0; }
             .ffc-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 20px; }
-            .ffc-stat-card { background: #fff; border: 1px solid #c3c4c7; border-radius: 4px; padding: 20px; display: flex; flex-direction: row; align-items: flex-start; gap: 15px; flex-wrap: wrap; }
-            .ffc-stat-icon { font-size: 32px; color: #2271b1; flex-shrink: 0; line-height: 1; }
-            .ffc-stat-content { flex: 1 1 0; min-width: 0; }
-            .ffc-stat-value { font-size: 28px; font-weight: 600; display: block; color: #1d2327; word-break: break-word; }
-            .ffc-stat-label { color: #50575e; font-size: 14px; }
-            .ffc-stat-link { width: 100%; color: #2271b1; text-decoration: none; }
+            .ffc-stat-card { background: #fff; border: 1px solid #c3c4c7; border-radius: 4px; padding: 20px; display: flex; flex-direction: column; gap: 8px; }
+            .ffc-stat-label { color: #50575e; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+            .ffc-stat-number { display: flex; align-items: center; gap: 10px; }
+            .ffc-stat-icon { font-size: 28px; color: #2271b1; flex-shrink: 0; line-height: 1; }
+            .ffc-stat-value { font-size: 32px; font-weight: 600; color: #1d2327; }
+            .ffc-stat-link { margin-top: auto; color: #2271b1; text-decoration: none; font-size: 13px; }
             .ffc-stat-link:hover { text-decoration: underline; }
             .ffc-quick-actions { background: #fff; border: 1px solid #c3c4c7; border-radius: 4px; padding: 20px; margin-top: 10px; }
             .ffc-quick-actions h2 { margin-top: 0; }
