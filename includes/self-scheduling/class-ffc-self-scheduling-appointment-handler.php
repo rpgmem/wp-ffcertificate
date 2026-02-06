@@ -375,7 +375,10 @@ class AppointmentHandler {
             }
         }
 
-        // 7. Check if date is blocked
+        // 7. Check global holidays and blocked dates
+        if (\FreeFormCertificate\Scheduling\DateBlockingService::is_global_holiday($data['appointment_date'])) {
+            return new \WP_Error('date_blocked', __('This date is a holiday.', 'wp-ffcertificate'));
+        }
         if ($this->blocked_date_repository->isDateBlocked($data['calendar_id'], $data['appointment_date'], $data['start_time'])) {
             return new \WP_Error('date_blocked', __('This date/time is not available.', 'wp-ffcertificate'));
         }
@@ -595,7 +598,10 @@ class AppointmentHandler {
             return new \WP_Error('calendar_inactive', __('Calendar is not active.', 'wp-ffcertificate'));
         }
 
-        // Check if date is blocked
+        // Check global holidays and blocked dates
+        if (\FreeFormCertificate\Scheduling\DateBlockingService::is_global_holiday($date)) {
+            return array(); // Global holiday - no slots
+        }
         if ($this->blocked_date_repository->isDateBlocked($calendar_id, $date)) {
             return array(); // No slots available
         }
