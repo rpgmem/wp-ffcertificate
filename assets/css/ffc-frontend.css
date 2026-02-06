@@ -367,22 +367,26 @@
    VERIFICATION PAGE
    ============================================ */
 .ffc-verification-container {
-    max-width: 700px;
+    max-width: 600px;
     margin: 30px auto;
     padding: 30px;
     background: #ffffff;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .ffc-verification-header {
     margin-bottom: 30px;
     text-align: center;
+    width: 100%;
 }
 
 .ffc-verification-header h2 {
     margin: 0 0 10px 0;
-    font-size: 18px;
+    font-size: 24px;
     color: #333;
     font-weight: 600;
 }
@@ -390,14 +394,28 @@
 .ffc-verification-header p {
     margin: 0;
     color: #666;
-    font-size: 18px;
+    font-size: 16px;
+}
+
+/* ============================================
+   VERIFICATION MANUAL SECTION
+   ============================================ */
+.ffc-verification-manual {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 /* ============================================
    VERIFICATION FORM (Manual)
    ============================================ */
 .ffc-verification-form {
-    margin-bottom: 30px;
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
 }
 
 .ffc-verify-input-group {
@@ -407,20 +425,21 @@
 }
 
 .ffc-verify-input {
-    flex: 1;
-    padding: 12px 15px;
-    border: 2px solid #ddd;
-    border-radius: 5px;
-    font-size: 18px;
-    font-family: monospace;
+    padding: 12px 15px !important;
+    border: 2px solid #ddd !important;
+    border-radius: 5px !important;
+    font-size: 18px !important;
+    font-family: monospace !important;
     text-transform: uppercase;
     letter-spacing: 2px;
+    text-align: center;
     transition: border-color 0.3s;
 }
 
 .ffc-verify-input:focus {
     outline: none;
-    border-color: #0073aa;
+    border-color: #0073aa !important;
+    box-shadow: 0 0 0 3px rgba(0, 115, 170, 0.1);
 }
 
 .ffc-verify-input-group .ffc-submit-btn {
@@ -429,7 +448,8 @@
 }
 
 .ffc-no-js-security {
-    margin-top: 15px;
+    margin-top: 5px;
+    width: 100%;
 }
 
 /* ============================================

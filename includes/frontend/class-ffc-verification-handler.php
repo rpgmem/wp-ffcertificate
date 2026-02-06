@@ -742,58 +742,80 @@ class VerificationHandler {
             $cpf_rf_display = \FreeFormCertificate\Core\Utils::format_document( $data['cpf_rf'] );
         }
 
-        // Build HTML
-        $html = '<div class="ffc-verification-success ffc-appointment-verification">';
-        $html .= '<div class="ffc-certificate-header">';
-        $html .= '<h3>' . esc_html__( 'Appointment Receipt Valid', 'wp-ffcertificate' ) . '</h3>';
+        // Build HTML - uses same structure as certificate-preview.php for visual consistency
+        $html = '<div class="ffc-certificate-preview ffc-appointment-verification">';
 
-        if ( ! empty( $display_code ) ) {
-            $html .= '<div class="ffc-auth-code-display"><span>' . esc_html( $display_code ) . '</span></div>';
-        }
-
-        $html .= '<span class="ffc-appointment-status ffc-status-' . esc_attr( $status ) . '">' . esc_html( $status_label ) . '</span>';
+        // Header with gradient badge
+        $html .= '<div class="ffc-preview-header">';
+        $html .= '<span class="ffc-status-badge success">✅ ' . esc_html__( 'Appointment Receipt Valid', 'wp-ffcertificate' ) . '</span>';
+        $html .= '<br><span class="ffc-appointment-status ffc-status-' . esc_attr( $status ) . '">' . esc_html( $status_label ) . '</span>';
         $html .= '</div>';
 
-        $html .= '<div class="ffc-certificate-details">';
+        // Body with detail rows
+        $html .= '<div class="ffc-preview-body">';
+        $html .= '<h3>' . esc_html__( 'Appointment Details', 'wp-ffcertificate' ) . '</h3>';
+
+        // Validation code
+        if ( ! empty( $display_code ) ) {
+            $html .= '<div class="ffc-detail-row">';
+            $html .= '<span class="label">' . esc_html__( 'Validation Code:', 'wp-ffcertificate' ) . '</span>';
+            $html .= '<span class="value code">' . esc_html( $display_code ) . '</span>';
+            $html .= '</div>';
+        }
 
         // Event
         if ( ! empty( $data['calendar_title'] ) ) {
-            $html .= '<div class="ffc-detail-row"><span class="ffc-detail-label">' . esc_html__( 'Event', 'wp-ffcertificate' ) . '</span>';
-            $html .= '<span class="ffc-detail-value">' . esc_html( $data['calendar_title'] ) . '</span></div>';
+            $html .= '<div class="ffc-detail-row">';
+            $html .= '<span class="label">' . esc_html__( 'Event:', 'wp-ffcertificate' ) . '</span>';
+            $html .= '<span class="value">' . esc_html( $data['calendar_title'] ) . '</span>';
+            $html .= '</div>';
         }
 
         // Date
-        $html .= '<div class="ffc-detail-row"><span class="ffc-detail-label">' . esc_html__( 'Date', 'wp-ffcertificate' ) . '</span>';
-        $html .= '<span class="ffc-detail-value">' . esc_html( $formatted_date ) . '</span></div>';
+        $html .= '<div class="ffc-detail-row">';
+        $html .= '<span class="label">' . esc_html__( 'Date:', 'wp-ffcertificate' ) . '</span>';
+        $html .= '<span class="value">' . esc_html( $formatted_date ) . '</span>';
+        $html .= '</div>';
 
         // Time
-        $html .= '<div class="ffc-detail-row"><span class="ffc-detail-label">' . esc_html__( 'Time', 'wp-ffcertificate' ) . '</span>';
-        $html .= '<span class="ffc-detail-value">' . esc_html( $formatted_time ) . '</span></div>';
+        $html .= '<div class="ffc-detail-row">';
+        $html .= '<span class="label">' . esc_html__( 'Time:', 'wp-ffcertificate' ) . '</span>';
+        $html .= '<span class="value">' . esc_html( $formatted_time ) . '</span>';
+        $html .= '</div>';
+
+        $html .= '<hr>';
+        $html .= '<h4>' . esc_html__( 'Participant Data:', 'wp-ffcertificate' ) . '</h4>';
 
         // Name
         if ( ! empty( $data['name'] ) ) {
-            $html .= '<div class="ffc-detail-row"><span class="ffc-detail-label">' . esc_html__( 'Name', 'wp-ffcertificate' ) . '</span>';
-            $html .= '<span class="ffc-detail-value">' . esc_html( $data['name'] ) . '</span></div>';
+            $html .= '<div class="ffc-detail-row">';
+            $html .= '<span class="label">' . esc_html__( 'Name:', 'wp-ffcertificate' ) . '</span>';
+            $html .= '<span class="value">' . esc_html( $data['name'] ) . '</span>';
+            $html .= '</div>';
         }
 
         // CPF/RF
         if ( ! empty( $cpf_rf_display ) ) {
-            $html .= '<div class="ffc-detail-row"><span class="ffc-detail-label">' . esc_html__( 'CPF/RF', 'wp-ffcertificate' ) . '</span>';
-            $html .= '<span class="ffc-detail-value">' . esc_html( $cpf_rf_display ) . '</span></div>';
+            $html .= '<div class="ffc-detail-row">';
+            $html .= '<span class="label">' . esc_html__( 'CPF/RF:', 'wp-ffcertificate' ) . '</span>';
+            $html .= '<span class="value">' . esc_html( $cpf_rf_display ) . '</span>';
+            $html .= '</div>';
         }
 
         // Booked on
-        $html .= '<div class="ffc-detail-row"><span class="ffc-detail-label">' . esc_html__( 'Booked on', 'wp-ffcertificate' ) . '</span>';
-        $html .= '<span class="ffc-detail-value">' . esc_html( $formatted_created ) . '</span></div>';
-
+        $html .= '<div class="ffc-detail-row">';
+        $html .= '<span class="label">' . esc_html__( 'Booked on:', 'wp-ffcertificate' ) . '</span>';
+        $html .= '<span class="value">' . esc_html( $formatted_created ) . '</span>';
         $html .= '</div>';
 
-        // Download button
-        $html .= '<div class="ffc-certificate-actions">';
-        $html .= '<button class="ffc-download-pdf-btn ffc-btn ffc-btn-primary">' . esc_html__( 'Download PDF', 'wp-ffcertificate' ) . '</button>';
+        $html .= '</div>'; // .ffc-preview-body
+
+        // Download button (same structure as certificate)
+        $html .= '<div class="ffc-preview-actions">';
+        $html .= '<button class="ffc-download-btn ffc-download-pdf-btn">⬇️ ' . esc_html__( 'Download Receipt (PDF)', 'wp-ffcertificate' ) . '</button>';
         $html .= '</div>';
 
-        $html .= '</div>';
+        $html .= '</div>'; // .ffc-certificate-preview
 
         return $html;
     }
