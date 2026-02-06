@@ -229,7 +229,7 @@ class AppointmentHandler {
      */
     public function process_appointment(array $data) {
         // Get calendar
-        $calendar = $this->calendar_repository->findById($data['calendar_id']);
+        $calendar = $this->calendar_repository->findById((int) $data['calendar_id']);
 
         if (!$calendar) {
             return new \WP_Error('invalid_calendar', __('Calendar not found.', 'wp-ffcertificate'));
@@ -700,7 +700,7 @@ class AppointmentHandler {
         }
 
         // Get calendar
-        $calendar = $this->calendar_repository->findById($appointment['calendar_id']);
+        $calendar = $this->calendar_repository->findById((int) $appointment['calendar_id']);
 
         if (!$calendar) {
             return new \WP_Error('calendar_not_found', __('Calendar not found.', 'wp-ffcertificate'));
