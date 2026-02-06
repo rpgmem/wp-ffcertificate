@@ -3383,6 +3383,18 @@ msgstr "Atenção: Os seguintes grupos já possuem agendamentos neste dia:"
 msgid "member(s) have overlapping bookings."
 msgstr "membro(s) possuem agendamentos sobrepostos."
 
+#: includes/audience/class-ffc-audience-shortcode.php
+msgid "This time slot is already booked for this environment. You cannot create a booking at this time."
+msgstr "Este horário já está reservado para este ambiente. Não é possível criar um agendamento neste horário."
+
+#: includes/audience/class-ffc-audience-shortcode.php
+msgid "No conflicts found. You may proceed."
+msgstr "Nenhum conflito encontrado. Pode prosseguir."
+
+#: includes/audience/class-ffc-audience-shortcode.php
+msgid "I am aware of the conflicts and want to proceed."
+msgstr "Estou ciente dos conflitos e desejo prosseguir."
+
 #: includes/audience/class-ffc-audience-shortcode.php:486
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:130
 msgid "January"
