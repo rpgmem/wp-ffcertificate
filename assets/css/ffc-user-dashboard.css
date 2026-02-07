@@ -339,19 +339,20 @@
     border-collapse: collapse;
     margin-top: 15px;
     margin-bottom: 20px;
-    table-layout: fixed;
 }
 
 .ffc-audience-bookings-table th:nth-child(1),
-.ffc-audience-bookings-table td:nth-child(1) { width: 20%; }
+.ffc-audience-bookings-table td:nth-child(1) { width: 17%; }
 .ffc-audience-bookings-table th:nth-child(2),
-.ffc-audience-bookings-table td:nth-child(2) { width: 15%; }
+.ffc-audience-bookings-table td:nth-child(2) { width: 12%; }
 .ffc-audience-bookings-table th:nth-child(3),
-.ffc-audience-bookings-table td:nth-child(3) { width: 13%; }
+.ffc-audience-bookings-table td:nth-child(3) { width: 10%; }
 .ffc-audience-bookings-table th:nth-child(4),
-.ffc-audience-bookings-table td:nth-child(4) { width: 30%; }
+.ffc-audience-bookings-table td:nth-child(4) { width: 24%; }
 .ffc-audience-bookings-table th:nth-child(5),
-.ffc-audience-bookings-table td:nth-child(5) { width: 22%; }
+.ffc-audience-bookings-table td:nth-child(5) { width: 17%; }
+.ffc-audience-bookings-table th:nth-child(6),
+.ffc-audience-bookings-table td:nth-child(6) { width: 20%; }
 
 .ffc-audience-bookings-table th {
     background: #f5f5f5;
@@ -519,6 +520,81 @@
 .ffc-pagination-info {
     font-size: 13px;
     color: #666;
+}
+
+/* Calendar Export Dropdown */
+.ffc-cal-export-wrap {
+    position: relative;
+    display: inline-block;
+}
+
+.ffc-cal-export-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    font-size: 12px;
+    line-height: 1.4;
+    background: #0073aa;
+    color: #fff;
+    border: 1px solid #0073aa;
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.ffc-cal-export-btn:hover {
+    background: #005a87;
+    border-color: #005a87;
+    color: #fff;
+}
+
+.ffc-cal-export-btn svg {
+    flex-shrink: 0;
+}
+
+.ffc-cal-export-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 4px;
+    min-width: 200px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.ffc-cal-export-dropdown.open {
+    display: block;
+}
+
+.ffc-cal-export-dropdown a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    color: #333;
+    text-decoration: none;
+    font-size: 13px;
+    transition: background 0.15s ease;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.ffc-cal-export-dropdown a:last-child {
+    border-bottom: none;
+}
+
+.ffc-cal-export-dropdown a:hover {
+    background: #f5f7fa;
+}
+
+.ffc-cal-export-dropdown a svg {
+    flex-shrink: 0;
 }
 
 /* Audience Groups in Profile */
