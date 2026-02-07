@@ -309,6 +309,8 @@ class DashboardShortcode {
             'canViewCertificates' => $can_view_certificates,
             'canViewAppointments' => $can_view_appointments,
             'canViewAudienceBookings' => $can_view_audience_bookings,
+            'siteName' => get_bloginfo('name'),
+            'wpTimezone' => wp_timezone_string(),
             'strings' => array(
                 'loading' => __('Loading...', 'ffcertificate'),
                 'error' => __('Error loading data', 'ffcertificate'),
@@ -342,6 +344,9 @@ class DashboardShortcode {
                 'cancelSuccess' => __('Appointment cancelled successfully', 'ffcertificate'),
                 'cancelError' => __('Error cancelling appointment', 'ffcertificate'),
                 'noPermission' => __('You do not have permission to view this content.', 'ffcertificate'),
+                // Calendar export
+                'exportToCalendar' => __('Export to Calendar', 'ffcertificate'),
+                'otherIcs' => __('Other (.ics)', 'ffcertificate'),
                 // Audience bookings
                 'environment' => __('Environment', 'ffcertificate'),
                 'description' => __('Description', 'ffcertificate'),
