@@ -1737,10 +1737,10 @@ class AudienceAdminPage {
         $active_tab = isset($_GET['tab']) ? sanitize_text_field(wp_unslash($_GET['tab'])) : 'general';
 
         ?>
-        <div class="wrap">
+        <div class="wrap ffc-settings-wrap">
             <h1><?php esc_html_e('Scheduling Settings', 'wp-ffcertificate'); ?></h1>
 
-            <nav class="nav-tab-wrapper">
+            <h2 class="nav-tab-wrapper">
                 <a href="<?php echo esc_url(admin_url('admin.php?page=' . self::MENU_SLUG . '-settings&tab=general')); ?>"
                    class="nav-tab <?php echo $active_tab === 'general' ? 'nav-tab-active' : ''; ?>">
                     <?php esc_html_e('General', 'wp-ffcertificate'); ?>
@@ -1753,9 +1753,9 @@ class AudienceAdminPage {
                    class="nav-tab <?php echo $active_tab === 'audience' ? 'nav-tab-active' : ''; ?>">
                     <?php esc_html_e('Audience', 'wp-ffcertificate'); ?>
                 </a>
-            </nav>
+            </h2>
 
-            <div class="tab-content" style="margin-top: 20px;">
+            <div class="ffc-tab-content">
                 <?php
                 switch ($active_tab) {
                     case 'self-scheduling':
@@ -1787,90 +1787,93 @@ class AudienceAdminPage {
         });
 
         ?>
-        <div class="card" style="max-width: 800px;">
+        <div class="card">
             <h2><?php esc_html_e('General Settings', 'wp-ffcertificate'); ?></h2>
             <p class="description">
                 <?php esc_html_e('General scheduling settings that apply to both Self-Scheduling and Audience systems.', 'wp-ffcertificate'); ?>
             </p>
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><?php esc_html_e('Status', 'wp-ffcertificate'); ?></th>
-                    <td>
-                        <p>
-                            <strong><?php esc_html_e('Self-Scheduling:', 'wp-ffcertificate'); ?></strong>
-                            <?php
-                            $calendars_count = wp_count_posts('ffc_self_scheduling');
-                            $published = isset($calendars_count->publish) ? $calendars_count->publish : 0;
-                            printf(
-                                /* translators: %d: number of published calendars */
-                                esc_html__('%d published calendar(s)', 'wp-ffcertificate'),
-                                (int) $published
-                            );
-                            ?>
-                        </p>
-                        <p>
-                            <strong><?php esc_html_e('Audience:', 'wp-ffcertificate'); ?></strong>
-                            <?php
-                            printf(
-                                /* translators: %d: number of active schedules */
-                                esc_html__('%d active schedule(s)', 'wp-ffcertificate'),
-                                absint(AudienceScheduleRepository::count(array('status' => 'active')))
-                            );
-                            ?>
-                        </p>
-                    </td>
-                </tr>
+            <table class="form-table" role="presentation">
+                <tbody>
+                    <tr>
+                        <th scope="row"><?php esc_html_e('Status', 'wp-ffcertificate'); ?></th>
+                        <td>
+                            <p>
+                                <strong><?php esc_html_e('Self-Scheduling:', 'wp-ffcertificate'); ?></strong>
+                                <?php
+                                $calendars_count = wp_count_posts('ffc_self_scheduling');
+                                $published = isset($calendars_count->publish) ? $calendars_count->publish : 0;
+                                printf(
+                                    /* translators: %d: number of published calendars */
+                                    esc_html__('%d published calendar(s)', 'wp-ffcertificate'),
+                                    (int) $published
+                                );
+                                ?>
+                            </p>
+                            <p>
+                                <strong><?php esc_html_e('Audience:', 'wp-ffcertificate'); ?></strong>
+                                <?php
+                                printf(
+                                    /* translators: %d: number of active schedules */
+                                    esc_html__('%d active schedule(s)', 'wp-ffcertificate'),
+                                    absint(AudienceScheduleRepository::count(array('status' => 'active')))
+                                );
+                                ?>
+                            </p>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
         </div>
 
         <!-- Global Holidays -->
-        <div class="card" style="max-width: 800px; margin-top: 20px;">
+        <div class="card">
             <h2><?php esc_html_e('Global Holidays', 'wp-ffcertificate'); ?></h2>
             <p class="description">
                 <?php esc_html_e('Holidays added here will block bookings across all calendars in both scheduling systems. Use per-calendar blocked dates for calendar-specific closures.', 'wp-ffcertificate'); ?>
             </p>
 
-            <form method="post" style="margin: 15px 0;">
+            <form method="post">
                 <?php wp_nonce_field('ffc_global_holiday_action', 'ffc_global_holiday_nonce'); ?>
                 <input type="hidden" name="ffc_action" value="add_global_holiday">
-                <table class="form-table" style="margin: 0;">
-                    <tr>
-                        <th scope="row">
-                            <label for="global_holiday_date"><?php esc_html_e('Date', 'wp-ffcertificate'); ?></label>
-                        </th>
-                        <td>
-                            <input type="date" id="global_holiday_date" name="global_holiday_date" required
-                                   style="width: 180px;">
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row">
-                            <label for="global_holiday_description"><?php esc_html_e('Description', 'wp-ffcertificate'); ?></label>
-                        </th>
-                        <td>
-                            <input type="text" id="global_holiday_description" name="global_holiday_description"
-                                   placeholder="<?php esc_attr_e('e.g. Christmas, Carnival...', 'wp-ffcertificate'); ?>"
-                                   style="width: 100%; max-width: 400px;">
-                        </td>
-                    </tr>
-                    <tr>
-                        <th></th>
-                        <td>
-                            <button type="submit" class="button button-primary">
-                                <?php esc_html_e('Add Holiday', 'wp-ffcertificate'); ?>
-                            </button>
-                        </td>
-                    </tr>
+                <table class="form-table" role="presentation">
+                    <tbody>
+                        <tr>
+                            <th scope="row">
+                                <label for="global_holiday_date"><?php esc_html_e('Date', 'wp-ffcertificate'); ?></label>
+                            </th>
+                            <td>
+                                <input type="date" id="global_holiday_date" name="global_holiday_date" required class="regular-text">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">
+                                <label for="global_holiday_description"><?php esc_html_e('Description', 'wp-ffcertificate'); ?></label>
+                            </th>
+                            <td>
+                                <input type="text" id="global_holiday_description" name="global_holiday_description"
+                                       placeholder="<?php esc_attr_e('e.g. Christmas, Carnival...', 'wp-ffcertificate'); ?>"
+                                       class="regular-text">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <td>
+                                <button type="submit" class="button button-primary">
+                                    <?php esc_html_e('Add Holiday', 'wp-ffcertificate'); ?>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
             </form>
 
             <?php if (!empty($holidays)) : ?>
-                <table class="widefat striped" style="margin-top: 15px;">
+                <table class="widefat striped ffc-mt-15">
                     <thead>
                         <tr>
-                            <th style="width: 150px;"><?php esc_html_e('Date', 'wp-ffcertificate'); ?></th>
+                            <th><?php esc_html_e('Date', 'wp-ffcertificate'); ?></th>
                             <th><?php esc_html_e('Description', 'wp-ffcertificate'); ?></th>
-                            <th style="width: 80px;"><?php esc_html_e('Actions', 'wp-ffcertificate'); ?></th>
+                            <th><?php esc_html_e('Actions', 'wp-ffcertificate'); ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1892,9 +1895,8 @@ class AudienceAdminPage {
                                     );
                                     ?>
                                     <a href="<?php echo esc_url($delete_url); ?>"
-                                       class="button button-small"
-                                       onclick="return confirm('<?php esc_attr_e('Remove this holiday?', 'wp-ffcertificate'); ?>');"
-                                       style="color: #a00;">
+                                       class="button button-small button-link-delete"
+                                       onclick="return confirm('<?php esc_attr_e('Remove this holiday?', 'wp-ffcertificate'); ?>');">
                                         <?php esc_html_e('Delete', 'wp-ffcertificate'); ?>
                                     </a>
                                 </td>
@@ -1903,7 +1905,7 @@ class AudienceAdminPage {
                     </tbody>
                 </table>
             <?php else : ?>
-                <p style="color: #666; font-style: italic; margin-top: 15px;">
+                <p class="description ffc-mt-15">
                     <?php esc_html_e('No global holidays configured.', 'wp-ffcertificate'); ?>
                 </p>
             <?php endif; ?>
@@ -1918,31 +1920,33 @@ class AudienceAdminPage {
      */
     private function render_settings_self_scheduling_tab(): void {
         ?>
-        <div class="card" style="max-width: 800px;">
+        <div class="card">
             <h2><?php esc_html_e('Self-Scheduling Settings', 'wp-ffcertificate'); ?></h2>
             <p class="description">
                 <?php esc_html_e('Settings specific to the personal appointment booking system. Calendar-specific settings (slots, working hours, email templates) are configured on each calendar\'s edit page.', 'wp-ffcertificate'); ?>
             </p>
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><?php esc_html_e('Manage Calendars', 'wp-ffcertificate'); ?></th>
-                    <td>
-                        <a href="<?php echo esc_url(admin_url('edit.php?post_type=ffc_self_scheduling')); ?>" class="button">
-                            <?php esc_html_e('View All Calendars', 'wp-ffcertificate'); ?>
-                        </a>
-                        <a href="<?php echo esc_url(admin_url('post-new.php?post_type=ffc_self_scheduling')); ?>" class="button">
-                            <?php esc_html_e('Add New Calendar', 'wp-ffcertificate'); ?>
-                        </a>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row"><?php esc_html_e('Appointments', 'wp-ffcertificate'); ?></th>
-                    <td>
-                        <a href="<?php echo esc_url(admin_url('admin.php?page=ffc-appointments')); ?>" class="button">
-                            <?php esc_html_e('View All Appointments', 'wp-ffcertificate'); ?>
-                        </a>
-                    </td>
-                </tr>
+            <table class="form-table" role="presentation">
+                <tbody>
+                    <tr>
+                        <th scope="row"><?php esc_html_e('Manage Calendars', 'wp-ffcertificate'); ?></th>
+                        <td>
+                            <a href="<?php echo esc_url(admin_url('edit.php?post_type=ffc_self_scheduling')); ?>" class="button">
+                                <?php esc_html_e('View All Calendars', 'wp-ffcertificate'); ?>
+                            </a>
+                            <a href="<?php echo esc_url(admin_url('post-new.php?post_type=ffc_self_scheduling')); ?>" class="button">
+                                <?php esc_html_e('Add New Calendar', 'wp-ffcertificate'); ?>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php esc_html_e('Appointments', 'wp-ffcertificate'); ?></th>
+                        <td>
+                            <a href="<?php echo esc_url(admin_url('admin.php?page=ffc-appointments')); ?>" class="button">
+                                <?php esc_html_e('View All Appointments', 'wp-ffcertificate'); ?>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
             <p class="description">
                 <?php esc_html_e('Additional self-scheduling settings will be available in a future update.', 'wp-ffcertificate'); ?>
@@ -1958,26 +1962,28 @@ class AudienceAdminPage {
      */
     private function render_settings_audience_tab(): void {
         ?>
-        <div class="card" style="max-width: 800px;">
+        <div class="card">
             <h2><?php esc_html_e('Audience Scheduling Settings', 'wp-ffcertificate'); ?></h2>
             <p class="description">
                 <?php esc_html_e('Settings specific to the audience/group booking system.', 'wp-ffcertificate'); ?>
             </p>
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><?php esc_html_e('Manage', 'wp-ffcertificate'); ?></th>
-                    <td>
-                        <a href="<?php echo esc_url(admin_url('admin.php?page=' . self::MENU_SLUG . '-calendars')); ?>" class="button">
-                            <?php esc_html_e('Audience Calendars', 'wp-ffcertificate'); ?>
-                        </a>
-                        <a href="<?php echo esc_url(admin_url('admin.php?page=' . self::MENU_SLUG . '-environments')); ?>" class="button">
-                            <?php esc_html_e('Environments', 'wp-ffcertificate'); ?>
-                        </a>
-                        <a href="<?php echo esc_url(admin_url('admin.php?page=' . self::MENU_SLUG . '-audiences')); ?>" class="button">
-                            <?php esc_html_e('Audiences', 'wp-ffcertificate'); ?>
-                        </a>
-                    </td>
-                </tr>
+            <table class="form-table" role="presentation">
+                <tbody>
+                    <tr>
+                        <th scope="row"><?php esc_html_e('Manage', 'wp-ffcertificate'); ?></th>
+                        <td>
+                            <a href="<?php echo esc_url(admin_url('admin.php?page=' . self::MENU_SLUG . '-calendars')); ?>" class="button">
+                                <?php esc_html_e('Audience Calendars', 'wp-ffcertificate'); ?>
+                            </a>
+                            <a href="<?php echo esc_url(admin_url('admin.php?page=' . self::MENU_SLUG . '-environments')); ?>" class="button">
+                                <?php esc_html_e('Environments', 'wp-ffcertificate'); ?>
+                            </a>
+                            <a href="<?php echo esc_url(admin_url('admin.php?page=' . self::MENU_SLUG . '-audiences')); ?>" class="button">
+                                <?php esc_html_e('Audiences', 'wp-ffcertificate'); ?>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
             <p class="description">
                 <?php esc_html_e('Additional audience settings will be available in a future update.', 'wp-ffcertificate'); ?>

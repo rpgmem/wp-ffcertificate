@@ -257,11 +257,6 @@
     margin-bottom: 20px;
 }
 
-.ffc-migration-card.ffc-migration-complete .postbox-header {
-    background: #d4edda;
-    border-color: #00a32a;
-}
-
 .ffc-migration-stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -495,40 +490,6 @@
    DOCUMENTATION TAB - COMPLETE STYLES
    ========================================================================== */
 
-/* General Documentation Sections */
-.ffc-doc-section {
-    margin-bottom: 30px;
-}
-
-.ffc-doc-section h3 {
-    margin-top: 0;
-    margin-bottom: 15px;
-    font-size: 16px;
-    font-weight: 600;
-}
-
-.ffc-doc-section pre {
-    background: #f6f7f7;
-    padding: 15px;
-    border-radius: 4px;
-    border-left: 4px solid #2271b1;
-    overflow-x: auto;
-    font-size: 13px;
-}
-
-.ffc-doc-section code {
-    background: #f6f7f7;
-    padding: 2px 6px;
-    border-radius: 3px;
-    font-size: 13px;
-    font-family: 'SF Mono', Monaco, Consolas, monospace;
-}
-
-.ffc-doc-section pre code {
-    background: none;
-    padding: 0;
-}
-
 /* Table of Contents */
 .ffc-doc-toc {
     background: #f6f7f7;
@@ -730,22 +691,6 @@ pre code {
 /* ==========================================================================
    GEOLOCATION TAB STYLES - v3.0.0
    ========================================================================== */
-
-/* Settings Section */
-.ffc-settings-section {
-    margin-bottom: 30px;
-}
-
-.ffc-settings-section h2 {
-    font-size: 20px;
-    margin-bottom: 5px;
-}
-
-.ffc-settings-section > .description {
-    color: #666;
-    font-size: 13px;
-    margin-bottom: 15px;
-}
 
 /* Info Box */
 .ffc-info-box {

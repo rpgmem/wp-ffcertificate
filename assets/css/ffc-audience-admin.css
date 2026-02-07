@@ -6,10 +6,6 @@
  */
 
 /* Dashboard Stats Grid */
-.ffc-audience-dashboard {
-    margin-top: 20px;
-}
-
 .ffc-stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -30,10 +26,6 @@
     font-size: 32px;
     color: #2271b1;
     margin-bottom: 10px;
-}
-
-.ffc-stat-content {
-    flex-grow: 1;
 }
 
 .ffc-stat-value {
@@ -245,20 +237,6 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-/* Permissions Grid */
-.ffc-permissions-grid {
-    display: grid;
-    grid-template-columns: 1fr auto auto auto;
-    gap: 10px;
-    align-items: center;
-}
-
-.ffc-permissions-grid .header {
-    font-weight: 600;
-    padding: 10px 0;
-    border-bottom: 1px solid #c3c4c7;
 }
 
 /* Responsive */

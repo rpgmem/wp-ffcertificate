@@ -99,12 +99,6 @@
     border-top: 1px solid #eee;
 }
 
-.ffc-hidden {
-    position: absolute;
-    left: -9999px;
-    display: none;
-}
-
 /* ==========================================================================
    3. HTML EDITOR & PREVIEW
    ========================================================================== */
@@ -330,15 +324,6 @@
 .ffc-label-accent { 
     color: #2271b1; 
     font-weight: bold; 
-}
-
-/* ==========================================================================
-   13. HONEYPOT FIELD (Hidden from view)
-   ========================================================================== */
-.ffc-honeypot-field {
-    position: absolute;
-    left: -9999px;
-    display: none;
 }
 
 /* ==========================================================================
@@ -598,12 +583,8 @@
    Replaced inline styles with proper CSS classes for better maintainability
    ========================================================================== */
 
-/* Margin utilities */
-.ffc-mb-15 { margin-bottom: 15px; }
-.ffc-mt-15 { margin-top: 15px; }
+/* Margin utilities (ffc-mb-15 and ffc-mt-15 in ffc-admin-utilities.css) */
 .ffc-ml-20 { margin-left: 20px; }
-.ffc-mt-5 { margin-top: 5px; }
-.ffc-my-10 { margin: 10px 0; }
 .ffc-m-5-0 { margin: 5px 0 0 0; }
 
 /* Form label blocks */
@@ -664,11 +645,6 @@
 /* List style */
 .ffc-list-disc {
     list-style: disc;
-}
-
-/* Text colors */
-.ffc-text-error {
-    color: #d63638;
 }
 
 /* Checkbox label block */

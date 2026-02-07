@@ -117,41 +117,10 @@
     white-space: nowrap;
 }
 
-/* Status variants - WordPress post status */
-.ffc-status-publish {
-    background: #e7f5ec;
-    color: #008a20;
-}
-
-.ffc-status-draft {
-    background: #f0f0f1;
-    color: #646970;
-}
-
-.ffc-status-trash {
-    background: #fcf0f1;
-    color: #d63638;
-}
-
 /* Status variants - Submission status */
 .ffc-status-pending {
     background: #fef8e6;
     color: #886400;
-}
-
-.ffc-status-approved {
-    background: #e7f5ec;
-    color: #008a20;
-}
-
-.ffc-status-rejected {
-    background: #fcf0f1;
-    color: #d63638;
-}
-
-.ffc-status-verified {
-    background: #e5f5fa;
-    color: #006ba1;
 }
 
 /* ==========================================================================
