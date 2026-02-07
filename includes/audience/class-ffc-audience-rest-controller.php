@@ -562,6 +562,8 @@ class AudienceRestController {
                 'audience_same_day' => array(),
             );
 
+            $is_hard_conflict = false;
+
             // 1. Check environment time slot conflicts (hard conflict)
             $env_conflicts = AudienceBookingRepository::get_conflicts($environment_id, $booking_date, $start_time, $end_time);
             if (!empty($env_conflicts)) {
@@ -574,11 +576,30 @@ class AudienceRestController {
                         'end_time' => $b->end_time,
                     );
                 }, $env_conflicts);
+                $is_hard_conflict = true;
             }
 
-            // Hard conflict detected — skip soft conflict checks entirely
-            if ($response_data['type'] !== 'environment') {
-                // 2. Check user conflicts — members with overlapping bookings (soft conflict)
+            // 2. Check same audience group on same day (hard conflict)
+            if (!$is_hard_conflict && !empty($audience_ids)) {
+                $same_day = AudienceBookingRepository::get_audience_same_day_bookings($booking_date, $audience_ids);
+                if (!empty($same_day)) {
+                    $response_data['type'] = 'audience_same_day';
+                    $response_data['audience_same_day'] = array_map(function($b) {
+                        return array(
+                            'id' => (int) $b->id,
+                            'start_time' => $b->start_time,
+                            'end_time' => $b->end_time,
+                            'description' => $b->description ?? '',
+                            'audience_name' => $b->audience_name,
+                        );
+                    }, $same_day);
+                    $is_hard_conflict = true;
+                }
+            }
+
+            // 3. Check user conflicts — members with overlapping bookings (soft conflict)
+            // Only check if no hard conflict detected
+            if (!$is_hard_conflict) {
                 $user_conflicts = AudienceBookingRepository::get_user_conflicts(
                     $booking_date,
                     $start_time,
@@ -598,22 +619,6 @@ class AudienceRestController {
                         );
                     }, $user_conflicts['bookings']);
                     $response_data['affected_users'] = $user_conflicts['affected_users'];
-                }
-
-                // 3. Check same audience group on same day (soft conflict / warning)
-                if (!empty($audience_ids)) {
-                    $same_day = AudienceBookingRepository::get_audience_same_day_bookings($booking_date, $audience_ids);
-                    if (!empty($same_day)) {
-                        $response_data['audience_same_day'] = array_map(function($b) {
-                            return array(
-                                'id' => (int) $b->id,
-                                'start_time' => $b->start_time,
-                                'end_time' => $b->end_time,
-                                'description' => $b->description ?? '',
-                                'audience_name' => $b->audience_name,
-                            );
-                        }, $same_day);
-                    }
                 }
             }
 
