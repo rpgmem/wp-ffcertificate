@@ -1086,16 +1086,7 @@ class AudienceAdminPage {
         </form>
 
         <!-- Styles in ffc-audience-admin.css -->
-
-        <script>
-        jQuery(document).ready(function($) {
-            $('.ffc-day-row input[type="checkbox"]').on('change', function() {
-                var row = $(this).closest('.ffc-day-row');
-                var inputs = row.find('input[type="time"]');
-                inputs.prop('disabled', $(this).is(':checked'));
-            });
-        });
-        </script>
+        <!-- Scripts in ffc-audience-admin.js -->
         <?php
     }
 
@@ -1392,72 +1383,7 @@ class AudienceAdminPage {
         </div>
 
         <!-- Styles in ffc-audience-admin.css -->
-
-        <script>
-        jQuery(document).ready(function($) {
-            var selectedUsers = {};
-            var searchTimeout;
-
-            $('#user_search').on('input', function() {
-                clearTimeout(searchTimeout);
-                var query = $(this).val();
-                if (query.length < 2) {
-                    $('#user_results').removeClass('active').empty();
-                    return;
-                }
-
-                searchTimeout = setTimeout(function() {
-                    $.ajax({
-                        url: ajaxurl,
-                        data: {
-                            action: 'ffc_search_users',
-                            query: query,
-                            nonce: '<?php echo esc_attr(wp_create_nonce('ffc_search_users')); ?>'
-                        },
-                        success: function(response) {
-                            if (response.success && response.data.length > 0) {
-                                var html = '';
-                                response.data.forEach(function(user) {
-                                    if (!selectedUsers[user.id]) {
-                                        html += '<div class="ffc-user-result" data-id="' + user.id + '" data-name="' + user.name + '">' + user.name + ' (' + user.email + ')</div>';
-                                    }
-                                });
-                                $('#user_results').html(html).addClass('active');
-                            } else {
-                                $('#user_results').removeClass('active').empty();
-                            }
-                        }
-                    });
-                }, 300);
-            });
-
-            $(document).on('click', '.ffc-user-result', function() {
-                var id = $(this).data('id');
-                var name = $(this).data('name');
-                selectedUsers[id] = name;
-                updateSelectedUsers();
-                $('#user_results').removeClass('active').empty();
-                $('#user_search').val('');
-            });
-
-            $(document).on('click', '.ffc-selected-user .remove', function() {
-                var id = $(this).data('id');
-                delete selectedUsers[id];
-                updateSelectedUsers();
-            });
-
-            function updateSelectedUsers() {
-                var html = '';
-                var ids = [];
-                for (var id in selectedUsers) {
-                    html += '<span class="ffc-selected-user">' + selectedUsers[id] + '<span class="remove" data-id="' + id + '">&times;</span></span>';
-                    ids.push(id);
-                }
-                $('#selected_users').html(html);
-                $('#selected_user_ids').val(ids.join(','));
-            }
-        });
-        </script>
+        <!-- Scripts in ffc-audience-admin.js -->
         <?php
     }
 
@@ -1624,54 +1550,7 @@ class AudienceAdminPage {
         </div>
 
         <!-- Styles in ffc-audience-admin.css -->
-
-        <script>
-        jQuery(document).ready(function($) {
-            var $scheduleSelect = $('#filter-schedule');
-            var $environmentSelect = $('#filter-environment');
-            var allEnvironmentsText = '<?php echo esc_js(__('All Environments', 'wp-ffcertificate')); ?>';
-            var loadingText = '<?php echo esc_js(__('Loading...', 'wp-ffcertificate')); ?>';
-            var adminNonce = '<?php echo esc_js(wp_create_nonce('ffc_admin_nonce')); ?>';
-
-            $scheduleSelect.on('change', function() {
-                var scheduleId = $(this).val();
-
-                // Reset to all environments if no schedule selected
-                if (!scheduleId) {
-                    $environmentSelect.html('<option value="">' + allEnvironmentsText + '</option>');
-                    return;
-                }
-
-                // Show loading
-                $environmentSelect.html('<option value="">' + loadingText + '</option>');
-
-                // Fetch environments for the selected schedule
-                $.ajax({
-                    url: ajaxurl,
-                    type: 'GET',
-                    data: {
-                        action: 'ffc_audience_get_environments',
-                        schedule_id: scheduleId,
-                        nonce: adminNonce
-                    },
-                    success: function(response) {
-                        if (response.success && response.data) {
-                            var html = '<option value="">' + allEnvironmentsText + '</option>';
-                            $.each(response.data, function(i, env) {
-                                html += '<option value="' + env.id + '">' + $('<div/>').text(env.name).html() + '</option>';
-                            });
-                            $environmentSelect.html(html);
-                        } else {
-                            $environmentSelect.html('<option value="">' + allEnvironmentsText + '</option>');
-                        }
-                    },
-                    error: function() {
-                        $environmentSelect.html('<option value="">' + allEnvironmentsText + '</option>');
-                    }
-                });
-            });
-        });
-        </script>
+        <!-- Scripts in ffc-audience-admin.js -->
         <?php
     }
 

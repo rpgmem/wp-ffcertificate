@@ -27,6 +27,27 @@ class AdminUserCapabilities {
         // Save capability changes
         add_action('personal_options_update', array(__CLASS__, 'save_capability_fields'));
         add_action('edit_user_profile_update', array(__CLASS__, 'save_capability_fields'));
+
+        // Enqueue scripts on user profile pages
+        add_action('admin_enqueue_scripts', array(__CLASS__, 'enqueue_scripts'));
+    }
+
+    /**
+     * Enqueue scripts on user profile pages
+     *
+     * @param string $hook_suffix Admin page hook suffix
+     */
+    public static function enqueue_scripts( string $hook_suffix ): void {
+        if ( $hook_suffix !== 'user-edit.php' && $hook_suffix !== 'profile.php' ) {
+            return;
+        }
+        wp_enqueue_script(
+            'ffc-user-capabilities',
+            FFC_PLUGIN_URL . 'assets/js/ffc-user-capabilities.js',
+            array( 'jquery' ),
+            FFC_VERSION,
+            true
+        );
     }
 
     /**
@@ -175,33 +196,7 @@ class AdminUserCapabilities {
                         <button type="button" class="button" id="ffc-grant-appointments">
                             <?php esc_html_e('Grant Appointments Only', 'wp-ffcertificate'); ?>
                         </button>
-
-                        <script>
-                        jQuery(document).ready(function($) {
-                            // Capability checkboxes
-                            var certCaps = $('input[name^="ffc_cap_"][name*="certificate"]');
-                            var apptCaps = $('input[name^="ffc_cap_ffc_"][name*="appointment"]');
-                            var allCaps = $('input[name^="ffc_cap_"]');
-
-                            $('#ffc-grant-all-caps').on('click', function() {
-                                allCaps.prop('checked', true);
-                            });
-
-                            $('#ffc-revoke-all-caps').on('click', function() {
-                                allCaps.prop('checked', false);
-                            });
-
-                            $('#ffc-grant-certificates').on('click', function() {
-                                allCaps.prop('checked', false);
-                                certCaps.prop('checked', true);
-                            });
-
-                            $('#ffc-grant-appointments').on('click', function() {
-                                allCaps.prop('checked', false);
-                                apptCaps.prop('checked', true);
-                            });
-                        });
-                        </script>
+                        <!-- Scripts in ffc-user-capabilities.js -->
                     </td>
                 </tr>
             </tbody>

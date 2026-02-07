@@ -100,7 +100,7 @@
         removeWorkingHour: function(e) {
             e.preventDefault();
 
-            if (!confirm(ffcCalendarEditor.strings.confirmDelete)) {
+            if (!confirm(ffcSelfSchedulingEditor.strings.confirmDelete)) {
                 return;
             }
 
@@ -131,14 +131,61 @@
         toggleAllowedRoles: function() {
             const isChecked = $(this).is(':checked');
             $('.ffc-allowed-roles').toggle(isChecked);
+        },
+
+        /**
+         * Handle appointment cleanup buttons
+         */
+        initCleanup: function() {
+            $(document).on('click', '.ffc-cleanup-btn', function() {
+                const $btn = $(this);
+                const action = $btn.data('action');
+                const calendarId = $btn.data('calendar-id');
+                const strings = typeof ffcSelfSchedulingEditor !== 'undefined' ? ffcSelfSchedulingEditor.strings : {};
+
+                let confirmMessage = strings.confirmCleanup || 'Are you sure you want to delete these appointments? This action cannot be undone.';
+
+                if (action === 'all') {
+                    confirmMessage = strings.confirmCleanupAll || 'Are you sure you want to delete ALL appointments? This will permanently remove all appointment data and cannot be undone!';
+                }
+
+                if (!confirm(confirmMessage)) {
+                    return;
+                }
+
+                $btn.prop('disabled', true).text(strings.deleting || 'Deleting...');
+
+                $.ajax({
+                    url: ajaxurl,
+                    method: 'POST',
+                    data: {
+                        action: 'ffc_cleanup_appointments',
+                        calendar_id: calendarId,
+                        cleanup_action: action,
+                        nonce: $('#ffc_cleanup_appointments_nonce').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            alert(response.data.message);
+                            location.reload();
+                        } else {
+                            alert(response.data.message || strings.errorDeleting || 'Error deleting appointments');
+                            $btn.prop('disabled', false);
+                        }
+                    },
+                    error: function() {
+                        alert(strings.errorServer || 'Error communicating with server');
+                        $btn.prop('disabled', false);
+                    }
+                });
+            });
         }
     };
 
     // Initialize when document is ready
     $(document).ready(function() {
-        if ($('#ffc-working-hours-wrapper').length > 0) {
-            FFCCalendarEditor.init();
-        }
+        FFCCalendarEditor.init();
+        FFCCalendarEditor.initCleanup();
     });
 
 })(jQuery);

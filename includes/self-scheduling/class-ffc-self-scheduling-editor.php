@@ -65,8 +65,13 @@ class SelfSchedulingEditor {
         wp_localize_script('ffc-calendar-editor', 'ffcSelfSchedulingEditor', array(
             'nonce' => wp_create_nonce('ffc_self_scheduling_editor_nonce'),
             'strings' => array(
-                'confirmDelete' => __('Are you sure you want to delete this?', 'wp-ffcertificate'),
-                'addWorkingHour' => __('Add Working Hours', 'wp-ffcertificate'),
+                'confirmDelete'     => __('Are you sure you want to delete this?', 'wp-ffcertificate'),
+                'addWorkingHour'    => __('Add Working Hours', 'wp-ffcertificate'),
+                'confirmCleanup'    => __('Are you sure you want to delete these appointments? This action cannot be undone.', 'wp-ffcertificate'),
+                'confirmCleanupAll' => __('Are you sure you want to delete ALL appointments? This will permanently remove all appointment data and cannot be undone!', 'wp-ffcertificate'),
+                'deleting'          => __('Deleting...', 'wp-ffcertificate'),
+                'errorDeleting'     => __('Error deleting appointments', 'wp-ffcertificate'),
+                'errorServer'       => __('Error communicating with server', 'wp-ffcertificate'),
             )
         ));
     }
@@ -386,16 +391,7 @@ class SelfSchedulingEditor {
             </tr>
         </table>
 
-        <script>
-        jQuery(document).ready(function($) {
-            $('#allow_cancellation').on('change', function() {
-                $('.ffc-cancellation-hours').toggle(this.checked);
-            });
-            $('#require_login').on('change', function() {
-                $('.ffc-allowed-roles').toggle(this.checked);
-            });
-        });
-        </script>
+        <!-- Toggle logic handled by calendar-editor.js -->
         <?php
     }
 
@@ -874,51 +870,7 @@ class SelfSchedulingEditor {
             <?php endif; ?>
         </div>
 
-        <script>
-        jQuery(document).ready(function($) {
-            $('.ffc-cleanup-btn').on('click', function() {
-                const $btn = $(this);
-                const action = $btn.data('action');
-                const calendarId = $btn.data('calendar-id');
-
-                let confirmMessage = '<?php esc_html_e('Are you sure you want to delete these appointments? This action cannot be undone.', 'wp-ffcertificate'); ?>';
-
-                if (action === 'all') {
-                    confirmMessage = '<?php esc_html_e('Are you sure you want to delete ALL appointments? This will permanently remove all appointment data and cannot be undone!', 'wp-ffcertificate'); ?>';
-                }
-
-                if (!confirm(confirmMessage)) {
-                    return;
-                }
-
-                $btn.prop('disabled', true).text('<?php esc_html_e('Deleting...', 'wp-ffcertificate'); ?>');
-
-                $.ajax({
-                    url: ajaxurl,
-                    method: 'POST',
-                    data: {
-                        action: 'ffc_cleanup_appointments',
-                        calendar_id: calendarId,
-                        cleanup_action: action,
-                        nonce: $('#ffc_cleanup_appointments_nonce').val()
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            alert(response.data.message);
-                            location.reload();
-                        } else {
-                            alert(response.data.message || '<?php esc_html_e('Error deleting appointments', 'wp-ffcertificate'); ?>');
-                            $btn.prop('disabled', false);
-                        }
-                    },
-                    error: function() {
-                        alert('<?php esc_html_e('Error communicating with server', 'wp-ffcertificate'); ?>');
-                        $btn.prop('disabled', false);
-                    }
-                });
-            });
-        });
-        </script>
+        <!-- Cleanup scripts in calendar-editor.js -->
         <?php
     }
 
