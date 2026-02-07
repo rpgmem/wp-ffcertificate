@@ -3,7 +3,7 @@ Contributors: alexmeusburger
 Tags: certificate, form builder, pdf generation, verification, validation
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 4.6.5
+Stable tag: 4.6.6
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -154,6 +154,19 @@ In the certificate layout editor, use these dynamic tags:
 * Common examples: `{{name}}`, `{{email}}`, `{{cpf_rf}}`, `{{ticket}}`
 
 == Changelog ==
+
+= 4.6.6 (2026-02-07) =
+
+Reliability: Standardize error handling across all modules.
+
+* Fix: Encryption catch blocks now use \Exception (namespace bug prevented catching errors)
+* Fix: wp_mail() return values checked and failures logged in EmailHandler and AppointmentEmailHandler
+* Security: REST API catch blocks no longer expose internal exception messages to clients
+* Improve: AJAX error responses now include structured error codes alongside messages
+* Improve: WP_Error codes propagated through AJAX handlers (FormProcessor, AppointmentHandler)
+* Improve: AbstractRepository logs $wpdb->last_error on insert/update/delete failures
+* Refactor: AppointmentEmailHandler uses centralized send_mail() with failure logging
+* Improve: Catch blocks in AppointmentHandler AJAX use debug_log instead of error_log/getMessage exposure
 
 = 4.6.5 (2026-02-07) =
 
@@ -537,6 +550,9 @@ Bug fixes for strict types introduction.
 * Verification shortcode `[ffc_verification]`
 
 == Upgrade Notice ==
+
+= 4.6.6 =
+Reliability: Standardized error handling — fixed encryption namespace bug, email failure logging, REST API no longer exposes internal errors, AJAX responses include error codes, database errors logged. No data changes required.
 
 = 4.6.5 =
 Architecture: ActivityLog decoupled from business logic via new ActivityLogSubscriber class. Logging now happens through plugin hooks instead of direct calls. Settings save triggers automatic cache invalidation. No data changes required.

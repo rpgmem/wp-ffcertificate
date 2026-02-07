@@ -113,7 +113,8 @@ class AppointmentHandler {
 
             if (is_wp_error($result)) {
                 wp_send_json_error(array(
-                    'message' => $result->get_error_message()
+                    'code'    => $result->get_error_code(),
+                    'message' => $result->get_error_message(),
                 ));
                 return;
             }
@@ -152,11 +153,16 @@ class AppointmentHandler {
 
             wp_send_json_success( $response );
         } catch (\Exception $e) {
-            // phpcs:ignore WordPress.PHP.DevelopmentFunctions
-            error_log('FFC Calendar Appointment Error: ' . $e->getMessage());
+            if ( class_exists( '\FreeFormCertificate\Core\Utils' ) ) {
+                \FreeFormCertificate\Core\Utils::debug_log( 'Appointment AJAX error', array(
+                    'message' => $e->getMessage(),
+                    'file'    => $e->getFile(),
+                    'line'    => $e->getLine(),
+                ) );
+            }
             wp_send_json_error(array(
+                'code'    => 'ffc_internal_error',
                 'message' => __('An unexpected error occurred. Please try again.', 'ffcertificate'),
-                'debug' => WP_DEBUG ? $e->getMessage() : null
             ));
         }
     }
@@ -233,7 +239,8 @@ class AppointmentHandler {
 
             if (is_wp_error($result)) {
                 wp_send_json_error(array(
-                    'message' => $result->get_error_message()
+                    'code'    => $result->get_error_code(),
+                    'message' => $result->get_error_message(),
                 ));
                 return;
             }
@@ -243,8 +250,14 @@ class AppointmentHandler {
             ));
 
         } catch (\Throwable $e) {
+            if ( class_exists( '\FreeFormCertificate\Core\Utils' ) ) {
+                \FreeFormCertificate\Core\Utils::debug_log( 'Cancellation AJAX error', array(
+                    'message' => $e->getMessage(),
+                ) );
+            }
             wp_send_json_error(array(
-                'message' => $e->getMessage()
+                'code'    => 'ffc_internal_error',
+                'message' => __('An unexpected error occurred.', 'ffcertificate'),
             ));
         }
     }
@@ -1000,7 +1013,15 @@ class AppointmentHandler {
             ));
 
         } catch (\Throwable $e) {
-            wp_send_json_error(array('message' => $e->getMessage()));
+            if ( class_exists( '\FreeFormCertificate\Core\Utils' ) ) {
+                \FreeFormCertificate\Core\Utils::debug_log( 'Admin appointments AJAX error', array(
+                    'message' => $e->getMessage(),
+                ) );
+            }
+            wp_send_json_error(array(
+                'code'    => 'ffc_internal_error',
+                'message' => __('An unexpected error occurred.', 'ffcertificate'),
+            ));
         }
     }
 }

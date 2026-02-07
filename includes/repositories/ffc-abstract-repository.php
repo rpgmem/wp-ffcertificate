@@ -158,6 +158,7 @@ abstract class AbstractRepository {
             return $this->wpdb->insert_id;
         }
 
+        $this->log_db_error( 'insert' );
         return false;
     }
 
@@ -178,6 +179,8 @@ abstract class AbstractRepository {
 
         if ($result !== false) {
             $this->clear_cache("id_{$id}");
+        } else {
+            $this->log_db_error( 'update', $id );
         }
 
         return $result;
@@ -195,6 +198,8 @@ abstract class AbstractRepository {
 
         if ($result) {
             $this->clear_cache("id_{$id}");
+        } elseif ( $result === false ) {
+            $this->log_db_error( 'delete', $id );
         }
 
         return $result;
@@ -274,6 +279,27 @@ abstract class AbstractRepository {
             wp_cache_delete($key, $this->cache_group);
         } else {
             wp_cache_flush();
+        }
+    }
+
+    /**
+     * Log database error from $wpdb->last_error.
+     *
+     * @since 4.6.6
+     * @param string   $operation Operation name (insert, update, delete).
+     * @param int|null $id        Record ID if applicable.
+     */
+    protected function log_db_error( string $operation, ?int $id = null ): void {
+        if ( empty( $this->wpdb->last_error ) ) {
+            return;
+        }
+
+        if ( class_exists( '\FreeFormCertificate\Core\Utils' ) ) {
+            \FreeFormCertificate\Core\Utils::debug_log( "Database {$operation} failed", array(
+                'table' => $this->table,
+                'id'    => $id,
+                'error' => $this->wpdb->last_error,
+            ) );
         }
     }
 }
