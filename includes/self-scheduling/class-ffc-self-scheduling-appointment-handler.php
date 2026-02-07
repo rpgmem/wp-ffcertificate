@@ -325,24 +325,6 @@ class AppointmentHandler {
          */
         do_action( 'ffc_after_appointment_create', $appointment_id, $data, $calendar );
 
-        // Log activity
-        if (class_exists('\FreeFormCertificate\Core\ActivityLog')) {
-            \FreeFormCertificate\Core\ActivityLog::log(
-                'appointment_created',
-                \FreeFormCertificate\Core\ActivityLog::LEVEL_INFO,
-                array(
-                    'appointment_id' => $appointment_id,
-                    'calendar_id' => $data['calendar_id'],
-                    'date' => $data['appointment_date'],
-                    'time' => $data['start_time'],
-                    'status' => $data['status'],
-                    'user_id' => $data['user_id'] ?? null,
-                    'ip' => $data['user_ip']
-                ),
-                $appointment_id
-            );
-        }
-
         // Get appointment for email
         $appointment = $this->appointment_repository->findById($appointment_id);
 
@@ -837,21 +819,6 @@ class AppointmentHandler {
          * @param int|null $cancelled_by User ID who cancelled (null for guest).
          */
         do_action( 'ffc_appointment_cancelled', $appointment_id, $appointment, $reason, $cancelled_by );
-
-        // Log activity
-        if (class_exists('\FreeFormCertificate\Core\ActivityLog')) {
-            \FreeFormCertificate\Core\ActivityLog::log(
-                'appointment_cancelled',
-                \FreeFormCertificate\Core\ActivityLog::LEVEL_WARNING,
-                array(
-                    'appointment_id' => $appointment_id,
-                    'calendar_id' => $appointment['calendar_id'],
-                    'cancelled_by' => $cancelled_by,
-                    'reason' => $reason
-                ),
-                $appointment_id
-            );
-        }
 
         // Send cancellation emails
         $this->schedule_email_notifications($appointment, $calendar, 'cancelled');

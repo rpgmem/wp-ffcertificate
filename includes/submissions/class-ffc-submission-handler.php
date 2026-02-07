@@ -223,15 +223,6 @@ class SubmissionHandler {
             return new WP_Error('db_error', __('Error saving submission to the database.', 'ffcertificate'));
         }
 
-        // 10. Log activity
-        if (class_exists('\FreeFormCertificate\Core\ActivityLog')) {
-            \FreeFormCertificate\Core\ActivityLog::log_submission_created($submission_id, [
-                'form_id' => $form_id,
-                'has_cpf' => !empty($clean_cpf_rf),
-                'encrypted' => !empty($email_encrypted)
-            ]);
-        }
-
         /**
          * Fires after a submission is saved to the database.
          *
@@ -298,10 +289,6 @@ class SubmissionHandler {
             $update_data['edited_at'] = current_time('mysql');
             $update_data['edited_by'] = get_current_user_id();
             $result = $this->repository->update($id, $update_data);
-        }
-
-        if ($result !== false && class_exists('\FreeFormCertificate\Core\ActivityLog')) {
-            \FreeFormCertificate\Core\ActivityLog::log_submission_updated($id, get_current_user_id());
         }
 
         if ( $result !== false ) {
@@ -393,10 +380,6 @@ class SubmissionHandler {
     public function trash_submission(int $id): bool {
         $result = $this->repository->updateStatus($id, 'trash');
 
-        if ($result && class_exists('\FreeFormCertificate\Core\ActivityLog')) {
-            \FreeFormCertificate\Core\ActivityLog::log_submission_trashed($id);
-        }
-
         if ( $result ) {
             /** @since 4.6.4 */
             do_action( 'ffc_submission_trashed', $id );
@@ -411,10 +394,6 @@ class SubmissionHandler {
      */
     public function restore_submission(int $id): bool {
         $result = $this->repository->updateStatus($id, 'publish');
-
-        if ($result && class_exists('\FreeFormCertificate\Core\ActivityLog')) {
-            \FreeFormCertificate\Core\ActivityLog::log_submission_restored($id);
-        }
 
         if ( $result ) {
             /** @since 4.6.4 */
@@ -433,10 +412,6 @@ class SubmissionHandler {
         do_action( 'ffc_before_submission_delete', $id );
 
         $result = $this->repository->delete($id);
-
-        if ($result && class_exists('\FreeFormCertificate\Core\ActivityLog')) {
-            \FreeFormCertificate\Core\ActivityLog::log_submission_deleted($id);
-        }
 
         if ( $result ) {
             /** @since 4.6.4 */

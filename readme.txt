@@ -3,7 +3,7 @@ Contributors: alexmeusburger
 Tags: certificate, form builder, pdf generation, verification, validation
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 4.6.4
+Stable tag: 4.6.5
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -154,6 +154,16 @@ In the certificate layout editor, use these dynamic tags:
 * Common examples: `{{name}}`, `{{email}}`, `{{cpf_rf}}`, `{{ticket}}`
 
 == Changelog ==
+
+= 4.6.5 (2026-02-07) =
+
+Architecture: Internal hook consumption — plugin uses its own hooks for activity logging.
+
+* New: ActivityLogSubscriber class listens to ffc_ hooks for decoupled logging
+* Refactor: Removed direct ActivityLog calls from SubmissionHandler (5 calls → hook-based)
+* Refactor: Removed direct ActivityLog calls from AppointmentHandler (2 calls → hook-based)
+* New: ffc_settings_saved hook now triggers cache invalidation (options + transients)
+* Architecture: Plugin "eats its own dog food" — business logic decoupled from logging
 
 = 4.6.4 (2026-02-07) =
 
@@ -527,6 +537,9 @@ Bug fixes for strict types introduction.
 * Verification shortcode `[ffc_verification]`
 
 == Upgrade Notice ==
+
+= 4.6.5 =
+Architecture: ActivityLog decoupled from business logic via new ActivityLogSubscriber class. Logging now happens through plugin hooks instead of direct calls. Settings save triggers automatic cache invalidation. No data changes required.
 
 = 4.6.4 =
 Extensibility: Added 31 action/filter hooks across submissions, PDF generation, email, appointments, audience bookings, settings, and CSV export. Developers can now customize all major plugin workflows.
