@@ -3,7 +3,7 @@ Contributors: alexmeusburger
 Tags: certificate, form builder, pdf generation, verification, validation
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 4.6.6
+Stable tag: 4.6.7
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -154,6 +154,26 @@ In the certificate layout editor, use these dynamic tags:
 * Common examples: `{{name}}`, `{{email}}`, `{{cpf_rf}}`, `{{ticket}}`
 
 == Changelog ==
+
+= 4.6.7 (2026-02-07) =
+
+Accessibility: WCAG 2.1 AA compliance for all frontend components.
+
+* A11y: Add aria-required="true" to all required form fields (forms, booking, verification, captcha)
+* A11y: Add role="group" and aria-label to radio button groups
+* A11y: Add role="dialog", aria-modal="true", aria-labelledby to booking modal
+* A11y: Add focus trap inside booking modal (Tab/Shift+Tab cycle)
+* A11y: Return focus to trigger element on modal close
+* A11y: Time slots rendered with role="option", tabindex="0", keyboard support (Enter/Space)
+* A11y: Dashboard tabs use role="tablist"/role="tab"/role="tabpanel" with aria-selected and aria-controls
+* A11y: Arrow key navigation between dashboard tabs (Left/Right/Home/End)
+* A11y: Replace all alert() calls with accessible inline messages (role="alert")
+* A11y: Add aria-invalid and aria-describedby to validation errors (CPF/RF fields)
+* A11y: Add role="status" and aria-live="polite" to loading indicators and result regions
+* A11y: Add role="alert" and aria-live="assertive" to form error/success message containers
+* A11y: Decorative emoji wrapped in aria-hidden="true" in dashboard tabs
+* A11y: Focus management after AJAX operations (form errors, booking confirmation)
+* A11y: Verification page auth code input gets aria-describedby linking to description text
 
 = 4.6.6 (2026-02-07) =
 
