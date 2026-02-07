@@ -200,7 +200,7 @@ class AdminAssetsManager {
      * - Submission Edit CSS + JS (only on edit page)
      */
     private function enqueue_conditional_assets(): void {
-        // Settings page styles
+        // Settings page styles + scripts
         if ( $this->is_settings_page() ) {
             wp_enqueue_style(
                 'ffc-admin-settings',
@@ -208,6 +208,26 @@ class AdminAssetsManager {
                 array( 'ffc-admin-css' ),
                 FFC_VERSION
             );
+
+            wp_enqueue_script(
+                'ffc-admin-migrations',
+                FFC_PLUGIN_URL . 'assets/js/ffc-admin-migrations.js',
+                array( 'jquery' ),
+                FFC_VERSION,
+                true
+            );
+
+            wp_localize_script( 'ffc-admin-migrations', 'ffcMigrations', array(
+                'strings' => array(
+                    'processing'        => __( 'Processing...', 'wp-ffcertificate' ),
+                    'complete'          => __( 'Complete', 'wp-ffcertificate' ),
+                    'processed'         => __( 'Processed ', 'wp-ffcertificate' ),
+                    'records'           => __( 'records...', 'wp-ffcertificate' ),
+                    'migrationComplete' => __( 'Migration Complete', 'wp-ffcertificate' ),
+                    'allRecordsMigrated' => __( 'All records have been successfully migrated.', 'wp-ffcertificate' ),
+                    'errorOccurred'     => __( 'Error occurred. Please try again.', 'wp-ffcertificate' ),
+                ),
+            ) );
         }
 
         // Submission edit page assets

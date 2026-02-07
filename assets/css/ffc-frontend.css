@@ -186,7 +186,7 @@
     outline: none;
 }
 
-.ffc-consent-label input[type="checkbox"]:focus {
+.ffc-consent-label input[type="checkbox"]:focus-visible {
     outline: 2px solid #0073aa;
     outline-offset: 2px;
 }
@@ -271,13 +271,7 @@
     width: 100%; /* ← Pega largura total do form (450px) */
 }
 
-.ffc-honeypot-field {
-    position: absolute;
-    left: -9999px;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-}
+/* .ffc-honeypot-field defined in ffc-common.css */
 
 .ffc-captcha-row {
     margin-bottom: 20px;
@@ -332,6 +326,11 @@
 
 .ffc-submit-btn:active {
     transform: scale(0.98);
+}
+
+.ffc-submit-btn:focus-visible {
+    outline: 2px solid #0073aa;
+    outline-offset: 2px;
 }
 
 .ffc-submit-btn:disabled {
@@ -560,6 +559,7 @@
     padding: 5px 15px;
     background: rgba(255, 255, 255, 0.2);
     border-radius: 20px;
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
 }
 
@@ -707,6 +707,11 @@
 .ffc-download-btn:active {
     transform: translateY(0);
     box-shadow: 0 2px 8px rgba(0, 115, 170, 0.2);
+}
+
+.ffc-download-btn:focus-visible {
+    outline: 2px solid #0073aa;
+    outline-offset: 2px;
 }
 
 .ffc-download-btn:disabled {
@@ -905,4 +910,23 @@
     font-size: 18px;
 }
 
-/* ✅ v3.1.0 Phase 3: Removed .ffc-success-actions (never used in templates) */
+/* ============================================
+   REDUCED MOTION
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+    .ffc-certificate-preview {
+        animation: none;
+    }
+
+    .ffc-spinner {
+        animation: none;
+    }
+
+    .ffc-input,
+    .ffc-consent-text a,
+    .ffc-submit-btn,
+    .ffc-verify-input,
+    .ffc-download-btn {
+        transition: none;
+    }
+}

@@ -201,6 +201,7 @@ class AudienceLoader {
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'restUrl' => rest_url('ffc/v1/audience/'),
             'nonce' => wp_create_nonce('wp_rest'),
+            'adminNonce' => wp_create_nonce('ffc_admin_nonce'),
             'strings' => $this->get_admin_strings(),
         ));
     }
@@ -259,6 +260,7 @@ class AudienceLoader {
             'selectUsers' => __('Select users', 'wp-ffcertificate'),
             'requiredField' => __('This field is required.', 'wp-ffcertificate'),
             'invalidTime' => __('End time must be after start time.', 'wp-ffcertificate'),
+            'allEnvironments' => __('All Environments', 'wp-ffcertificate'),
         );
     }
 
