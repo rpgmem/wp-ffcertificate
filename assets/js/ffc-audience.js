@@ -159,6 +159,40 @@
             }
         });
 
+        // Audience select: selecting a parent auto-selects children, deselecting removes children
+        $('#booking-audiences').on('change', function() {
+            var $sel = $(this);
+            var selected = ($sel.val() || []).map(function(v) { return parseInt(v); });
+            var audiences = state.config.audiences || [];
+            var newSelected = selected.slice();
+
+            audiences.forEach(function(audience) {
+                if (!audience.children || audience.children.length === 0) return;
+                var parentId = parseInt(audience.id);
+                var childIds = audience.children.map(function(c) { return parseInt(c.id); });
+                var parentSelected = selected.indexOf(parentId) !== -1;
+
+                if (parentSelected) {
+                    // Parent selected — add all children
+                    childIds.forEach(function(cid) {
+                        if (newSelected.indexOf(cid) === -1) {
+                            newSelected.push(cid);
+                        }
+                    });
+                } else {
+                    // Parent deselected — remove all children
+                    newSelected = newSelected.filter(function(id) {
+                        return childIds.indexOf(id) === -1;
+                    });
+                }
+            });
+
+            // Only update if selection changed to avoid infinite loop
+            if (newSelected.length !== selected.length || !newSelected.every(function(v) { return selected.indexOf(v) !== -1; })) {
+                $sel.val(newSelected.map(String));
+            }
+        });
+
         // Description character count
         $('#booking-description').on('input', function() {
             $('#desc-char-count').text($(this).val().length);
@@ -273,14 +307,14 @@
         var audiences = state.config.audiences || [];
 
         audiences.forEach(function(audience) {
+            // Parent is always a selectable option
+            $select.append('<option value="' + audience.id + '">' + audience.name + '</option>');
+
+            // Children appear indented below the parent
             if (audience.children && audience.children.length > 0) {
-                var $group = $('<optgroup label="' + audience.name + '">');
                 audience.children.forEach(function(child) {
-                    $group.append('<option value="' + child.id + '">' + child.name + '</option>');
+                    $select.append('<option value="' + child.id + '">\u00A0\u00A0\u00A0\u2514 ' + child.name + '</option>');
                 });
-                $select.append($group);
-            } else {
-                $select.append('<option value="' + audience.id + '">' + audience.name + '</option>');
             }
         });
     }
@@ -756,8 +790,7 @@
                 try {
                     if (response.success) {
                         var conflicts = response.conflicts || {};
-                        var isHardConflict = (conflicts.type === 'environment' && conflicts.bookings && conflicts.bookings.length > 0);
-                        var softWarnings = [];
+                        var isHardConflict = (conflicts.type === 'environment' || conflicts.type === 'audience_same_day');
 
                         // Reset conflict UI
                         $('#ffc-conflict-warning').hide();
@@ -765,25 +798,16 @@
                         $('#ffc-conflict-acknowledge').prop('checked', false);
 
                         if (isHardConflict) {
-                            // HARD CONFLICT: environment double-booking — block booking
-                            var errorMsg = ffcAudience.strings.hardConflict || 'This time slot is already booked for this environment.';
-                            var times = conflicts.bookings.map(function(b) { return b.start_time + '–' + b.end_time; }).join(', ');
-                            $('#ffc-conflict-error-details').html('<p><strong>' + errorMsg + '</strong></p><p>' + times + '</p>');
-                            $('#ffc-conflict-error').show();
+                            // HARD CONFLICT — block booking
+                            var errorHtml = '';
 
-                            // Hide check button, do NOT show create button
-                            $btn.hide();
-                            $('#ffc-create-booking-btn').hide();
-                        } else {
-                            // Check for soft conflicts
-                            // User overlap
-                            if (conflicts.bookings && conflicts.bookings.length > 0 && conflicts.type === 'user') {
-                                var count = conflicts.affected_users ? conflicts.affected_users.length : 0;
-                                softWarnings.push(count + ' ' + (ffcAudience.strings.membersOverlapping || 'member(s) have overlapping bookings.'));
-                            }
-
-                            // Audience same day
-                            if (conflicts.audience_same_day && conflicts.audience_same_day.length > 0) {
+                            if (conflicts.type === 'environment') {
+                                // Environment double-booking
+                                var errorMsg = ffcAudience.strings.hardConflict || 'This time slot is already booked for this environment.';
+                                var times = conflicts.bookings.map(function(b) { return b.start_time + '–' + b.end_time; }).join(', ');
+                                errorHtml = '<p><strong>' + errorMsg + '</strong></p><p>' + times + '</p>';
+                            } else if (conflicts.type === 'audience_same_day') {
+                                // Same audience group already booked on this day
                                 var grouped = {};
                                 conflicts.audience_same_day.forEach(function(b) {
                                     if (!grouped[b.audience_name]) {
@@ -795,10 +819,22 @@
                                 for (var name in grouped) {
                                     lines.push('<strong>' + name + '</strong>: ' + grouped[name].join(', '));
                                 }
-                                softWarnings.push(
-                                    (ffcAudience.strings.audienceSameDayWarning || 'Warning: The following groups already have bookings on this day:') +
-                                    '<br>' + lines.join('<br>')
-                                );
+                                var sameDayMsg = ffcAudience.strings.audienceSameDayHard || 'This audience group already has a booking on this day.';
+                                errorHtml = '<p><strong>' + sameDayMsg + '</strong></p><p>' + lines.join('<br>') + '</p>';
+                            }
+
+                            $('#ffc-conflict-error-details').html(errorHtml);
+                            $('#ffc-conflict-error').show();
+
+                            // Hide check button, do NOT show create button
+                            $btn.hide();
+                            $('#ffc-create-booking-btn').hide();
+                        } else {
+                            // Check for soft conflicts (user overlap only)
+                            var softWarnings = [];
+                            if (conflicts.bookings && conflicts.bookings.length > 0 && conflicts.type === 'user') {
+                                var count = conflicts.affected_users ? conflicts.affected_users.length : 0;
+                                softWarnings.push(count + ' ' + (ffcAudience.strings.membersOverlapping || 'member(s) have overlapping bookings.'));
                             }
 
                             $btn.hide();

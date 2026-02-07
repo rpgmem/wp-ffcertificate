@@ -3379,6 +3379,10 @@ msgstr "Atenção: Conflitos detectados com reservas existentes."
 msgid "Warning: The following groups already have bookings on this day:"
 msgstr "Atenção: Os seguintes grupos já possuem agendamentos neste dia:"
 
+#: includes/audience/class-ffc-audience-shortcode.php
+msgid "This audience group already has a booking on this day. You cannot create another booking for the same group on the same day."
+msgstr "Este público-alvo já possui um agendamento neste dia. Não é possível criar outro agendamento para o mesmo grupo no mesmo dia."
+
 #: includes/audience/class-ffc-audience-shortcode.php:484
 msgid "member(s) have overlapping bookings."
 msgstr "membro(s) possuem agendamentos sobrepostos."
