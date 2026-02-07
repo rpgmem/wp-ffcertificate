@@ -3,7 +3,7 @@ Contributors: alexmeusburger
 Tags: certificate, form builder, pdf generation, verification, validation
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 4.6.1
+Stable tag: 4.6.2
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -154,6 +154,23 @@ In the certificate layout editor, use these dynamic tags:
 * Common examples: `{{name}}`, `{{email}}`, `{{cpf_rf}}`, `{{ticket}}`
 
 == Changelog ==
+
+= 4.6.2 (2026-02-07) =
+
+Performance: Fix N+1 queries and add composite database indexes.
+
+* Performance: Batch load form titles in submissions list (replaces per-row get_the_title)
+* Performance: Batch load calendars in user appointments REST endpoint (replaces per-row findById)
+* Performance: Batch load audiences in user audience-bookings REST endpoint (replaces per-row query)
+* Performance: Batch load user data in admin bookings list (replaces per-row get_userdata)
+* Performance: Added findByIds() batch method to AbstractRepository for reusable multi-ID lookups
+* Database: Added composite index idx_form_status (form_id, status) on submissions table
+* Database: Added composite index idx_status_submission_date (status, submission_date) on submissions table
+* Database: Added composite index idx_email_hash_form_id (email_hash, form_id) on submissions table
+* Database: Added composite index idx_calendar_status_date (calendar_id, status, appointment_date) on appointments table
+* Database: Added composite index idx_user_status (user_id, status) on appointments table
+* Database: Added composite index idx_date_status (booking_date, status) on audience bookings table
+* Database: Added composite index idx_created_by_date (created_by, booking_date) on audience bookings table
 
 = 4.6.1 (2026-02-07) =
 
@@ -487,6 +504,9 @@ Bug fixes for strict types introduction.
 * Verification shortcode `[ffc_verification]`
 
 == Upgrade Notice ==
+
+= 4.6.2 =
+Performance improvement: Fixed N+1 database queries in 4 locations (submissions list, appointments, audience bookings, admin bookings). Added 7 composite indexes for faster query performance. Reactivate plugin to apply new indexes.
 
 = 4.6.1 =
 BREAKING: Plugin slug changed from `wp-ffcertificate` to `ffcertificate`. Existing installations must deactivate and reactivate. All settings and data are preserved. Security hardening, accessibility improvements, and major structural refactoring.
