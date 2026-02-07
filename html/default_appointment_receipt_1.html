@@ -36,8 +36,12 @@
                         <div style="font-size: 11pt;font-weight: bold;color: #0073aa;text-transform: uppercase;letter-spacing: 1px;padding-bottom: 6px;border-bottom: 2px solid #e8e8e8;margin-bottom: 10px">Detalhes do Calendário</div>
                         <table style="width: 100%;border-collapse: collapse;font-size: 10.5pt" role="presentation">
                             <tr>
-                                <td style="padding: 5px 0;font-weight: bold;color: #666;width: 120px;vertical-align: top">Evento:</td>
+                                <td style="padding: 5px 0;font-weight: bold;color: #666;width: 150px;vertical-align: top">Setor / Sala:</td>
                                 <td style="padding: 5px 0;color: #222">{{calendar_title}}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px 0;font-weight: bold;color: #666;width: 150px;vertical-align: top">Endereço:</td>
+                                <td style="padding: 5px 0;color: #222">Av. Nordestina, 747 - Vila Americana - São Paulo - SP, 08021-000</td>
                             </tr>
                         </table>
                     </div>
@@ -47,17 +51,12 @@
                         <div style="font-size: 11pt;font-weight: bold;color: #0073aa;text-transform: uppercase;letter-spacing: 1px;padding-bottom: 6px;border-bottom: 2px solid #e8e8e8;margin-bottom: 10px">Informações do Agendamento</div>
                         <table style="width: 100%;border-collapse: collapse;font-size: 10.5pt" role="presentation">
                             <tr>
-                                <td style="padding: 5px 0;font-weight: bold;color: #666;width: 120px">Data:</td>
+                                <td style="padding: 5px 0;font-weight: bold;color: #666;width: 150px">Atendimento em:</td>
                                 <td style="padding: 5px 0;color: #222">{{appointment_date}}</td>
                             </tr>
                             <tr>
-                                <td style="padding: 5px 0;font-weight: bold;color: #666">Horário:</td>
+                                <td style="padding: 5px 0;font-weight: bold;color: #666">No Horário:</td>
                                 <td style="padding: 5px 0;color: #222">{{appointment_time}}</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 5px 0;font-weight: bold;color: #666">Agendado em:</td>
-                                <td style="padding: 5px 0;color: #222">{{created_at}}</td>
-                            </tr>
                         </table>
                     </div>
 
@@ -66,7 +65,7 @@
                         <div style="font-size: 11pt;font-weight: bold;color: #0073aa;text-transform: uppercase;letter-spacing: 1px;padding-bottom: 6px;border-bottom: 2px solid #e8e8e8;margin-bottom: 10px">Informações Pessoais</div>
                         <table style="width: 100%;border-collapse: collapse;font-size: 10.5pt" role="presentation">
                             <tr>
-                                <td style="padding: 5px 0;font-weight: bold;color: #666;width: 120px">Nome:</td>
+                                <td style="padding: 5px 0;font-weight: bold;color: #666;width: 150px">Nome:</td>
                                 <td style="padding: 5px 0;color: #222">{{name}}</td>
                             </tr>
                             <tr>
@@ -100,7 +99,7 @@
 
         <!-- Footer -->
         <div style="position: absolute;bottom: 25px;left: 50px;right: 50px;border-top: 2px solid #e8e8e8;padding-top: 8px;text-align: center">
-            <span style="font-size: 8.5pt;color: #999">{{site_name}} &mdash; Gerado em {{print_date}}</span>
+            <span style="font-size: 8.5pt;color: #999">{{site_name}} &mdash; Registrado em: {{created_at}} - Arquivo Gerado em: {{print_date}}</span>
         </div>
 
     </div>
