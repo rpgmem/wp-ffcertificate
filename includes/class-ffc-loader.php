@@ -40,22 +40,22 @@ if (!defined('ABSPATH')) exit;
 
 class Loader {
 
-    protected $submission_handler = null;
-    protected $email_handler = null;
-    protected $csv_exporter = null;
-    protected $cpt = null;
-    protected $admin = null;
-    protected $frontend = null;
-    protected $admin_ajax = null;
-    protected $self_scheduling_cpt = null;
-    protected $self_scheduling_admin = null;
-    protected $self_scheduling_editor = null;
-    protected $self_scheduling_appointment_handler = null;
-    protected $self_scheduling_email_handler = null;
-    protected $self_scheduling_receipt_handler = null;
-    protected $self_scheduling_csv_exporter = null;
-    protected $self_scheduling_shortcode = null;
-    protected $audience_loader = null;
+    protected $submission_handler;
+    protected $email_handler;
+    protected $csv_exporter;
+    protected $cpt;
+    protected $admin;
+    protected $frontend;
+    protected $admin_ajax;
+    protected $self_scheduling_cpt;
+    protected $self_scheduling_admin;
+    protected $self_scheduling_editor;
+    protected $self_scheduling_appointment_handler;
+    protected $self_scheduling_email_handler;
+    protected $self_scheduling_receipt_handler;
+    protected $self_scheduling_csv_exporter;
+    protected $self_scheduling_shortcode;
+    protected $audience_loader;
 
     public function __construct() {
         add_action('plugins_loaded', [$this, 'init_plugin'], 10);
