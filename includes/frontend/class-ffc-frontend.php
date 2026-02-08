@@ -80,10 +80,8 @@ class Frontend {
             // PDF Generator (shared module)
             wp_enqueue_script( 'ffc-pdf-generator', FFC_PLUGIN_URL . "assets/js/ffc-pdf-generator{$s}.js", array( 'jquery', 'html2canvas', 'jspdf' ), FFC_VERSION, true );
 
-            // ✅ v3.1.0: ffc-frontend.js depends on PDF generator and ffc-rate-limit (which loads ffc-frontend-helpers.js)
             wp_enqueue_script( 'ffc-frontend-js', FFC_PLUGIN_URL . "assets/js/ffc-frontend{$s}.js", array( 'jquery', 'ffc-pdf-generator', 'ffc-rate-limit' ), FFC_VERSION, true );
 
-            // ✅ v3.0.0: Geofence frontend validation - NEW!
             wp_enqueue_script( 'ffc-geofence-frontend', FFC_PLUGIN_URL . "assets/js/ffc-geofence-frontend{$s}.js", array( 'jquery' ), FFC_VERSION, true );
 
             // Pass geofence configurations to frontend
