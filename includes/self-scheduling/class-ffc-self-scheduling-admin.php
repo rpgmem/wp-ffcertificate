@@ -83,14 +83,14 @@ class SelfSchedulingAdmin {
             'ffc-calendar-admin',
             plugins_url("assets/css/ffc-calendar-admin{$s}.css", dirname(__FILE__, 2)),
             array(),
-            '4.1.0'
+            FFC_VERSION
         );
 
         wp_enqueue_script(
             'ffc-calendar-admin',
             plugins_url("assets/js/ffc-calendar-admin{$s}.js", dirname(__FILE__, 2)),
             array('jquery', 'jquery-ui-sortable', 'jquery-ui-datepicker'),
-            '4.1.0',
+            FFC_VERSION,
             true
         );
 
@@ -107,6 +107,7 @@ class SelfSchedulingAdmin {
         ));
 
         // phpcs:ignore PluginCheck.CodeAnalysis.EnqueuedResourceOffloading.OffloadedContent -- jQuery UI CSS from official CDN, standard practice.
-        wp_enqueue_style('jquery-ui-theme', '//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css', array(), '1.12.1');
+        $jquery_ui_v = FFC_JQUERY_UI_VERSION;
+        wp_enqueue_style( 'jquery-ui-theme', "//code.jquery.com/ui/{$jquery_ui_v}/themes/smoothness/jquery-ui.css", array(), $jquery_ui_v );
     }
 }
