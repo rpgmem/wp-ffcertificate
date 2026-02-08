@@ -391,13 +391,15 @@ class AudienceRepository {
         $table = self::get_table_name();
         $members_table = self::get_members_table_name();
 
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
         $audiences = $wpdb->get_results(
             $wpdb->prepare(
-                "SELECT a.* FROM {$table} a
-                INNER JOIN {$members_table} m ON a.id = m.audience_id
-                WHERE m.user_id = %d AND a.status = 'active'
-                ORDER BY a.name ASC",
+                'SELECT a.* FROM %i a
+                INNER JOIN %i m ON a.id = m.audience_id
+                WHERE m.user_id = %d AND a.status = \'active\'
+                ORDER BY a.name ASC',
+                $table,
+                $members_table,
                 $user_id
             )
         );
@@ -412,17 +414,16 @@ class AudienceRepository {
             }
 
             if (!empty($parent_ids)) {
-                $parent_ids = array_unique($parent_ids);
-                $placeholders = implode(',', array_fill(0, count($parent_ids), '%d'));
+                $parent_ids = array_unique( array_map( 'absint', $parent_ids ) );
+                $id_list = implode( ',', $parent_ids );
 
-                // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Dynamic IN() placeholders built from array_fill above.
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
                 $parents = $wpdb->get_results(
                     $wpdb->prepare(
-                        "SELECT * FROM {$table} WHERE id IN ({$placeholders}) AND status = 'active'",
-                        $parent_ids
+                        "SELECT * FROM %i WHERE id IN ({$id_list}) AND status = 'active'",
+                        $table
                     )
                 );
-                // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 
                 // Merge and remove duplicates
                 $existing_ids = array_column($audiences, 'id');
@@ -553,16 +554,16 @@ class AudienceRepository {
 
         $where_clause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
 
-        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-        $sql = "SELECT COUNT(*) FROM {$table} {$where_clause}";
+        // Build prepared query with %i for table name
+        $prepare_args = array_merge( [ $table ], $values );
 
-        if (!empty($values)) {
-            // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-            $sql = $wpdb->prepare($sql, $values);
-        }
-
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared
-        $result = (int) $wpdb->get_var($sql);
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared
+        $result = (int) $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT COUNT(*) FROM %i {$where_clause}",
+                $prepare_args
+            )
+        );
         wp_cache_set( $cache_key, $result, 'ffcertificate' );
 
         return $result;
@@ -585,13 +586,14 @@ class AudienceRepository {
         global $wpdb;
         $table = self::get_table_name();
 
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
         $results = $wpdb->get_results(
             $wpdb->prepare(
-                "SELECT * FROM {$table}
+                "SELECT * FROM %i
                 WHERE name LIKE %s AND status = 'active'
                 ORDER BY name ASC
                 LIMIT %d",
+                $table,
                 '%' . $wpdb->esc_like($search) . '%',
                 $limit
             )

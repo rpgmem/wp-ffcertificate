@@ -384,10 +384,11 @@ class AudienceEnvironmentRepository {
         global $wpdb;
         $table = self::get_holidays_table_name();
 
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
         $count = $wpdb->get_var(
             $wpdb->prepare(
-                "SELECT COUNT(*) FROM {$table} WHERE schedule_id = %d AND holiday_date = %s",
+                'SELECT COUNT(*) FROM %i WHERE schedule_id = %d AND holiday_date = %s',
+                $table,
                 $env->schedule_id,
                 $date
             )
@@ -430,16 +431,16 @@ class AudienceEnvironmentRepository {
 
         $where_clause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
 
-        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-        $sql = "SELECT COUNT(*) FROM {$table} {$where_clause}";
+        // Build prepared query with %i for table name
+        $prepare_args = array_merge( [ $table ], $values );
 
-        if (!empty($values)) {
-            // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-            $sql = $wpdb->prepare($sql, $values);
-        }
-
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared
-        $result = (int) $wpdb->get_var($sql);
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared
+        $result = (int) $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT COUNT(*) FROM %i {$where_clause}",
+                $prepare_args
+            )
+        );
         wp_cache_set( $cache_key, $result, 'ffcertificate' );
 
         return $result;
