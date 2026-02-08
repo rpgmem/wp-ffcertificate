@@ -2,12 +2,12 @@
 declare(strict_types=1);
 
 /**
- * QR Code Settings Tab
+ * Cache & Performance Settings Tab
+ *
+ * Contains Form Cache and QR Code Cache settings
  *
  * @package FFC
- * @since 2.10.0
- * @version 3.3.0 - Added strict types and type hints
- * @version 3.2.0 - Migrated to namespace (Phase 2)
+ * @since 4.6.16
  */
 
 namespace FreeFormCertificate\Settings\Tabs;
@@ -18,28 +18,28 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class TabQRCode extends SettingsTab {
+class TabCache extends SettingsTab {
 
     protected function init(): void {
-        $this->tab_id = 'qr_code';
-        $this->tab_title = __( 'QR Code', 'ffcertificate' );
-        $this->tab_icon = 'ffc-icon-phone';
-        $this->tab_order = 40;
+        $this->tab_id = 'cache';
+        $this->tab_title = __( 'Cache', 'ffcertificate' );
+        $this->tab_icon = 'ffc-icon-package';
+        $this->tab_order = 30;
     }
-    
+
     public function render(): void {
-        // Include view file
-        $view_file = FFC_PLUGIN_DIR . 'includes/settings/views/ffc-tab-qrcode.php';
-        
+        $view_file = FFC_PLUGIN_DIR . 'includes/settings/views/ffc-tab-cache.php';
+
         if ( file_exists( $view_file ) ) {
+            $settings = $this;
             include $view_file;
         } else {
             echo '<div class="notice notice-error"><p>';
-            echo esc_html__( 'QR Code settings view file not found.', 'ffcertificate' );
+            echo esc_html__( 'Cache settings view file not found.', 'ffcertificate' );
             echo '</p></div>';
         }
     }
-    
+
     /**
      * Get option value (for view compatibility)
      */
