@@ -110,7 +110,7 @@ class SelfSchedulingShortcode {
             'html2canvas',
             FFC_PLUGIN_URL . 'libs/js/html2canvas.min.js',
             array(),
-            defined( 'FFC_HTML2CANVAS_VERSION' ) ? FFC_HTML2CANVAS_VERSION : '1.4.1',
+            FFC_HTML2CANVAS_VERSION,
             true
         );
 
@@ -118,7 +118,7 @@ class SelfSchedulingShortcode {
             'jspdf',
             FFC_PLUGIN_URL . 'libs/js/jspdf.umd.min.js',
             array(),
-            defined( 'FFC_JSPDF_VERSION' ) ? FFC_JSPDF_VERSION : '2.5.1',
+            FFC_JSPDF_VERSION,
             true
         );
 
