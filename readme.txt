@@ -3,7 +3,7 @@ Contributors: alexmeusburger
 Tags: certificate, form builder, pdf generation, verification, validation
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 4.6.8
+Stable tag: 4.6.9
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -154,6 +154,19 @@ In the certificate layout editor, use these dynamic tags:
 * Common examples: `{{name}}`, `{{email}}`, `{{cpf_rf}}`, `{{ticket}}`
 
 == Changelog ==
+
+= 4.6.9 (2026-02-08) =
+
+Performance: Activity Log optimization with batch writes, auto-cleanup, and stats caching.
+
+* Perf: Buffer activity log writes and flush as single multi-row INSERT on shutdown (or at 20-entry threshold)
+* Feature: Automatic log cleanup via daily cron with configurable retention period (default 90 days)
+* Feature: Add "Log Retention (days)" setting under Settings > General > Activity Log
+* Perf: Cache get_stats() results with 1-hour transient, invalidated on cleanup and settings save
+* Fix: Activator schema mismatch — delegate to ActivityLog::create_table() for consistent schema
+* Fix: MigrationManager used undefined LEVEL_CRITICAL, changed to LEVEL_ERROR
+* Fix: Schedule ffc_daily_cleanup_hook cron on activation (was registered but never scheduled)
+* Fix: Clear cron on plugin deactivation
 
 = 4.6.8 (2026-02-08) =
 

@@ -114,6 +114,11 @@ class Loader {
         // v4.6.5: Hook-based logging — plugin consumes its own hooks
         new ActivityLogSubscriber();
 
+        // v4.6.9: Ensure daily cleanup cron is scheduled (safety net for existing installs)
+        if ( ! wp_next_scheduled( 'ffc_daily_cleanup_hook' ) ) {
+            wp_schedule_event( time(), 'daily', 'ffc_daily_cleanup_hook' );
+        }
+
         $this->define_admin_hooks();
         $this->init_rest_api(); // Initialize REST API
     }
