@@ -11,6 +11,7 @@ declare(strict_types=1);
  * Extracted from AppointmentHandler (M7 refactoring).
  *
  * @since 4.6.8
+ * @version 4.6.10 - Added lock-aware validation for concurrent booking safety
  * @package FreeFormCertificate\SelfScheduling
  */
 
@@ -42,9 +43,10 @@ class AppointmentValidator {
      *
      * @param array $data Appointment data
      * @param array $calendar Calendar configuration
+     * @param bool $use_lock Use FOR UPDATE locks on capacity queries (requires active transaction)
      * @return true|\WP_Error
      */
-    public function validate(array $data, array $calendar) {
+    public function validate(array $data, array $calendar, bool $use_lock = false) {
         // 1. Validate required fields
         if (empty($data['appointment_date']) || empty($data['start_time'])) {
             return new \WP_Error('missing_fields', __('Date and time are required.', 'ffcertificate'));
@@ -112,21 +114,22 @@ class AppointmentValidator {
             return new \WP_Error('outside_hours', __('Selected time is outside working hours.', 'ffcertificate'));
         }
 
-        // 9. Check slot availability
+        // 9. Check slot availability (with row lock inside transaction)
         $is_available = $this->appointment_repository->isSlotAvailable(
             $data['calendar_id'],
             $data['appointment_date'],
             $data['start_time'],
-            (int)$calendar['max_appointments_per_slot']
+            (int)$calendar['max_appointments_per_slot'],
+            $use_lock
         );
 
         if (!$is_available) {
             return new \WP_Error('slot_full', __('This time slot is fully booked.', 'ffcertificate'));
         }
 
-        // 10. Check daily limit
+        // 10. Check daily limit (with row lock inside transaction)
         if ($calendar['slots_per_day'] > 0) {
-            $daily_count = $this->get_daily_appointment_count($data['calendar_id'], $data['appointment_date']);
+            $daily_count = $this->get_daily_appointment_count($data['calendar_id'], $data['appointment_date'], $use_lock);
             if ($daily_count >= $calendar['slots_per_day']) {
                 return new \WP_Error('daily_limit', __('Daily booking limit reached for this date.', 'ffcertificate'));
             }
@@ -287,10 +290,11 @@ class AppointmentValidator {
      *
      * @param int $calendar_id
      * @param string $date
+     * @param bool $use_lock Use FOR UPDATE lock (requires active transaction)
      * @return int
      */
-    public function get_daily_appointment_count(int $calendar_id, string $date): int {
-        $appointments = $this->appointment_repository->getAppointmentsByDate($calendar_id, $date);
+    public function get_daily_appointment_count(int $calendar_id, string $date, bool $use_lock = false): int {
+        $appointments = $this->appointment_repository->getAppointmentsByDate($calendar_id, $date, ['confirmed', 'pending'], $use_lock);
         return count($appointments);
     }
 }

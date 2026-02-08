@@ -3,7 +3,7 @@ Contributors: alexmeusburger
 Tags: certificate, form builder, pdf generation, verification, validation
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 4.6.9
+Stable tag: 4.6.10
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -154,6 +154,18 @@ In the certificate layout editor, use these dynamic tags:
 * Common examples: `{{name}}`, `{{email}}`, `{{cpf_rf}}`, `{{ticket}}`
 
 == Changelog ==
+
+= 4.6.10 (2026-02-08) =
+
+Fix: Race condition in concurrent appointment booking (TOCTOU vulnerability).
+
+* Fix: Wrap validate + insert in MySQL transaction with row-level locking (FOR UPDATE)
+* Fix: Add transaction support (begin/commit/rollback) to AbstractRepository
+* Fix: AppointmentRepository::isSlotAvailable() now supports FOR UPDATE lock
+* Fix: AppointmentRepository::getAppointmentsByDate() now supports FOR UPDATE lock
+* Fix: AppointmentValidator accepts lock flag for capacity queries inside transaction
+* Fix: Upgrade validation_code index from KEY to UNIQUE KEY (prevents duplicate codes)
+* Fix: Catch exceptions during booking and rollback on failure
 
 = 4.6.9 (2026-02-08) =
 

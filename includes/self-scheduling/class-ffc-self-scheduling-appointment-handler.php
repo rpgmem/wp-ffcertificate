@@ -9,6 +9,7 @@ declare(strict_types=1);
  * Validation logic extracted to AppointmentValidator (v4.6.8).
  *
  * @since 4.1.0
+ * @version 4.6.10 - Transaction-based booking with row-level locking (race condition fix)
  * @version 4.6.8 - Refactored: extracted AJAX + validation into separate classes
  */
 
@@ -66,14 +67,13 @@ class AppointmentHandler {
      * @return array|\WP_Error
      */
     public function process_appointment(array $data) {
-        // Get calendar
+        // Get calendar (outside transaction — immutable config)
         $calendar = $this->calendar_repository->findById((int) $data['calendar_id']);
 
         if (!$calendar) {
             return new \WP_Error('invalid_calendar', __('Calendar not found.', 'ffcertificate'));
         }
 
-        // Validate calendar status
         if ($calendar['status'] !== 'active') {
             return new \WP_Error('calendar_inactive', __('This calendar is not accepting bookings.', 'ffcertificate'));
         }
@@ -83,13 +83,7 @@ class AppointmentHandler {
         $end_timestamp = strtotime($start_datetime) + ($calendar['slot_duration'] * 60);
         $data['end_time'] = gmdate('H:i:s', $end_timestamp);
 
-        // Run validations
-        $validation = $this->validator->validate($data, $calendar);
-        if (is_wp_error($validation)) {
-            return $validation;
-        }
-
-        // Check LGPD consent
+        // Check LGPD consent (outside transaction — no DB needed)
         if (empty($data['consent_given'])) {
             return new \WP_Error('consent_required', __('You must agree to the terms to book an appointment.', 'ffcertificate'));
         }
@@ -109,21 +103,40 @@ class AppointmentHandler {
             $data['approved_at'] = current_time('mysql');
         }
 
-        /**
-         * Fires before an appointment is created in the database.
-         *
-         * @since 4.6.4
-         * @param array $data     Appointment data.
-         * @param array $calendar Calendar configuration.
-         */
-        do_action( 'ffc_before_appointment_create', $data, $calendar );
+        // === BEGIN TRANSACTION: Atomic validate + insert ===
+        $this->appointment_repository->begin_transaction();
 
-        // Create appointment
-        $appointment_id = $this->appointment_repository->createAppointment($data);
+        try {
+            // Validate with row-level locks (FOR UPDATE) to prevent concurrent overbooking
+            $validation = $this->validator->validate($data, $calendar, true);
+            if (is_wp_error($validation)) {
+                $this->appointment_repository->rollback();
+                return $validation;
+            }
 
-        if (!$appointment_id) {
-            return new \WP_Error('creation_failed', __('Failed to create appointment. Please try again.', 'ffcertificate'));
+            /**
+             * Fires before an appointment is created in the database.
+             *
+             * @since 4.6.4
+             * @param array $data     Appointment data.
+             * @param array $calendar Calendar configuration.
+             */
+            do_action( 'ffc_before_appointment_create', $data, $calendar );
+
+            // Create appointment (inside transaction — protected by locks)
+            $appointment_id = $this->appointment_repository->createAppointment($data);
+
+            if (!$appointment_id) {
+                $this->appointment_repository->rollback();
+                return new \WP_Error('creation_failed', __('Failed to create appointment. Please try again.', 'ffcertificate'));
+            }
+
+            $this->appointment_repository->commit();
+        } catch (\Exception $e) {
+            $this->appointment_repository->rollback();
+            return new \WP_Error('booking_error', __('An error occurred while booking. Please try again.', 'ffcertificate'));
         }
+        // === END TRANSACTION ===
 
         /**
          * Fires after an appointment is created.
@@ -135,7 +148,7 @@ class AppointmentHandler {
          */
         do_action( 'ffc_after_appointment_create', $appointment_id, $data, $calendar );
 
-        // Get appointment for email
+        // Get appointment for email (outside transaction — read-only)
         $appointment = $this->appointment_repository->findById($appointment_id);
 
         // Schedule email notifications

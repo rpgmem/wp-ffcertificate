@@ -4,6 +4,7 @@
  * Base class for all repositories
  *
  * @since 3.0.0
+ * @version 4.6.10 - Added transaction support (begin/commit/rollback)
  * @version 3.3.0 - Added strict types and type hints for better code safety
  * @version 3.2.0 - Migrated to namespace (Phase 2)
  */
@@ -280,6 +281,39 @@ abstract class AbstractRepository {
         } else {
             wp_cache_flush();
         }
+    }
+
+    /**
+     * Start a database transaction.
+     *
+     * @since 4.6.10
+     * @return bool
+     */
+    public function begin_transaction(): bool {
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        return $this->wpdb->query( 'START TRANSACTION' ) !== false;
+    }
+
+    /**
+     * Commit the current transaction.
+     *
+     * @since 4.6.10
+     * @return bool
+     */
+    public function commit(): bool {
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        return $this->wpdb->query( 'COMMIT' ) !== false;
+    }
+
+    /**
+     * Rollback the current transaction.
+     *
+     * @since 4.6.10
+     * @return bool
+     */
+    public function rollback(): bool {
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        return $this->wpdb->query( 'ROLLBACK' ) !== false;
     }
 
     /**
