@@ -3,7 +3,7 @@ Contributors: alexmeusburger
 Tags: certificate, form builder, pdf generation, verification, validation
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 4.6.7
+Stable tag: 4.6.8
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -154,6 +154,17 @@ In the certificate layout editor, use these dynamic tags:
 * Common examples: `{{name}}`, `{{email}}`, `{{cpf_rf}}`, `{{ticket}}`
 
 == Changelog ==
+
+= 4.6.8 (2026-02-08) =
+
+Refactor: Break down God classes into focused single-responsibility classes.
+
+* Refactor: Extract AppointmentValidator from AppointmentHandler (all validation logic)
+* Refactor: Extract AppointmentAjaxHandler from AppointmentHandler (4 AJAX endpoints)
+* Refactor: Slim AppointmentHandler from 1,027 to 457 lines (core business logic only)
+* Refactor: Extract VerificationResponseRenderer from VerificationHandler (HTML rendering + PDF generation)
+* Refactor: Slim VerificationHandler from 822 to 547 lines (search + verification logic only)
+* Refactor: Wire AppointmentAjaxHandler via Loader using dependency injection
 
 = 4.6.7 (2026-02-07) =
 

@@ -29,6 +29,7 @@ use FreeFormCertificate\SelfScheduling\SelfSchedulingCPT;
 use FreeFormCertificate\SelfScheduling\SelfSchedulingAdmin;
 use FreeFormCertificate\SelfScheduling\SelfSchedulingEditor;
 use FreeFormCertificate\SelfScheduling\AppointmentHandler;
+use FreeFormCertificate\SelfScheduling\AppointmentAjaxHandler;
 use FreeFormCertificate\SelfScheduling\AppointmentEmailHandler;
 use FreeFormCertificate\SelfScheduling\AppointmentReceiptHandler;
 use FreeFormCertificate\SelfScheduling\AppointmentCsvExporter;
@@ -100,6 +101,7 @@ class Loader {
         $this->self_scheduling_admin            = new SelfSchedulingAdmin();
         $this->self_scheduling_editor           = new SelfSchedulingEditor();
         $this->self_scheduling_appointment_handler = new AppointmentHandler();
+        new AppointmentAjaxHandler( $this->self_scheduling_appointment_handler );
         $this->self_scheduling_email_handler    = new AppointmentEmailHandler();
         $this->self_scheduling_receipt_handler  = new AppointmentReceiptHandler();
         $this->self_scheduling_csv_exporter     = new AppointmentCsvExporter();
