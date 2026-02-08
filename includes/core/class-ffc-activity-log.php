@@ -192,54 +192,34 @@ class ActivityLog {
         $has_submission_id = in_array( 'submission_id', $columns );
         $has_context_encrypted = in_array( 'context_encrypted', $columns );
 
-        // Build column list based on available columns
-        $insert_columns = [ 'action', 'level', 'context', 'user_id', 'user_ip', 'created_at' ];
-        if ( $has_submission_id ) {
-            $insert_columns[] = 'submission_id';
-        }
-        if ( $has_context_encrypted ) {
-            $insert_columns[] = 'context_encrypted';
-        }
+        $count = count( self::$write_buffer );
+        $entries = self::$write_buffer;
+        self::$write_buffer = [];
 
-        $column_list = implode( ', ', $insert_columns );
-        $placeholders = [];
-        $values = [];
-
-        foreach ( self::$write_buffer as $entry ) {
-            $row_placeholders = [ '%s', '%s', '%s', '%d', '%s', '%s' ];
-            $row_values = [
-                $entry['action'],
-                $entry['level'],
-                $entry['context'],
-                $entry['user_id'],
-                $entry['user_ip'],
-                $entry['created_at'],
+        foreach ( $entries as $entry ) {
+            $row_data = [
+                'action'     => $entry['action'],
+                'level'      => $entry['level'],
+                'context'    => $entry['context'],
+                'user_id'    => $entry['user_id'],
+                'user_ip'    => $entry['user_ip'],
+                'created_at' => $entry['created_at'],
             ];
+            $row_format = [ '%s', '%s', '%s', '%d', '%s', '%s' ];
 
             if ( $has_submission_id ) {
-                $row_placeholders[] = '%d';
-                $row_values[] = $entry['submission_id'];
+                $row_data['submission_id'] = $entry['submission_id'];
+                $row_format[] = '%d';
             }
 
             if ( $has_context_encrypted ) {
-                $row_placeholders[] = '%s';
-                $row_values[] = $entry['context_encrypted'] ?? '';
+                $row_data['context_encrypted'] = $entry['context_encrypted'] ?? '';
+                $row_format[] = '%s';
             }
 
-            $placeholders[] = '(' . implode( ', ', $row_placeholders ) . ')';
-            $values = array_merge( $values, $row_values );
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+            $wpdb->insert( $table_name, $row_data, $row_format );
         }
-
-        $count = count( self::$write_buffer );
-        self::$write_buffer = [];
-
-        $placeholders_sql = implode( ', ', $placeholders );
-
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
-        $wpdb->query( $wpdb->prepare(
-            "INSERT INTO {$table_name} ({$column_list}) VALUES {$placeholders_sql}",
-            $values
-        ) );
 
         return $count;
     }

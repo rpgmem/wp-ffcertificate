@@ -570,14 +570,16 @@ class UserDataRestController {
             }, $bookings ) );
 
             if ( ! empty( $booking_ids ) ) {
-                $id_placeholders = implode( ',', array_fill( 0, count( $booking_ids ), '%d' ) );
-                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+                $safe_ids = array_map( 'absint', $booking_ids );
+                $id_list  = implode( ',', $safe_ids );
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
                 $all_audiences = $wpdb->get_results( $wpdb->prepare(
                     "SELECT ba.booking_id, a.name, a.color
-                     FROM {$booking_audiences_table} ba
-                     INNER JOIN {$audience_names_table} a ON ba.audience_id = a.id
-                     WHERE ba.booking_id IN ({$id_placeholders})",
-                    ...$booking_ids
+                     FROM %i ba
+                     INNER JOIN %i a ON ba.audience_id = a.id
+                     WHERE ba.booking_id IN ({$id_list})",
+                    $booking_audiences_table,
+                    $audience_names_table
                 ), ARRAY_A );
 
                 if ( is_array( $all_audiences ) ) {
