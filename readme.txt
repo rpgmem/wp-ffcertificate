@@ -3,7 +3,7 @@ Contributors: alexmeusburger
 Tags: certificate, form builder, pdf generation, verification, validation
 Requires at least: 6.2
 Tested up to: 6.9
-Stable tag: 4.6.16
+Stable tag: 4.7.0
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -154,6 +154,32 @@ In the certificate layout editor, use these dynamic tags:
 * Common examples: `{{name}}`, `{{email}}`, `{{cpf_rf}}`, `{{ticket}}`
 
 == Changelog ==
+
+= 4.7.0 (2026-02-09) =
+
+Milestone: Visibility and scheduling controls for calendars, admin bypass system.
+
+* New: Per-calendar **Visibility** control (Public/Private) for self-scheduling calendars
+* New: Per-calendar **Scheduling** control (Public/Private) for self-scheduling calendars
+* New: Audience calendars visibility now supports non-logged-in visitors (public calendars show read-only view)
+* New: Audience scheduling is always private — requires login + audience group membership
+* New: Configurable display modes for private calendars: show message, show title + message, or hide
+* New: Customizable visibility and scheduling messages with login link (%login_url% placeholder)
+* New: Settings in Self-Scheduling and Audience tabs for message configuration
+* New: `ffc_scheduling_bypass` capability for granting admin-level scheduling access to non-admin users
+* New: Admin bypass system — admins can book past dates, out-of-hours, blocked dates, and holidays
+* New: Admin bypass visual indicators — "Private" badge and bypass notice on frontend
+* New: Admin cancellation with mandatory reason in appointments list (prompt for reason)
+* New: Non-logged-in users can view public audience calendars with occupancy data (no personal details)
+* Changed: Default visibility — self-scheduling: Public/Public, audience: Private
+* Changed: Slot limit (max_appointments_per_slot) is never bypassed, even for admins
+* Changed: REST API now filters calendars by visibility for non-authenticated requests
+* Changed: REST API rejects bookings when scheduling is private and user is not authenticated
+* Migration: `require_login` and `allowed_roles` fields replaced by `visibility` and `scheduling_visibility`
+* Migration: Existing data automatically migrated (require_login=1 → private/private, 0 → public/public)
+* Refactor: Audience shortcode split into reusable `render_calendar_html()` for shared rendering
+* Refactor: All `current_user_can('manage_options')` scheduling checks use `userHasSchedulingBypass()`
+* CSS: Added styles for visibility restrictions, scheduling restrictions, admin bypass notices, and badges
 
 = 4.6.16 (2026-02-08) =
 
