@@ -88,9 +88,9 @@ class SelfSchedulingActivator {
             -- Capacity
             max_appointments_per_slot int unsigned DEFAULT 1,
 
-            -- User restrictions
-            require_login tinyint(1) DEFAULT 0,
-            allowed_roles longtext DEFAULT NULL COMMENT 'JSON array of role names',
+            -- Visibility & access control
+            visibility enum('public','private') DEFAULT 'public' COMMENT 'Calendar visibility: public or private',
+            scheduling_visibility enum('public','private') DEFAULT 'public' COMMENT 'Booking access: public or private',
 
             -- Email notifications (JSON config)
             email_config longtext DEFAULT NULL,
@@ -526,6 +526,8 @@ class SelfSchedulingActivator {
         if ($calendars_exists) {
             // Run migration to ensure minimum_interval_between_bookings column exists
             self::migrate_calendars_table();
+            // Run migration to add visibility columns (replacing require_login/allowed_roles)
+            self::migrate_visibility_columns();
         }
     }
 
@@ -555,6 +557,81 @@ class SelfSchedulingActivator {
             $wpdb->query(
                 "ALTER TABLE {$table_name}
                 ADD COLUMN minimum_interval_between_bookings int unsigned DEFAULT 24 COMMENT 'Minimum hours between user bookings (0 = disabled)' AFTER cancellation_min_hours"
+            );
+        }
+    }
+
+    /**
+     * Migrate calendars table to add visibility columns
+     *
+     * Replaces require_login and allowed_roles with visibility and scheduling_visibility.
+     * Migration: require_login=1 → private/private, require_login=0 → public/public.
+     *
+     * @since 4.7.0
+     * @return void
+     */
+    private static function migrate_visibility_columns(): void {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'ffc_self_scheduling_calendars';
+
+        // Check if visibility column already exists
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $column_exists = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = 'visibility'",
+                DB_NAME,
+                $table_name
+            )
+        );
+
+        if (!empty($column_exists)) {
+            return;
+        }
+
+        // Check if require_login column exists (old schema)
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $require_login_exists = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = 'require_login'",
+                DB_NAME,
+                $table_name
+            )
+        );
+
+        // Add new columns
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+        $wpdb->query(
+            "ALTER TABLE {$table_name}
+            ADD COLUMN visibility enum('public','private') DEFAULT 'public' COMMENT 'Calendar visibility: public or private' AFTER max_appointments_per_slot,
+            ADD COLUMN scheduling_visibility enum('public','private') DEFAULT 'public' COMMENT 'Booking access: public or private' AFTER visibility"
+        );
+
+        // Migrate data from require_login if the old column exists
+        if (!empty($require_login_exists)) {
+            // require_login=1 → private/private
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+            $wpdb->query(
+                "UPDATE {$table_name}
+                SET visibility = 'private', scheduling_visibility = 'private'
+                WHERE require_login = 1"
+            );
+
+            // require_login=0 → public/public (already default, but be explicit)
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+            $wpdb->query(
+                "UPDATE {$table_name}
+                SET visibility = 'public', scheduling_visibility = 'public'
+                WHERE require_login = 0"
+            );
+
+            // Drop old columns
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+            $wpdb->query(
+                "ALTER TABLE {$table_name}
+                DROP COLUMN require_login,
+                DROP COLUMN allowed_roles"
             );
         }
     }

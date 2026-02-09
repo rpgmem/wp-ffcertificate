@@ -288,8 +288,8 @@ class SelfSchedulingCPT {
             'minimum_interval_between_bookings' => $config['minimum_interval_between_bookings'] ?? 24,
             'requires_approval' => $config['requires_approval'] ?? 0,
             'max_appointments_per_slot' => $config['max_appointments_per_slot'] ?? 1,
-            'require_login' => $config['require_login'] ?? 0,
-            'allowed_roles' => isset($config['allowed_roles']) ? json_encode($config['allowed_roles']) : null,
+            'visibility' => $config['visibility'] ?? 'public',
+            'scheduling_visibility' => $config['scheduling_visibility'] ?? 'public',
             'status' => $config['status'] ?? 'active'
         );
     }

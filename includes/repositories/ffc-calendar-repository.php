@@ -95,10 +95,6 @@ class CalendarRepository extends AbstractRepository {
             $calendar['working_hours'] = json_decode($calendar['working_hours'], true);
         }
 
-        if ($calendar && !empty($calendar['allowed_roles'])) {
-            $calendar['allowed_roles'] = json_decode($calendar['allowed_roles'], true);
-        }
-
         if ($calendar && !empty($calendar['email_config'])) {
             $calendar['email_config'] = json_decode($calendar['email_config'], true);
         }
@@ -152,38 +148,38 @@ class CalendarRepository extends AbstractRepository {
     }
 
     /**
-     * Get calendars by user role
+     * Get public active calendars
      *
-     * Returns calendars that the current user can access based on their role.
+     * Returns active calendars with visibility = 'public'.
+     * Used for non-authenticated users.
      *
-     * @param array $user_roles User's WordPress roles
+     * @since 4.7.0
+     * @param int|null $limit
+     * @param int $offset
      * @return array
      */
-    public function getCalendarsByUserRoles(array $user_roles): array {
-        // Get all active calendars
-        $calendars = $this->getActiveCalendars();
+    public function getPublicActiveCalendars(?int $limit = null, int $offset = 0): array {
+        return $this->findAll(
+            ['status' => 'active', 'visibility' => 'public'],
+            'created_at',
+            'DESC',
+            $limit,
+            $offset
+        );
+    }
 
-        $accessible = [];
-        foreach ($calendars as $calendar) {
-            // If no role restrictions, everyone can access
-            if (empty($calendar['allowed_roles'])) {
-                $accessible[] = $calendar;
-                continue;
-            }
-
-            $allowed_roles = json_decode($calendar['allowed_roles'], true);
-            if (!is_array($allowed_roles)) {
-                $accessible[] = $calendar;
-                continue;
-            }
-
-            // Check if user has at least one allowed role
-            if (array_intersect($user_roles, $allowed_roles)) {
-                $accessible[] = $calendar;
-            }
+    /**
+     * Check if user has scheduling bypass capability
+     *
+     * @since 4.7.0
+     * @param int|null $user_id User ID (null for current user)
+     * @return bool
+     */
+    public static function userHasSchedulingBypass(?int $user_id = null): bool {
+        if ($user_id === null) {
+            return current_user_can('manage_options') || current_user_can('ffc_scheduling_bypass');
         }
-
-        return $accessible;
+        return user_can($user_id, 'manage_options') || user_can($user_id, 'ffc_scheduling_bypass');
     }
 
     /**
@@ -210,8 +206,8 @@ class CalendarRepository extends AbstractRepository {
             'cancellation_min_hours' => 24,
             'requires_approval' => 0,
             'max_appointments_per_slot' => 1,
-            'require_login' => 0,
-            'allowed_roles' => null,
+            'visibility' => 'public',
+            'scheduling_visibility' => 'public',
             'email_config' => json_encode([
                 'send_user_confirmation' => 0,
                 'send_admin_notification' => 0,

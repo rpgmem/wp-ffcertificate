@@ -146,6 +146,14 @@ class AdminUserCapabilities {
                                     <?php checked($capabilities['ffc_cancel_own_appointments'] ?? false); ?>>
                                 <?php esc_html_e('Cancel own appointments', 'ffcertificate'); ?>
                             </label>
+                            <br>
+
+                            <label>
+                                <input type="checkbox" name="ffc_cap_ffc_scheduling_bypass" value="1"
+                                    <?php checked($capabilities['ffc_scheduling_bypass'] ?? false); ?>>
+                                <?php esc_html_e('Scheduling bypass (admin-level access)', 'ffcertificate'); ?>
+                            </label>
+                            <span class="description"><?php esc_html_e('Allows viewing private calendars, booking past dates, out-of-hours, and blocked dates.', 'ffcertificate'); ?></span>
 
                             <p class="description">
                                 <?php esc_html_e('Allow access to appointment-related features. Calendar-specific settings also apply.', 'ffcertificate'); ?>
@@ -233,6 +241,7 @@ class AdminUserCapabilities {
             'ffc_book_appointments',
             'ffc_view_self_scheduling',
             'ffc_cancel_own_appointments',
+            'ffc_scheduling_bypass',
             // Future capabilities
             'ffc_reregistration',
             'ffc_certificate_update',
