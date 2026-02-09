@@ -55,15 +55,65 @@ class AudienceShortcode {
         // Always enqueue CSS so styles are consistent regardless of login state
         self::enqueue_styles();
 
-        // Check if user is logged in
-        if (!is_user_logged_in()) {
-            return self::render_login_required();
+        $is_logged_in = is_user_logged_in();
+        $has_bypass = \FreeFormCertificate\Repositories\CalendarRepository::userHasSchedulingBypass();
+        $specific_id = absint($atts['schedule_id']);
+
+        // Handle non-logged-in users
+        if (!$is_logged_in && !$has_bypass) {
+            // Check if specific schedule requested
+            if ($specific_id > 0) {
+                $schedule = AudienceScheduleRepository::get_by_id($specific_id);
+                if (!$schedule || $schedule->status !== 'active') {
+                    return '';
+                }
+                if ($schedule->visibility === 'private') {
+                    return self::render_private_visibility_message($schedule->name);
+                }
+                // Public schedule: show read-only calendar
+                $schedules = array($schedule);
+            } else {
+                // Get only public active schedules
+                $schedules = AudienceScheduleRepository::get_all(array('status' => 'active', 'visibility' => 'public'));
+                if (empty($schedules)) {
+                    return self::render_private_visibility_message();
+                }
+            }
+
+            // Enqueue assets for read-only view
+            self::enqueue_assets();
+
+            $scheduling_message = get_option(
+                'ffc_aud_scheduling_message',
+                __('Para agendar neste calendário é necessário estar logado. <a href="%login_url%">Faça login</a> para continuar.', 'ffcertificate')
+            );
+            $scheduling_message = str_replace('%login_url%', wp_login_url(get_permalink()), $scheduling_message);
+
+            $config = array(
+                'scheduleId' => $specific_id,
+                'environmentId' => absint($atts['environment_id']),
+                'view' => sanitize_text_field($atts['view']),
+                'schedules' => array_map(function($s) {
+                    return array(
+                        'id' => (int) $s->id,
+                        'name' => $s->name,
+                        'environments' => self::get_schedule_environments((int) $s->id),
+                        'futureDaysLimit' => isset($s->future_days_limit) ? (int) $s->future_days_limit : null,
+                    );
+                }, $schedules),
+                'canBook' => false,
+                'readOnly' => true,
+                'schedulingMessage' => $scheduling_message,
+                'audiences' => array(),
+            );
+
+            return self::render_calendar_html($schedules, $config, $atts, false);
         }
 
         $user_id = get_current_user_id();
 
         // Get schedules user can access
-        $schedules = self::get_user_schedules($user_id, absint($atts['schedule_id']));
+        $schedules = self::get_user_schedules($user_id, $specific_id);
 
         if (empty($schedules)) {
             return self::render_no_access();
@@ -72,9 +122,21 @@ class AudienceShortcode {
         // Enqueue JS and localization (only for logged-in users who have access)
         self::enqueue_assets();
 
+        // Admin bypass notice
+        $bypass_notice = '';
+        if ($has_bypass) {
+            $private_schedules = array_filter($schedules, function($s) { return $s->visibility === 'private'; });
+            if (!empty($private_schedules)) {
+                $bypass_notice = '<div class="ffc-admin-bypass-notice">'
+                    . '<span class="ffc-badge ffc-badge-private">' . esc_html__('Private', 'ffcertificate') . '</span> '
+                    . esc_html__('You are viewing this calendar as an administrator (bypass active).', 'ffcertificate')
+                    . '</div>';
+            }
+        }
+
         // Build configuration for JavaScript
         $config = array(
-            'scheduleId' => absint($atts['schedule_id']),
+            'scheduleId' => $specific_id,
             'environmentId' => absint($atts['environment_id']),
             'view' => sanitize_text_field($atts['view']),
             'schedules' => array_map(function($s) {
@@ -89,6 +151,20 @@ class AudienceShortcode {
             'audiences' => self::get_user_audiences($user_id),
         );
 
+        return ($bypass_notice ?? '') . self::render_calendar_html($schedules, $config, $atts, true);
+    }
+
+    /**
+     * Render the calendar HTML (shared between logged-in and public views)
+     *
+     * @since 4.7.0
+     * @param array $schedules Array of schedule objects
+     * @param array $config JS configuration
+     * @param array $atts Shortcode attributes
+     * @param bool $show_booking_modal Whether to show the booking modal
+     * @return string HTML output
+     */
+    private static function render_calendar_html(array $schedules, array $config, array $atts, bool $show_booking_modal): string {
         ob_start();
         ?>
         <div class="ffc-audience-calendar" id="ffc-audience-calendar" data-config="<?php echo esc_attr(wp_json_encode($config)); ?>">
@@ -156,6 +232,7 @@ class AudienceShortcode {
             </div>
         </div>
 
+        <?php if ($show_booking_modal) : ?>
         <!-- Booking Modal -->
         <div class="ffc-modal" id="ffc-booking-modal" style="display: none;">
             <div class="ffc-modal-backdrop"></div>
@@ -221,7 +298,7 @@ class AudienceShortcode {
                             <span class="ffc-char-count"><span id="desc-char-count">0</span>/300</span>
                         </div>
 
-                        <!-- Soft Conflict Warning (user overlap / audience same day) -->
+                        <!-- Soft Conflict Warning -->
                         <div class="ffc-conflict-warning ffc-conflict-soft" id="ffc-conflict-warning" style="display: none;">
                             <span class="dashicons dashicons-warning"></span>
                             <div class="ffc-conflict-details" id="ffc-conflict-details"></div>
@@ -231,7 +308,7 @@ class AudienceShortcode {
                             </label>
                         </div>
 
-                        <!-- Hard Conflict Error (environment double-booking) -->
+                        <!-- Hard Conflict Error -->
                         <div class="ffc-conflict-error" id="ffc-conflict-error" style="display: none;">
                             <span class="dashicons dashicons-dismiss"></span>
                             <div class="ffc-conflict-error-details" id="ffc-conflict-error-details"></div>
@@ -251,6 +328,7 @@ class AudienceShortcode {
                 </div>
             </div>
         </div>
+        <?php endif; ?>
 
         <!-- Day Detail Modal -->
         <div class="ffc-modal" id="ffc-day-modal" style="display: none;">
@@ -275,9 +353,11 @@ class AudienceShortcode {
                     <button type="button" class="ffc-btn ffc-btn-secondary ffc-modal-cancel">
                         <?php esc_html_e('Close', 'ffcertificate'); ?>
                     </button>
+                    <?php if ($show_booking_modal) : ?>
                     <button type="button" class="ffc-btn ffc-btn-primary" id="ffc-new-booking-btn">
                         <?php esc_html_e('New Booking', 'ffcertificate'); ?>
                     </button>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -287,23 +367,44 @@ class AudienceShortcode {
     }
 
     /**
-     * Render login required message
+     * Render private visibility message based on settings
+     *
+     * @since 4.7.0
+     * @param string|null $schedule_name Optional schedule name for title display
+     * @return string HTML output
+     */
+    private static function render_private_visibility_message(?string $schedule_name = null): string {
+        $display_mode = get_option('ffc_aud_private_display_mode', 'show_message');
+
+        if ($display_mode === 'hide') {
+            return '';
+        }
+
+        $message = get_option(
+            'ffc_aud_visibility_message',
+            __('Para visualizar este calendário é necessário estar logado. <a href="%login_url%">Faça login</a> para continuar.', 'ffcertificate')
+        );
+        $message = str_replace('%login_url%', wp_login_url(get_permalink()), $message);
+
+        $output = '<div class="ffc-visibility-restricted">';
+
+        if ($display_mode === 'show_title_message' && $schedule_name) {
+            $output .= '<h3 class="ffc-calendar-title">' . esc_html($schedule_name) . '</h3>';
+        }
+
+        $output .= '<div class="ffc-restricted-message">' . wp_kses_post($message) . '</div>';
+        $output .= '</div>';
+
+        return $output;
+    }
+
+    /**
+     * Render login required message (legacy, kept for compatibility)
      *
      * @return string HTML output
      */
     private static function render_login_required(): string {
-        ob_start();
-        ?>
-        <div class="ffc-audience-notice ffc-notice-warning">
-            <p><?php esc_html_e('You must be logged in to view the calendar.', 'ffcertificate'); ?></p>
-            <p>
-                <a href="<?php echo esc_url(wp_login_url(get_permalink())); ?>" class="ffc-btn ffc-btn-primary">
-                    <?php esc_html_e('Login', 'ffcertificate'); ?>
-                </a>
-            </p>
-        </div>
-        <?php
-        return ob_get_clean();
+        return self::render_private_visibility_message();
     }
 
     /**

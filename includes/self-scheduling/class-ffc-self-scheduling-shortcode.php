@@ -235,9 +235,6 @@ class SelfSchedulingShortcode {
             if (!empty($calendar['working_hours'])) {
                 $calendar['working_hours'] = json_decode($calendar['working_hours'], true);
             }
-            if (!empty($calendar['allowed_roles'])) {
-                $calendar['allowed_roles'] = json_decode($calendar['allowed_roles'], true);
-            }
         }
 
         if (!$calendar) {
@@ -253,37 +250,82 @@ class SelfSchedulingShortcode {
             return '<p class="ffc-error">' . __('Calendar has no working hours configured. Please contact the administrator.', 'ffcertificate') . '</p>';
         }
 
-        // Check login requirement
-        if ($calendar['require_login'] && !is_user_logged_in()) {
-            return '<p class="ffc-error">' . sprintf(
-                /* translators: %s: value */
-                __('You must be <a href="%s">logged in</a> to book this calendar.', 'ffcertificate'),
-                wp_login_url(get_permalink())
-            ) . '</p>';
+        $is_logged_in = is_user_logged_in();
+        $has_bypass = \FreeFormCertificate\Repositories\CalendarRepository::userHasSchedulingBypass();
+        $visibility = $calendar['visibility'] ?? 'public';
+        $scheduling_visibility = $calendar['scheduling_visibility'] ?? 'public';
+
+        // Visibility check: Private calendar + not logged in (and no bypass)
+        if ($visibility === 'private' && !$is_logged_in && !$has_bypass) {
+            return $this->render_private_visibility_message($calendar);
         }
 
-        // Check role permissions
-        if ($calendar['require_login'] && !empty($calendar['allowed_roles'])) {
-            $user = wp_get_current_user();
-            $has_role = array_intersect($user->roles, $calendar['allowed_roles']);
-            if (empty($has_role)) {
-                return '<p class="ffc-error">' . __('You do not have permission to book this calendar.', 'ffcertificate') . '</p>';
-            }
+        // Render calendar interface with scheduling restriction flag
+        $can_book = true;
+        $scheduling_message = '';
+
+        if ($scheduling_visibility === 'private' && !$is_logged_in && !$has_bypass) {
+            $can_book = false;
+            $scheduling_message = get_option(
+                'ffc_ss_scheduling_message',
+                __('Para agendar neste calendário é necessário estar logado. <a href="%login_url%">Faça login</a> para continuar.', 'ffcertificate')
+            );
+            $scheduling_message = str_replace('%login_url%', wp_login_url(get_permalink()), $scheduling_message);
         }
 
-        // Render calendar interface
         ob_start();
-        $this->render_calendar_interface($calendar);
+        // Admin bypass badge
+        if ($has_bypass && $visibility === 'private') {
+            echo '<div class="ffc-admin-bypass-notice">';
+            echo '<span class="ffc-badge ffc-badge-private">' . esc_html__('Private', 'ffcertificate') . '</span> ';
+            echo esc_html__('You are viewing this calendar as an administrator (bypass active).', 'ffcertificate');
+            echo '</div>';
+        }
+        $this->render_calendar_interface($calendar, $can_book, $scheduling_message);
         return ob_get_clean();
+    }
+
+    /**
+     * Render message for private visibility restriction
+     *
+     * @since 4.7.0
+     * @param array $calendar Calendar data
+     * @return string HTML output
+     */
+    private function render_private_visibility_message(array $calendar): string {
+        $display_mode = get_option('ffc_ss_private_display_mode', 'show_message');
+
+        if ($display_mode === 'hide') {
+            return '';
+        }
+
+        $message = get_option(
+            'ffc_ss_visibility_message',
+            __('Para visualizar este calendário é necessário estar logado. <a href="%login_url%">Faça login</a> para continuar.', 'ffcertificate')
+        );
+        $message = str_replace('%login_url%', wp_login_url(get_permalink()), $message);
+
+        $output = '<div class="ffc-visibility-restricted">';
+
+        if ($display_mode === 'show_title_message') {
+            $output .= '<h3 class="ffc-calendar-title">' . esc_html($calendar['title']) . '</h3>';
+        }
+
+        $output .= '<div class="ffc-restricted-message">' . wp_kses_post($message) . '</div>';
+        $output .= '</div>';
+
+        return $output;
     }
 
     /**
      * Render calendar booking interface
      *
      * @param array $calendar
+     * @param bool $can_book Whether the user can book (false when scheduling is restricted)
+     * @param string $scheduling_message Message to show when booking is restricted
      * @return void
      */
-    private function render_calendar_interface(array $calendar): void {
+    private function render_calendar_interface(array $calendar, bool $can_book = true, string $scheduling_message = ''): void {
         $user = wp_get_current_user();
         $is_logged_in = is_user_logged_in();
 
@@ -315,6 +357,13 @@ class SelfSchedulingShortcode {
                         <button type="button" class="ffc-modal-close" aria-label="<?php esc_attr_e('Close', 'ffcertificate'); ?>">&times;</button>
                     </div>
                     <div class="ffc-modal-body">
+
+                    <?php if (!$can_book && $scheduling_message): ?>
+                        <!-- Scheduling restricted message (no time slots shown) -->
+                        <div class="ffc-scheduling-restricted">
+                            <div class="ffc-restricted-message"><?php echo wp_kses_post($scheduling_message); ?></div>
+                        </div>
+                    <?php else: ?>
 
                         <!-- Step 1: Time Slots -->
                         <div class="ffc-timeslots-wrapper">
@@ -437,6 +486,8 @@ class SelfSchedulingShortcode {
                             </form>
                         </div>
 
+                    <?php endif; // $can_book ?>
+
                     </div>
                 </div>
             </div>
@@ -482,6 +533,7 @@ class SelfSchedulingShortcode {
             'workingDays'  => $working_days_js,
             'minDateHours' => isset($calendar['advance_booking_min']) ? (int) $calendar['advance_booking_min'] : 0,
             'maxDateDays'  => isset($calendar['advance_booking_max']) ? (int) $calendar['advance_booking_max'] : 30,
+            'canBook'      => $can_book,
         );
         ?>
         <script type="application/json" id="ffc-calendar-config-<?php echo (int) $calendar['id']; ?>"><?php echo wp_json_encode($calendar_config); ?></script>

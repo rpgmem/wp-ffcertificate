@@ -364,3 +364,84 @@
 .ffc-icon-broom::before { content: "\1F9F9 "; }
 .ffc-icon-user::before { content: "\1F464 "; }
 .ffc-icon-key::before { content: "\1F511 "; }
+
+/* ==========================================================================
+   VISIBILITY & ACCESS CONTROL (v4.7.0)
+   ========================================================================== */
+
+/* Private visibility restriction container */
+.ffc-visibility-restricted {
+    padding: 20px;
+    background: var(--ffc-warning-light, #fff8e5);
+    border: 1px solid var(--ffc-warning, #dba617);
+    border-radius: 6px;
+    text-align: center;
+}
+
+.ffc-visibility-restricted .ffc-calendar-title {
+    margin: 0 0 10px;
+    font-size: 1.2em;
+    color: var(--ffc-text, #1d2327);
+}
+
+.ffc-visibility-restricted .ffc-restricted-message {
+    color: var(--ffc-text-muted, #50575e);
+}
+
+.ffc-visibility-restricted .ffc-restricted-message a {
+    color: var(--ffc-primary, #2271b1);
+    font-weight: 600;
+}
+
+/* Scheduling restriction within modal */
+.ffc-scheduling-restricted {
+    padding: 20px;
+    text-align: center;
+}
+
+.ffc-scheduling-restricted .ffc-restricted-message {
+    color: var(--ffc-text-muted, #50575e);
+}
+
+.ffc-scheduling-restricted .ffc-restricted-message a {
+    color: var(--ffc-primary, #2271b1);
+    font-weight: 600;
+}
+
+/* Admin bypass notice */
+.ffc-admin-bypass-notice {
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    background: var(--ffc-info-light, #e5f5fa);
+    border: 1px solid var(--ffc-info, #006ba1);
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: var(--ffc-info, #006ba1);
+}
+
+/* Badge for private/bypass indicators */
+.ffc-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 0.8em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ffc-badge-private {
+    background: var(--ffc-danger-light, #fcf0f1);
+    color: var(--ffc-danger, #d63638);
+    border: 1px solid var(--ffc-danger, #d63638);
+}
+
+/* Admin bypass alert for booking actions */
+.ffc-bypass-alert {
+    padding: 8px 12px;
+    margin: 8px 0;
+    background: var(--ffc-warning-light, #fff8e5);
+    border-left: 3px solid var(--ffc-warning, #dba617);
+    font-size: 0.85em;
+    color: var(--ffc-warning, #dba617);
+}
