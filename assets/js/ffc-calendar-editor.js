@@ -44,8 +44,8 @@
             // Toggle cancellation hours visibility
             $(document).on('change', '#allow_cancellation', this.toggleCancellationHours);
 
-            // Toggle allowed roles visibility
-            $(document).on('change', '#require_login', this.toggleAllowedRoles);
+            // Toggle scheduling visibility based on visibility setting
+            $(document).on('change', '#ffc_visibility', this.toggleSchedulingVisibility);
         },
 
         /**
@@ -126,11 +126,26 @@
         },
 
         /**
-         * Toggle allowed roles field visibility
+         * Toggle scheduling visibility based on visibility setting
          */
-        toggleAllowedRoles: function() {
-            const isChecked = $(this).is(':checked');
-            $('.ffc-allowed-roles').toggle(isChecked);
+        toggleSchedulingVisibility: function() {
+            const $visibility = $('#ffc_visibility');
+            const $scheduling = $('#ffc_scheduling_visibility');
+            const $desc = $('#ffc-scheduling-desc');
+            const isPrivate = $visibility.val() === 'private';
+
+            if (isPrivate) {
+                $scheduling.val('private').prop('disabled', true);
+                // Add hidden input to ensure value is submitted
+                if (!$scheduling.next('input[type="hidden"]').length) {
+                    $scheduling.after('<input type="hidden" name="ffc_self_scheduling_config[scheduling_visibility]" value="private" />');
+                }
+                $desc.text(ffcSelfSchedulingEditor.strings.schedulingForced || 'Forced to Private because Visibility is Private.');
+            } else {
+                $scheduling.prop('disabled', false);
+                $scheduling.next('input[type="hidden"]').remove();
+                $desc.text(ffcSelfSchedulingEditor.strings.schedulingDesc || 'Public: anyone can book. Private: only logged-in users can book.');
+            }
         },
 
         /**

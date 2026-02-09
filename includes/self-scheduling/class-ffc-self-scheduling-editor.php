@@ -74,6 +74,8 @@ class SelfSchedulingEditor {
                 'deleting'          => __('Deleting...', 'ffcertificate'),
                 'errorDeleting'     => __('Error deleting appointments', 'ffcertificate'),
                 'errorServer'       => __('Error communicating with server', 'ffcertificate'),
+                'schedulingForced'  => __('Forced to Private because Visibility is Private.', 'ffcertificate'),
+                'schedulingDesc'    => __('Public: anyone can book. Private: only logged-in users can book.', 'ffcertificate'),
             )
         ));
     }
@@ -315,13 +317,11 @@ class SelfSchedulingEditor {
             'cancellation_min_hours' => 24,
             'minimum_interval_between_bookings' => 24,
             'requires_approval' => 0,
-            'require_login' => 0,
-            'allowed_roles' => array()
+            'visibility' => 'public',
+            'scheduling_visibility' => 'public',
         );
 
         $config = array_merge($defaults, $config);
-
-        $roles = wp_roles()->get_names();
         ?>
         <table class="form-table">
             <tr>
@@ -371,24 +371,32 @@ class SelfSchedulingEditor {
                 </td>
             </tr>
             <tr>
-                <th><label for="require_login"><?php esc_html_e('Require User Login', 'ffcertificate'); ?></label></th>
+                <th><label for="ffc_visibility"><?php esc_html_e('Visibility', 'ffcertificate'); ?></label></th>
                 <td>
-                    <label>
-                        <input type="checkbox" id="require_login" name="ffc_self_scheduling_config[require_login]" value="1" <?php checked($config['require_login'], 1); ?> />
-                        <?php esc_html_e('Only logged-in users can book', 'ffcertificate'); ?>
-                    </label>
+                    <select id="ffc_visibility" name="ffc_self_scheduling_config[visibility]">
+                        <option value="public" <?php selected($config['visibility'], 'public'); ?>><?php esc_html_e('Public', 'ffcertificate'); ?></option>
+                        <option value="private" <?php selected($config['visibility'], 'private'); ?>><?php esc_html_e('Private', 'ffcertificate'); ?></option>
+                    </select>
+                    <p class="description"><?php esc_html_e('Public: visible to everyone. Private: only visible to logged-in users.', 'ffcertificate'); ?></p>
                 </td>
             </tr>
-            <tr class="ffc-allowed-roles" <?php echo esc_attr( $config['require_login'] ? '' : 'style="display:none;"' ); ?>>
-                <th><label><?php esc_html_e('Allowed Roles', 'ffcertificate'); ?></label></th>
+            <tr>
+                <th><label for="ffc_scheduling_visibility"><?php esc_html_e('Scheduling', 'ffcertificate'); ?></label></th>
                 <td>
-                    <?php foreach ($roles as $role_key => $role_name): ?>
-                        <label style="display: block; margin-bottom: 5px;">
-                            <input type="checkbox" name="ffc_self_scheduling_config[allowed_roles][]" value="<?php echo esc_attr($role_key); ?>" <?php checked(in_array($role_key, $config['allowed_roles'])); ?> />
-                            <?php echo esc_html($role_name); ?>
-                        </label>
-                    <?php endforeach; ?>
-                    <p class="description"><?php esc_html_e('Leave empty to allow all logged-in users', 'ffcertificate'); ?></p>
+                    <select id="ffc_scheduling_visibility" name="ffc_self_scheduling_config[scheduling_visibility]" <?php echo $config['visibility'] === 'private' ? 'disabled' : ''; ?>>
+                        <option value="public" <?php selected($config['scheduling_visibility'], 'public'); ?>><?php esc_html_e('Public', 'ffcertificate'); ?></option>
+                        <option value="private" <?php selected($config['scheduling_visibility'], 'private'); ?>><?php esc_html_e('Private', 'ffcertificate'); ?></option>
+                    </select>
+                    <?php if ($config['visibility'] === 'private'): ?>
+                        <input type="hidden" name="ffc_self_scheduling_config[scheduling_visibility]" value="private" />
+                    <?php endif; ?>
+                    <p class="description" id="ffc-scheduling-desc">
+                        <?php if ($config['visibility'] === 'private'): ?>
+                            <?php esc_html_e('Forced to Private because Visibility is Private.', 'ffcertificate'); ?>
+                        <?php else: ?>
+                            <?php esc_html_e('Public: anyone can book. Private: only logged-in users can book.', 'ffcertificate'); ?>
+                        <?php endif; ?>
+                    </p>
                 </td>
             </tr>
         </table>
@@ -553,14 +561,15 @@ class SelfSchedulingEditor {
             $config['cancellation_min_hours'] = absint($config['cancellation_min_hours'] ?? 24);
             $config['minimum_interval_between_bookings'] = absint($config['minimum_interval_between_bookings'] ?? 24);
             $config['requires_approval'] = isset($config['requires_approval']) ? 1 : 0;
-            $config['require_login'] = isset($config['require_login']) ? 1 : 0;
             $config['status'] = sanitize_text_field($config['status'] ?? 'active');
 
-            // Sanitize allowed roles
-            if (isset($config['allowed_roles']) && is_array($config['allowed_roles'])) {
-                $config['allowed_roles'] = array_map('sanitize_text_field', $config['allowed_roles']);
-            } else {
-                $config['allowed_roles'] = array();
+            // Visibility controls
+            $config['visibility'] = in_array(($config['visibility'] ?? ''), ['public', 'private'], true) ? $config['visibility'] : 'public';
+            $config['scheduling_visibility'] = in_array(($config['scheduling_visibility'] ?? ''), ['public', 'private'], true) ? $config['scheduling_visibility'] : 'public';
+
+            // If visibility is private, scheduling must also be private
+            if ($config['visibility'] === 'private') {
+                $config['scheduling_visibility'] = 'private';
             }
 
             update_post_meta($post_id, '_ffc_self_scheduling_config', $config);

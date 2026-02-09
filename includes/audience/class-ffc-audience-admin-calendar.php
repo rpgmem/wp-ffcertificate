@@ -207,12 +207,15 @@ class AudienceAdminCalendar {
                     <td>
                         <select name="schedule_visibility" id="schedule_visibility">
                             <option value="private" <?php selected($schedule->visibility ?? 'private', 'private'); ?>>
-                                <?php esc_html_e('Private (only users with permission)', 'ffcertificate'); ?>
+                                <?php esc_html_e('Private', 'ffcertificate'); ?>
                             </option>
                             <option value="public" <?php selected($schedule->visibility ?? '', 'public'); ?>>
-                                <?php esc_html_e('Public (visible to all logged-in users)', 'ffcertificate'); ?>
+                                <?php esc_html_e('Public', 'ffcertificate'); ?>
                             </option>
                         </select>
+                        <p class="description">
+                            <?php esc_html_e('Public: visible to everyone. Private: only visible to logged-in users who belong to an audience group. Scheduling is always restricted to authorized members.', 'ffcertificate'); ?>
+                        </p>
                     </td>
                 </tr>
                 <tr>
