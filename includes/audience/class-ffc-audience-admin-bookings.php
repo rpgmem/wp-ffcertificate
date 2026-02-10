@@ -103,8 +103,18 @@ class AudienceAdminBookings {
                         <?php endforeach; ?>
                     </select>
 
+                    <?php
+                    $env_filter_label = $schedule_id > 0
+                        ? AudienceScheduleRepository::get_environment_label($schedule_id)
+                        : AudienceScheduleRepository::get_environment_label();
+                    ?>
                     <select name="environment_id" id="filter-environment">
-                        <option value=""><?php esc_html_e('All Environments', 'ffcertificate'); ?></option>
+                        <option value="">
+                            <?php
+                            /* translators: %s: environment label (plural) */
+                            printf(esc_html__('All %s', 'ffcertificate'), esc_html($env_filter_label));
+                            ?>
+                        </option>
                         <?php foreach ($environments as $env) : ?>
                             <option value="<?php echo esc_attr($env->id); ?>" <?php selected($environment_id, $env->id); ?>>
                                 <?php echo esc_html($env->name); ?>
@@ -133,7 +143,7 @@ class AudienceAdminBookings {
                         <th scope="col" class="manage-column"><?php esc_html_e('ID', 'ffcertificate'); ?></th>
                         <th scope="col" class="manage-column"><?php esc_html_e('Date', 'ffcertificate'); ?></th>
                         <th scope="col" class="manage-column"><?php esc_html_e('Time', 'ffcertificate'); ?></th>
-                        <th scope="col" class="manage-column"><?php esc_html_e('Environment', 'ffcertificate'); ?></th>
+                        <th scope="col" class="manage-column"><?php echo esc_html(AudienceScheduleRepository::get_environment_label(null, true)); ?></th>
                         <th scope="col" class="manage-column"><?php esc_html_e('Description', 'ffcertificate'); ?></th>
                         <th scope="col" class="manage-column"><?php esc_html_e('Type', 'ffcertificate'); ?></th>
                         <th scope="col" class="manage-column"><?php esc_html_e('Status', 'ffcertificate'); ?></th>

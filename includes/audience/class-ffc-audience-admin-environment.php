@@ -74,8 +74,13 @@ class AudienceAdminEnvironment {
         $schedules = AudienceScheduleRepository::get_all();
         $add_url = admin_url('admin.php?page=' . $this->menu_slug . '-environments&action=new');
 
+        // Dynamic label: use filtered schedule's label or default
+        $env_label = $filter_schedule > 0
+            ? AudienceScheduleRepository::get_environment_label($filter_schedule)
+            : AudienceScheduleRepository::get_environment_label();
+
         ?>
-        <h1 class="wp-heading-inline"><?php esc_html_e('Environments', 'ffcertificate'); ?></h1>
+        <h1 class="wp-heading-inline"><?php echo esc_html($env_label); ?></h1>
         <a href="<?php echo esc_url($add_url); ?>" class="page-title-action"><?php esc_html_e('Add New', 'ffcertificate'); ?></a>
         <hr class="wp-header-end">
 
@@ -107,7 +112,12 @@ class AudienceAdminEnvironment {
             <tbody>
                 <?php if (empty($environments)) : ?>
                     <tr>
-                        <td colspan="4"><?php esc_html_e('No environments found.', 'ffcertificate'); ?></td>
+                        <td colspan="4">
+                            <?php
+                            /* translators: %s: environment label (e.g. "Environments", "Rooms") */
+                            printf(esc_html__('No %s found.', 'ffcertificate'), esc_html(mb_strtolower($env_label)));
+                            ?>
+                        </td>
                     </tr>
                 <?php else : ?>
                     <?php foreach ($environments as $env) : ?>
@@ -136,7 +146,10 @@ class AudienceAdminEnvironment {
                             </td>
                             <td class="column-actions">
                                 <a href="<?php echo esc_url($edit_url); ?>"><?php esc_html_e('Edit', 'ffcertificate'); ?></a> |
-                                <a href="<?php echo esc_url($delete_url); ?>" class="delete-link" onclick="return confirm('<?php esc_attr_e('Are you sure you want to delete this environment?', 'ffcertificate'); ?>');">
+                                <a href="<?php echo esc_url($delete_url); ?>" class="delete-link" onclick="return confirm('<?php
+                                    /* translators: %s: environment label (singular) */
+                                    printf(esc_attr__('Are you sure you want to delete this %s?', 'ffcertificate'), esc_attr(mb_strtolower(AudienceScheduleRepository::get_environment_label(isset($env->schedule_id) ? (int) $env->schedule_id : null, true))));
+                                    ?>');">
                                     <?php esc_html_e('Delete', 'ffcertificate'); ?>
                                 </a>
                             </td>
@@ -158,15 +171,24 @@ class AudienceAdminEnvironment {
      */
     private function render_form(int $id): void {
         $environment = null;
-        $page_title = __('Add New Environment', 'ffcertificate');
 
+        // Get the schedule for dynamic label
+        $schedule_id = 0;
         if ($id > 0) {
             $environment = AudienceEnvironmentRepository::get_by_id($id);
             if (!$environment) {
                 wp_die(esc_html__('Environment not found.', 'ffcertificate'));
             }
-            $page_title = __('Edit Environment', 'ffcertificate');
+            $schedule_id = (int) ($environment->schedule_id ?? 0);
         }
+
+        $env_label_singular = AudienceScheduleRepository::get_environment_label($schedule_id ?: null, true);
+        $env_label_plural = AudienceScheduleRepository::get_environment_label($schedule_id ?: null);
+
+        /* translators: %s: environment label (singular, e.g. "Environment", "Room") */
+        $page_title = $id > 0
+            ? sprintf(__('Edit %s', 'ffcertificate'), $env_label_singular)
+            : sprintf(__('Add New %s', 'ffcertificate'), $env_label_singular);
 
         $schedules = AudienceScheduleRepository::get_all(array('status' => 'active'));
         $back_url = admin_url('admin.php?page=' . $this->menu_slug . '-environments');
@@ -179,7 +201,12 @@ class AudienceAdminEnvironment {
 
         ?>
         <h1><?php echo esc_html($page_title); ?></h1>
-        <a href="<?php echo esc_url($back_url); ?>">&larr; <?php esc_html_e('Back to Environments', 'ffcertificate'); ?></a>
+        <a href="<?php echo esc_url($back_url); ?>">&larr;
+            <?php
+            /* translators: %s: environment label (plural, e.g. "Environments", "Rooms") */
+            printf(esc_html__('Back to %s', 'ffcertificate'), esc_html($env_label_plural));
+            ?>
+        </a>
 
         <?php settings_errors('ffc_audience'); ?>
 
@@ -272,7 +299,13 @@ class AudienceAdminEnvironment {
                 </tr>
             </tbody></table>
 
-            <?php submit_button($id > 0 ? __('Update Environment', 'ffcertificate') : __('Create Environment', 'ffcertificate')); ?>
+            <?php
+            /* translators: %s: environment label (singular) */
+            submit_button($id > 0
+                ? sprintf(__('Update %s', 'ffcertificate'), $env_label_singular)
+                : sprintf(__('Create %s', 'ffcertificate'), $env_label_singular)
+            );
+            ?>
         </form>
 
         <!-- Styles in ffc-audience-admin.css -->
@@ -322,7 +355,9 @@ class AudienceAdminEnvironment {
 
             if ($id > 0) {
                 AudienceEnvironmentRepository::update($id, $data);
-                add_settings_error('ffc_audience', 'ffc_message', __('Environment updated successfully.', 'ffcertificate'), 'success');
+                $updated_label = AudienceScheduleRepository::get_environment_label($data['schedule_id'], true);
+                /* translators: %s: environment label (singular) */
+                add_settings_error('ffc_audience', 'ffc_message', sprintf(__('%s updated successfully.', 'ffcertificate'), $updated_label), 'success');
             } else {
                 $new_id = AudienceEnvironmentRepository::create($data);
                 if ($new_id) {

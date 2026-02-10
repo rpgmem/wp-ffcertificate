@@ -102,7 +102,12 @@ class AudienceAdminDashboard {
                     </div>
 
                     <div class="ffc-stat-card">
-                        <span class="ffc-stat-label"><?php esc_html_e('Active Environments', 'ffcertificate'); ?></span>
+                        <span class="ffc-stat-label">
+                            <?php
+                            /* translators: %s: environment label (plural) */
+                            printf(esc_html__('Active %s', 'ffcertificate'), esc_html(AudienceScheduleRepository::get_environment_label()));
+                            ?>
+                        </span>
                         <div class="ffc-stat-number">
                             <span class="ffc-stat-icon dashicons dashicons-building"></span>
                             <span class="ffc-stat-value"><?php echo esc_html($audience_stats['environments']); ?></span>
@@ -145,7 +150,10 @@ class AudienceAdminDashboard {
                             <?php esc_html_e('New Audience Calendar', 'ffcertificate'); ?>
                         </a>
                         <a href="<?php echo esc_url(admin_url('admin.php?page=' . $this->menu_slug . '-environments&action=new')); ?>" class="button">
-                            <?php esc_html_e('Add Environment', 'ffcertificate'); ?>
+                            <?php
+                            /* translators: %s: environment label (singular) */
+                            printf(esc_html__('Add %s', 'ffcertificate'), esc_html(AudienceScheduleRepository::get_environment_label(null, true)));
+                            ?>
                         </a>
                         <a href="<?php echo esc_url(admin_url('admin.php?page=' . $this->menu_slug . '-audiences&action=new')); ?>" class="button">
                             <?php esc_html_e('Create Audience', 'ffcertificate'); ?>

@@ -67,9 +67,11 @@ class AudienceNotificationHandler {
         $creator_name = $creator ? $creator->display_name : __('Unknown', 'ffcertificate');
 
         // Prepare booking data
+        $environment_label = AudienceScheduleRepository::get_environment_label($schedule, true);
         $booking_data = array(
             'booking_id' => $booking_id,
             'environment_name' => $environment->name,
+            'environment_label' => $environment_label,
             'schedule_name' => $schedule->name,
             'booking_date' => self::format_date($booking->booking_date),
             'booking_date_raw' => $booking->booking_date,
@@ -153,9 +155,11 @@ class AudienceNotificationHandler {
         $cancelled_by_name = $cancelled_by ? $cancelled_by->display_name : __('Unknown', 'ffcertificate');
 
         // Prepare booking data
+        $environment_label = AudienceScheduleRepository::get_environment_label($schedule, true);
         $booking_data = array(
             'booking_id' => $booking_id,
             'environment_name' => $environment->name,
+            'environment_label' => $environment_label,
             'schedule_name' => $schedule->name,
             'booking_date' => self::format_date($booking->booking_date),
             'booking_date_raw' => $booking->booking_date,
@@ -296,6 +300,7 @@ class AudienceNotificationHandler {
             '{user_name}' => $user->display_name,
             '{user_email}' => $user->user_email,
             '{environment_name}' => $booking_data['environment_name'],
+            '{environment_label}' => $booking_data['environment_label'] ?? __('Environment', 'ffcertificate'),
             '{schedule_name}' => $booking_data['schedule_name'],
             '{booking_date}' => $booking_data['booking_date'],
             '{start_time}' => $booking_data['start_time'],
@@ -369,7 +374,7 @@ class AudienceNotificationHandler {
 
 <div class='info-box'>
     <div class='info-row'><span class='info-label'>" . __('Calendar:', 'ffcertificate') . "</span> {schedule_name}</div>
-    <div class='info-row'><span class='info-label'>" . __('Environment:', 'ffcertificate') . "</span> {environment_name}</div>
+    <div class='info-row'><span class='info-label'>{environment_label}:</span> {environment_name}</div>
     <div class='info-row'><span class='info-label'>" . __('Date:', 'ffcertificate') . "</span> {booking_date}</div>
     <div class='info-row'><span class='info-label'>" . __('Time:', 'ffcertificate') . "</span> {start_time} - {end_time}</div>
     <div class='info-row'><span class='info-label'>" . __('Description:', 'ffcertificate') . "</span> {description}</div>
@@ -397,7 +402,7 @@ class AudienceNotificationHandler {
 
 <div class='info-box cancelled'>
     <div class='info-row'><span class='info-label'>" . __('Calendar:', 'ffcertificate') . "</span> {schedule_name}</div>
-    <div class='info-row'><span class='info-label'>" . __('Environment:', 'ffcertificate') . "</span> {environment_name}</div>
+    <div class='info-row'><span class='info-label'>{environment_label}:</span> {environment_name}</div>
     <div class='info-row'><span class='info-label'>" . __('Date:', 'ffcertificate') . "</span> {booking_date}</div>
     <div class='info-row'><span class='info-label'>" . __('Time:', 'ffcertificate') . "</span> {start_time} - {end_time}</div>
     <div class='info-row'><span class='info-label'>" . __('Description:', 'ffcertificate') . "</span> {description}</div>

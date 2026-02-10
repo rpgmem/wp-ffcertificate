@@ -145,6 +145,7 @@ class AudienceScheduleRepository {
         $defaults = array(
             'name' => '',
             'description' => null,
+            'environment_label' => null,
             'visibility' => 'private',
             'future_days_limit' => null,
             'notify_on_booking' => 1,
@@ -162,6 +163,7 @@ class AudienceScheduleRepository {
             array(
                 'name' => $data['name'],
                 'description' => $data['description'],
+                'environment_label' => $data['environment_label'],
                 'visibility' => $data['visibility'],
                 'future_days_limit' => $data['future_days_limit'],
                 'notify_on_booking' => $data['notify_on_booking'],
@@ -172,7 +174,7 @@ class AudienceScheduleRepository {
                 'status' => $data['status'],
                 'created_by' => $data['created_by'],
             ),
-            array('%s', '%s', '%s', '%d', '%d', '%d', '%s', '%s', '%d', '%s', '%d')
+            array('%s', '%s', '%s', '%s', '%d', '%d', '%d', '%s', '%s', '%d', '%s', '%d')
         );
 
         return $result ? $wpdb->insert_id : false;
@@ -203,6 +205,7 @@ class AudienceScheduleRepository {
         $field_formats = array(
             'name' => '%s',
             'description' => '%s',
+            'environment_label' => '%s',
             'visibility' => '%s',
             'future_days_limit' => '%d',
             'notify_on_booking' => '%d',
@@ -417,6 +420,32 @@ class AudienceScheduleRepository {
         $permissions = self::get_user_permissions($schedule_id, $user_id);
 
         return $permissions && (bool) $permissions->can_override_conflicts;
+    }
+
+    /**
+     * Get the environment label for a schedule
+     *
+     * Returns the custom label if set, otherwise the default translatable "Environments".
+     *
+     * @since 4.7.0
+     * @param object|int|null $schedule Schedule object, ID, or null for default
+     * @param bool $singular Whether to return singular form
+     * @return string
+     */
+    public static function get_environment_label($schedule = null, bool $singular = false): string {
+        if (is_int($schedule)) {
+            $schedule = self::get_by_id($schedule);
+        }
+
+        $custom_label = $schedule->environment_label ?? null;
+
+        if (!empty($custom_label)) {
+            return $custom_label;
+        }
+
+        return $singular
+            ? __('Environment', 'ffcertificate')
+            : __('Environments', 'ffcertificate');
     }
 
     /**

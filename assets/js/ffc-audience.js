@@ -272,6 +272,7 @@
 
         var schedules = state.config.schedules || [];
         var environments = [];
+        var envLabelPlural = (ffcAudience.strings || {}).allEnvironments || 'All Environments';
 
         if (state.selectedSchedule > 0) {
             // Get environments for selected schedule
@@ -279,6 +280,12 @@
                 // Use == for loose comparison (int vs string)
                 if (parseInt(schedules[i].id) === parseInt(state.selectedSchedule)) {
                     environments = schedules[i].environments || [];
+                    // Update dropdown label to match schedule's custom label
+                    if (schedules[i].environmentLabelPlural) {
+                        envLabelPlural = (ffcAudience.strings || {}).all
+                            ? (ffcAudience.strings.all + ' ' + schedules[i].environmentLabelPlural)
+                            : schedules[i].environmentLabelPlural;
+                    }
                     break;
                 }
             }
@@ -291,6 +298,9 @@
                 }
             }
         }
+
+        // Update first option text with dynamic label
+        $select.find('option:first').text(envLabelPlural);
 
         environments.forEach(function(env) {
             $select.append('<option value="' + env.id + '">' + env.name + '</option>');
@@ -602,7 +612,7 @@
             html += '<div class="ffc-booking-description">' + escapeHtml(booking.description) + '</div>';
 
             html += '<div class="ffc-booking-meta">';
-            html += '<span><strong>Environment:</strong> ' + escapeHtml(booking.environment_name) + '</span>';
+            html += '<span><strong>' + escapeHtml(getEnvironmentLabelForBooking(booking) + ':') + '</strong> ' + escapeHtml(booking.environment_name) + '</span>';
             if (booking.status === 'cancelled') {
                 html += ' <span class="ffc-status-cancelled">(' + (ffcAudience.strings.cancelled || 'Cancelled') + ')</span>';
             }
@@ -693,6 +703,22 @@
             $envSelect.append('<option value="' + allEnvironments[0].id + '">' + allEnvironments[0].name + '</option>');
         }
 
+        // Update environment label in the booking form
+        var currentSchedule = null;
+        if (state.selectedSchedule > 0) {
+            for (var s = 0; s < schedules.length; s++) {
+                if (parseInt(schedules[s].id) === parseInt(state.selectedSchedule)) {
+                    currentSchedule = schedules[s];
+                    break;
+                }
+            }
+        } else if (schedules.length === 1) {
+            currentSchedule = schedules[0];
+        }
+        if (currentSchedule && currentSchedule.environmentLabel) {
+            $('label[for="booking-environment-id"]').html(escapeHtml(currentSchedule.environmentLabel) + ' *');
+        }
+
         // Set selected environment
         var selectedEnv = environmentId || state.selectedEnvironment || '';
         $envSelect.val(selectedEnv);
@@ -717,6 +743,23 @@
             }
         }
         return '';
+    }
+
+    /**
+     * Get the environment label for a booking (finds the schedule that owns this environment)
+     */
+    function getEnvironmentLabelForBooking(booking) {
+        var envId = parseInt(booking.environment_id);
+        var schedules = state.config.schedules || [];
+        for (var i = 0; i < schedules.length; i++) {
+            var envs = schedules[i].environments || [];
+            for (var j = 0; j < envs.length; j++) {
+                if (parseInt(envs[j].id) === envId) {
+                    return schedules[i].environmentLabel || (ffcAudience.strings || {}).environmentLabel || 'Environment';
+                }
+            }
+        }
+        return (ffcAudience.strings || {}).environmentLabel || 'Environment';
     }
 
     /**

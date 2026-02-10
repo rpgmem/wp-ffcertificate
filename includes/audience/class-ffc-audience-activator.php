@@ -398,6 +398,61 @@ class AudienceActivator {
     }
 
     /**
+     * Run migrations on plugin load
+     * This ensures migrations run even if plugin wasn't re-activated
+     *
+     * @since 4.7.0
+     * @return void
+     */
+    public static function maybe_migrate(): void {
+        global $wpdb;
+
+        $schedules_table = $wpdb->prefix . 'ffc_audience_schedules';
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $schedules_exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $schedules_table ) ) == $schedules_table;
+
+        if ($schedules_exists) {
+            self::migrate_environment_label_column();
+        }
+    }
+
+    /**
+     * Migrate schedules table to add environment_label column
+     *
+     * Allows each calendar to define a custom label for its environments
+     * (e.g. "Salas", "Consultórios", "Categorias") instead of the default "Ambientes".
+     *
+     * @since 4.7.0
+     * @return void
+     */
+    private static function migrate_environment_label_column(): void {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'ffc_audience_schedules';
+
+        // Check if environment_label column already exists
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $column_exists = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = 'environment_label'",
+                DB_NAME,
+                $table_name
+            )
+        );
+
+        if (!empty($column_exists)) {
+            return;
+        }
+
+        // Add environment_label column after description
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+        $wpdb->query(
+            "ALTER TABLE {$table_name}
+            ADD COLUMN environment_label varchar(100) DEFAULT NULL COMMENT 'Custom label for environments (default: Environments)' AFTER description"
+        );
+    }
+
+    /**
      * Drop all audience tables (for uninstall)
      *
      * @return void

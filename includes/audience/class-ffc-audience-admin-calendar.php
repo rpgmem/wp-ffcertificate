@@ -78,7 +78,7 @@ class AudienceAdminCalendar {
                 <tr>
                     <th scope="col" class="column-name"><?php esc_html_e('Name', 'ffcertificate'); ?></th>
                     <th scope="col" class="column-visibility"><?php esc_html_e('Visibility', 'ffcertificate'); ?></th>
-                    <th scope="col" class="column-environments"><?php esc_html_e('Environments', 'ffcertificate'); ?></th>
+                    <th scope="col" class="column-environments"><?php echo esc_html(AudienceScheduleRepository::get_environment_label()); ?></th>
                     <th scope="col" class="column-status"><?php esc_html_e('Status', 'ffcertificate'); ?></th>
                     <th scope="col" class="column-actions"><?php esc_html_e('Actions', 'ffcertificate'); ?></th>
                 </tr>
@@ -198,6 +198,19 @@ class AudienceAdminCalendar {
                     </th>
                     <td>
                         <textarea name="schedule_description" id="schedule_description" rows="3" class="large-text"><?php echo esc_textarea($schedule->description ?? ''); ?></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        <label for="schedule_environment_label"><?php esc_html_e('Environment Label', 'ffcertificate'); ?></label>
+                    </th>
+                    <td>
+                        <input type="text" name="schedule_environment_label" id="schedule_environment_label" class="regular-text"
+                               value="<?php echo esc_attr($schedule->environment_label ?? ''); ?>"
+                               placeholder="<?php esc_attr_e('Environments', 'ffcertificate'); ?>">
+                        <p class="description">
+                            <?php esc_html_e('Custom label for the environments of this calendar (e.g. "Rooms", "Categories", "Services"). Leave empty to use the default "Environments".', 'ffcertificate'); ?>
+                        </p>
                     </td>
                 </tr>
                 <tr>
@@ -361,6 +374,7 @@ class AudienceAdminCalendar {
             $data = array(
                 'name' => isset($_POST['schedule_name']) ? sanitize_text_field(wp_unslash($_POST['schedule_name'])) : '',
                 'description' => isset($_POST['schedule_description']) ? sanitize_textarea_field(wp_unslash($_POST['schedule_description'])) : '',
+                'environment_label' => isset($_POST['schedule_environment_label']) ? sanitize_text_field(wp_unslash($_POST['schedule_environment_label'])) : null,
                 'visibility' => isset($_POST['schedule_visibility']) ? sanitize_text_field(wp_unslash($_POST['schedule_visibility'])) : 'private',
                 'future_days_limit' => isset($_POST['schedule_future_days']) && $_POST['schedule_future_days'] !== '' ? absint($_POST['schedule_future_days']) : null,
                 'notify_on_booking' => isset($_POST['schedule_notify_booking']) ? 1 : 0,

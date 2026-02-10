@@ -265,6 +265,7 @@ class AudienceLoader {
             'requiredField' => __('This field is required.', 'ffcertificate'),
             'invalidTime' => __('End time must be after start time.', 'ffcertificate'),
             'allEnvironments' => __('All Environments', 'ffcertificate'),
+            'environmentLabel' => __('Environment', 'ffcertificate'),
         );
     }
 

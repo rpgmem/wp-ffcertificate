@@ -97,6 +97,8 @@ class AudienceShortcode {
                     return array(
                         'id' => (int) $s->id,
                         'name' => $s->name,
+                        'environmentLabel' => AudienceScheduleRepository::get_environment_label($s, true),
+                        'environmentLabelPlural' => AudienceScheduleRepository::get_environment_label($s),
                         'environments' => self::get_schedule_environments((int) $s->id),
                         'futureDaysLimit' => isset($s->future_days_limit) ? (int) $s->future_days_limit : null,
                     );
@@ -143,6 +145,8 @@ class AudienceShortcode {
                 return array(
                     'id' => (int) $s->id,
                     'name' => $s->name,
+                    'environmentLabel' => AudienceScheduleRepository::get_environment_label($s, true),
+                    'environmentLabelPlural' => AudienceScheduleRepository::get_environment_label($s),
                     'environments' => self::get_schedule_environments((int) $s->id),
                     'futureDaysLimit' => isset($s->future_days_limit) ? (int) $s->future_days_limit : null,
                 );
@@ -195,8 +199,21 @@ class AudienceShortcode {
                         </select>
                     <?php endif; ?>
 
+                    <?php
+                    $first_env_label_plural = !empty($schedules)
+                        ? AudienceScheduleRepository::get_environment_label($schedules[0])
+                        : AudienceScheduleRepository::get_environment_label();
+                    $first_env_label_singular = !empty($schedules)
+                        ? AudienceScheduleRepository::get_environment_label($schedules[0], true)
+                        : AudienceScheduleRepository::get_environment_label(null, true);
+                    ?>
                     <select class="ffc-environment-select" id="ffc-environment-select">
-                        <option value=""><?php esc_html_e('All Environments', 'ffcertificate'); ?></option>
+                        <option value="">
+                            <?php
+                            /* translators: %s: environment label (plural) */
+                            printf(esc_html__('All %s', 'ffcertificate'), esc_html($first_env_label_plural));
+                            ?>
+                        </option>
                         <!-- Populated by JavaScript -->
                     </select>
                 </div>
@@ -251,7 +268,9 @@ class AudienceShortcode {
                         </div>
 
                         <div class="ffc-form-group">
-                            <label for="booking-environment-id"><?php esc_html_e('Environment', 'ffcertificate'); ?> *</label>
+                            <label for="booking-environment-id">
+                                <?php echo esc_html($first_env_label_singular ?? AudienceScheduleRepository::get_environment_label(null, true)); ?> *
+                            </label>
                             <select name="environment_id" id="booking-environment-id" required>
                                 <!-- Populated by JavaScript -->
                             </select>

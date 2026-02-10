@@ -67,6 +67,9 @@ class Loader {
         if (class_exists('\FreeFormCertificate\SelfScheduling\SelfSchedulingActivator')) {
             \FreeFormCertificate\SelfScheduling\SelfSchedulingActivator::maybe_migrate();
         }
+        if (class_exists('\FreeFormCertificate\Audience\AudienceActivator')) {
+            \FreeFormCertificate\Audience\AudienceActivator::maybe_migrate();
+        }
 
         // Shared classes (needed in both admin and frontend contexts)
         $this->submission_handler = new SubmissionHandler();
