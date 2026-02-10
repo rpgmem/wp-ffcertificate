@@ -89,6 +89,16 @@
     min-width: 150px;
 }
 
+.ffc-calendar-title {
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ffc-gray-700);
+    border: 1px solid var(--ffc-gray-300);
+    border-radius: var(--ffc-radius-sm);
+    background: #fff;
+}
+
 /* Calendar Grid */
 .ffc-calendar-grid {
     padding: 15px;
