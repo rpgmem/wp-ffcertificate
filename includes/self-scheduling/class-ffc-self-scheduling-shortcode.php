@@ -461,6 +461,10 @@ class SelfSchedulingShortcode {
         ?>
         <div class="ffc-audience-calendar" data-calendar-id="<?php echo esc_attr($calendar['id']); ?>">
 
+            <div class="ffc-calendar-filters">
+                <span class="ffc-calendar-title"><?php echo esc_html($calendar['title']); ?></span>
+            </div>
+
             <?php if (!empty($calendar['description'])): ?>
                 <div class="ffc-calendar-description">
                     <p><?php echo esc_html($calendar['description']); ?></p>
