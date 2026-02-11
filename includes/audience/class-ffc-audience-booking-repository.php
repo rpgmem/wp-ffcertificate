@@ -294,6 +294,7 @@ class AudienceBookingRepository {
             'booking_date' => '',
             'start_time' => '',
             'end_time' => '',
+            'is_all_day' => 0,
             'booking_type' => 'audience',
             'description' => '',
             'status' => 'active',
@@ -313,12 +314,13 @@ class AudienceBookingRepository {
                 'booking_date' => $data['booking_date'],
                 'start_time' => $data['start_time'],
                 'end_time' => $data['end_time'],
+                'is_all_day' => $data['is_all_day'] ? 1 : 0,
                 'booking_type' => $data['booking_type'],
                 'description' => $data['description'],
                 'status' => $data['status'],
                 'created_by' => $data['created_by'],
             ),
-            array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d')
+            array('%d', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%d')
         );
 
         if (!$result) {

@@ -268,6 +268,31 @@ class AudienceAdminCalendar {
                     </td>
                 </tr>
                 <tr>
+                    <th scope="row"><?php esc_html_e('Event List', 'ffcertificate'); ?></th>
+                    <td>
+                        <fieldset>
+                            <label>
+                                <input type="checkbox" name="schedule_show_event_list" value="1"
+                                       <?php checked($schedule->show_event_list ?? 0, 1); ?>>
+                                <?php esc_html_e('Show event list alongside the calendar', 'ffcertificate'); ?>
+                            </label>
+                        </fieldset>
+                        <br>
+                        <label for="schedule_event_list_position"><?php esc_html_e('Position', 'ffcertificate'); ?></label>
+                        <select name="schedule_event_list_position" id="schedule_event_list_position">
+                            <option value="side" <?php selected($schedule->event_list_position ?? 'side', 'side'); ?>>
+                                <?php esc_html_e('Side (responsive)', 'ffcertificate'); ?>
+                            </option>
+                            <option value="below" <?php selected($schedule->event_list_position ?? '', 'below'); ?>>
+                                <?php esc_html_e('Below', 'ffcertificate'); ?>
+                            </option>
+                        </select>
+                        <p class="description">
+                            <?php esc_html_e('Side: appears next to the calendar on desktop, moves below on mobile. Below: always below the calendar.', 'ffcertificate'); ?>
+                        </p>
+                    </td>
+                </tr>
+                <tr>
                     <th scope="row">
                         <label for="schedule_status"><?php esc_html_e('Status', 'ffcertificate'); ?></label>
                     </th>
@@ -576,6 +601,10 @@ class AudienceAdminCalendar {
                 'notify_on_booking' => isset($_POST['schedule_notify_booking']) ? 1 : 0,
                 'notify_on_cancellation' => isset($_POST['schedule_notify_cancel']) ? 1 : 0,
                 'include_ics' => isset($_POST['schedule_include_ics']) ? 1 : 0,
+                'show_event_list' => isset($_POST['schedule_show_event_list']) ? 1 : 0,
+                'event_list_position' => isset($_POST['schedule_event_list_position']) && in_array($_POST['schedule_event_list_position'], array('side', 'below'), true)
+                    ? sanitize_text_field(wp_unslash($_POST['schedule_event_list_position']))
+                    : 'side',
                 'status' => isset($_POST['schedule_status']) ? sanitize_text_field(wp_unslash($_POST['schedule_status'])) : 'active',
             );
 

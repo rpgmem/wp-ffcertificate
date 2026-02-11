@@ -103,6 +103,8 @@ class AudienceShortcode {
                         'futureDaysLimit' => isset($s->future_days_limit) ? (int) $s->future_days_limit : null,
                     );
                 }, $schedules),
+                'showEventList' => self::should_show_event_list($schedules),
+                'eventListPosition' => self::get_event_list_position($schedules),
                 'canBook' => false,
                 'readOnly' => true,
                 'schedulingMessage' => $scheduling_message,
@@ -151,6 +153,8 @@ class AudienceShortcode {
                     'futureDaysLimit' => isset($s->future_days_limit) ? (int) $s->future_days_limit : null,
                 );
             }, $schedules),
+            'showEventList' => self::should_show_event_list($schedules),
+            'eventListPosition' => self::get_event_list_position($schedules),
             'canBook' => self::can_user_book($user_id, $schedules),
             'audiences' => self::get_user_audiences($user_id),
         );
@@ -169,8 +173,16 @@ class AudienceShortcode {
      * @return string HTML output
      */
     private static function render_calendar_html(array $schedules, array $config, array $atts, bool $show_booking_modal): string {
+        $show_event_list = !empty($config['showEventList']);
+        $event_list_position = $config['eventListPosition'] ?? 'side';
+        $wrapper_class = 'ffc-calendar-wrapper';
+        if ($show_event_list) {
+            $wrapper_class .= ' ffc-has-event-list ffc-event-list-' . esc_attr($event_list_position);
+        }
+
         ob_start();
         ?>
+        <div class="<?php echo esc_attr($wrapper_class); ?>">
         <div class="ffc-audience-calendar" id="ffc-audience-calendar" data-config="<?php echo esc_attr(wp_json_encode($config)); ?>">
             <!-- Header -->
             <div class="ffc-calendar-header">
@@ -249,6 +261,19 @@ class AudienceShortcode {
             </div>
         </div>
 
+        <?php if ($show_event_list) : ?>
+        <!-- Event List Panel -->
+        <div class="ffc-event-list-panel" id="ffc-event-list-panel">
+            <div class="ffc-event-list-header">
+                <h3><?php esc_html_e('Events', 'ffcertificate'); ?></h3>
+            </div>
+            <div class="ffc-event-list-content" id="ffc-event-list-content">
+                <div class="ffc-loading"><?php esc_html_e('Loading...', 'ffcertificate'); ?></div>
+            </div>
+        </div>
+        <?php endif; ?>
+        </div><!-- .ffc-calendar-wrapper -->
+
         <?php if ($show_booking_modal) : ?>
         <!-- Booking Modal -->
         <div class="ffc-modal" id="ffc-booking-modal" style="display: none;">
@@ -276,7 +301,14 @@ class AudienceShortcode {
                             </select>
                         </div>
 
-                        <div class="ffc-form-row">
+                        <div class="ffc-form-group">
+                            <label>
+                                <input type="checkbox" id="booking-all-day" name="is_all_day" value="1">
+                                <?php esc_html_e('All day event', 'ffcertificate'); ?>
+                            </label>
+                        </div>
+
+                        <div class="ffc-form-row" id="booking-time-row">
                             <div class="ffc-form-group">
                                 <label for="booking-start-time"><?php esc_html_e('Start Time', 'ffcertificate'); ?> *</label>
                                 <input type="time" name="start_time" id="booking-start-time" required>
@@ -386,6 +418,38 @@ class AudienceShortcode {
     }
 
     /**
+     * Determine if event list should be shown based on schedules
+     *
+     * @since 4.8.0
+     * @param array $schedules Array of schedule objects
+     * @return bool
+     */
+    private static function should_show_event_list(array $schedules): bool {
+        foreach ($schedules as $s) {
+            if (!empty($s->show_event_list)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Get event list position from schedules (first one that has it enabled)
+     *
+     * @since 4.8.0
+     * @param array $schedules Array of schedule objects
+     * @return string 'side' or 'below'
+     */
+    private static function get_event_list_position(array $schedules): string {
+        foreach ($schedules as $s) {
+            if (!empty($s->show_event_list) && !empty($s->event_list_position)) {
+                return $s->event_list_position;
+            }
+        }
+        return 'side';
+    }
+
+    /**
      * Render private visibility message based on settings
      *
      * @since 4.7.0
@@ -483,6 +547,7 @@ class AudienceShortcode {
             return array(
                 'id' => $e->id,
                 'name' => $e->name,
+                'color' => $e->color ?? '#3788d8',
             );
         }, $environments);
     }
@@ -642,6 +707,11 @@ class AudienceShortcode {
                 'bookings' => __('bookings', 'ffcertificate'),
                 'createBooking' => __('Create Booking', 'ffcertificate'),
                 'newBooking' => __('New Booking', 'ffcertificate'),
+                'environmentLabel' => __('Environment', 'ffcertificate'),
+                'allEnvironments' => __('All Environments', 'ffcertificate'),
+                'allDay' => __('All Day', 'ffcertificate'),
+                'events' => __('Events', 'ffcertificate'),
+                'noEvents' => __('No events this month.', 'ffcertificate'),
             ),
         ));
     }
