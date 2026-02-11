@@ -47,8 +47,10 @@ class AccessControl {
         $user = wp_get_current_user();
         $blocked_roles = isset($settings['blocked_roles']) ? $settings['blocked_roles'] : array('ffc_user');
 
-        // Check for role intersection
-        if (array_intersect($blocked_roles, $user->roles)) {
+        // Block only if ALL of the user's roles are in the blocked list.
+        // If the user has at least one non-blocked role (e.g. editor + ffc_user),
+        // they should retain wp-admin access.
+        if (!empty($user->roles) && !array_diff($user->roles, $blocked_roles)) {
             // Get redirect URL
             $redirect_url = isset($settings['redirect_url']) ? $settings['redirect_url'] : home_url();
 
@@ -79,8 +81,8 @@ class AccessControl {
         $user = wp_get_current_user();
         $blocked_roles = isset($settings['blocked_roles']) ? $settings['blocked_roles'] : array('ffc_user');
 
-        // Hide admin bar for blocked roles
-        if (array_intersect($blocked_roles, $user->roles)) {
+        // Hide admin bar only if ALL of the user's roles are blocked
+        if (!empty($user->roles) && !array_diff($user->roles, $blocked_roles)) {
             return false;
         }
 

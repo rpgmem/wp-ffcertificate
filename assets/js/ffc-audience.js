@@ -88,6 +88,7 @@
         updateEnvironmentSelect();
         populateAudienceSelect();
         renderCalendar();
+        renderEnvironmentLegend();
         bindEvents();
     }
 
@@ -115,6 +116,7 @@
         $('#ffc-schedule-select').on('change', function() {
             state.selectedSchedule = parseInt($(this).val()) || 0;
             updateEnvironmentSelect();
+            renderEnvironmentLegend();
             renderCalendar();
         });
 
@@ -145,6 +147,19 @@
             var date = $('#ffc-day-modal').data('date');
             if (date) {
                 loadDayBookings(date);
+            }
+        });
+
+        // All-day toggle
+        $('#booking-all-day').on('change', function() {
+            if ($(this).is(':checked')) {
+                $('#booking-time-row').hide();
+                $('#booking-start-time').removeAttr('required').val('00:00');
+                $('#booking-end-time').removeAttr('required').val('23:59');
+            } else {
+                $('#booking-time-row').show();
+                $('#booking-start-time').attr('required', 'required').val('');
+                $('#booking-end-time').attr('required', 'required').val('');
             }
         });
 
@@ -303,7 +318,7 @@
         $select.find('option:first').text(envLabelPlural);
 
         environments.forEach(function(env) {
-            $select.append('<option value="' + env.id + '">' + env.name + '</option>');
+            $select.append('<option value="' + env.id + '" data-color="' + (env.color || '#3788d8') + '">' + env.name + '</option>');
         });
 
         // Set dropdown value (0 = "All Environments" stays as default)
@@ -343,6 +358,12 @@
 
         // Update header
         $('.ffc-current-month').text(ffcAudience.strings.months[month] + ' ' + year);
+
+        // Update event list header
+        var $eventListHeader = $('#ffc-event-list-panel .ffc-event-list-header h3');
+        if ($eventListHeader.length) {
+            $eventListHeader.text(((ffcAudience.strings || {}).events || 'Events') + ' - ' + ffcAudience.strings.months[month] + ' ' + year);
+        }
 
         // Get first and last day of month
         var firstDay = new Date(year, month, 1);
@@ -438,6 +459,9 @@
             }
 
             $('#ffc-calendar-days').html(html);
+
+            // Update event list panel if present
+            renderEventList();
         });
     }
 
@@ -607,8 +631,13 @@
                 classes.push('ffc-booking-cancelled');
             }
 
-            html += '<div class="' + classes.join(' ') + '">';
-            html += '<div class="ffc-booking-time">' + formatTime(booking.start_time) + ' - ' + formatTime(booking.end_time) + '</div>';
+            var envColor = getEnvironmentColor(booking.environment_id);
+            html += '<div class="' + classes.join(' ') + '" style="border-left: 4px solid ' + envColor + ';">';
+            if (parseInt(booking.is_all_day)) {
+                html += '<div class="ffc-booking-time ffc-all-day">' + ((ffcAudience.strings || {}).allDay || 'All Day') + '</div>';
+            } else {
+                html += '<div class="ffc-booking-time">' + formatTime(booking.start_time) + ' - ' + formatTime(booking.end_time) + '</div>';
+            }
             html += '<div class="ffc-booking-description">' + escapeHtml(booking.description) + '</div>';
 
             html += '<div class="ffc-booking-meta">';
@@ -659,6 +688,10 @@
 
         // Reset form
         $('#ffc-booking-form')[0].reset();
+        $('#booking-all-day').prop('checked', false);
+        $('#booking-time-row').show();
+        $('#booking-start-time').attr('required', 'required');
+        $('#booking-end-time').attr('required', 'required');
         state.selectedUsers = {};
         updateSelectedUsers();
         $('#ffc-conflict-warning').hide();
@@ -743,6 +776,23 @@
             }
         }
         return '';
+    }
+
+    /**
+     * Get environment color by ID
+     */
+    function getEnvironmentColor(envId) {
+        envId = parseInt(envId);
+        var schedules = state.config.schedules || [];
+        for (var i = 0; i < schedules.length; i++) {
+            var envs = schedules[i].environments || [];
+            for (var j = 0; j < envs.length; j++) {
+                if (parseInt(envs[j].id) === envId) {
+                    return envs[j].color || '#3788d8';
+                }
+            }
+        }
+        return '#3788d8';
     }
 
     /**
@@ -995,19 +1045,22 @@
      * Validate booking form
      */
     function validateBookingForm() {
+        var isAllDay = $('#booking-all-day').is(':checked');
         var startTime = $('#booking-start-time').val();
         var endTime = $('#booking-end-time').val();
         var description = $('#booking-description').val().trim();
         var bookingType = $('#booking-type').val();
 
-        if (!startTime || !endTime) {
-            alert('Please fill in the time fields.');
-            return false;
-        }
+        if (!isAllDay) {
+            if (!startTime || !endTime) {
+                alert('Please fill in the time fields.');
+                return false;
+            }
 
-        if (startTime >= endTime) {
-            alert(ffcAudience.strings.invalidTime);
-            return false;
+            if (startTime >= endTime) {
+                alert(ffcAudience.strings.invalidTime);
+                return false;
+            }
         }
 
         if (description.length < 15 || description.length > 300) {
@@ -1037,11 +1090,13 @@
      */
     function getBookingFormData() {
         var bookingType = $('#booking-type').val();
+        var isAllDay = $('#booking-all-day').is(':checked');
         var data = {
             environment_id: parseInt($('#booking-environment-id').val()),
             booking_date: $('#booking-date').val(),
-            start_time: $('#booking-start-time').val(),
-            end_time: $('#booking-end-time').val(),
+            start_time: isAllDay ? '00:00' : $('#booking-start-time').val(),
+            end_time: isAllDay ? '23:59' : $('#booking-end-time').val(),
+            is_all_day: isAllDay ? 1 : 0,
             booking_type: bookingType,
             description: $('#booking-description').val().trim(),
             audience_ids: [],
@@ -1061,6 +1116,140 @@
         }
 
         return data;
+    }
+
+    /**
+     * Render environment legend with colors
+     */
+    function renderEnvironmentLegend() {
+        var $legend = $('.ffc-calendar-legend');
+        if (!$legend.length) return;
+
+        // Remove any existing environment legend
+        $legend.find('.ffc-env-legend-item').remove();
+
+        var schedules = state.config.schedules || [];
+        var environments = [];
+
+        if (state.selectedSchedule > 0) {
+            for (var i = 0; i < schedules.length; i++) {
+                if (parseInt(schedules[i].id) === parseInt(state.selectedSchedule)) {
+                    environments = schedules[i].environments || [];
+                    break;
+                }
+            }
+        } else {
+            for (var j = 0; j < schedules.length; j++) {
+                var envs = schedules[j].environments || [];
+                for (var k = 0; k < envs.length; k++) {
+                    environments.push(envs[k]);
+                }
+            }
+        }
+
+        if (environments.length > 1) {
+            environments.forEach(function(env) {
+                var color = env.color || '#3788d8';
+                $legend.append(
+                    '<span class="ffc-legend-item ffc-env-legend-item">' +
+                    '<span class="ffc-legend-dot" style="background:' + color + '"></span> ' +
+                    escapeHtml(env.name) +
+                    '</span>'
+                );
+            });
+        }
+    }
+
+    /**
+     * Render the event list panel with bookings for the visible month
+     */
+    function renderEventList() {
+        var $panel = $('#ffc-event-list-content');
+        if (!$panel.length) {
+            return;
+        }
+
+        // Collect all active bookings for the current month, sorted by date then time
+        var allBookings = [];
+        for (var dateStr in state.bookings) {
+            var dayBookings = state.bookings[dateStr];
+            for (var i = 0; i < dayBookings.length; i++) {
+                if (dayBookings[i].status === 'active') {
+                    allBookings.push(dayBookings[i]);
+                }
+            }
+        }
+
+        if (allBookings.length === 0) {
+            $panel.html('<p class="ffc-no-events">' + ((ffcAudience.strings || {}).noEvents || 'No events this month.') + '</p>');
+            return;
+        }
+
+        // Sort by date, then start_time
+        allBookings.sort(function(a, b) {
+            if (a.booking_date < b.booking_date) return -1;
+            if (a.booking_date > b.booking_date) return 1;
+            return a.start_time.localeCompare(b.start_time);
+        });
+
+        var html = '';
+        var lastDate = '';
+
+        allBookings.forEach(function(booking) {
+            // Group header for each date
+            if (booking.booking_date !== lastDate) {
+                lastDate = booking.booking_date;
+                var dateObj = parseDate(booking.booking_date);
+                var dateDisplay = dateObj.toLocaleDateString(ffcAudience.locale, {
+                    weekday: 'short',
+                    day: 'numeric',
+                    month: 'short'
+                });
+                html += '<div class="ffc-event-list-date">' + dateDisplay + '</div>';
+            }
+
+            // Event item
+            var evtColor = getEnvironmentColor(booking.environment_id);
+            html += '<div class="ffc-event-list-item" data-date="' + booking.booking_date + '" style="border-left: 3px solid ' + evtColor + ';">';
+
+            // Time
+            if (parseInt(booking.is_all_day)) {
+                html += '<span class="ffc-event-list-time ffc-all-day">' + ((ffcAudience.strings || {}).allDay || 'All Day') + '</span>';
+            } else {
+                html += '<span class="ffc-event-list-time">' + formatTime(booking.start_time) + ' - ' + formatTime(booking.end_time) + '</span>';
+            }
+
+            // Environment name
+            html += '<span class="ffc-event-list-env">' + escapeHtml(booking.environment_name) + '</span>';
+
+            // Description (truncated)
+            var desc = booking.description || '';
+            if (desc.length > 60) {
+                desc = desc.substring(0, 57) + '...';
+            }
+            html += '<span class="ffc-event-list-desc">' + escapeHtml(desc) + '</span>';
+
+            // Audiences
+            if (booking.audiences && booking.audiences.length > 0) {
+                html += '<span class="ffc-event-list-audiences">';
+                booking.audiences.forEach(function(audience) {
+                    html += '<span class="ffc-audience-tag-sm" style="background-color: ' + audience.color + '">' + escapeHtml(audience.name) + '</span>';
+                });
+                html += '</span>';
+            }
+
+            html += '</div>';
+        });
+
+        $panel.html(html);
+
+        // Click on event item opens day modal
+        $panel.find('.ffc-event-list-item').on('click', function() {
+            var date = $(this).data('date');
+            if (date) {
+                openDayModal(date);
+            }
+        });
     }
 
     /**

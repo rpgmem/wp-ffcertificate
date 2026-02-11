@@ -133,6 +133,7 @@ class AudienceEnvironmentRepository {
         $defaults = array(
             'schedule_id' => 0,
             'name' => '',
+            'color' => '#3788d8',
             'description' => null,
             'working_hours' => null,
             'status' => 'active',
@@ -150,11 +151,12 @@ class AudienceEnvironmentRepository {
             array(
                 'schedule_id' => $data['schedule_id'],
                 'name' => $data['name'],
+                'color' => $data['color'],
                 'description' => $data['description'],
                 'working_hours' => $working_hours,
                 'status' => $data['status'],
             ),
-            array('%d', '%s', '%s', '%s', '%s')
+            array('%d', '%s', '%s', '%s', '%s', '%s')
         );
 
         return $result ? $wpdb->insert_id : false;
@@ -190,6 +192,7 @@ class AudienceEnvironmentRepository {
         $field_formats = array(
             'schedule_id' => '%d',
             'name' => '%s',
+            'color' => '%s',
             'description' => '%s',
             'working_hours' => '%s',
             'status' => '%s',

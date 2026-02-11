@@ -413,6 +413,9 @@ class AudienceActivator {
 
         if ($schedules_exists) {
             self::migrate_environment_label_column();
+            self::migrate_booking_is_all_day_column();
+            self::migrate_environment_color_column();
+            self::migrate_schedule_event_list_columns();
         }
     }
 
@@ -449,6 +452,100 @@ class AudienceActivator {
         $wpdb->query(
             "ALTER TABLE {$table_name}
             ADD COLUMN environment_label varchar(100) DEFAULT NULL COMMENT 'Custom label for environments (default: Environments)' AFTER description"
+        );
+    }
+
+    /**
+     * Migrate bookings table to add is_all_day column
+     *
+     * @since 4.8.0
+     * @return void
+     */
+    private static function migrate_booking_is_all_day_column(): void {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'ffc_audience_bookings';
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $column_exists = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = 'is_all_day'",
+                DB_NAME,
+                $table_name
+            )
+        );
+
+        if (!empty($column_exists)) {
+            return;
+        }
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+        $wpdb->query(
+            "ALTER TABLE {$table_name}
+            ADD COLUMN is_all_day tinyint(1) DEFAULT 0 COMMENT 'All-day event flag' AFTER end_time"
+        );
+    }
+
+    /**
+     * Migrate environments table to add color column
+     *
+     * @since 4.8.0
+     * @return void
+     */
+    private static function migrate_environment_color_column(): void {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'ffc_audience_environments';
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $column_exists = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = 'color'",
+                DB_NAME,
+                $table_name
+            )
+        );
+
+        if (!empty($column_exists)) {
+            return;
+        }
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+        $wpdb->query(
+            "ALTER TABLE {$table_name}
+            ADD COLUMN color varchar(7) DEFAULT '#3788d8' COMMENT 'Hex color for visual identification' AFTER name"
+        );
+    }
+
+    /**
+     * Migrate schedules table to add event list columns
+     *
+     * @since 4.8.0
+     * @return void
+     */
+    private static function migrate_schedule_event_list_columns(): void {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'ffc_audience_schedules';
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $column_exists = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = 'show_event_list'",
+                DB_NAME,
+                $table_name
+            )
+        );
+
+        if (!empty($column_exists)) {
+            return;
+        }
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+        $wpdb->query(
+            "ALTER TABLE {$table_name}
+            ADD COLUMN show_event_list tinyint(1) DEFAULT 0 COMMENT 'Show event list alongside calendar' AFTER include_ics,
+            ADD COLUMN event_list_position enum('side','below') DEFAULT 'side' COMMENT 'Position of event list' AFTER show_event_list"
         );
     }
 

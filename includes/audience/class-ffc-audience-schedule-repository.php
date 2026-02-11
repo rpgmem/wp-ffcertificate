@@ -213,6 +213,8 @@ class AudienceScheduleRepository {
             'email_template_booking' => '%s',
             'email_template_cancellation' => '%s',
             'include_ics' => '%d',
+            'show_event_list' => '%d',
+            'event_list_position' => '%s',
             'status' => '%s',
         );
 

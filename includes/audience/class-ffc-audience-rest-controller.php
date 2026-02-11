@@ -297,6 +297,7 @@ class AudienceRestController {
                     'booking_date' => $booking->booking_date,
                     'start_time' => $booking->start_time,
                     'end_time' => $booking->end_time,
+                    'is_all_day' => $booking->is_all_day ?? 0,
                     'status' => $booking->status,
                     'can_cancel' => false,
                     'audiences' => array(),
@@ -310,6 +311,7 @@ class AudienceRestController {
                 'booking_date' => $booking->booking_date,
                 'start_time' => $booking->start_time,
                 'end_time' => $booking->end_time,
+                'is_all_day' => $booking->is_all_day ?? 0,
                 'booking_type' => $booking->booking_type,
                 'description' => $booking->description,
                 'status' => $booking->status,
@@ -378,8 +380,9 @@ class AudienceRestController {
     public function create_booking(\WP_REST_Request $request): \WP_REST_Response {
         $environment_id = $request->get_param('environment_id');
         $booking_date = $request->get_param('booking_date');
-        $start_time = $request->get_param('start_time');
-        $end_time = $request->get_param('end_time');
+        $is_all_day = !empty($request->get_param('is_all_day'));
+        $start_time = $is_all_day ? '00:00' : $request->get_param('start_time');
+        $end_time = $is_all_day ? '23:59' : $request->get_param('end_time');
         $booking_type = $request->get_param('booking_type');
         $description = $request->get_param('description');
         $audience_ids = $request->get_param('audience_ids') ?: array();
@@ -412,8 +415,8 @@ class AudienceRestController {
             ), 400);
         }
 
-        // Validate time range
-        if ($start_time >= $end_time) {
+        // Validate time range (skip for all-day events)
+        if (!$is_all_day && $start_time >= $end_time) {
             return new \WP_REST_Response(array(
                 'success' => false,
                 'message' => __('End time must be after start time.', 'ffcertificate'),
@@ -482,6 +485,7 @@ class AudienceRestController {
             'booking_date' => $booking_date,
             'start_time' => $start_time,
             'end_time' => $end_time,
+            'is_all_day' => $is_all_day ? 1 : 0,
             'booking_type' => $booking_type,
             'description' => $description,
             'audience_ids' => $audience_ids,

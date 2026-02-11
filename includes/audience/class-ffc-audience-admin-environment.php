@@ -103,6 +103,7 @@ class AudienceAdminEnvironment {
         <table class="wp-list-table widefat fixed striped">
             <thead>
                 <tr>
+                    <th scope="col" class="column-color" style="width: 50px;"><?php esc_html_e('Color', 'ffcertificate'); ?></th>
                     <th scope="col" class="column-name"><?php esc_html_e('Name', 'ffcertificate'); ?></th>
                     <th scope="col" class="column-calendar"><?php esc_html_e('Calendar', 'ffcertificate'); ?></th>
                     <th scope="col" class="column-status"><?php esc_html_e('Status', 'ffcertificate'); ?></th>
@@ -112,7 +113,7 @@ class AudienceAdminEnvironment {
             <tbody>
                 <?php if (empty($environments)) : ?>
                     <tr>
-                        <td colspan="4">
+                        <td colspan="5">
                             <?php
                             /* translators: %s: environment label (e.g. "Environments", "Rooms") */
                             printf(esc_html__('No %s found.', 'ffcertificate'), esc_html(mb_strtolower($env_label)));
@@ -130,6 +131,9 @@ class AudienceAdminEnvironment {
                         );
                         ?>
                         <tr>
+                            <td class="column-color" style="text-align: center;">
+                                <span style="display: inline-block; width: 20px; height: 20px; border-radius: 50%; background-color: <?php echo esc_attr($env->color ?? '#3788d8'); ?>; border: 1px solid rgba(0,0,0,0.1);"></span>
+                            </td>
                             <td class="column-name">
                                 <strong><a href="<?php echo esc_url($edit_url); ?>"><?php echo esc_html($env->name); ?></a></strong>
                                 <?php if ($env->description) : ?>
@@ -249,6 +253,22 @@ class AudienceAdminEnvironment {
                     </td>
                 </tr>
                 <tr>
+                    <th scope="row">
+                        <label for="environment_color"><?php esc_html_e('Color', 'ffcertificate'); ?></label>
+                    </th>
+                    <td>
+                        <input type="color" name="environment_color" id="environment_color"
+                               value="<?php echo esc_attr($environment->color ?? '#3788d8'); ?>"
+                               style="width: 60px; height: 36px; padding: 2px; cursor: pointer;">
+                        <span class="description" style="vertical-align: middle; margin-left: 8px;">
+                            <?php echo esc_html($environment->color ?? '#3788d8'); ?>
+                        </span>
+                        <p class="description">
+                            <?php esc_html_e('Color used to identify this environment in the calendar.', 'ffcertificate'); ?>
+                        </p>
+                    </td>
+                </tr>
+                <tr>
                     <th scope="row"><?php esc_html_e('Working Hours', 'ffcertificate'); ?></th>
                     <td>
                         <div class="ffc-working-hours">
@@ -345,9 +365,12 @@ class AudienceAdminEnvironment {
                 }
             }
 
+            $color = isset($_POST['environment_color']) ? sanitize_hex_color(wp_unslash($_POST['environment_color'])) : '#3788d8';
+
             $data = array(
                 'schedule_id' => isset($_POST['environment_schedule']) ? absint($_POST['environment_schedule']) : 0,
                 'name' => isset($_POST['environment_name']) ? sanitize_text_field(wp_unslash($_POST['environment_name'])) : '',
+                'color' => $color ?: '#3788d8',
                 'description' => isset($_POST['environment_description']) ? sanitize_textarea_field(wp_unslash($_POST['environment_description'])) : '',
                 'working_hours' => $working_hours,
                 'status' => isset($_POST['environment_status']) ? sanitize_text_field(wp_unslash($_POST['environment_status'])) : 'active',
