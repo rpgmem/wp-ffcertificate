@@ -309,6 +309,25 @@ class AudienceAdminCalendar {
                 </tr>
                 <tr>
                     <th scope="row">
+                        <label for="schedule_booking_label_singular"><?php esc_html_e('Booking Badge Label', 'ffcertificate'); ?></label>
+                    </th>
+                    <td>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="text" name="schedule_booking_label_singular" id="schedule_booking_label_singular" class="regular-text" style="max-width: 160px;"
+                                   value="<?php echo esc_attr($schedule->booking_label_singular ?? ''); ?>"
+                                   placeholder="<?php echo esc_attr__('booking', 'ffcertificate'); ?>">
+                            <span>/</span>
+                            <input type="text" name="schedule_booking_label_plural" id="schedule_booking_label_plural" class="regular-text" style="max-width: 160px;"
+                                   value="<?php echo esc_attr($schedule->booking_label_plural ?? ''); ?>"
+                                   placeholder="<?php echo esc_attr__('bookings', 'ffcertificate'); ?>">
+                        </div>
+                        <p class="description">
+                            <?php esc_html_e('Custom singular/plural label for the booking count shown in calendar day cells (e.g. "session" / "sessions"). Leave empty to use default.', 'ffcertificate'); ?>
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
                         <label for="schedule_audience_badge_format"><?php esc_html_e('Audience Badge Format', 'ffcertificate'); ?></label>
                     </th>
                     <td>
@@ -657,6 +676,12 @@ class AudienceAdminCalendar {
                 'audience_badge_format' => isset($_POST['schedule_audience_badge_format']) && in_array($_POST['schedule_audience_badge_format'], array('name', 'parent_name'), true)
                     ? sanitize_text_field(wp_unslash($_POST['schedule_audience_badge_format']))
                     : 'name',
+                'booking_label_singular' => !empty($_POST['schedule_booking_label_singular'])
+                    ? sanitize_text_field(wp_unslash($_POST['schedule_booking_label_singular']))
+                    : null,
+                'booking_label_plural' => !empty($_POST['schedule_booking_label_plural'])
+                    ? sanitize_text_field(wp_unslash($_POST['schedule_booking_label_plural']))
+                    : null,
                 'status' => isset($_POST['schedule_status']) ? sanitize_text_field(wp_unslash($_POST['schedule_status'])) : 'active',
             );
 

@@ -450,7 +450,8 @@
                     } else if (isClosed) {
                         html += '<span class="ffc-day-badge ffc-badge-closed">' + ffcAudience.strings.closed + '</span>';
                     } else if (bookingCount > 0) {
-                        html += '<span class="ffc-day-badge ffc-badge-bookings">' + bookingCount + ' ' + (bookingCount === 1 ? ffcAudience.strings.booking : ffcAudience.strings.bookings) + '</span>';
+                        var bLabel = bookingCount === 1 ? getBookingLabel('singular') : getBookingLabel('plural');
+                        html += '<span class="ffc-day-badge ffc-badge-bookings">' + bookingCount + ' ' + bLabel + '</span>';
                     }
 
                     html += '</div></div>';
@@ -1287,6 +1288,20 @@
     /**
      * Escape HTML
      */
+    /**
+     * Get custom booking label from schedule config, with global fallback.
+     * @param {string} form - 'singular' or 'plural'
+     */
+    function getBookingLabel(form) {
+        var schedules = state.config.schedules || [];
+        for (var i = 0; i < schedules.length; i++) {
+            var s = schedules[i];
+            if (form === 'singular' && s.bookingLabelSingular) return s.bookingLabelSingular;
+            if (form === 'plural' && s.bookingLabelPlural) return s.bookingLabelPlural;
+        }
+        return form === 'singular' ? ffcAudience.strings.booking : ffcAudience.strings.bookings;
+    }
+
     /**
      * Build a map of audienceId -> parentName from hierarchical config.
      */
