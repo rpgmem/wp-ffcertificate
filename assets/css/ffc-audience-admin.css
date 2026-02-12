@@ -22,16 +22,20 @@
     flex-direction: column;
 }
 
+.ffc-stat-number {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
 .ffc-stat-icon {
     font-size: 32px;
     color: var(--ffc-primary);
-    margin-bottom: 10px;
 }
 
 .ffc-stat-value {
     font-size: 36px;
     font-weight: 600;
-    display: block;
     color: var(--ffc-text);
 }
 
