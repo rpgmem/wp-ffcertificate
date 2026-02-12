@@ -7222,3 +7222,124 @@ msgstr "✅ Cache limpo com sucesso!"
 #: includes/admin/class-ffc-settings.php:227
 msgid "✅ Cache warmed! %d form(s) pre-loaded."
 msgstr "✅ Cache aquecido! %d formulário(s) pré-carregados."
+
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php
+msgid "Enable Quiz Mode"
+msgstr "Ativar Modo Quiz"
+
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php
+msgid "Turn this form into a quiz/evaluation"
+msgstr "Transformar este formulário em um quiz/avaliação"
+
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php
+msgid "When enabled, radio and select fields can have point values per option. The form is scored on submission."
+msgstr "Quando ativado, campos de rádio e seleção podem ter valores de pontos por opção. O formulário é pontuado ao enviar."
+
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php
+msgid "Passing Score (%)"
+msgstr "Nota de Aprovação (%)"
+
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php
+msgid "Minimum percentage to pass. Set 0 for no minimum."
+msgstr "Porcentagem mínima para aprovação. Defina 0 para sem mínimo."
+
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php
+msgid "Max Attempts"
+msgstr "Tentativas Máximas"
+
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php
+msgid "Max retries per CPF/RF. 0 = unlimited."
+msgstr "Máximo de tentativas por CPF/RF. 0 = ilimitado."
+
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php
+msgid "Display Options"
+msgstr "Opções de Exibição"
+
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php
+msgid "Show score after submission"
+msgstr "Mostrar pontuação após envio"
+
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php
+msgid "Show which answers were correct/incorrect"
+msgstr "Mostrar quais respostas estavam corretas/incorretas"
+
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php
+msgid "Points per option (same order, separate with commas):"
+msgstr "Pontos por opção (mesma ordem, separe com vírgulas):"
+
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php
+msgid "Info Block"
+msgstr "Bloco Informativo"
+
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php
+msgid "Title (optional)"
+msgstr "Título (opcional)"
+
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php
+msgid "Content (supports <b>, <i>, <a>, <p>, <ul>, <ol>):"
+msgstr "Conteúdo (suporta <b>, <i>, <a>, <p>, <ul>, <ol>):"
+
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php
+msgid "Embed (Media)"
+msgstr "Incorporar (Mídia)"
+
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php
+msgid "Caption (optional)"
+msgstr "Legenda (opcional)"
+
+#: includes/admin/class-ffc-form-editor-metabox-renderer.php
+msgid "Media URL (YouTube, Vimeo, image, or audio):"
+msgstr "URL da Mídia (YouTube, Vimeo, imagem ou áudio):"
+
+#: includes/admin/class-ffc-form-editor.php
+msgid "6. Quiz / Evaluation Mode"
+msgstr "6. Modo Quiz / Avaliação"
+
+#: includes/admin/class-ffc-submissions-list.php
+msgid "Quiz: Retry"
+msgstr "Quiz: Tentando"
+
+#: includes/admin/class-ffc-submissions-list.php
+msgid "Quiz: Failed"
+msgstr "Quiz: Reprovado"
+
+#: includes/frontend/class-ffc-form-processor.php
+msgid "Maximum quiz attempts reached for this CPF/RF."
+msgstr "Número máximo de tentativas do quiz atingido para este CPF/RF."
+
+#. %d: score percentage, used when max attempts reached
+#: includes/frontend/class-ffc-form-processor.php
+msgid "Quiz failed. Score: %d%%. Maximum attempts reached."
+msgstr "Quiz reprovado. Nota: %d%%. Número máximo de tentativas atingido."
+
+#: includes/frontend/class-ffc-form-processor.php
+msgid "Quiz failed. Maximum attempts reached."
+msgstr "Quiz reprovado. Número máximo de tentativas atingido."
+
+#. %1$d: score percentage, %2$d: remaining attempts
+#: includes/frontend/class-ffc-form-processor.php
+msgid "Score: %1$d%%. You can try again (%2$d attempts remaining)."
+msgstr "Nota: %1$d%%. Você pode tentar novamente (%2$d tentativas restantes)."
+
+#. %d: remaining attempts
+#: includes/frontend/class-ffc-form-processor.php
+msgid "Not passed. You can try again (%d attempts remaining)."
+msgstr "Não aprovado. Você pode tentar novamente (%d tentativas restantes)."
+
+#. %d: score percentage
+#: includes/frontend/class-ffc-form-processor.php
+msgid "Score: %d%%. You can try again."
+msgstr "Nota: %d%%. Você pode tentar novamente."
+
+#: includes/frontend/class-ffc-form-processor.php
+msgid "Not passed. You can try again."
+msgstr "Não aprovado. Você pode tentar novamente."
+
+#. %d: score percentage, used on quiz pass
+#: includes/frontend/class-ffc-form-processor.php
+msgid "Congratulations! Score: %d%%. Certificate generated."
+msgstr "Parabéns! Nota: %d%%. Certificado gerado."
+
+#: includes/frontend/class-ffc-form-processor.php
+msgid "Congratulations! Quiz passed. Certificate generated."
+msgstr "Parabéns! Quiz aprovado. Certificado gerado."
