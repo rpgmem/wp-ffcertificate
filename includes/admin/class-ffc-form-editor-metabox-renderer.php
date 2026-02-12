@@ -543,26 +543,45 @@ class FormEditorMetaboxRenderer {
         $name    = isset( $field['name'] ) ? $field['name'] : '';
         $req     = isset( $field['required'] ) ? $field['required'] : '';
         $opts    = isset( $field['options'] ) ? $field['options'] : '';
-        $content = isset( $field['content'] ) ? $field['content'] : '';
+        $content   = isset( $field['content'] ) ? $field['content'] : '';
+        $embed_url = isset( $field['embed_url'] ) ? $field['embed_url'] : '';
 
         $is_info = $type === 'info';
+        $is_embed = $type === 'embed';
+        $is_display_only = $is_info || $is_embed;
         $options_visible_class = ( $type === 'select' || $type === 'radio' ) ? '' : 'ffc-hidden';
         ?>
         <div class="ffc-field-row" data-index="<?php echo esc_attr($index); ?>">
             <div class="ffc-field-row-header">
                 <span class="ffc-sort-handle">
                     <span class="dashicons dashicons-menu"></span>
-                    <span class="ffc-field-title"><strong><?php echo $is_info ? esc_html__( 'Info Block', 'ffcertificate' ) : esc_html__( 'Field', 'ffcertificate' ); ?></strong></span>
+                    <span class="ffc-field-title"><strong><?php
+                        if ( $is_info ) {
+                            esc_html_e( 'Info Block', 'ffcertificate' );
+                        } elseif ( $is_embed ) {
+                            esc_html_e( 'Embed', 'ffcertificate' );
+                        } else {
+                            esc_html_e( 'Field', 'ffcertificate' );
+                        }
+                    ?></strong></span>
                 </span>
                 <button type="button" class="button button-link-delete ffc-remove-field"><?php esc_html_e( 'Remove', 'ffcertificate' ); ?></button>
             </div>
 
             <div class="ffc-field-row-grid">
                 <div class="ffc-grid-item">
-                    <label><?php echo $is_info ? esc_html__( 'Title (optional)', 'ffcertificate' ) : esc_html__( 'Label', 'ffcertificate' ); ?></label>
+                    <label><?php
+                        if ( $is_info ) {
+                            esc_html_e( 'Title (optional)', 'ffcertificate' );
+                        } elseif ( $is_embed ) {
+                            esc_html_e( 'Caption (optional)', 'ffcertificate' );
+                        } else {
+                            esc_html_e( 'Label', 'ffcertificate' );
+                        }
+                    ?></label>
                     <input type="text" name="ffc_fields[<?php echo esc_attr( $index ); ?>][label]" value="<?php echo esc_attr( $label ); ?>" class="ffc-w100">
                 </div>
-                <div class="ffc-grid-item ffc-standard-row<?php echo $is_info ? ' ffc-hidden' : ''; ?>">
+                <div class="ffc-grid-item ffc-standard-row<?php echo $is_display_only ? ' ffc-hidden' : ''; ?>">
                     <label><?php esc_html_e('Variable Name (Tag)', 'ffcertificate'); ?></label>
                     <input type="text" name="ffc_fields[<?php echo esc_attr( $index ); ?>][name]" value="<?php echo esc_attr( $name ); ?>" placeholder="<?php esc_attr_e('ex: course_name', 'ffcertificate'); ?>" class="ffc-w100">
                 </div>
@@ -578,9 +597,10 @@ class FormEditorMetaboxRenderer {
                         <option value="radio" <?php selected($type, 'radio'); ?>><?php esc_html_e('Radio Box', 'ffcertificate'); ?></option>
                         <option value="hidden" <?php selected($type, 'hidden'); ?>><?php esc_html_e('Hidden Field', 'ffcertificate'); ?></option>
                         <option value="info" <?php selected($type, 'info'); ?>><?php esc_html_e('Info Block', 'ffcertificate'); ?></option>
+                        <option value="embed" <?php selected($type, 'embed'); ?>><?php esc_html_e('Embed (Media)', 'ffcertificate'); ?></option>
                     </select>
                 </div>
-                <div class="ffc-grid-item ffc-flex-center ffc-standard-row<?php echo $is_info ? ' ffc-hidden' : ''; ?>">
+                <div class="ffc-grid-item ffc-flex-center ffc-standard-row<?php echo $is_display_only ? ' ffc-hidden' : ''; ?>">
                     <label class="ffc-req-label">
                         <input type="checkbox" name="ffc_fields[<?php echo esc_attr( $index ); ?>][required]" value="1" <?php checked($req, '1'); ?>>
                         <?php esc_html_e('Required?', 'ffcertificate'); ?>
@@ -593,6 +613,13 @@ class FormEditorMetaboxRenderer {
                     <?php esc_html_e('Content (supports <b>, <i>, <a>, <p>, <ul>, <ol>):', 'ffcertificate'); ?>
                 </p>
                 <textarea name="ffc_fields[<?php echo esc_attr( $index ); ?>][content]" rows="4" class="ffc-w100"><?php echo esc_textarea( $content ); ?></textarea>
+            </div>
+
+            <div class="ffc-embed-field<?php echo $is_embed ? '' : ' ffc-hidden'; ?>">
+                <p class="description ffc-options-desc">
+                    <?php esc_html_e('Media URL (YouTube, Vimeo, image, or audio):', 'ffcertificate'); ?>
+                </p>
+                <input type="url" name="ffc_fields[<?php echo esc_attr( $index ); ?>][embed_url]" value="<?php echo esc_url( $embed_url ); ?>" placeholder="https://www.youtube.com/watch?v=..." class="ffc-w100">
             </div>
 
             <div class="ffc-options-field <?php echo esc_attr( $options_visible_class ); ?>">

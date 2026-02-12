@@ -150,6 +150,44 @@
 }
 
 /* ============================================
+   EMBED BLOCK - v4.9.0
+   ============================================ */
+.ffc-form-embed-block {
+    margin-bottom: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.ffc-embed-caption {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    color: var(--ffc-text-muted);
+    font-style: italic;
+}
+
+.ffc-embed-media {
+    max-width: 600px;
+    width: 100%;
+}
+
+.ffc-embed-media iframe {
+    max-width: 100%;
+    border-radius: var(--ffc-radius-sm);
+}
+
+.ffc-embed-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--ffc-radius-sm);
+    display: block;
+}
+
+.ffc-embed-media a {
+    color: var(--ffc-link);
+    word-break: break-all;
+}
+
+/* ============================================
    LGPD CONSENT CHECKBOX - v2.10.0
    ============================================ */
 

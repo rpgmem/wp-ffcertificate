@@ -303,6 +303,38 @@ class Shortcodes {
             return ob_get_clean();
         }
 
+        // Embed block: display media via oembed or img tag
+        if ( $type === 'embed' ) {
+            $embed_url = isset( $field['embed_url'] ) ? $field['embed_url'] : '';
+            if ( empty( $embed_url ) ) return '';
+            ob_start();
+            ?>
+            <div class="ffc-form-embed-block">
+                <?php if ( ! empty( $label ) ) : ?>
+                    <p class="ffc-embed-caption"><?php echo esc_html( $label ); ?></p>
+                <?php endif; ?>
+                <div class="ffc-embed-media">
+                    <?php
+                    // Check if URL is a direct image
+                    if ( preg_match( '/\.(jpe?g|png|gif|webp|svg)(\?.*)?$/i', $embed_url ) ) {
+                        echo '<img src="' . esc_url( $embed_url ) . '" alt="' . esc_attr( $label ) . '" class="ffc-embed-image">';
+                    } else {
+                        // Try oembed (YouTube, Vimeo, audio, etc.)
+                        $embed_html = wp_oembed_get( $embed_url, array( 'width' => 600 ) );
+                        if ( $embed_html ) {
+                            echo $embed_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_oembed_get returns sanitized HTML from trusted providers.
+                        } else {
+                            // Fallback: show as a link
+                            echo '<a href="' . esc_url( $embed_url ) . '" target="_blank" rel="noopener noreferrer">' . esc_html( $embed_url ) . '</a>';
+                        }
+                    }
+                    ?>
+                </div>
+            </div>
+            <?php
+            return ob_get_clean();
+        }
+
         if ( empty( $name ) ) return '';
 
         // Special treatment for CPF/RF

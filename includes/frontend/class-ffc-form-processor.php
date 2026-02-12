@@ -370,7 +370,7 @@ class FormProcessor {
 
         foreach ( $fields_config as $field ) {
             // Skip display-only field types (no user input)
-            if ( isset( $field['type'] ) && $field['type'] === 'info' ) {
+            if ( isset( $field['type'] ) && in_array( $field['type'], array( 'info', 'embed' ), true ) ) {
                 continue;
             }
 

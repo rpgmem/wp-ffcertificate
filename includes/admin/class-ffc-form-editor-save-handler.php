@@ -36,15 +36,16 @@ class FormEditorSaveHandler {
             $clean_fields = array();
             // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each field sanitized individually below.
             foreach ( wp_unslash( $_POST['ffc_fields'] ) as $index => $field ) {
-                if ( $index === 'TEMPLATE' || (empty($field['label']) && empty($field['name']) && empty($field['content'])) ) continue;
+                if ( $index === 'TEMPLATE' || (empty($field['label']) && empty($field['name']) && empty($field['content']) && empty($field['embed_url'])) ) continue;
 
                 $clean_fields[] = array(
-                    'label'    => sanitize_text_field( $field['label'] ),
-                    'name'     => sanitize_key( $field['name'] ),
-                    'type'     => sanitize_key( $field['type'] ),
-                    'required' => isset( $field['required'] ) ? '1' : '',
-                    'options'  => sanitize_text_field( isset( $field['options'] ) ? $field['options'] : '' ),
-                    'content'  => wp_kses_post( isset( $field['content'] ) ? $field['content'] : '' ),
+                    'label'     => sanitize_text_field( $field['label'] ),
+                    'name'      => sanitize_key( $field['name'] ),
+                    'type'      => sanitize_key( $field['type'] ),
+                    'required'  => isset( $field['required'] ) ? '1' : '',
+                    'options'   => sanitize_text_field( isset( $field['options'] ) ? $field['options'] : '' ),
+                    'content'   => wp_kses_post( isset( $field['content'] ) ? $field['content'] : '' ),
+                    'embed_url' => esc_url_raw( isset( $field['embed_url'] ) ? $field['embed_url'] : '' ),
                 );
             }
             update_post_meta( $post_id, '_ffc_form_fields', $clean_fields );

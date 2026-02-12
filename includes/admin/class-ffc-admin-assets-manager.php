@@ -393,11 +393,17 @@ class AdminAssetsManager {
                 'radioButtons'            => __( 'Radio Buttons', 'ffcertificate' ),
                 'date'                    => __( 'Date', 'ffcertificate' ),
                 'infoBlock'               => __( 'Info Block', 'ffcertificate' ),
+                'embedMedia'              => __( 'Embed (Media)', 'ffcertificate' ),
 
                 // Info Block Field
                 'content'                 => __( 'Content:', 'ffcertificate' ),
                 'contentPlaceholder'      => __( 'Text to display. Supports <b>, <i>, <a>.', 'ffcertificate' ),
                 'titleOptional'           => __( 'Title (optional):', 'ffcertificate' ),
+
+                // Embed Field
+                'embedUrl'                => __( 'Media URL:', 'ffcertificate' ),
+                'embedUrlPlaceholder'     => __( 'https://www.youtube.com/watch?v=... or image URL', 'ffcertificate' ),
+                'captionOptional'         => __( 'Caption (optional):', 'ffcertificate' ),
 
                 // Template Manager
                 'selectTemplate'          => __( 'Select a Template', 'ffcertificate' ),
