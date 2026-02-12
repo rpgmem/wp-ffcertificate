@@ -3,7 +3,7 @@ Contributors: alexmeusburger
 Tags: certificate, form builder, pdf generation, verification, validation
 Requires at least: 6.2
 Tested up to: 6.9
-Stable tag: 4.9.0
+Stable tag: 4.9.1
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -154,6 +154,18 @@ In the certificate layout editor, use these dynamic tags:
 * Common examples: `{{name}}`, `{{email}}`, `{{cpf_rf}}`, `{{ticket}}`
 
 == Changelog ==
+
+= 4.9.1 (2026-02-12) =
+
+Calendar display improvements, custom booking labels, audience badge format, and bug fixes.
+
+* New: **Collapse parent audiences** — when a parent audience with all children is selected, display only the parent in frontend badges
+* New: **Audience badge format** option per calendar — choose between name only or "Parent: Child" format
+* New: **Custom booking badge labels** per calendar — configurable singular/plural labels for booking count in day cells (with global fallback)
+* Fix: **Geofence GPS checkbox** not saving when unchecked — added hidden sentinel field so unchecked state is properly persisted
+* Fix: **Migration cascade failure** — removed `AFTER` clauses from ALTER TABLE migrations that caused silent failures when referenced columns didn't exist
+* Fix: **Booking labels missing** from logged-in user config — bookingLabelSingular/bookingLabelPlural were only passed in the public config path
+* Fix: **Public calendar event details** — REST API now returns description, environment name, and audiences for non-authenticated users on public calendars
 
 = 4.9.0 (2026-02-12) =
 
