@@ -29,6 +29,9 @@
 
             // Cascading environment filter on bookings page
             this.initEnvironmentFilter();
+
+            // Booking actions (view/cancel) on bookings page
+            this.initBookingActions();
         },
 
         /**
@@ -150,6 +153,145 @@
                     },
                     error: function() {
                         $environmentSelect.html('<option value="">' + allEnvironmentsText + '</option>');
+                    }
+                });
+            });
+        },
+
+        /**
+         * View and Cancel booking actions on the bookings admin page
+         */
+        initBookingActions: function() {
+            if (!$('.ffc-view-booking').length && !$('.ffc-cancel-booking').length) {
+                return;
+            }
+
+            var strings = typeof ffcAudienceAdmin !== 'undefined' ? ffcAudienceAdmin.strings : {};
+            var adminNonce = typeof ffcAudienceAdmin !== 'undefined' ? ffcAudienceAdmin.adminNonce : '';
+
+            // Escape HTML helper
+            function esc(str) {
+                var div = document.createElement('div');
+                div.appendChild(document.createTextNode(str || ''));
+                return div.innerHTML;
+            }
+
+            // View booking
+            $(document).on('click', '.ffc-view-booking', function(e) {
+                e.preventDefault();
+                var bookingId = $(this).data('booking-id');
+
+                // Remove existing modal
+                $('#ffc-booking-modal').remove();
+
+                // Show loading modal
+                var $modal = $('<div id="ffc-booking-modal" class="ffc-admin-modal-overlay">' +
+                    '<div class="ffc-admin-modal">' +
+                    '<div class="ffc-admin-modal-header"><h3>' + esc(strings.bookingDetails || 'Booking Details') + '</h3><button type="button" class="ffc-admin-modal-close">&times;</button></div>' +
+                    '<div class="ffc-admin-modal-body"><p>' + esc(strings.loading || 'Loading...') + '</p></div>' +
+                    '</div></div>');
+                $('body').append($modal);
+                $modal.show();
+
+                $.ajax({
+                    url: ajaxurl,
+                    type: 'GET',
+                    data: {
+                        action: 'ffc_audience_get_booking',
+                        booking_id: bookingId,
+                        nonce: adminNonce
+                    },
+                    success: function(response) {
+                        if (!response.success) {
+                            $modal.find('.ffc-admin-modal-body').html('<p>' + esc(response.data.message || strings.error) + '</p>');
+                            return;
+                        }
+                        var b = response.data;
+                        var timeDisplay = parseInt(b.is_all_day) ? (strings.allDay || 'All Day') : (b.start_time + ' - ' + b.end_time);
+                        var typeDisplay = b.booking_type === 'audience' ? (strings.audience || 'Audience') : (strings.customUsers || 'Custom Users');
+                        var statusDisplay = b.status === 'active' ? (strings.active || 'Active') : (strings.cancelled || 'Cancelled');
+                        var statusClass = b.status === 'active' ? 'status-active' : 'status-cancelled';
+
+                        var html = '<table class="widefat fixed"><tbody>';
+                        html += '<tr><th>' + esc(strings.date || 'Date') + '</th><td>' + esc(b.booking_date) + '</td></tr>';
+                        html += '<tr><th>' + esc(strings.time || 'Time') + '</th><td>' + esc(timeDisplay) + '</td></tr>';
+                        html += '<tr><th>' + esc(strings.environmentLabel || 'Environment') + '</th><td>' + esc(b.environment_name) + '</td></tr>';
+                        html += '<tr><th>' + esc(strings.description || 'Description') + '</th><td>' + esc(b.description) + '</td></tr>';
+                        html += '<tr><th>' + esc(strings.type || 'Type') + '</th><td>' + esc(typeDisplay) + '</td></tr>';
+                        html += '<tr><th>' + esc(strings.status || 'Status') + '</th><td><span class="' + statusClass + '">' + esc(statusDisplay) + '</span></td></tr>';
+                        html += '<tr><th>' + esc(strings.createdBy || 'Created By') + '</th><td>' + esc(b.created_by) + '</td></tr>';
+
+                        if (b.audiences && b.audiences.length > 0) {
+                            var audNames = b.audiences.map(function(a) { return a.name; }).join(', ');
+                            html += '<tr><th>' + esc(strings.audiences || 'Audiences') + '</th><td>' + esc(audNames) + '</td></tr>';
+                        }
+
+                        if (b.users && b.users.length > 0) {
+                            var userList = b.users.map(function(u) { return u.name + ' (' + u.email + ')'; }).join(', ');
+                            html += '<tr><th>' + esc(strings.users || 'Users') + '</th><td>' + esc(userList) + '</td></tr>';
+                        }
+
+                        if (b.status === 'cancelled' && b.cancel_reason) {
+                            html += '<tr><th>' + esc(strings.cancelReason || 'Cancel Reason') + '</th><td>' + esc(b.cancel_reason) + '</td></tr>';
+                        }
+
+                        html += '</tbody></table>';
+                        $modal.find('.ffc-admin-modal-body').html(html);
+                    },
+                    error: function() {
+                        $modal.find('.ffc-admin-modal-body').html('<p>' + esc(strings.error || 'An error occurred.') + '</p>');
+                    }
+                });
+            });
+
+            // Close modal
+            $(document).on('click', '.ffc-admin-modal-close, .ffc-admin-modal-overlay', function(e) {
+                if (e.target === this) {
+                    $('#ffc-booking-modal').remove();
+                }
+            });
+
+            // Cancel booking
+            $(document).on('click', '.ffc-cancel-booking', function(e) {
+                e.preventDefault();
+                var $link = $(this);
+                var bookingId = $link.data('booking-id');
+
+                if (!confirm(strings.confirmCancel || 'Are you sure you want to cancel this booking?')) {
+                    return;
+                }
+
+                var reason = prompt(strings.cancelReason || 'Please provide a reason for cancellation:');
+                if (reason === null) {
+                    return;
+                }
+
+                $link.css('pointer-events', 'none').css('opacity', '0.5');
+
+                $.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    data: {
+                        action: 'ffc_audience_cancel_booking',
+                        booking_id: bookingId,
+                        reason: reason,
+                        nonce: adminNonce
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Update the row status and remove cancel link
+                            var $row = $link.closest('tr');
+                            $row.find('.status-active').removeClass('status-active').addClass('status-cancelled').text(strings.cancelled || 'Cancelled');
+                            $link.prev().remove(); // remove "|" separator
+                            $link.remove();
+                        } else {
+                            alert(response.data.message || strings.error);
+                            $link.css('pointer-events', '').css('opacity', '');
+                        }
+                    },
+                    error: function() {
+                        alert(strings.error || 'An error occurred.');
+                        $link.css('pointer-events', '').css('opacity', '');
                     }
                 });
             });

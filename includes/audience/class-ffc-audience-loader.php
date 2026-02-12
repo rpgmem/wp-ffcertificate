@@ -88,6 +88,7 @@ class AudienceLoader {
         add_action('wp_ajax_ffc_audience_check_conflicts', array($this, 'ajax_check_conflicts'));
         add_action('wp_ajax_ffc_audience_create_booking', array($this, 'ajax_create_booking'));
         add_action('wp_ajax_ffc_audience_cancel_booking', array($this, 'ajax_cancel_booking'));
+        add_action('wp_ajax_ffc_audience_get_booking', array($this, 'ajax_get_booking'));
         add_action('wp_ajax_ffc_audience_get_schedule_slots', array($this, 'ajax_get_schedule_slots'));
         add_action('wp_ajax_ffc_search_users', array($this, 'ajax_search_users'));
         add_action('wp_ajax_ffc_audience_get_environments', array($this, 'ajax_get_environments'));
@@ -269,6 +270,24 @@ class AudienceLoader {
             'invalidTime' => __('End time must be after start time.', 'ffcertificate'),
             'allEnvironments' => __('All Environments', 'ffcertificate'),
             'environmentLabel' => __('Environment', 'ffcertificate'),
+            'cancelReason' => __('Please provide a reason for cancellation:', 'ffcertificate'),
+            'bookingCancelled' => __('Booking cancelled successfully.', 'ffcertificate'),
+            'bookingDetails' => __('Booking Details', 'ffcertificate'),
+            'date' => __('Date', 'ffcertificate'),
+            'time' => __('Time', 'ffcertificate'),
+            'description' => __('Description', 'ffcertificate'),
+            'type' => __('Type', 'ffcertificate'),
+            'status' => __('Status', 'ffcertificate'),
+            'createdBy' => __('Created By', 'ffcertificate'),
+            'audiences' => __('Audiences', 'ffcertificate'),
+            'users' => __('Users', 'ffcertificate'),
+            'cancelReason' => __('Cancel Reason', 'ffcertificate'),
+            'close' => __('Close', 'ffcertificate'),
+            'allDay' => __('All Day', 'ffcertificate'),
+            'audience' => __('Audience', 'ffcertificate'),
+            'customUsers' => __('Custom Users', 'ffcertificate'),
+            'active' => __('Active', 'ffcertificate'),
+            'cancelled' => __('Cancelled', 'ffcertificate'),
         );
     }
 
@@ -330,15 +349,106 @@ class AudienceLoader {
      * @return void
      */
     public function ajax_cancel_booking(): void {
-        check_ajax_referer('wp_rest', 'nonce');
+        check_ajax_referer('ffc_admin_nonce', 'nonce');
 
-        if (!current_user_can('read')) {
+        if (!current_user_can('manage_options')) {
             wp_send_json_error(array('message' => __('Permission denied.', 'ffcertificate')));
         }
 
-        // Booking cancellation is handled by AudienceBookingService
-        // This is a placeholder - actual implementation in Phase 6
-        wp_send_json_error(array('message' => __('Not implemented yet.', 'ffcertificate')));
+        $booking_id = isset($_POST['booking_id']) ? absint($_POST['booking_id']) : 0;
+        $reason = isset($_POST['reason']) ? sanitize_textarea_field(wp_unslash($_POST['reason'])) : '';
+
+        if (!$booking_id) {
+            wp_send_json_error(array('message' => __('Invalid booking ID.', 'ffcertificate')));
+        }
+
+        $booking = AudienceBookingRepository::get_by_id($booking_id);
+        if (!$booking) {
+            wp_send_json_error(array('message' => __('Booking not found.', 'ffcertificate')));
+        }
+
+        if ($booking->status === 'cancelled') {
+            wp_send_json_error(array('message' => __('Booking is already cancelled.', 'ffcertificate')));
+        }
+
+        $result = AudienceBookingRepository::cancel($booking_id, $reason);
+        if (!$result) {
+            wp_send_json_error(array('message' => __('Failed to cancel booking.', 'ffcertificate')));
+        }
+
+        do_action('ffcertificate_audience_booking_cancelled', $booking_id, $reason);
+
+        wp_send_json_success(array('message' => __('Booking cancelled successfully.', 'ffcertificate')));
+    }
+
+    /**
+     * AJAX: Get booking details
+     *
+     * @return void
+     */
+    public function ajax_get_booking(): void {
+        check_ajax_referer('ffc_admin_nonce', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(array('message' => __('Permission denied.', 'ffcertificate')));
+        }
+
+        $booking_id = isset($_GET['booking_id']) ? absint($_GET['booking_id']) : 0;
+        if (!$booking_id) {
+            wp_send_json_error(array('message' => __('Invalid booking ID.', 'ffcertificate')));
+        }
+
+        $booking = AudienceBookingRepository::get_by_id($booking_id);
+        if (!$booking) {
+            wp_send_json_error(array('message' => __('Booking not found.', 'ffcertificate')));
+        }
+
+        // Get creator name
+        $creator = get_userdata((int) $booking->created_by);
+        $creator_name = $creator ? $creator->display_name : __('Unknown', 'ffcertificate');
+
+        // Format audiences
+        $audiences = array();
+        if (!empty($booking->audiences)) {
+            foreach ($booking->audiences as $aud) {
+                $audiences[] = array(
+                    'id' => $aud->audience_id ?? $aud->id ?? 0,
+                    'name' => $aud->name ?? $aud->audience_name ?? '',
+                );
+            }
+        }
+
+        // Format users
+        $users = array();
+        if (!empty($booking->users)) {
+            foreach ($booking->users as $u) {
+                $user_data = get_userdata((int) ($u->user_id ?? $u->ID ?? 0));
+                if ($user_data) {
+                    $users[] = array(
+                        'id' => $user_data->ID,
+                        'name' => $user_data->display_name,
+                        'email' => $user_data->user_email,
+                    );
+                }
+            }
+        }
+
+        wp_send_json_success(array(
+            'id' => $booking->id,
+            'booking_date' => $booking->booking_date,
+            'start_time' => $booking->start_time,
+            'end_time' => $booking->end_time,
+            'is_all_day' => (int) ($booking->is_all_day ?? 0),
+            'environment_name' => $booking->environment_name,
+            'description' => $booking->description,
+            'booking_type' => $booking->booking_type,
+            'status' => $booking->status,
+            'cancel_reason' => $booking->cancel_reason ?? '',
+            'created_by' => $creator_name,
+            'created_at' => $booking->created_at,
+            'audiences' => $audiences,
+            'users' => $users,
+        ));
     }
 
     /**
