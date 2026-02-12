@@ -22,16 +22,20 @@
     flex-direction: column;
 }
 
+.ffc-stat-number {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
 .ffc-stat-icon {
     font-size: 32px;
     color: var(--ffc-primary);
-    margin-bottom: 10px;
 }
 
 .ffc-stat-value {
     font-size: 36px;
     font-weight: 600;
-    display: block;
     color: var(--ffc-text);
 }
 
@@ -261,6 +265,74 @@
 .tablenav.top select,
 .tablenav.top input[type="date"] {
     margin-right: 5px;
+}
+
+/* Admin Modal Overlay (booking details) */
+.ffc-admin-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ffc-admin-modal {
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.ffc-admin-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    border-bottom: 1px solid #ddd;
+}
+
+.ffc-admin-modal-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.ffc-admin-modal-close {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+    line-height: 1;
+}
+
+.ffc-admin-modal-close:hover {
+    color: #333;
+}
+
+.ffc-admin-modal-body {
+    padding: 18px;
+    overflow-y: auto;
+}
+
+.ffc-admin-modal-body table.widefat th {
+    width: 140px;
+    font-weight: 600;
+    padding: 10px 12px;
+}
+
+.ffc-admin-modal-body table.widefat td {
+    padding: 10px 12px;
 }
 
 /* Import Page */

@@ -93,10 +93,19 @@ class AudienceAdminCalendar {
                         <?php
                         $env_count = AudienceEnvironmentRepository::count(array('schedule_id' => $schedule->id));
                         $edit_url = admin_url('admin.php?page=' . $this->menu_slug . '-calendars&action=edit&id=' . $schedule->id);
-                        $delete_url = wp_nonce_url(
-                            admin_url('admin.php?page=' . $this->menu_slug . '-calendars&action=delete&id=' . $schedule->id),
-                            'delete_schedule_' . $schedule->id
-                        );
+                        $is_active = ($schedule->status === 'active');
+
+                        if ($is_active) {
+                            $deactivate_url = wp_nonce_url(
+                                admin_url('admin.php?page=' . $this->menu_slug . '-calendars&action=deactivate&id=' . $schedule->id),
+                                'deactivate_schedule_' . $schedule->id
+                            );
+                        } else {
+                            $delete_url = wp_nonce_url(
+                                admin_url('admin.php?page=' . $this->menu_slug . '-calendars&action=delete&id=' . $schedule->id),
+                                'delete_schedule_' . $schedule->id
+                            );
+                        }
                         ?>
                         <tr>
                             <td class="column-name">
@@ -111,14 +120,20 @@ class AudienceAdminCalendar {
                             <td class="column-environments"><?php echo esc_html($env_count); ?></td>
                             <td class="column-status">
                                 <span class="ffc-status-badge ffc-status-<?php echo esc_attr($schedule->status); ?>">
-                                    <?php echo $schedule->status === 'active' ? esc_html__('Active', 'ffcertificate') : esc_html__('Inactive', 'ffcertificate'); ?>
+                                    <?php echo $is_active ? esc_html__('Active', 'ffcertificate') : esc_html__('Inactive', 'ffcertificate'); ?>
                                 </span>
                             </td>
                             <td class="column-actions">
                                 <a href="<?php echo esc_url($edit_url); ?>"><?php esc_html_e('Edit', 'ffcertificate'); ?></a> |
-                                <a href="<?php echo esc_url($delete_url); ?>" class="delete-link" onclick="return confirm('<?php esc_attr_e('Are you sure you want to delete this calendar?', 'ffcertificate'); ?>');">
-                                    <?php esc_html_e('Delete', 'ffcertificate'); ?>
-                                </a>
+                                <?php if ($is_active) : ?>
+                                    <a href="<?php echo esc_url($deactivate_url); ?>" class="delete-link" onclick="return confirm('<?php esc_attr_e('Are you sure you want to deactivate this calendar?', 'ffcertificate'); ?>');">
+                                        <?php esc_html_e('Deactivate', 'ffcertificate'); ?>
+                                    </a>
+                                <?php else : ?>
+                                    <a href="<?php echo esc_url($delete_url); ?>" class="delete-link" onclick="return confirm('<?php esc_attr_e('Are you sure you want to permanently delete this calendar?', 'ffcertificate'); ?>');">
+                                        <?php esc_html_e('Delete', 'ffcertificate'); ?>
+                                    </a>
+                                <?php endif; ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -592,6 +607,7 @@ class AudienceAdminCalendar {
             $msg = sanitize_text_field(wp_unslash($_GET['message']));
             $messages = array(
                 'created'         => __('Calendar created successfully.', 'ffcertificate'),
+                'deactivated'     => __('Calendar deactivated successfully.', 'ffcertificate'),
                 'deleted'         => __('Calendar deleted successfully.', 'ffcertificate'),
                 'holiday_deleted' => __('Holiday deleted successfully.', 'ffcertificate'),
             );
@@ -635,14 +651,28 @@ class AudienceAdminCalendar {
             }
         }
 
-        // Handle delete
+        // Handle deactivate (active items get deactivated instead of deleted)
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        if (isset($_GET['action']) && $_GET['action'] === 'deactivate' && isset($_GET['id'])) {
+            $id = absint($_GET['id']);
+            if (wp_verify_nonce(isset($_GET['_wpnonce']) ? sanitize_text_field(wp_unslash($_GET['_wpnonce'])) : '', 'deactivate_schedule_' . $id)) {
+                AudienceScheduleRepository::update($id, array('status' => 'inactive'));
+                wp_safe_redirect(admin_url('admin.php?page=' . $this->menu_slug . '-calendars&message=deactivated'));
+                exit;
+            }
+        }
+
+        // Handle delete (only inactive items can be permanently deleted)
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])) {
             $id = absint($_GET['id']);
             if (wp_verify_nonce(isset($_GET['_wpnonce']) ? sanitize_text_field(wp_unslash($_GET['_wpnonce'])) : '', 'delete_schedule_' . $id)) {
-                AudienceScheduleRepository::delete($id);
-                wp_safe_redirect(admin_url('admin.php?page=' . $this->menu_slug . '-calendars&message=deleted'));
-                exit;
+                $schedule = AudienceScheduleRepository::get_by_id($id);
+                if ($schedule && $schedule->status !== 'active') {
+                    AudienceScheduleRepository::delete($id);
+                    wp_safe_redirect(admin_url('admin.php?page=' . $this->menu_slug . '-calendars&message=deleted'));
+                    exit;
+                }
             }
         }
 
