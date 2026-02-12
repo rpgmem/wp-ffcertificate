@@ -314,13 +314,13 @@ class SubmissionsList extends \WP_List_Table {
             return;
         }
 
-        // Get all forms
+        // Get all forms ordered by ID descending (newest first)
         $forms = get_posts( [
             'post_type' => 'ffc_form',
             'posts_per_page' => -1,
             'post_status' => 'publish',
-            'orderby' => 'title',
-            'order' => 'ASC'
+            'orderby' => 'ID',
+            'order' => 'DESC'
         ] );
 
         if ( empty( $forms ) ) {
@@ -340,23 +340,62 @@ class SubmissionsList extends \WP_List_Table {
         }
         // phpcs:enable WordPress.Security.NonceVerification.Recommended
 
+        $filter_count = count( $selected_form_ids );
+        $btn_label = $filter_count > 0
+            /* translators: %d: number of selected filters */
+            ? sprintf( __( 'Filter (%d)', 'ffcertificate' ), $filter_count )
+            : __( 'Filter', 'ffcertificate' );
+
         ?>
-        <div class="alignleft actions">
-            <label for="filter-form-id" class="screen-reader-text"><?php esc_html_e( 'Filter by form', 'ffcertificate' ); ?></label>
-            <select name="filter_form_id[]" id="filter-form-id" multiple style="min-width: 200px; height: 100px;">
-                <?php foreach ( $forms as $form ) : ?>
-                    <option value="<?php echo esc_attr( $form->ID ); ?>" <?php echo in_array( $form->ID, $selected_form_ids ) ? 'selected' : ''; ?>>
-                        <?php echo esc_html( $form->post_title ); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-            <input type="submit" class="button" value="<?php esc_html_e( 'Filter', 'ffcertificate' ); ?>">
-            <?php if ( !empty( $selected_form_ids ) ) : ?>
+        <div class="alignleft actions ffc-filter-actions">
+            <button type="button" class="button ffc-filter-btn" id="ffc-open-filter-overlay">
+                <span class="dashicons dashicons-filter" style="vertical-align: middle; margin-right: 2px; font-size: 16px; line-height: 1.4;"></span>
+                <?php echo esc_html( $btn_label ); ?>
+            </button>
+            <?php if ( $filter_count > 0 ) : ?>
                 <a href="<?php echo esc_url( remove_query_arg( 'filter_form_id' ) ); ?>" class="button">
                     <?php esc_html_e( 'Clear Filter', 'ffcertificate' ); ?>
                 </a>
             <?php endif; ?>
+
+            <!-- Filter Overlay -->
+            <div id="ffc-filter-overlay" class="ffc-filter-overlay" style="display: none;">
+                <div class="ffc-filter-overlay-backdrop"></div>
+                <div class="ffc-filter-overlay-content">
+                    <div class="ffc-filter-overlay-header">
+                        <h3><?php esc_html_e( 'Filter by Form', 'ffcertificate' ); ?></h3>
+                        <button type="button" class="ffc-filter-overlay-close" title="<?php esc_attr_e( 'Close', 'ffcertificate' ); ?>">&times;</button>
+                    </div>
+                    <div class="ffc-filter-overlay-body">
+                        <?php foreach ( $forms as $form ) :
+                            $checked = in_array( $form->ID, $selected_form_ids ) ? 'checked' : '';
+                        ?>
+                            <label class="ffc-filter-form-item">
+                                <input type="checkbox" name="filter_form_id[]" value="<?php echo esc_attr( $form->ID ); ?>" <?php echo $checked; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- 'checked' literal ?>>
+                                <span class="ffc-filter-form-title"><?php echo esc_html( $form->post_title ); ?></span>
+                                <span class="ffc-filter-form-id">#<?php echo esc_html( $form->ID ); ?></span>
+                            </label>
+                        <?php endforeach; ?>
+                    </div>
+                    <div class="ffc-filter-overlay-footer">
+                        <button type="submit" class="button button-primary"><?php esc_html_e( 'Apply Filter', 'ffcertificate' ); ?></button>
+                        <button type="button" class="button ffc-filter-overlay-close"><?php esc_html_e( 'Cancel', 'ffcertificate' ); ?></button>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <script>
+        (function(){
+            var overlay = document.getElementById('ffc-filter-overlay');
+            if (!overlay) return;
+            document.getElementById('ffc-open-filter-overlay').addEventListener('click', function(){ overlay.style.display = 'flex'; });
+            overlay.querySelectorAll('.ffc-filter-overlay-close, .ffc-filter-overlay-backdrop').forEach(function(el){
+                el.addEventListener('click', function(){ overlay.style.display = 'none'; });
+            });
+            overlay.addEventListener('click', function(e){ if (e.target === overlay) overlay.style.display = 'none'; });
+        })();
+        </script>
         <?php
     }
 }

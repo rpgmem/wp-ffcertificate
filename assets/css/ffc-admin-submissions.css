@@ -204,6 +204,125 @@
 }
 
 /* ==========================================================================
+   FILTER OVERLAY
+   ========================================================================== */
+
+.ffc-filter-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ffc-filter-overlay-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.ffc-filter-overlay-content {
+    position: relative;
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+    max-width: 480px;
+    width: 90%;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.ffc-filter-overlay-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    border-bottom: 1px solid #ddd;
+}
+
+.ffc-filter-overlay-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.ffc-filter-overlay-close {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+    line-height: 1;
+}
+
+.ffc-filter-overlay-close:hover {
+    color: #333;
+}
+
+.ffc-filter-overlay-body {
+    padding: 8px 0;
+    overflow-y: auto;
+    max-height: 50vh;
+}
+
+.ffc-filter-form-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 18px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.ffc-filter-form-item:last-child {
+    border-bottom: none;
+}
+
+.ffc-filter-form-item:hover {
+    background: #f6f7f7;
+}
+
+.ffc-filter-form-item input[type="checkbox"] {
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.ffc-filter-form-title {
+    flex: 1;
+    font-size: 14px;
+    color: #1d2327;
+}
+
+.ffc-filter-form-id {
+    font-size: 12px;
+    color: #999;
+    flex-shrink: 0;
+}
+
+.ffc-filter-overlay-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 14px 18px;
+    border-top: 1px solid #ddd;
+}
+
+.ffc-filter-btn .dashicons {
+    width: 16px;
+    height: 16px;
+}
+
+/* ==========================================================================
    ADMIN TOP ACTIONS - MODERN
    ========================================================================== */
 
