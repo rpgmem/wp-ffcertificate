@@ -216,6 +216,8 @@ class AudienceScheduleRepository {
             'show_event_list' => '%d',
             'event_list_position' => '%s',
             'audience_badge_format' => '%s',
+            'booking_label_singular' => '%s',
+            'booking_label_plural' => '%s',
             'status' => '%s',
         );
 

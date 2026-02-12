@@ -417,6 +417,7 @@ class AudienceActivator {
             self::migrate_environment_color_column();
             self::migrate_schedule_event_list_columns();
             self::migrate_schedule_audience_badge_format_column();
+            self::migrate_schedule_booking_label_columns();
         }
     }
 
@@ -547,6 +548,41 @@ class AudienceActivator {
             "ALTER TABLE {$table_name}
             ADD COLUMN show_event_list tinyint(1) DEFAULT 0 COMMENT 'Show event list alongside calendar' AFTER include_ics,
             ADD COLUMN event_list_position enum('side','below') DEFAULT 'side' COMMENT 'Position of event list' AFTER show_event_list"
+        );
+    }
+
+    /**
+     * Migrate schedules table to add booking_label_singular / booking_label_plural columns.
+     *
+     * Custom labels for the booking count badge shown in calendar day cells
+     * (e.g. "atendimento" / "atendimentos" instead of "reserva" / "reservas").
+     *
+     * @since 4.9.0
+     * @return void
+     */
+    private static function migrate_schedule_booking_label_columns(): void {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'ffc_audience_schedules';
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $column_exists = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = 'booking_label_singular'",
+                DB_NAME,
+                $table_name
+            )
+        );
+
+        if (!empty($column_exists)) {
+            return;
+        }
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+        $wpdb->query(
+            "ALTER TABLE {$table_name}
+            ADD COLUMN booking_label_singular varchar(50) DEFAULT NULL COMMENT 'Custom singular label for booking badge' AFTER audience_badge_format,
+            ADD COLUMN booking_label_plural varchar(50) DEFAULT NULL COMMENT 'Custom plural label for booking badge' AFTER booking_label_singular"
         );
     }
 

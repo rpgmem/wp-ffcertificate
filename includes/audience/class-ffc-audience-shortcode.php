@@ -101,6 +101,8 @@ class AudienceShortcode {
                         'environmentLabelPlural' => AudienceScheduleRepository::get_environment_label($s),
                         'environments' => self::get_schedule_environments((int) $s->id),
                         'futureDaysLimit' => isset($s->future_days_limit) ? (int) $s->future_days_limit : null,
+                    'bookingLabelSingular' => $s->booking_label_singular ?? null,
+                    'bookingLabelPlural' => $s->booking_label_plural ?? null,
                     );
                 }, $schedules),
                 'showEventList' => self::should_show_event_list($schedules),
