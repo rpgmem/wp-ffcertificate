@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Free Form Certificate\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-02-06 11:00+0000\n"
-"PO-Revision-Date: 2026-02-10 01:49+0000\n"
+"PO-Revision-Date: 2026-02-12 00:36+0000\n"
 "Last-Translator: \n"
 "Language-Team: Português do Brasil\n"
 "Language: pt_BR\n"
@@ -116,7 +116,7 @@ msgstr[0] "%d hora"
 msgstr[1] "%d horas"
 
 #. %d: number of members added
-#: includes/audience/class-ffc-audience-admin-audience.php:379
+#: includes/audience/class-ffc-audience-admin-audience.php:394
 msgid "%d member(s) added successfully."
 msgstr "%d membro(s) adicionado(s) com sucesso."
 
@@ -172,6 +172,18 @@ msgstr ""
 "A coluna %s não existe. Por favor, atualize o esquema do banco de dados "
 "primeiro."
 
+#. %s: environment label (singular)
+#: includes/audience/class-ffc-audience-admin-environment.php:354
+#, php-format
+msgid "%s created successfully."
+msgstr "%s criado com sucesso."
+
+#. %s: environment label (singular)
+#: includes/audience/class-ffc-audience-admin-environment.php:356
+#, php-format
+msgid "%s deleted successfully."
+msgstr "%s excluído com sucesso."
+
 #. %s: number of logs
 #: includes/admin/views/ffc-admin-activity-log.php:164
 #, php-format
@@ -187,7 +199,7 @@ msgid "%s Migration"
 msgstr "%s Migração"
 
 #. %s: environment label (singular)
-#: includes/audience/class-ffc-audience-admin-environment.php:360
+#: includes/audience/class-ffc-audience-admin-environment.php:400
 #, php-format
 msgid "%s updated successfully."
 msgstr "%s atualizado com sucesso."
@@ -207,8 +219,8 @@ msgstr "(padrão: 2)"
 msgid "(Deleted)"
 msgstr "(Excluída)"
 
-#: includes/admin/class-ffc-admin-user-capabilities.php:179
-#: includes/admin/class-ffc-admin-user-capabilities.php:187
+#: includes/admin/class-ffc-admin-user-capabilities.php:202
+#: includes/admin/class-ffc-admin-user-capabilities.php:210
 msgid "(Future feature)"
 msgstr "(Recurso futuro)"
 
@@ -374,12 +386,12 @@ msgid "[%1$s] New Scheduled Activity - %2$s"
 msgstr "[%1$s] Nova Atividade Agendada - %2$s"
 
 #. %s: site name
-#: includes/self-scheduling/class-ffc-self-scheduling-cpt.php:432
+#: includes/self-scheduling/class-ffc-self-scheduling-cpt.php:434
 #, php-format
 msgid "[%s] Appointment Cancelled - Calendar No Longer Available"
 msgstr "[%s] Agendamento Cancelado - Calendário Não Disponível"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:508
+#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:631
 msgid "A confirmation email has been sent to your email address."
 msgstr "Um e-mail de confirmação foi enviado para o seu endereço de e-mail."
 
@@ -408,9 +420,10 @@ msgstr "Ação"
 #: includes/admin/class-ffc-form-editor-metabox-renderer.php:65
 #: includes/self-scheduling/class-ffc-self-scheduling-editor.php:267
 #: includes/audience/class-ffc-audience-admin-bookings.php:151
-#: includes/audience/class-ffc-audience-admin-environment.php:109
+#: includes/audience/class-ffc-audience-admin-environment.php:110
 #: includes/audience/class-ffc-audience-admin-calendar.php:83
-#: includes/audience/class-ffc-audience-admin-calendar.php:325
+#: includes/audience/class-ffc-audience-admin-calendar.php:349
+#: includes/audience/class-ffc-audience-admin-calendar.php:546
 #: includes/audience/class-ffc-audience-admin-audience.php:86
 #: includes/audience/class-ffc-audience-admin-audience.php:296
 #: includes/audience/class-ffc-audience-admin-settings.php:184
@@ -421,10 +434,10 @@ msgstr "Ações"
 #: includes/self-scheduling/class-ffc-self-scheduling-editor.php:218
 #: includes/audience/class-ffc-audience-admin-bookings.php:127
 #: includes/audience/class-ffc-audience-admin-bookings.php:195
-#: includes/audience/class-ffc-audience-admin-environment.php:144
-#: includes/audience/class-ffc-audience-admin-environment.php:292
+#: includes/audience/class-ffc-audience-admin-environment.php:148
+#: includes/audience/class-ffc-audience-admin-environment.php:312
 #: includes/audience/class-ffc-audience-admin-calendar.php:114
-#: includes/audience/class-ffc-audience-admin-calendar.php:277
+#: includes/audience/class-ffc-audience-admin-calendar.php:302
 #: includes/audience/class-ffc-audience-admin-audience.php:140
 #: includes/audience/class-ffc-audience-admin-audience.php:231
 msgid "Active"
@@ -487,7 +500,7 @@ msgstr "Resumo das Atividades (últimos 30 dias)"
 msgid "Add %s"
 msgstr "Adicione %s"
 
-#: includes/audience/class-ffc-audience-admin-calendar.php:311
+#: includes/audience/class-ffc-audience-admin-calendar.php:532
 #: includes/audience/class-ffc-audience-admin-settings.php:170
 msgid "Add Holiday"
 msgstr "Adicionar Feriado"
@@ -502,7 +515,7 @@ msgstr "Adicionar Membros"
 msgid "Add New"
 msgstr "Adicionar Novo"
 
-#: includes/audience/class-ffc-audience-admin-environment.php:191
+#: includes/audience/class-ffc-audience-admin-environment.php:195
 #, php-format
 msgid "Add New %s"
 msgstr "Adicionar Novo(a) %s"
@@ -512,7 +525,7 @@ msgid "Add New Audience"
 msgstr "Adicionar Novo Público-alvo"
 
 #: includes/audience/class-ffc-audience-admin-calendar.php:141
-#: includes/audience/class-ffc-audience-admin-settings.php:250
+#: includes/audience/class-ffc-audience-admin-settings.php:252
 msgid "Add New Calendar"
 msgstr "Adicionar Novo Calendário"
 
@@ -532,13 +545,18 @@ msgstr "Adicionar Novo Calendário Pessoal"
 msgid "Add Selected Members"
 msgstr "Adicionar Membros Selecionados"
 
-#: includes/audience/class-ffc-audience-admin-calendar.php:294
+#: includes/audience/class-ffc-audience-admin-calendar.php:515
 msgid ""
 "Add specific dates when the calendar will be closed (holidays, maintenance, "
 "etc.)."
 msgstr ""
 "Adicione datas específicas quando o calendário estará fechado (feriados, "
 "manutenção, etc.)."
+
+#: includes/audience/class-ffc-audience-admin-calendar.php:326
+#: includes/audience/class-ffc-audience-admin-calendar.php:332
+msgid "Add User"
+msgstr "Adicionar Usuário"
 
 #: includes/settings/views/ffc-tab-documentation.php:617
 msgid "Add width/height attributes"
@@ -584,11 +602,11 @@ msgstr ""
 "Acesso Administrativo: As restrições de geolocalização estão desativadas "
 "para administradores"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:471
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:493
 msgid "Admin Email Addresses"
 msgstr "Endereços de E-mail do Administrador"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:369
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:371
 msgid "Admin must manually approve all bookings"
 msgstr "O administrador deve aprovar manualmente todos os agendamentos"
 
@@ -624,8 +642,8 @@ msgstr ""
 msgid "Advanced"
 msgstr "Avançado"
 
-#: includes/admin/class-ffc-admin-user-capabilities.php:167
-#: includes/admin/class-ffc-admin-user-capabilities.php:171
+#: includes/admin/class-ffc-admin-user-capabilities.php:190
+#: includes/admin/class-ffc-admin-user-capabilities.php:194
 msgid "Advanced Permissions"
 msgstr "Permissões Avançadas"
 
@@ -639,7 +657,7 @@ msgstr "Alex Meusburger"
 
 #. %s: environment label (plural)
 #: includes/audience/class-ffc-audience-admin-bookings.php:115
-#: includes/audience/class-ffc-audience-shortcode.php:214
+#: includes/audience/class-ffc-audience-shortcode.php:226
 #, php-format
 msgid "All %s"
 msgstr "Todas(os) %s"
@@ -649,17 +667,26 @@ msgid "All Actions"
 msgstr "Todas as Ações"
 
 #. %d: total number of appointments
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:871
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:897
 msgid "All Appointments (%d)"
 msgstr "Todos os Agendamentos (%d)"
 
 #: includes/audience/class-ffc-audience-admin-environment.php:93
-#: includes/audience/class-ffc-audience-shortcode.php:193
+#: includes/audience/class-ffc-audience-shortcode.php:205
 #: includes/self-scheduling/views/appointments-list.php:270
 msgid "All Calendars"
 msgstr "Todos os Calendários"
 
-#: includes/audience/class-ffc-audience-loader.php:267
+#: includes/audience/class-ffc-audience-shortcode.php:712
+msgid "All Day"
+msgstr "Dia Inteiro"
+
+#: includes/audience/class-ffc-audience-shortcode.php:307
+msgid "All day event"
+msgstr "Evento que dura o dia inteiro"
+
+#: includes/audience/class-ffc-audience-loader.php:270
+#: includes/audience/class-ffc-audience-shortcode.php:711
 msgid "All Environments"
 msgstr "Todos os Ambientes"
 
@@ -716,6 +743,10 @@ msgstr ""
 "Permitir acesso a recursos relacionados a compromissos. As configurações "
 "específicas do calendário também se aplicam."
 
+#: includes/admin/class-ffc-admin-user-capabilities.php:182
+msgid "Allow access to audience/group scheduling features."
+msgstr "Permitir acesso às funcionalidades de agendamento de público/grupo."
+
 #: includes/admin/class-ffc-admin-user-capabilities.php:115
 msgid "Allow access to certificate-related features in the user dashboard."
 msgstr ""
@@ -734,7 +765,7 @@ msgstr ""
 msgid "Allow administrators to bypass the block (recommended)"
 msgstr "Permitir que os administradores ignorem o bloqueio (recomendado)"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:342
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:344
 msgid "Allow User Cancellation"
 msgstr "Permitir Cancelamento pelo Usuário"
 
@@ -762,6 +793,10 @@ msgstr ""
 "Permite a criação de formulários dinâmicos, salva os envios, gera um "
 "certificado em PDF e possibilita a exportação em CSV."
 
+#: includes/admin/class-ffc-admin-user-capabilities.php:179
+msgid "Allows viewing group/audience bookings in the dashboard."
+msgstr "Permite visualizar reservas de grupo/público no painel de controle."
+
 #: includes/admin/class-ffc-admin-user-capabilities.php:156
 msgid ""
 "Allows viewing private calendars, booking past dates, out-of-hours, and "
@@ -769,6 +804,10 @@ msgid ""
 msgstr ""
 "Permite visualizar calendários privados, reservar datas passadas, horários "
 "fora do expediente e datas bloqueadas."
+
+#: includes/audience/class-ffc-audience-admin-calendar.php:418
+msgid "already added"
+msgstr "já adicionado"
 
 #: includes/settings/views/ffc-tab-documentation.php:638
 msgid "Always use inline styles"
@@ -779,8 +818,8 @@ msgid "An error occurred while booking. Please try again."
 msgstr "Ocorreu um erro ao efetuar a reserva. Por favor, tente novamente."
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:156
-#: includes/audience/class-ffc-audience-loader.php:260
-#: includes/audience/class-ffc-audience-shortcode.php:602
+#: includes/audience/class-ffc-audience-loader.php:263
+#: includes/audience/class-ffc-audience-shortcode.php:667
 msgid "An error occurred. Please try again."
 msgstr "Ocorreu um erro. Por favor, tente novamente."
 
@@ -872,7 +911,7 @@ msgstr "Agendamento cancelado com sucesso."
 msgid "Appointment Cancelled: %s"
 msgstr "Agendamento Cancelado: %s"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:428
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:450
 msgid "Appointment Confirmation - {{calendar_title}}"
 msgstr "Confirmação de Agendamento - {{calendar_title}}"
 
@@ -887,7 +926,7 @@ msgid "Appointment confirmed successfully."
 msgstr "Agendamento confirmado com sucesso."
 
 #: includes/self-scheduling/class-ffc-self-scheduling-appointment-email-handler.php:261
-#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:499
+#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:622
 msgid "Appointment Confirmed!"
 msgstr "Agendamento Confirmado!"
 
@@ -958,7 +997,7 @@ msgstr "Comprovante_Agendamento"
 #: includes/admin/class-ffc-admin-user-columns.php:69
 #: includes/self-scheduling/class-ffc-self-scheduling-admin.php:37
 #: includes/self-scheduling/class-ffc-self-scheduling-admin.php:38
-#: includes/audience/class-ffc-audience-admin-settings.php:255
+#: includes/audience/class-ffc-audience-admin-settings.php:257
 #: includes/self-scheduling/views/appointments-list.php:393
 msgid "Appointments"
 msgstr "Agendamentos"
@@ -984,7 +1023,7 @@ msgid "Approved By"
 msgstr "Aprovado Por"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:162
-#: includes/audience/class-ffc-audience-shortcode.php:623
+#: includes/audience/class-ffc-audience-shortcode.php:688
 msgid "April"
 msgstr "Abril"
 
@@ -1008,8 +1047,8 @@ msgstr ""
 msgid "Are you sure you want to cancel this appointment?"
 msgstr "Tem certeza que deseja cancelar este agendamento?"
 
-#: includes/audience/class-ffc-audience-loader.php:257
-#: includes/audience/class-ffc-audience-shortcode.php:607
+#: includes/audience/class-ffc-audience-loader.php:260
+#: includes/audience/class-ffc-audience-shortcode.php:672
 msgid "Are you sure you want to cancel this booking?"
 msgstr "Tem certeza que deseja cancelar esta reserva?"
 
@@ -1030,7 +1069,7 @@ msgstr ""
 "desfeita."
 
 #. %s: environment label (singular)
-#: includes/audience/class-ffc-audience-admin-environment.php:151
+#: includes/audience/class-ffc-audience-admin-environment.php:155
 #, php-format
 msgid "Are you sure you want to delete this %s?"
 msgstr "Tem certeza de que deseja excluir este(a) %s?"
@@ -1043,7 +1082,7 @@ msgstr "Tem certeza que deseja excluir este público-alvo?"
 msgid "Are you sure you want to delete this calendar?"
 msgstr "Tem certeza que deseja excluir este calendário?"
 
-#: includes/audience/class-ffc-audience-loader.php:256
+#: includes/audience/class-ffc-audience-loader.php:259
 msgid "Are you sure you want to delete this item?"
 msgstr "Tem certeza que deseja excluir este item?"
 
@@ -1060,7 +1099,7 @@ msgstr "Tem certeza de que deseja desvincular este usuário dessa submissão?"
 msgid "Associate submissions with WordPress users based on CPF/RF"
 msgstr "Associar envios a usuários do WordPress com base no CPF/RF"
 
-#: includes/audience/class-ffc-audience-rest-controller.php:436
+#: includes/audience/class-ffc-audience-rest-controller.php:439
 msgid "At least one audience must be selected."
 msgstr "Pelo menos um público-alvo deve ser selecionado."
 
@@ -1072,7 +1111,7 @@ msgstr ""
 "Pelo menos um método de geolocalização (GPS ou IP) deve estar ativado quando "
 "a geolocalização estiver ativa."
 
-#: includes/audience/class-ffc-audience-rest-controller.php:443
+#: includes/audience/class-ffc-audience-rest-controller.php:446
 msgid "At least one user must be selected."
 msgstr "Pelo menos um usuário deve ser selecionado."
 
@@ -1089,11 +1128,19 @@ msgstr "Agendamentos de Público-alvo"
 
 #: includes/audience/class-ffc-audience-admin-page.php:129
 #: includes/audience/class-ffc-audience-admin-page.php:130
-#: includes/audience/class-ffc-audience-admin-settings.php:350
+#: includes/audience/class-ffc-audience-admin-settings.php:392
 msgid "Audience Calendars"
 msgstr "Calendários de Público-alvo"
 
-#: includes/audience/class-ffc-audience-shortcode.php:293
+#: includes/audience/class-ffc-audience-admin-audience.php:346
+msgid "Audience created successfully."
+msgstr "Público-alvo criado com sucesso."
+
+#: includes/audience/class-ffc-audience-admin-audience.php:347
+msgid "Audience deleted successfully."
+msgstr "Público-alvo excluído com sucesso."
+
+#: includes/audience/class-ffc-audience-shortcode.php:325
 msgid "Audience Groups"
 msgstr "Grupos de Público-alvo"
 
@@ -1102,19 +1149,24 @@ msgstr "Grupos de Público-alvo"
 msgid "Audience not found."
 msgstr "Público-alvo não encontrado."
 
+#: includes/admin/class-ffc-admin-user-capabilities.php:167
+#: includes/admin/class-ffc-admin-user-capabilities.php:171
+msgid "Audience Permissions"
+msgstr "Permissões de Público-alvo"
+
 #: includes/audience/class-ffc-audience-admin-dashboard.php:91
 msgid "Audience Scheduling"
 msgstr "Agendamento de Público-alvo"
 
-#: includes/audience/class-ffc-audience-admin-settings.php:340
+#: includes/audience/class-ffc-audience-admin-settings.php:382
 msgid "Audience Scheduling Settings"
 msgstr "Configurações de Agendamento de Público-alvo"
 
-#: includes/audience/class-ffc-audience-admin-audience.php:356
+#: includes/audience/class-ffc-audience-admin-audience.php:371
 msgid "Audience updated successfully."
 msgstr "Público-alvo atualizado com sucesso."
 
-#: includes/audience/class-ffc-audience-admin-settings.php:473
+#: includes/audience/class-ffc-audience-admin-settings.php:528
 msgid "Audience visibility settings saved."
 msgstr "Tem certeza de que deseja excluir este(a) %s?"
 
@@ -1126,7 +1178,7 @@ msgstr "Público-alvo:"
 #: includes/audience/class-ffc-audience-admin-audience.php:73
 #: includes/audience/class-ffc-audience-admin-page.php:149
 #: includes/audience/class-ffc-audience-admin-page.php:150
-#: includes/audience/class-ffc-audience-admin-settings.php:356
+#: includes/audience/class-ffc-audience-admin-settings.php:398
 msgid "Audiences"
 msgstr "Públicos-alvo"
 
@@ -1135,7 +1187,7 @@ msgid "Audiences:"
 msgstr "Públicos-alvo:"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:166
-#: includes/audience/class-ffc-audience-shortcode.php:627
+#: includes/audience/class-ffc-audience-shortcode.php:692
 msgid "August"
 msgstr "Agosto"
 
@@ -1195,26 +1247,26 @@ msgstr ""
 "indefinidamente."
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:184
-#: includes/audience/class-ffc-audience-shortcode.php:245
-#: includes/audience/class-ffc-audience-shortcode.php:635
+#: includes/audience/class-ffc-audience-shortcode.php:257
+#: includes/audience/class-ffc-audience-shortcode.php:700
 msgid "Available"
 msgstr "Disponível"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:374
+#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:497
 msgid "Available time slots"
 msgstr "Horários disponíveis"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:152
-#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:356
+#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:479
 msgid "Available Times"
 msgstr "Horários Disponíveis"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:488
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:510
 msgid "Available variables:"
 msgstr "Variáveis disponíveis:"
 
 #. %s: environment label (plural, e.g. "Environments", "Rooms")
-#: includes/audience/class-ffc-audience-admin-environment.php:207
+#: includes/audience/class-ffc-audience-admin-environment.php:211
 #, php-format
 msgid "Back to %s"
 msgstr "Voltar para %s"
@@ -1259,6 +1311,10 @@ msgstr "Usuários banidos..."
 #: includes/settings/views/ffc-tab-documentation.php:498
 msgid "Basic humanity verification"
 msgstr "Verificação básica de humanidade"
+
+#: includes/audience/class-ffc-audience-admin-calendar.php:287
+msgid "Below"
+msgstr "Abaixo"
 
 #: includes/audience/class-ffc-audience-notification-handler.php:387
 #: includes/audience/class-ffc-audience-notification-handler.php:415
@@ -1318,12 +1374,12 @@ msgstr "Bloqueado hoje:"
 msgid "Bold text:"
 msgstr "Texto em negrito:"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:513
+#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:636
 msgid "Book Another Appointment"
 msgstr "Agendar Outro Horário"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:201
-#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:477
+#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:600
 msgid "Book Appointment"
 msgstr "Agendar Horário"
 
@@ -1332,8 +1388,8 @@ msgid "Book appointments"
 msgstr "Reservar agendamentos"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:185
-#: includes/audience/class-ffc-audience-shortcode.php:246
-#: includes/audience/class-ffc-audience-shortcode.php:636
+#: includes/audience/class-ffc-audience-shortcode.php:258
+#: includes/audience/class-ffc-audience-shortcode.php:701
 msgid "Booked"
 msgstr "Reservado"
 
@@ -1343,32 +1399,46 @@ msgid "Booked on:"
 msgstr "Agendado em:"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:186
-#: includes/audience/class-ffc-audience-shortcode.php:641
+#: includes/audience/class-ffc-audience-shortcode.php:706
 msgid "booking"
 msgstr "reserva"
 
-#: includes/audience/class-ffc-audience-rest-controller.php:569
-#: includes/audience/class-ffc-audience-shortcode.php:606
+#: includes/audience/class-ffc-audience-rest-controller.php:573
+#: includes/audience/class-ffc-audience-shortcode.php:671
 msgid "Booking cancelled successfully."
 msgstr "Reserva cancelada com sucesso."
 
-#: includes/audience/class-ffc-audience-shortcode.php:605
+#: includes/audience/class-ffc-audience-shortcode.php:670
 msgid "Booking created successfully!"
 msgstr "Reserva criada com sucesso!"
 
-#: includes/audience/class-ffc-audience-rest-controller.php:516
+#: includes/audience/class-ffc-audience-rest-controller.php:520
 msgid "Booking created successfully."
 msgstr "Reserva criada com sucesso."
 
-#: includes/audience/class-ffc-audience-rest-controller.php:549
+#: includes/audience/class-ffc-audience-rest-controller.php:553
 msgid "Booking is already cancelled."
 msgstr "A reserva já está cancelada."
 
-#: includes/audience/class-ffc-audience-rest-controller.php:542
+#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:415
+#: includes/audience/class-ffc-audience-admin-settings.php:235
+msgid "Booking is available only during business hours (%hours%)."
+msgstr ""
+"As reservas estão disponíveis apenas durante o horário comercial (% horas)."
+
+#: includes/self-scheduling/class-ffc-self-scheduling-appointment-validator.php:193
+msgid "Booking is available only during business hours."
+msgstr "As reservas estão disponíveis apenas durante o horário comercial."
+
+#: includes/audience/class-ffc-audience-rest-controller.php:546
 msgid "Booking not found."
 msgstr "Reserva não encontrada."
 
-#: includes/audience/class-ffc-audience-shortcode.php:291
+#: includes/audience/class-ffc-audience-admin-settings.php:352
+msgid "Booking Restriction Message"
+msgstr "Mensagem de Restrição de Reserva"
+
+#: includes/audience/class-ffc-audience-shortcode.php:323
 msgid "Booking Type"
 msgstr "Tipo de Reserva"
 
@@ -1377,9 +1447,13 @@ msgid "Bookings"
 msgstr "Reservas"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:187
-#: includes/audience/class-ffc-audience-shortcode.php:642
+#: includes/audience/class-ffc-audience-shortcode.php:707
 msgid "bookings"
 msgstr "reservas"
+
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:419
+msgid "Bookings can only be made during working hours"
+msgstr "As reservas só podem ser feitas durante o horário de funcionamento."
 
 #: includes/settings/views/ffc-tab-documentation.php:378
 msgid "Border"
@@ -1400,6 +1474,18 @@ msgstr "Tempo de intervalo entre agendamentos (0 = sem intervalo)"
 #: includes/admin/class-ffc-admin.php:215
 msgid "Bulk action completed."
 msgstr "Ação em massa concluída."
+
+#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:304
+msgid "Business Hours Restricted"
+msgstr "Horário de Funcionamento Restrito"
+
+#: includes/audience/class-ffc-audience-admin-settings.php:333
+msgid "Business Hours Restriction Messages"
+msgstr "Mensagens de Restrição de Horário Comercial"
+
+#: includes/audience/class-ffc-audience-admin-settings.php:508
+msgid "Business hours restriction messages saved."
+msgstr "Mensagens de restrição de horário comercial salvas."
 
 #: includes/admin/views/ffc-admin-activity-log.php:195
 msgid "By Level:"
@@ -1446,17 +1532,29 @@ msgstr "Códigos QR em cache:"
 
 #: includes/shortcodes/class-ffc-dashboard-shortcode.php:360
 #: includes/self-scheduling/class-ffc-self-scheduling-appointment-csv-exporter.php:54
-#: includes/audience/class-ffc-audience-admin-environment.php:107
-#: includes/audience/class-ffc-audience-admin-environment.php:221
+#: includes/audience/class-ffc-audience-admin-environment.php:108
+#: includes/audience/class-ffc-audience-admin-environment.php:225
 #: includes/self-scheduling/views/appointments-list.php:47
 msgid "Calendar"
 msgstr "Calendário"
 
 #. %s: calendar title
-#: includes/self-scheduling/class-ffc-self-scheduling-cpt.php:385
+#: includes/self-scheduling/class-ffc-self-scheduling-cpt.php:387
 #, php-format
 msgid "Calendar \"%s\" was deleted"
 msgstr "O calendário \"%s\" foi excluído"
+
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:409
+msgid "Calendar can only be viewed during working hours"
+msgstr "O calendário só pode ser visualizado durante o horário de expediente."
+
+#: includes/audience/class-ffc-audience-admin-calendar.php:594
+msgid "Calendar created successfully."
+msgstr "Calendário criado com sucesso."
+
+#: includes/audience/class-ffc-audience-admin-calendar.php:595
+msgid "Calendar deleted successfully."
+msgstr "Calendário excluído com sucesso."
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:250
 msgid ""
@@ -1484,11 +1582,11 @@ msgstr "Calendário não está ativo."
 
 #: includes/api/class-ffc-calendar-rest-controller.php:171
 #: includes/api/class-ffc-appointment-rest-controller.php:132
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:652
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:678
 msgid "Calendar not found"
 msgstr "Calendário não encontrado"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:760
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:786
 msgid "Calendar not found in database. Save the calendar first."
 msgstr ""
 "Calendário não encontrado no banco de dados. Salve o calendário primeiro."
@@ -1498,6 +1596,7 @@ msgstr ""
 #: includes/self-scheduling/class-ffc-self-scheduling-appointment-handler.php:299
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:241
 #: includes/audience/class-ffc-audience-admin-calendar.php:146
+#: includes/audience/class-ffc-audience-loader.php:450
 msgid "Calendar not found."
 msgstr "Calendário não encontrado."
 
@@ -1511,7 +1610,7 @@ msgstr "Repositório de calendário não disponível"
 msgid "Calendar status (inactive = no new bookings allowed)"
 msgstr "Status do calendário (inativo = novos agendamentos não permitidos)"
 
-#: includes/audience/class-ffc-audience-admin-calendar.php:388
+#: includes/audience/class-ffc-audience-admin-calendar.php:628
 msgid "Calendar updated successfully."
 msgstr "Calendário atualizado com sucesso."
 
@@ -1528,6 +1627,10 @@ msgstr "Calendário:"
 msgid "Calendars"
 msgstr "Calendários"
 
+#: includes/audience/class-ffc-audience-admin-calendar.php:346
+msgid "Can Book"
+msgstr "Pode Reservar"
+
 #: includes/settings/views/ffc-tab-migrations.php:207
 msgid "Can I undo a migration?"
 msgstr "Posso desfazer uma migração?"
@@ -1536,8 +1639,8 @@ msgstr "Posso desfazer uma migração?"
 #: includes/admin/class-ffc-admin-assets-manager.php:398
 #: includes/admin/class-ffc-admin-submission-edit-page.php:122
 #: includes/audience/class-ffc-audience-admin-bookings.php:206
-#: includes/audience/class-ffc-audience-shortcode.php:339
-#: includes/audience/class-ffc-audience-shortcode.php:637
+#: includes/audience/class-ffc-audience-shortcode.php:371
+#: includes/audience/class-ffc-audience-shortcode.php:702
 #: includes/self-scheduling/views/appointments-list.php:111
 msgid "Cancel"
 msgstr "Cancelar"
@@ -1547,11 +1650,15 @@ msgstr "Cancelar"
 msgid "Cancel Appointment"
 msgstr "Cancelar Agendamento"
 
+#: includes/audience/class-ffc-audience-admin-calendar.php:347
+msgid "Cancel Others"
+msgstr "Cancelar de Outros"
+
 #: includes/admin/class-ffc-admin-user-capabilities.php:147
 msgid "Cancel own appointments"
 msgstr "Cancelar os próprios agendamentos"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:351
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:353
 msgid "Cancellation Deadline"
 msgstr "Prazo de Cancelamento"
 
@@ -1572,7 +1679,7 @@ msgstr "Cancelamento não é permitido para este calendário."
 msgid "Cancellation Reason"
 msgstr "Motivo do Cancelamento"
 
-#: includes/audience/class-ffc-audience-rest-controller.php:534
+#: includes/audience/class-ffc-audience-rest-controller.php:538
 msgid "Cancellation reason is required."
 msgstr "O motivo do cancelamento é obrigatório."
 
@@ -1593,7 +1700,7 @@ msgstr "CANCELADO"
 #: includes/self-scheduling/class-ffc-self-scheduling-appointment-receipt-handler.php:223
 #: includes/audience/class-ffc-audience-admin-bookings.php:128
 #: includes/audience/class-ffc-audience-admin-bookings.php:195
-#: includes/audience/class-ffc-audience-shortcode.php:638
+#: includes/audience/class-ffc-audience-shortcode.php:703
 #: includes/frontend/class-ffc-verification-response-renderer.php:115
 #: includes/self-scheduling/views/appointments-list.php:201
 #: includes/self-scheduling/views/appointments-list.php:282
@@ -1601,7 +1708,7 @@ msgid "Cancelled"
 msgstr "Cancelado"
 
 #. %d: number of cancelled appointments
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:836
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:862
 msgid "Cancelled (%d)"
 msgstr "Cancelados (%d)"
 
@@ -1621,7 +1728,7 @@ msgstr "Cancelado pelo administrador"
 msgid "Cancelled by:"
 msgstr "Cancelado por:"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:818
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:844
 msgid "Cancelled:"
 msgstr "Cancelados:"
 
@@ -1629,12 +1736,12 @@ msgstr "Cancelados:"
 msgid "Cannot book appointments in the past."
 msgstr "Não é possível agendar no passado."
 
-#: includes/audience/class-ffc-audience-rest-controller.php:411
+#: includes/audience/class-ffc-audience-rest-controller.php:414
 msgid "Cannot book dates in the past."
 msgstr "Não é possível reservar datas no passado."
 
 #. %d: maximum number of days allowed for advance booking
-#: includes/audience/class-ffc-audience-rest-controller.php:456
+#: includes/audience/class-ffc-audience-rest-controller.php:459
 msgid "Cannot book more than %d days in advance."
 msgstr "Não é possível reservar com mais de %d dias de antecedência."
 
@@ -1686,7 +1793,7 @@ msgstr "Certificado emitido anteriormente (Reimpressão)."
 msgid "Certificate Settings"
 msgstr "Configurações de Certificado"
 
-#: includes/admin/class-ffc-admin-user-capabilities.php:185
+#: includes/admin/class-ffc-admin-user-capabilities.php:208
 msgid "Certificate update"
 msgstr "Atualização de certificado"
 
@@ -1695,8 +1802,8 @@ msgstr "Atualização de certificado"
 msgid "Certificates"
 msgstr "Certificados"
 
-#: includes/audience/class-ffc-audience-shortcode.php:342
-#: includes/audience/class-ffc-audience-shortcode.php:640
+#: includes/audience/class-ffc-audience-shortcode.php:374
+#: includes/audience/class-ffc-audience-shortcode.php:705
 msgid "Check Conflicts"
 msgstr "Verificar Conflitos"
 
@@ -1813,18 +1920,22 @@ msgid "Click the button above to access your certificate online"
 msgstr "Clique no botão acima para acessar seu certificado online."
 
 #: includes/admin/class-ffc-admin-assets-manager.php:420
-#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:357
-#: includes/audience/class-ffc-audience-shortcode.php:373
+#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:480
+#: includes/audience/class-ffc-audience-shortcode.php:405
 msgid "Close"
 msgstr "Fechar"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:183
 #: includes/self-scheduling/class-ffc-self-scheduling-appointment-ajax-handler.php:290
-#: includes/audience/class-ffc-audience-admin-environment.php:274
-#: includes/audience/class-ffc-audience-shortcode.php:248
-#: includes/audience/class-ffc-audience-shortcode.php:634
+#: includes/audience/class-ffc-audience-admin-environment.php:294
+#: includes/audience/class-ffc-audience-shortcode.php:260
+#: includes/audience/class-ffc-audience-shortcode.php:699
 msgid "Closed"
 msgstr "Fechado"
+
+#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:389
+msgid "Closed today"
+msgstr "Fechado hoje"
 
 #: includes/shortcodes/class-ffc-dashboard-shortcode.php:366
 msgid "Code"
@@ -1834,6 +1945,8 @@ msgstr "Código"
 msgid "codes generated"
 msgstr "códigos gerados"
 
+#: includes/audience/class-ffc-audience-admin-environment.php:106
+#: includes/audience/class-ffc-audience-admin-environment.php:257
 #: includes/audience/class-ffc-audience-admin-audience.php:83
 #: includes/audience/class-ffc-audience-admin-audience.php:198
 msgid "Color"
@@ -1843,11 +1956,15 @@ msgstr "Cor"
 msgid "Color used for visual identification in calendars."
 msgstr "Cor utilizada para identificação visual nos calendários."
 
+#: includes/audience/class-ffc-audience-admin-environment.php:267
+msgid "Color used to identify this environment in the calendar."
+msgstr "Cor utilizada para identificar este ambiente no calendário."
+
 #: includes/settings/views/ffc-tab-documentation.php:221
 msgid "Combining multiple attributes (separate with colons)"
 msgstr "Combinando múltiplos atributos (separados com dois pontos)"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:474
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:496
 msgid ""
 "Comma-separated email addresses for admin notifications (leave empty to use "
 "site admin email)"
@@ -1906,7 +2023,7 @@ msgstr ""
 "Configure o cache de localização GPS no frontend (armazenamento local do "
 "navegador). O cache de GPS está sempre ativado para melhor desempenho."
 
-#: includes/audience/class-ffc-audience-admin-settings.php:372
+#: includes/audience/class-ffc-audience-admin-settings.php:414
 msgid ""
 "Configure how private audience calendars are displayed to non-logged-in "
 "visitors. Note: Scheduling is always restricted to authorized members."
@@ -1915,7 +2032,7 @@ msgstr ""
 "visitantes não autenticados. Observação: o agendamento é sempre restrito a "
 "membros autorizados."
 
-#: includes/audience/class-ffc-audience-admin-settings.php:274
+#: includes/audience/class-ffc-audience-admin-settings.php:276
 msgid ""
 "Configure how private calendars are displayed to non-logged-in visitors."
 msgstr ""
@@ -1930,11 +2047,11 @@ msgstr "Confirmar"
 msgid "Confirmation Code"
 msgstr "Código de Confirmação"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:484
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:506
 msgid "Confirmation Email Body"
 msgstr "Corpo do E-mail de Confirmação"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:478
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:500
 msgid "Confirmation Email Subject"
 msgstr "Assunto do E-mail de Confirmação"
 
@@ -2055,7 +2172,7 @@ msgstr "CPF"
 msgid "CPF / ID"
 msgstr "CPF / ID"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:418
+#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:541
 msgid "CPF / RF"
 msgstr "CPF / RF"
 
@@ -2075,7 +2192,7 @@ msgstr "Número CPF ou RF"
 msgid "CPF/RF"
 msgstr "CPF/RF"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-appointment-validator.php:188
+#: includes/self-scheduling/class-ffc-self-scheduling-appointment-validator.php:205
 msgid "CPF/RF is required."
 msgstr "CPF/RF é obrigatório."
 
@@ -2084,7 +2201,7 @@ msgstr "CPF/RF é obrigatório."
 msgid "CPF/RF limit reached."
 msgstr "Limite de CPF/RF atingido."
 
-#: includes/self-scheduling/class-ffc-self-scheduling-appointment-validator.php:201
+#: includes/self-scheduling/class-ffc-self-scheduling-appointment-validator.php:218
 msgid "CPF/RF must be 7 digits (RF) or 11 digits (CPF)."
 msgstr "CPF/RF deve ter 7 dígitos (RF) ou 11 dígitos (CPF)."
 
@@ -2097,7 +2214,7 @@ msgstr "O CPF/RF deve ter exatamente 7 ou 11 dígitos."
 msgid "CPF/RF:"
 msgstr "CPF/RF:"
 
-#: includes/audience/class-ffc-audience-admin-environment.php:306
+#: includes/audience/class-ffc-audience-admin-environment.php:326
 #, php-format
 msgid "Create %s"
 msgstr "Criar %s"
@@ -2112,12 +2229,12 @@ msgstr ""
 msgid "Create Audience"
 msgstr "Criar Público-alvo"
 
-#: includes/audience/class-ffc-audience-shortcode.php:345
-#: includes/audience/class-ffc-audience-shortcode.php:643
+#: includes/audience/class-ffc-audience-shortcode.php:377
+#: includes/audience/class-ffc-audience-shortcode.php:708
 msgid "Create Booking"
 msgstr "Criar Reserva"
 
-#: includes/audience/class-ffc-audience-admin-calendar.php:287
+#: includes/audience/class-ffc-audience-admin-calendar.php:312
 msgid "Create Calendar"
 msgstr "Criar Calendário"
 
@@ -2276,11 +2393,11 @@ msgstr "Migrações de Banco de Dados"
 #: includes/admin/class-ffc-form-editor-metabox-renderer.php:573
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:189
 #: includes/audience/class-ffc-audience-admin-bookings.php:144
-#: includes/audience/class-ffc-audience-admin-calendar.php:303
-#: includes/audience/class-ffc-audience-admin-calendar.php:323
+#: includes/audience/class-ffc-audience-admin-calendar.php:524
+#: includes/audience/class-ffc-audience-admin-calendar.php:544
 #: includes/audience/class-ffc-audience-admin-settings.php:150
 #: includes/audience/class-ffc-audience-admin-settings.php:182
-#: includes/audience/class-ffc-audience-shortcode.php:266
+#: includes/audience/class-ffc-audience-shortcode.php:291
 #: includes/frontend/class-ffc-verification-response-renderer.php:238
 #: includes/self-scheduling/views/appointments-list.php:50
 msgid "Date"
@@ -2337,7 +2454,7 @@ msgstr "Data: %s"
 msgid "Day"
 msgstr "Dia"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:337
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:339
 #: includes/settings/views/ffc-tab-rate-limit.php:111
 msgid "days"
 msgstr "dias"
@@ -2355,7 +2472,7 @@ msgid "Debug Settings"
 msgstr "Configurações de Depuração"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:170
-#: includes/audience/class-ffc-audience-shortcode.php:631
+#: includes/audience/class-ffc-audience-shortcode.php:696
 msgid "December"
 msgstr "Dezembro"
 
@@ -2395,7 +2512,7 @@ msgstr ""
 msgid "Default size:"
 msgstr "Tamanho padrão:"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:461
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:483
 msgid "Default: All notifications disabled"
 msgstr "Padrão: Todas as notificações desabilitadas"
 
@@ -2423,9 +2540,9 @@ msgid "Define which days and times appointments can be booked:"
 msgstr "Defina quais dias e horários os agendamentos podem ser realizados:"
 
 #: includes/admin/class-ffc-submissions-list.php:114
-#: includes/audience/class-ffc-audience-admin-environment.php:153
+#: includes/audience/class-ffc-audience-admin-environment.php:157
 #: includes/audience/class-ffc-audience-admin-calendar.php:120
-#: includes/audience/class-ffc-audience-admin-calendar.php:341
+#: includes/audience/class-ffc-audience-admin-calendar.php:562
 #: includes/audience/class-ffc-audience-admin-audience.php:147
 #: includes/audience/class-ffc-audience-admin-settings.php:208
 msgid "Delete"
@@ -2436,7 +2553,7 @@ msgstr "Excluir"
 msgid "Delete All Submissions (All Forms)"
 msgstr "Excluir todos os envios (todos os formulários)"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:826
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:852
 msgid "Delete appointments:"
 msgstr "Excluir agendamentos:"
 
@@ -2452,7 +2569,7 @@ msgstr "Excluir Permanentemente"
 msgid "Delete Submissions"
 msgstr "Excluir Submissões"
 
-#: includes/audience/class-ffc-audience-admin-calendar.php:340
+#: includes/audience/class-ffc-audience-admin-calendar.php:561
 msgid "Delete this holiday?"
 msgstr "Excluir este feriado?"
 
@@ -2468,19 +2585,19 @@ msgstr "Lista de Bloqueio (Bloqueada)"
 msgid "Denylist (CPF/RF)"
 msgstr "Lista de Bloqueio (CPF/RF)"
 
-#: includes/audience/class-ffc-audience-shortcode.php:316
+#: includes/audience/class-ffc-audience-shortcode.php:348
 msgid "Describe the purpose of this booking (15-300 characters)"
 msgstr "Descreva o objetivo desta reserva (15-300 caracteres)"
 
 #: includes/shortcodes/class-ffc-dashboard-shortcode.php:387
 #: includes/self-scheduling/class-ffc-self-scheduling-editor.php:180
 #: includes/audience/class-ffc-audience-admin-bookings.php:147
-#: includes/audience/class-ffc-audience-admin-environment.php:245
+#: includes/audience/class-ffc-audience-admin-environment.php:249
 #: includes/audience/class-ffc-audience-admin-calendar.php:197
-#: includes/audience/class-ffc-audience-admin-calendar.php:324
+#: includes/audience/class-ffc-audience-admin-calendar.php:545
 #: includes/audience/class-ffc-audience-admin-settings.php:158
 #: includes/audience/class-ffc-audience-admin-settings.php:183
-#: includes/audience/class-ffc-audience-shortcode.php:314
+#: includes/audience/class-ffc-audience-shortcode.php:346
 #: includes/settings/views/ffc-tab-documentation.php:43
 #: includes/settings/views/ffc-tab-documentation.php:95
 #: includes/settings/views/ffc-tab-documentation.php:183
@@ -2488,15 +2605,15 @@ msgstr "Descreva o objetivo desta reserva (15-300 caracteres)"
 msgid "Description"
 msgstr "Descrição"
 
-#: includes/audience/class-ffc-audience-admin-calendar.php:307
+#: includes/audience/class-ffc-audience-admin-calendar.php:528
 msgid "Description (optional)"
 msgstr "Descrição (opcional)"
 
-#: includes/audience/class-ffc-audience-shortcode.php:612
+#: includes/audience/class-ffc-audience-shortcode.php:677
 msgid "Description is required (15-300 characters)."
 msgstr "A descrição é obrigatória (15-300 caracteres)."
 
-#: includes/audience/class-ffc-audience-rest-controller.php:428
+#: includes/audience/class-ffc-audience-rest-controller.php:431
 msgid "Description must be between 15 and 300 characters."
 msgstr "A descrição deve ter entre 15 e 300 caracteres."
 
@@ -2562,7 +2679,7 @@ msgstr "Exibe o formulário de emissão do certificado."
 msgid "Displays the public verification page."
 msgstr "Exibe a página de verificação pública."
 
-#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:444
+#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:567
 #: includes/frontend/class-ffc-shortcodes.php:64
 msgid "Do not fill this field if you are human:"
 msgstr "Não preencha este campo se você for humano:"
@@ -2670,7 +2787,7 @@ msgstr "E-mail"
 msgid "e.g. Christmas, Carnival..."
 msgstr "ex.: Natal, Carnaval..."
 
-#: includes/audience/class-ffc-audience-admin-calendar.php:308
+#: includes/audience/class-ffc-audience-admin-calendar.php:529
 msgid "e.g., Christmas Day"
 msgstr "ex.: Dia de Natal"
 
@@ -2683,14 +2800,14 @@ msgstr ""
 "datas e opções de exibição."
 
 #: includes/admin/class-ffc-submissions-list.php:94
-#: includes/audience/class-ffc-audience-admin-environment.php:148
+#: includes/audience/class-ffc-audience-admin-environment.php:152
 #: includes/audience/class-ffc-audience-admin-calendar.php:118
 #: includes/audience/class-ffc-audience-admin-audience.php:144
 msgid "Edit"
 msgstr "Editar"
 
 #. %s: environment label (singular, e.g. "Environment", "Room")
-#: includes/audience/class-ffc-audience-admin-environment.php:190
+#: includes/audience/class-ffc-audience-admin-environment.php:194
 #, php-format
 msgid "Edit %s"
 msgstr "Editar %s"
@@ -2733,7 +2850,7 @@ msgstr "Editado Por"
 #: includes/admin/class-ffc-admin-submission-edit-page.php:406
 #: includes/self-scheduling/class-ffc-self-scheduling-appointment-csv-exporter.php:58
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:192
-#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:403
+#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:526
 #: includes/audience/class-ffc-audience-admin-audience.php:295
 #: includes/frontend/class-ffc-verification-response-renderer.php:236
 #: includes/self-scheduling/views/appointments-list.php:49
@@ -2744,7 +2861,7 @@ msgstr "E-mail"
 msgid "Email address"
 msgstr "Endereço de email"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-appointment-validator.php:183
+#: includes/self-scheduling/class-ffc-self-scheduling-appointment-validator.php:200
 #: includes/frontend/class-ffc-form-processor.php:416
 msgid "Email address is required."
 msgstr "É necessário ter um endereço de e-mail."
@@ -2988,13 +3105,13 @@ msgstr "Criptografia não configurada"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-appointment-csv-exporter.php:62
 #: includes/self-scheduling/class-ffc-self-scheduling-editor.php:266
-#: includes/audience/class-ffc-audience-shortcode.php:285
+#: includes/audience/class-ffc-audience-shortcode.php:317
 msgid "End Time"
 msgstr "Horário de Término"
 
-#: includes/audience/class-ffc-audience-loader.php:266
-#: includes/audience/class-ffc-audience-rest-controller.php:419
-#: includes/audience/class-ffc-audience-shortcode.php:609
+#: includes/audience/class-ffc-audience-loader.php:269
+#: includes/audience/class-ffc-audience-rest-controller.php:422
+#: includes/audience/class-ffc-audience-shortcode.php:674
 msgid "End time must be after start time."
 msgstr "O horário final deve ser posterior ao horário inicial."
 
@@ -3047,9 +3164,10 @@ msgid "Enter your unique ticket code"
 msgstr "Insira seu código de ingresso exclusivo."
 
 #: includes/shortcodes/class-ffc-dashboard-shortcode.php:386
-#: includes/audience/class-ffc-audience-loader.php:268
+#: includes/audience/class-ffc-audience-loader.php:271
 #: includes/audience/class-ffc-audience-notification-handler.php:303
-#: includes/audience/class-ffc-audience-schedule-repository.php:447
+#: includes/audience/class-ffc-audience-schedule-repository.php:449
+#: includes/audience/class-ffc-audience-shortcode.php:710
 msgid "Environment"
 msgstr "Ambiente"
 
@@ -3057,15 +3175,15 @@ msgstr "Ambiente"
 msgid "Environment Label"
 msgstr "Rótulo de Ambiente"
 
-#: includes/audience/class-ffc-audience-admin-environment.php:180
+#: includes/audience/class-ffc-audience-admin-environment.php:184
 msgid "Environment not found."
 msgstr "Ambiente não encontrado."
 
 #: includes/audience/class-ffc-audience-admin-calendar.php:210
 #: includes/audience/class-ffc-audience-admin-page.php:139
 #: includes/audience/class-ffc-audience-admin-page.php:140
-#: includes/audience/class-ffc-audience-schedule-repository.php:448
-#: includes/audience/class-ffc-audience-admin-settings.php:353
+#: includes/audience/class-ffc-audience-schedule-repository.php:450
+#: includes/audience/class-ffc-audience-admin-settings.php:395
 msgid "Environments"
 msgstr "Ambientes"
 
@@ -3073,11 +3191,19 @@ msgstr "Ambientes"
 msgid "Error"
 msgstr "Erro"
 
+#: includes/audience/class-ffc-audience-loader.php:470
+msgid "Error adding user permissions."
+msgstr "Erro ao adicionar permissões de usuário."
+
+#: includes/audience/class-ffc-audience-admin-calendar.php:464
+msgid "Error adding user."
+msgstr "Erro ao adicionar usuário."
+
 #: includes/shortcodes/class-ffc-dashboard-shortcode.php:380
 msgid "Error cancelling appointment"
 msgstr "Erro ao cancelar agendamento"
 
-#: includes/audience/class-ffc-audience-rest-controller.php:670
+#: includes/audience/class-ffc-audience-rest-controller.php:674
 msgid "Error checking conflicts."
 msgstr "Erro ao verificar conflitos."
 
@@ -3161,6 +3287,10 @@ msgstr "Ocorreu um erro. Tente novamente."
 msgid "Error reading file."
 msgstr "Erro ao ler o arquivo."
 
+#: includes/audience/class-ffc-audience-loader.php:568
+msgid "Error removing user access."
+msgstr "Erro ao remover o acesso do usuário."
+
 #: includes/submissions/class-ffc-submission-handler.php:223
 msgid "Error saving submission to the database."
 msgstr "Erro ao salvar o envio no banco de dados."
@@ -3168,6 +3298,10 @@ msgstr "Erro ao salvar o envio no banco de dados."
 #: includes/admin/class-ffc-admin-assets-manager.php:290
 msgid "Error searching for users. Please try again."
 msgstr "Erro ao procurar usuários. Tente novamente."
+
+#: includes/audience/class-ffc-audience-loader.php:540
+msgid "Error updating permission."
+msgstr "Erro ao atualizar as permissões."
 
 #: includes/admin/class-ffc-admin-assets-manager.php:337
 msgid "Error: "
@@ -3217,6 +3351,10 @@ msgstr ""
 msgid "Event Details"
 msgstr "Detalhes do Evento"
 
+#: includes/audience/class-ffc-audience-admin-calendar.php:271
+msgid "Event List"
+msgstr "Lista de Eventos"
+
 #: includes/shortcodes/class-ffc-dashboard-shortcode.php:359
 msgid "Event Name"
 msgstr "Nome do Evento"
@@ -3227,6 +3365,11 @@ msgstr "Nome do Evento"
 #: includes/frontend/class-ffc-verification-response-renderer.php:154
 msgid "Event:"
 msgstr "Evento:"
+
+#: includes/audience/class-ffc-audience-shortcode.php:268
+#: includes/audience/class-ffc-audience-shortcode.php:713
+msgid "Events"
+msgstr "Eventos"
 
 #: includes/settings/views/ffc-tab-documentation.php:418
 msgid ""
@@ -3330,7 +3473,7 @@ msgstr "Cache externo ativo (Redis/Memcached)"
 msgid "Failed to cancel appointment."
 msgstr "Falha ao cancelar agendamento."
 
-#: includes/audience/class-ffc-audience-rest-controller.php:559
+#: includes/audience/class-ffc-audience-rest-controller.php:563
 msgid "Failed to cancel booking."
 msgstr "Falha ao cancelar a reserva."
 
@@ -3342,7 +3485,7 @@ msgstr "Falha ao confirmar agendamento."
 msgid "Failed to create appointment. Please try again."
 msgstr "Falha ao criar agendamento. Por favor, tente novamente."
 
-#: includes/audience/class-ffc-audience-rest-controller.php:505
+#: includes/audience/class-ffc-audience-rest-controller.php:509
 msgid "Failed to create booking."
 msgstr "Falha ao criar a reserva."
 
@@ -3361,7 +3504,7 @@ msgid "Fallback Behavior"
 msgstr "Comportamento de Reserva"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:160
-#: includes/audience/class-ffc-audience-shortcode.php:621
+#: includes/audience/class-ffc-audience-shortcode.php:686
 msgid "February"
 msgstr "Fevereiro"
 
@@ -3474,7 +3617,7 @@ msgstr ""
 "plugins ou entre em contato com o suporte."
 
 #: includes/self-scheduling/class-ffc-self-scheduling-editor.php:77
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:395
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:397
 msgid "Forced to Private because Visibility is Private."
 msgstr "Forçado a manter privado porque a visibilidade é privada."
 
@@ -3577,12 +3720,12 @@ msgid "Free Form Certificate"
 msgstr "Formulário Grátis para Certificado"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:178
-#: includes/audience/class-ffc-audience-shortcode.php:231
+#: includes/audience/class-ffc-audience-shortcode.php:243
 msgid "Fri"
 msgstr "Sex"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-editor.php:253
-#: includes/audience/class-ffc-audience-admin-environment.php:261
+#: includes/audience/class-ffc-audience-admin-environment.php:281
 msgid "Friday"
 msgstr "Sexta-feira"
 
@@ -3619,7 +3762,7 @@ msgid "Full name of the participant"
 msgstr "Nome completo do participante"
 
 #. %d: number of future appointments
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:860
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:886
 msgid "Future (%d)"
 msgstr "Futuros (%d)"
 
@@ -3627,7 +3770,7 @@ msgstr "Futuros (%d)"
 msgid "Future Days Limit"
 msgstr "Limite de Dias Futuros"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:814
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:840
 msgid "Future:"
 msgstr "Futuros:"
 
@@ -3769,15 +3912,15 @@ msgstr ""
 msgid "Grade"
 msgstr "Nota"
 
-#: includes/admin/class-ffc-admin-user-capabilities.php:197
+#: includes/admin/class-ffc-admin-user-capabilities.php:220
 msgid "Grant All"
 msgstr "Conceder Todos"
 
-#: includes/admin/class-ffc-admin-user-capabilities.php:206
+#: includes/admin/class-ffc-admin-user-capabilities.php:229
 msgid "Grant Appointments Only"
 msgstr "Conceder Apenas Agendamentos"
 
-#: includes/admin/class-ffc-admin-user-capabilities.php:203
+#: includes/admin/class-ffc-admin-user-capabilities.php:226
 msgid "Grant Certificates Only"
 msgstr "Conceder Apenas Certificados"
 
@@ -3806,7 +3949,7 @@ msgstr "Cabeçalhos/títulos"
 msgid "Hello {user_name},"
 msgstr "Olá {user_name},"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:429
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:451
 msgid ""
 "Hello {{user_name}},\n"
 "\n"
@@ -3829,7 +3972,7 @@ msgstr ""
 "Obrigado!"
 
 #. %1$s, %2$s, %4$s, %5$s, %6$s, %8$s, %10$s, %12$s, %13$s, %14$s, %15$s: line breaks, %3$s: calendar title, %7$s: appointment date, %9$s: appointment time, %11$s: calendar title, %16$s: site name
-#: includes/self-scheduling/class-ffc-self-scheduling-cpt.php:441
+#: includes/self-scheduling/class-ffc-self-scheduling-cpt.php:443
 #, php-format
 msgid ""
 "Hello,%1$s%2$sWe regret to inform you that your appointment has been "
@@ -3848,8 +3991,8 @@ msgstr ""
 msgid "Hidden Field"
 msgstr "Campo Oculto"
 
-#: includes/audience/class-ffc-audience-admin-settings.php:291
-#: includes/audience/class-ffc-audience-admin-settings.php:389
+#: includes/audience/class-ffc-audience-admin-settings.php:293
+#: includes/audience/class-ffc-audience-admin-settings.php:431
 msgid "Hide completely"
 msgstr "Esconder completamente"
 
@@ -3874,17 +4017,21 @@ msgstr ""
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:182
 #: includes/self-scheduling/class-ffc-self-scheduling-appointment-ajax-handler.php:278
-#: includes/audience/class-ffc-audience-rest-controller.php:346
-#: includes/audience/class-ffc-audience-shortcode.php:247
-#: includes/audience/class-ffc-audience-shortcode.php:633
+#: includes/audience/class-ffc-audience-rest-controller.php:348
+#: includes/audience/class-ffc-audience-shortcode.php:259
+#: includes/audience/class-ffc-audience-shortcode.php:698
 msgid "Holiday"
 msgstr "Feriado"
 
-#: includes/audience/class-ffc-audience-admin-calendar.php:421
+#: includes/audience/class-ffc-audience-admin-calendar.php:661
 msgid "Holiday added successfully."
 msgstr "Feriado adicionado com sucesso."
 
-#: includes/audience/class-ffc-audience-admin-calendar.php:293
+#: includes/audience/class-ffc-audience-admin-calendar.php:596
+msgid "Holiday deleted successfully."
+msgstr "Feriado excluído com sucesso."
+
+#: includes/audience/class-ffc-audience-admin-calendar.php:514
 msgid "Holidays / Closed Dates"
 msgstr "Feriados / Datas Fechadas"
 
@@ -3906,20 +4053,20 @@ msgstr "Campo Honeypot:"
 msgid "Hours"
 msgstr "Horas"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:330
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:360
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:332
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:362
 msgid "hours"
 msgstr "horas"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:353
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:355
 msgid "hours before"
 msgstr "horas antes"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:467
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:489
 msgid "hours before appointment"
 msgstr "horas antes do agendamento"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:338
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:340
 msgid "How far in advance can users book?"
 msgstr "Com quanta antecedência os usuários podem agendar?"
 
@@ -3981,7 +4128,7 @@ msgid "https://github.com/rpgmem/ffcertificate"
 msgstr "https://github.com/rpgmem/ffcertificate"
 
 #. %s: value
-#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:465
+#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:588
 #, php-format
 msgid ""
 "I agree to the collection and processing of my personal data in accordance "
@@ -3990,7 +4137,7 @@ msgstr ""
 "Concordo com a coleta e processamento dos meus dados pessoais de acordo com "
 "a <a href=\"%s\" target=\"_blank\">Política de Privacidade</a> (LGPD)."
 
-#: includes/audience/class-ffc-audience-shortcode.php:326
+#: includes/audience/class-ffc-audience-shortcode.php:358
 msgid "I am aware of the conflicts and want to proceed."
 msgstr "Estou ciente dos conflitos e desejo prosseguir."
 
@@ -4101,10 +4248,10 @@ msgstr ""
 "banco de dados (aproximadamente 4 KB por envio)."
 
 #: includes/self-scheduling/class-ffc-self-scheduling-editor.php:219
-#: includes/audience/class-ffc-audience-admin-environment.php:144
-#: includes/audience/class-ffc-audience-admin-environment.php:295
+#: includes/audience/class-ffc-audience-admin-environment.php:148
+#: includes/audience/class-ffc-audience-admin-environment.php:315
 #: includes/audience/class-ffc-audience-admin-calendar.php:114
-#: includes/audience/class-ffc-audience-admin-calendar.php:280
+#: includes/audience/class-ffc-audience-admin-calendar.php:305
 #: includes/audience/class-ffc-audience-admin-audience.php:140
 #: includes/audience/class-ffc-audience-admin-audience.php:234
 msgid "Inactive"
@@ -4127,7 +4274,7 @@ msgstr "Resposta incorreta para a questão de matemática."
 msgid "Incorrect password."
 msgstr "Senha incorreta."
 
-#: includes/audience/class-ffc-audience-shortcode.php:294
+#: includes/audience/class-ffc-audience-shortcode.php:326
 msgid "Individual Users"
 msgstr "Usuários Individuais"
 
@@ -4164,7 +4311,7 @@ msgstr "Solicitação de comprovante de agendamento inválida."
 msgid "Invalid calendar."
 msgstr "Calendário inválido."
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:722
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:748
 msgid "Invalid cleanup action"
 msgstr "Ação de limpeza inválida"
 
@@ -4172,7 +4319,7 @@ msgstr "Ação de limpeza inválida"
 msgid "Invalid CPF"
 msgstr "CPF Inválido"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-appointment-validator.php:198
+#: includes/self-scheduling/class-ffc-self-scheduling-appointment-validator.php:215
 msgid "Invalid CPF."
 msgstr "CPF inválido."
 
@@ -4192,7 +4339,7 @@ msgstr "Formato de data inválido."
 msgid "Invalid email address"
 msgstr "Endereço de e-mail inválido"
 
-#: includes/audience/class-ffc-audience-rest-controller.php:393
+#: includes/audience/class-ffc-audience-rest-controller.php:396
 msgid "Invalid environment."
 msgstr "Ambiente inválido."
 
@@ -4216,13 +4363,17 @@ msgstr "Chave de migração inválida"
 msgid "Invalid or already used ticket."
 msgstr "Bilhete inválido ou já utilizado."
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:641
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:667
 msgid "Invalid parameters"
 msgstr "Parâmetros inválidos"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-appointment-ajax-handler.php:170
 msgid "Invalid parameters."
 msgstr "Parâmetros inválidos."
+
+#: includes/audience/class-ffc-audience-loader.php:522
+msgid "Invalid permission."
+msgstr "Permissão inválida."
 
 #: includes/admin/class-ffc-cpt.php:110
 msgid "Invalid post."
@@ -4240,7 +4391,7 @@ msgstr "Resposta inválida de ipinfo.io"
 msgid "Invalid RF"
 msgstr "RF Inválido"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-appointment-validator.php:194
+#: includes/self-scheduling/class-ffc-self-scheduling-appointment-validator.php:211
 msgid "Invalid RF format."
 msgstr "Formato de RF inválido."
 
@@ -4372,7 +4523,7 @@ msgid "Item restored."
 msgstr "Item restaurado."
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:159
-#: includes/audience/class-ffc-audience-shortcode.php:620
+#: includes/audience/class-ffc-audience-shortcode.php:685
 msgid "January"
 msgstr "Janeiro"
 
@@ -4381,12 +4532,12 @@ msgid "January 4, 2026 (Month Day, Year)"
 msgstr "Janeiro 4, 2026 (Mês, Dia, Ano)"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:165
-#: includes/audience/class-ffc-audience-shortcode.php:626
+#: includes/audience/class-ffc-audience-shortcode.php:691
 msgid "July"
 msgstr "Julho"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:164
-#: includes/audience/class-ffc-audience-shortcode.php:625
+#: includes/audience/class-ffc-audience-shortcode.php:690
 msgid "June"
 msgstr "Junho"
 
@@ -4420,7 +4571,7 @@ msgstr "Deixe vazio para acesso 24h. Padrão: 00:00 a 23:59"
 msgid "Leave empty for no date restriction. Format: YYYY-MM-DD"
 msgstr "Deixe em branco se não houver restrição de data."
 
-#: includes/audience/class-ffc-audience-admin-environment.php:282
+#: includes/audience/class-ffc-audience-admin-environment.php:302
 msgid "Leave times empty to use default (08:00 - 18:00)."
 msgstr "Deixe os horários vazios para usar o padrão (08:00 - 18:00)."
 
@@ -4513,15 +4664,15 @@ msgstr "Carregar \"%s\"? Isso substituirá o HTML atual do seu certificado."
 msgid "Loading appointments..."
 msgstr "Carregando agendamentos..."
 
-#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:372
+#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:495
 msgid "Loading available slots..."
 msgstr "Carregando horários disponíveis..."
 
-#: includes/audience/class-ffc-audience-shortcode.php:368
+#: includes/audience/class-ffc-audience-shortcode.php:400
 msgid "Loading bookings..."
 msgstr "Carregando reservas..."
 
-#: includes/audience/class-ffc-audience-shortcode.php:238
+#: includes/audience/class-ffc-audience-shortcode.php:250
 msgid "Loading calendar..."
 msgstr "Carregando calendário..."
 
@@ -4544,8 +4695,9 @@ msgstr "Carregando modelo..."
 #: includes/shortcodes/class-ffc-dashboard-shortcode.php:350
 #: includes/admin/class-ffc-admin-assets-manager.php:343
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:151
-#: includes/audience/class-ffc-audience-loader.php:261
-#: includes/audience/class-ffc-audience-shortcode.php:601
+#: includes/audience/class-ffc-audience-loader.php:264
+#: includes/audience/class-ffc-audience-shortcode.php:271
+#: includes/audience/class-ffc-audience-shortcode.php:666
 msgid "Loading..."
 msgstr "Carregando..."
 
@@ -4745,7 +4897,7 @@ msgstr ""
 #: includes/audience/class-ffc-audience-admin-dashboard.php:100
 #: includes/audience/class-ffc-audience-admin-dashboard.php:116
 #: includes/audience/class-ffc-audience-admin-dashboard.php:127
-#: includes/audience/class-ffc-audience-admin-settings.php:347
+#: includes/audience/class-ffc-audience-admin-settings.php:389
 msgid "Manage"
 msgstr "Gerenciar"
 
@@ -4753,7 +4905,7 @@ msgstr "Gerenciar"
 msgid "Manage Appointments"
 msgstr "Gerenciar Agendamentos"
 
-#: includes/audience/class-ffc-audience-admin-settings.php:244
+#: includes/audience/class-ffc-audience-admin-settings.php:246
 msgid "Manage Calendars"
 msgstr "Gerenciar Calendários"
 
@@ -4776,12 +4928,23 @@ msgstr ""
 "Gerencie a quais recursos do FFC este usuário pode acessar. Os recursos são "
 "verificados além das permissões de função."
 
+#: includes/audience/class-ffc-audience-admin-calendar.php:320
+msgid ""
+"Manage which users have access to this calendar and what they can do. For "
+"private calendars, only listed users can see and book. For public calendars, "
+"these permissions control who can book and cancel."
+msgstr ""
+"Gerencie quais usuários têm acesso a este calendário e o que eles podem "
+"fazer. Para calendários privados, somente os usuários listados podem "
+"visualizar e reservar. Para calendários públicos, essas permissões controlam "
+"quem pode reservar e cancelar."
+
 #: includes/admin/class-ffc-form-editor-metabox-renderer.php:101
 msgid "Mandatory Tags:"
 msgstr "Etiquetas Obrigatórias:"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:161
-#: includes/audience/class-ffc-audience-shortcode.php:622
+#: includes/audience/class-ffc-audience-shortcode.php:687
 msgid "March"
 msgstr "Março"
 
@@ -4828,7 +4991,7 @@ msgstr "Máximo por semana"
 msgid "Max per year"
 msgstr "Máximo por ano"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:335
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:337
 msgid "Maximum Advance Booking"
 msgstr "Antecedência Máxima de Agendamento"
 
@@ -4849,7 +5012,7 @@ msgid "Maximum number of people per time slot (1 = exclusive)"
 msgstr "Número máximo de pessoas por vaga (1 = exclusivo)"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:163
-#: includes/audience/class-ffc-audience-shortcode.php:624
+#: includes/audience/class-ffc-audience-shortcode.php:689
 msgid "May"
 msgstr "Maio"
 
@@ -4861,11 +5024,15 @@ msgstr "Médio (15% - recomendado)"
 msgid "Medium (15% correction) - Recommended"
 msgstr "Médio (correção de 15%) - Recomendado"
 
+#: includes/audience/class-ffc-audience-admin-audience.php:348
+msgid "Member removed successfully."
+msgstr "Membro removido com sucesso."
+
 #: includes/shortcodes/class-ffc-dashboard-shortcode.php:373
 msgid "Member Since:"
 msgstr "Membro Desde:"
 
-#: includes/audience/class-ffc-audience-shortcode.php:616
+#: includes/audience/class-ffc-audience-shortcode.php:681
 msgid "member(s) have overlapping bookings."
 msgstr "Os membros têm reservas sobrepostas."
 
@@ -4909,6 +5076,14 @@ msgstr ""
 msgid "Message shown when user is outside allowed geographic areas."
 msgstr ""
 "Mensagem exibida quando o usuário está fora das áreas geográficas permitidas."
+
+#: includes/audience/class-ffc-audience-admin-settings.php:335
+msgid ""
+"Messages shown when a calendar has business hours restrictions enabled "
+"(configured per calendar)."
+msgstr ""
+"Mensagens exibidas quando um calendário tem restrições de horário comercial "
+"ativadas (configuradas por calendário)."
 
 #. 1: field description, 2: column name
 #: includes/migrations/class-ffc-migration-registry.php:96
@@ -5013,19 +5188,19 @@ msgstr "Arquivo de visualização de migrações não encontrado."
 msgid "Minimal fields (Tag):"
 msgstr "Campos mínimos (Tag):"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:328
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:330
 msgid "Minimum Advance Booking"
 msgstr "Antecedência Mínima de Agendamento"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:358
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:360
 msgid "Minimum Interval Between Bookings"
 msgstr "Intervalo Mínimo Entre Agendamentos"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:354
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:356
 msgid "Minimum notice required to cancel (e.g., 24 hours)"
 msgstr "Aviso mínimo necessário para cancelar (ex: 24 horas)"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:331
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:333
 msgid "Minimum time in advance required to book (0 = same day allowed)"
 msgstr "Tempo mínimo de antecedência para agendar (0 = mesmo dia permitido)"
 
@@ -5049,8 +5224,11 @@ msgstr "Campo obrigatório ausente: %s"
 msgid "Missing required fields."
 msgstr "Campos obrigatórios ausentes."
 
-#: includes/audience/class-ffc-audience-loader.php:294
-#: includes/audience/class-ffc-audience-rest-controller.php:592
+#: includes/audience/class-ffc-audience-loader.php:297
+#: includes/audience/class-ffc-audience-loader.php:445
+#: includes/audience/class-ffc-audience-loader.php:517
+#: includes/audience/class-ffc-audience-loader.php:562
+#: includes/audience/class-ffc-audience-rest-controller.php:596
 msgid "Missing required parameters."
 msgstr "Parâmetros obrigatórios faltando."
 
@@ -5059,12 +5237,12 @@ msgid "Mode"
 msgstr "Modo"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:174
-#: includes/audience/class-ffc-audience-shortcode.php:227
+#: includes/audience/class-ffc-audience-shortcode.php:239
 msgid "Mon"
 msgstr "Seg"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-editor.php:249
-#: includes/audience/class-ffc-audience-admin-environment.php:257
+#: includes/audience/class-ffc-audience-admin-environment.php:277
 msgid "Monday"
 msgstr "Segunda-feira"
 
@@ -5075,6 +5253,10 @@ msgstr "Mover para a Lixeira"
 #: includes/settings/views/ffc-tab-documentation.php:461
 msgid "Multi-language Support:"
 msgstr "Suporte a vários idiomas:"
+
+#: includes/audience/class-ffc-audience-shortcode.php:715
+msgid "Multiple audiences"
+msgstr "Vários públicos-alvo"
 
 #. %d: number of days remaining
 #: includes/migrations/class-ffc-migration-manager.php:244
@@ -5106,9 +5288,9 @@ msgstr "N/D"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-appointment-csv-exporter.php:57
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:191
-#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:388
-#: includes/audience/class-ffc-audience-admin-environment.php:106
-#: includes/audience/class-ffc-audience-admin-environment.php:236
+#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:511
+#: includes/audience/class-ffc-audience-admin-environment.php:107
+#: includes/audience/class-ffc-audience-admin-environment.php:240
 #: includes/audience/class-ffc-audience-admin-calendar.php:79
 #: includes/audience/class-ffc-audience-admin-calendar.php:188
 #: includes/audience/class-ffc-audience-admin-audience.php:82
@@ -5176,9 +5358,9 @@ msgstr "Novo Agendamento: %s"
 msgid "New Audience Calendar"
 msgstr "Novo Calendário de Público-alvo"
 
-#: includes/audience/class-ffc-audience-shortcode.php:258
-#: includes/audience/class-ffc-audience-shortcode.php:377
-#: includes/audience/class-ffc-audience-shortcode.php:644
+#: includes/audience/class-ffc-audience-shortcode.php:283
+#: includes/audience/class-ffc-audience-shortcode.php:409
+#: includes/audience/class-ffc-audience-shortcode.php:709
 msgid "New Booking"
 msgstr "Nova Reserva"
 
@@ -5206,7 +5388,7 @@ msgstr "Nova Atividade Agendada"
 msgid "Next"
 msgstr "Próximo"
 
-#: includes/audience/class-ffc-audience-shortcode.php:182
+#: includes/audience/class-ffc-audience-shortcode.php:194
 msgid "Next month"
 msgstr "Próximo mês"
 
@@ -5218,12 +5400,12 @@ msgid "No"
 msgstr "Não"
 
 #. %s: environment label (e.g. "Environments", "Rooms")
-#: includes/audience/class-ffc-audience-admin-environment.php:118
+#: includes/audience/class-ffc-audience-admin-environment.php:119
 #, php-format
 msgid "No %s found."
 msgstr "Nenhum %s encontrado."
 
-#: includes/audience/class-ffc-audience-shortcode.php:604
+#: includes/audience/class-ffc-audience-shortcode.php:669
 msgid "No active bookings for this day."
 msgstr "Nenhuma reserva ativa para este dia."
 
@@ -5239,7 +5421,7 @@ msgstr "Nenhum agendamento disponível para exportação."
 msgid "No appointments found"
 msgstr "Nenhum agendamento encontrado"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:880
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:906
 msgid "No appointments to clean up."
 msgstr "Nenhum agendamento para limpar."
 
@@ -5259,7 +5441,7 @@ msgstr "Nenhum público-alvo encontrado."
 msgid "No available slots for this date"
 msgstr "Nenhum horário disponível para esta data"
 
-#: includes/audience/class-ffc-audience-shortcode.php:603
+#: includes/audience/class-ffc-audience-shortcode.php:668
 msgid "No bookings for this day."
 msgstr "Nenhuma reserva para este dia."
 
@@ -5275,7 +5457,7 @@ msgstr "Nenhum calendário encontrado."
 msgid "No certificates found"
 msgstr "Nenhum certificado encontrado"
 
-#: includes/audience/class-ffc-audience-shortcode.php:618
+#: includes/audience/class-ffc-audience-shortcode.php:683
 msgid "No conflicts found. You may proceed."
 msgstr "Nenhum conflito encontrado. Você pode prosseguir."
 
@@ -5290,6 +5472,10 @@ msgstr "Nenhum consentimento registrado:"
 #: includes/api/class-ffc-appointment-rest-controller.php:100
 msgid "No data provided in request body"
 msgstr "Nenhum dado fornecido no corpo da requisição"
+
+#: includes/audience/class-ffc-audience-shortcode.php:714
+msgid "No events this month."
+msgstr "Não há eventos neste mês."
 
 #: includes/migrations/class-ffc-migration-user-capabilities.php:51
 msgid "No FFC users found."
@@ -5307,7 +5493,7 @@ msgstr "Nenhum formulário encontrado."
 msgid "No global holidays configured."
 msgstr "Nenhum feriado global configurado."
 
-#: includes/audience/class-ffc-audience-admin-calendar.php:349
+#: includes/audience/class-ffc-audience-admin-calendar.php:570
 msgid "No holidays defined yet."
 msgstr "Nenhum feriado definido ainda."
 
@@ -5335,7 +5521,7 @@ msgstr "Nenhum calendário pessoal encontrado."
 msgid "No records available for export."
 msgstr "Não há registros disponíveis para exportação."
 
-#: includes/audience/class-ffc-audience-loader.php:262
+#: includes/audience/class-ffc-audience-loader.php:265
 msgid "No results found."
 msgstr "Nenhum resultado encontrado."
 
@@ -5395,8 +5581,14 @@ msgstr "Nenhum usuário está vinculado a esta submissão."
 
 #: includes/admin/class-ffc-admin-assets-manager.php:289
 #: includes/admin/class-ffc-admin-ajax.php:270
+#: includes/audience/class-ffc-audience-admin-calendar.php:423
 msgid "No users found."
 msgstr "Nenhum usuário encontrado."
+
+#: includes/audience/class-ffc-audience-admin-calendar.php:355
+#: includes/audience/class-ffc-audience-admin-calendar.php:503
+msgid "No users have been granted access yet."
+msgstr "Nenhum usuário recebeu acesso ainda."
 
 #: includes/settings/views/ffc-tab-documentation.php:204
 msgid "No white margin around QR code"
@@ -5418,9 +5610,9 @@ msgstr "Normalizar nomes (capitalização brasileira) e e-mails (minúsculas)"
 msgid "Not found"
 msgstr "Não encontrado"
 
-#: includes/audience/class-ffc-audience-loader.php:321
-#: includes/audience/class-ffc-audience-loader.php:338
-#: includes/audience/class-ffc-audience-loader.php:355
+#: includes/audience/class-ffc-audience-loader.php:324
+#: includes/audience/class-ffc-audience-loader.php:341
+#: includes/audience/class-ffc-audience-loader.php:358
 msgid "Not implemented yet."
 msgstr "Ainda não implementado."
 
@@ -5445,17 +5637,17 @@ msgstr ""
 msgid "Notes"
 msgstr "Notas"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:432
+#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:555
 msgid "Notes (optional)"
 msgstr "Notas (opcional)"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:437
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:459
 #: includes/audience/class-ffc-audience-admin-calendar.php:247
 msgid "Notifications"
 msgstr "Notificações"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:169
-#: includes/audience/class-ffc-audience-shortcode.php:630
+#: includes/audience/class-ffc-audience-shortcode.php:695
 msgid "November"
 msgstr "Novembro"
 
@@ -5469,7 +5661,7 @@ msgid "Numeric submission ID"
 msgstr "ID de envio numérico"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:168
-#: includes/audience/class-ffc-audience-shortcode.php:629
+#: includes/audience/class-ffc-audience-shortcode.php:694
 msgid "October"
 msgstr "Outubro"
 
@@ -5548,6 +5740,10 @@ msgstr "Data e hora da submissão original (somente leitura)."
 msgid "Other (.ics)"
 msgstr "Outros (.ics)"
 
+#: includes/audience/class-ffc-audience-admin-calendar.php:348
+msgid "Override Conflicts"
+msgstr "Sobrescrever Conflitos"
+
 #: includes/shortcodes/class-ffc-dashboard-shortcode.php:397
 msgid "Page {current} of {total}"
 msgstr "Página {current} de {total}"
@@ -5587,11 +5783,11 @@ msgid "Past"
 msgstr "Passados"
 
 #. %d: number of past appointments
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:848
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:874
 msgid "Past (%d)"
 msgstr "Passados (%d)"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:810
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:836
 msgid "Past:"
 msgstr "Passados:"
 
@@ -5632,7 +5828,7 @@ msgstr "Pendente"
 msgid "Pending Approval"
 msgstr "Aguardando Aprovação"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:800
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:826
 msgid ""
 "Permanently delete appointments from this calendar. This action cannot be "
 "undone."
@@ -5648,12 +5844,15 @@ msgstr "Excluir permanentemente?"
 #: includes/admin/class-ffc-admin-ajax.php:53
 #: includes/admin/class-ffc-admin-ajax.php:109
 #: includes/admin/class-ffc-admin-ajax.php:219
-#: includes/audience/class-ffc-audience-loader.php:282
-#: includes/audience/class-ffc-audience-loader.php:316
-#: includes/audience/class-ffc-audience-loader.php:333
-#: includes/audience/class-ffc-audience-loader.php:350
-#: includes/audience/class-ffc-audience-loader.php:367
-#: includes/audience/class-ffc-audience-loader.php:404
+#: includes/audience/class-ffc-audience-loader.php:285
+#: includes/audience/class-ffc-audience-loader.php:319
+#: includes/audience/class-ffc-audience-loader.php:336
+#: includes/audience/class-ffc-audience-loader.php:353
+#: includes/audience/class-ffc-audience-loader.php:370
+#: includes/audience/class-ffc-audience-loader.php:407
+#: includes/audience/class-ffc-audience-loader.php:438
+#: includes/audience/class-ffc-audience-loader.php:508
+#: includes/audience/class-ffc-audience-loader.php:555
 msgid "Permission denied."
 msgstr "Permissão negada."
 
@@ -5727,7 +5926,7 @@ msgstr "Por favor, preencha todos os campos obrigatórios."
 msgid "Please provide a reason for cancellation (minimum 5 characters):"
 msgstr "Por favor, indique o motivo do cancelamento (mínimo de 5 caracteres):"
 
-#: includes/audience/class-ffc-audience-shortcode.php:608
+#: includes/audience/class-ffc-audience-shortcode.php:673
 msgid "Please provide a reason for cancellation:"
 msgstr "Por favor, informe o motivo do cancelamento:"
 
@@ -5757,11 +5956,11 @@ msgstr "Por favor, selecione um horário"
 msgid "Please select an HTML file."
 msgstr "Por favor, selecione um arquivo HTML."
 
-#: includes/audience/class-ffc-audience-shortcode.php:610
+#: includes/audience/class-ffc-audience-shortcode.php:675
 msgid "Please select at least one audience."
 msgstr "Por favor, selecione pelo menos um público-alvo."
 
-#: includes/audience/class-ffc-audience-shortcode.php:611
+#: includes/audience/class-ffc-audience-shortcode.php:676
 msgid "Please select at least one user."
 msgstr "Por favor, selecione pelo menos um usuário."
 
@@ -5778,6 +5977,10 @@ msgstr "Aguarde, isso pode levar alguns segundos..."
 #: includes/settings/views/ffc-tab-smtp.php:224
 msgid "Popular SMTP Providers"
 msgstr "Provedores SMTP Populares"
+
+#: includes/audience/class-ffc-audience-admin-calendar.php:281
+msgid "Position"
+msgstr "Posição"
 
 #: includes/admin/class-ffc-cpt.php:32
 msgctxt "Post Type General Name"
@@ -5807,7 +6010,7 @@ msgstr "Pré-carregar cache diariamente"
 msgid "Prevent selected roles from accessing /wp-admin"
 msgstr "Impedir que funções selecionadas acessem /wp-admin"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:361
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:363
 msgid ""
 "Prevent users from booking another appointment within X hours of their last "
 "booking (0 = disabled, default: 24 hours)"
@@ -5823,11 +6026,11 @@ msgstr "Impede o abuso com limites de envio configuráveis."
 msgid "Preview"
 msgstr "Visualizar"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:516
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:538
 msgid "Preview Calendar"
 msgstr "Visualizar Calendário"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:515
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:537
 #: includes/settings/views/ffc-tab-general.php:85
 msgid "Preview:"
 msgstr "Pré-visualização:"
@@ -5836,7 +6039,7 @@ msgstr "Pré-visualização:"
 msgid "Previous"
 msgstr "Anterior"
 
-#: includes/audience/class-ffc-audience-shortcode.php:178
+#: includes/audience/class-ffc-audience-shortcode.php:190
 msgid "Previous month"
 msgstr "Mês anterior"
 
@@ -5864,17 +6067,17 @@ msgstr "Política de Privacidade"
 msgid "Privacy:"
 msgstr "Privacidade:"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:378
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:388
-#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:280
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:380
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:390
+#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:301
 #: includes/audience/class-ffc-audience-admin-calendar.php:109
 #: includes/audience/class-ffc-audience-admin-calendar.php:223
-#: includes/audience/class-ffc-audience-shortcode.php:133
+#: includes/audience/class-ffc-audience-shortcode.php:135
 msgid "Private"
 msgstr "Privado"
 
-#: includes/audience/class-ffc-audience-admin-settings.php:280
-#: includes/audience/class-ffc-audience-admin-settings.php:378
+#: includes/audience/class-ffc-audience-admin-settings.php:282
+#: includes/audience/class-ffc-audience-admin-settings.php:420
 msgid "Private Calendar Display"
 msgstr "Exibição de Calendário Privado"
 
@@ -5916,15 +6119,15 @@ msgstr "Código de autenticação protegido."
 msgid "Protected internal field."
 msgstr "Campo interno protegido."
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:377
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:387
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:379
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:389
 #: includes/audience/class-ffc-audience-admin-calendar.php:109
 #: includes/audience/class-ffc-audience-admin-calendar.php:226
 msgid "Public"
 msgstr "Público"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-editor.php:78
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:397
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:399
 msgid "Public: anyone can book. Private: only logged-in users can book."
 msgstr ""
 "Público: qualquer pessoa pode reservar. Privado: somente usuários "
@@ -5940,13 +6143,13 @@ msgstr ""
 "que pertencem a um grupo de público. O agendamento é sempre restrito a "
 "membros autorizados."
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:380
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:382
 msgid "Public: visible to everyone. Private: only visible to logged-in users."
 msgstr ""
 "Público: visível para todos. Privado: visível apenas para usuários "
 "conectados."
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:518
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:540
 msgid "Publish this calendar to generate the shortcode."
 msgstr "Publique este calendário para gerar o código curto."
 
@@ -6006,7 +6209,7 @@ msgstr "Quartil (correção de 25%)"
 msgid "Quartile (25%)"
 msgstr "Quartil (25%)"
 
-#: includes/admin/class-ffc-admin-user-capabilities.php:194
+#: includes/admin/class-ffc-admin-user-capabilities.php:217
 #: includes/audience/class-ffc-audience-admin-dashboard.php:144
 msgid "Quick Actions"
 msgstr "Ações Rápidas"
@@ -6036,7 +6239,7 @@ msgstr "Taxa Limite"
 msgid "Rate Limiting:"
 msgstr "Taxa Limite:"
 
-#: includes/admin/class-ffc-admin-user-capabilities.php:177
+#: includes/admin/class-ffc-admin-user-capabilities.php:200
 msgid "Re-registration"
 msgstr "Registrar novamente"
 
@@ -6082,7 +6285,7 @@ msgstr "URL de Redirecionamento"
 msgid "Reminder Sent At"
 msgstr "Lembrete Enviado Em"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:465
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:487
 msgid "Reminder Timing"
 msgstr "Lembrete de Horário"
 
@@ -6095,7 +6298,9 @@ msgstr "Lembrete: Agendamento Amanhã - %s"
 #: includes/admin/class-ffc-admin-assets-manager.php:376
 #: includes/admin/class-ffc-form-editor-metabox-renderer.php:555
 #: includes/self-scheduling/class-ffc-self-scheduling-editor.php:287
+#: includes/audience/class-ffc-audience-admin-calendar.php:377
 #: includes/audience/class-ffc-audience-admin-audience.php:314
+#: includes/audience/class-ffc-audience-loader.php:490
 msgid "Remove"
 msgstr "Remover"
 
@@ -6114,6 +6319,10 @@ msgstr "Remover este feriado?"
 #: includes/audience/class-ffc-audience-admin-audience.php:313
 msgid "Remove this member?"
 msgstr "Remover este membro?"
+
+#: includes/audience/class-ffc-audience-admin-calendar.php:489
+msgid "Remove this user's access?"
+msgstr "Remover o acesso deste usuário?"
 
 #: includes/migrations/class-ffc-migration-registry.php:130
 msgid "Remove unencrypted copies of sensitive data older than 15 days"
@@ -6142,11 +6351,11 @@ msgstr ""
 msgid "Reprinting certificates:"
 msgstr "Reimpressão de certificados:"
 
-#: includes/audience/class-ffc-audience-shortcode.php:639
+#: includes/audience/class-ffc-audience-shortcode.php:704
 msgid "Request timed out. Please try again."
 msgstr "A solicitação expirou. Por favor, tente novamente."
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:365
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:367
 msgid "Require Manual Approval"
 msgstr "Exigir Aprovação Manual"
 
@@ -6217,6 +6426,10 @@ msgstr "API REST"
 msgid "Restore"
 msgstr "Restaurar"
 
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:415
+msgid "Restrict Booking to Business Hours"
+msgstr "Restringir Reservas ao Horário Comercial"
+
 #: includes/admin/class-ffc-form-editor-metabox-renderer.php:380
 msgid "Restrict form access by date and time"
 msgstr "Restringir o acesso ao formulário por data e hora."
@@ -6224,6 +6437,10 @@ msgstr "Restringir o acesso ao formulário por data e hora."
 #: includes/admin/class-ffc-form-editor-metabox-renderer.php:456
 msgid "Restrict form access by geographic location"
 msgstr "Restringir o acesso ao formulário por localização geográfica."
+
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:405
+msgid "Restrict Viewing to Business Hours"
+msgstr "A visualização deve ser restrita ao horário comercial."
 
 #: includes/settings/views/ffc-tab-documentation.php:325
 msgid "Result"
@@ -6233,7 +6450,7 @@ msgstr "Resultado"
 msgid "Retention"
 msgstr "Retenção"
 
-#: includes/admin/class-ffc-admin-user-capabilities.php:200
+#: includes/admin/class-ffc-admin-user-capabilities.php:223
 msgid "Revoke All"
 msgstr "Revogar Tudo"
 
@@ -6315,12 +6532,12 @@ msgid "Sample CSV Format"
 msgstr "Formato CSV de Exemplo"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:179
-#: includes/audience/class-ffc-audience-shortcode.php:232
+#: includes/audience/class-ffc-audience-shortcode.php:244
 msgid "Sat"
 msgstr "Sáb"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-editor.php:254
-#: includes/audience/class-ffc-audience-admin-environment.php:262
+#: includes/audience/class-ffc-audience-admin-environment.php:282
 msgid "Saturday"
 msgstr "Sábado"
 
@@ -6337,8 +6554,9 @@ msgstr "Salvar Alterações"
 msgid "Save Geolocation Settings"
 msgstr "Salvar Configurações de Geolocalização"
 
-#: includes/audience/class-ffc-audience-admin-settings.php:321
-#: includes/audience/class-ffc-audience-admin-settings.php:419
+#: includes/audience/class-ffc-audience-admin-settings.php:323
+#: includes/audience/class-ffc-audience-admin-settings.php:363
+#: includes/audience/class-ffc-audience-admin-settings.php:461
 #: includes/settings/views/ffc-tab-user-access.php:229
 msgid "Save Settings"
 msgstr "Salvar Configurações"
@@ -6347,11 +6565,11 @@ msgstr "Salvar Configurações"
 msgid "Save this code to manage your appointment."
 msgstr "Salve este código para gerenciar seu agendamento."
 
-#: includes/audience/class-ffc-audience-loader.php:259
+#: includes/audience/class-ffc-audience-loader.php:262
 msgid "Saved!"
 msgstr "Salvo!"
 
-#: includes/audience/class-ffc-audience-loader.php:258
+#: includes/audience/class-ffc-audience-loader.php:261
 msgid "Saving..."
 msgstr "Salvando..."
 
@@ -6364,7 +6582,7 @@ msgstr ""
 msgid "Scheduled by:"
 msgstr "Agendado por:"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:384
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:386
 #: includes/audience/class-ffc-audience-admin-page.php:102
 #: includes/audience/class-ffc-audience-admin-page.php:103
 msgid "Scheduling"
@@ -6378,8 +6596,8 @@ msgstr "Ignorar o agendamento (acesso de nível administrativo)"
 msgid "Scheduling Dashboard"
 msgstr "Painel de Agendamento"
 
-#: includes/audience/class-ffc-audience-admin-settings.php:310
-#: includes/audience/class-ffc-audience-admin-settings.php:408
+#: includes/audience/class-ffc-audience-admin-settings.php:312
+#: includes/audience/class-ffc-audience-admin-settings.php:450
 msgid "Scheduling Message"
 msgstr "Mensagem de Agendamento"
 
@@ -6396,6 +6614,10 @@ msgstr "Busca"
 #: includes/admin/views/ffc-admin-activity-log.php:72
 msgid "Search activity logs"
 msgstr "Pesquisar registros de atividades"
+
+#: includes/audience/class-ffc-audience-admin-calendar.php:327
+msgid "Search by name or email..."
+msgstr "Pesquisar por nome ou e-mail..."
 
 #: includes/admin/class-ffc-admin-submission-edit-page.php:297
 msgid "Search by name, email, ID or CPF/RF..."
@@ -6421,7 +6643,7 @@ msgstr "Registros de pesquisa..."
 msgid "Search Personal Calendars"
 msgstr "Pesquisar Calendários Pessoais"
 
-#: includes/audience/class-ffc-audience-shortcode.php:307
+#: includes/audience/class-ffc-audience-shortcode.php:339
 msgid "Search users..."
 msgstr "Pesquisar usuários..."
 
@@ -6434,7 +6656,7 @@ msgstr "Pesquisar usuários:"
 msgid "seconds"
 msgstr "segundos"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:622
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:648
 msgid "Security check failed"
 msgstr "Verificação de segurança falhou"
 
@@ -6480,7 +6702,7 @@ msgstr "Consulte a documentação"
 msgid "Select (Combobox)"
 msgstr "Selecionar (Caixa de combinação)"
 
-#: includes/audience/class-ffc-audience-admin-environment.php:225
+#: includes/audience/class-ffc-audience-admin-environment.php:229
 msgid "Select a calendar"
 msgstr "Selecionar um calendário"
 
@@ -6501,11 +6723,11 @@ msgstr ""
 msgid "Select a Template"
 msgstr "Selecione um Modelo"
 
-#: includes/audience/class-ffc-audience-loader.php:263
+#: includes/audience/class-ffc-audience-loader.php:266
 msgid "Select audience groups"
 msgstr "Selecionar grupos de público-alvo"
 
-#: includes/audience/class-ffc-audience-shortcode.php:299
+#: includes/audience/class-ffc-audience-shortcode.php:331
 msgid "Select Audiences"
 msgstr "Selecionar Públicos-alvo"
 
@@ -6517,11 +6739,11 @@ msgstr "Selecione a Imagem de Fundo"
 msgid "Select Server Template..."
 msgstr "Selecione um Modelo do Servidor..."
 
-#: includes/audience/class-ffc-audience-shortcode.php:306
+#: includes/audience/class-ffc-audience-shortcode.php:338
 msgid "Select Users"
 msgstr "Selecionar Usuários"
 
-#: includes/audience/class-ffc-audience-loader.php:264
+#: includes/audience/class-ffc-audience-loader.php:267
 msgid "Select users"
 msgstr "Selecionar usuários"
 
@@ -6561,11 +6783,11 @@ msgstr "Auto-Agendamento"
 msgid "Self-Scheduling (Personal)"
 msgstr "Auto-Agendamento (Pessoal)"
 
-#: includes/audience/class-ffc-audience-admin-settings.php:237
+#: includes/audience/class-ffc-audience-admin-settings.php:239
 msgid "Self-Scheduling Settings"
 msgstr "Configurações de Auto-Agendamento"
 
-#: includes/audience/class-ffc-audience-admin-settings.php:453
+#: includes/audience/class-ffc-audience-admin-settings.php:495
 msgid "Self-scheduling visibility settings saved."
 msgstr "Configurações de visibilidade de autoagendamento salvas."
 
@@ -6577,7 +6799,7 @@ msgstr "Auto-Agendamento:"
 msgid "Send"
 msgstr "Enviar"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:442
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:464
 msgid "Send confirmation email to user"
 msgstr "Enviar e-mail de confirmação para o usuário"
 
@@ -6593,19 +6815,19 @@ msgstr "Enviar e-mail ao novo agendamento"
 msgid "Send Email to User?"
 msgstr "Enviar E-mail ao Usuário?"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:446
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:468
 msgid "Send notification to admin on new booking"
 msgstr "Enviar notificação ao administrador em novo agendamento"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:450
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:472
 msgid "Send notification when booking is approved"
 msgstr "Enviar notificação quando o agendamento for aprovado"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:454
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:476
 msgid "Send notification when booking is cancelled"
 msgstr "Enviar notificação quando o agendamento for cancelado"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:458
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:480
 msgid "Send reminder before appointment"
 msgstr "Enviar lembrete antes do agendamento"
 
@@ -6655,7 +6877,7 @@ msgid "Separate with commas"
 msgstr "Separe com vírgulas"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:167
-#: includes/audience/class-ffc-audience-shortcode.php:628
+#: includes/audience/class-ffc-audience-shortcode.php:693
 msgid "September"
 msgstr "Setembro"
 
@@ -6668,7 +6890,7 @@ msgstr "Erro do servidor (Status: %d)"
 msgid "Service Cascade"
 msgstr "Cascata de Serviços"
 
-#: includes/audience/class-ffc-audience-loader.php:304
+#: includes/audience/class-ffc-audience-loader.php:307
 msgid "Service not available."
 msgstr "Serviço não disponível."
 
@@ -6705,13 +6927,13 @@ msgstr "Configurações salvas!"
 msgid "Settings saved."
 msgstr "Configurações salvas."
 
-#: includes/audience/class-ffc-audience-admin-settings.php:342
+#: includes/audience/class-ffc-audience-admin-settings.php:384
 msgid "Settings specific to the audience/group booking system."
 msgstr ""
 "Configurações específicas para o sistema de agendamento de público-"
 "alvo/grupo."
 
-#: includes/audience/class-ffc-audience-admin-settings.php:239
+#: includes/audience/class-ffc-audience-admin-settings.php:241
 msgid ""
 "Settings specific to the personal appointment booking system. Calendar-"
 "specific settings (slots, working hours, email templates) are configured on "
@@ -6743,17 +6965,21 @@ msgstr "Exibir a barra de administração no frontend para funções bloqueadas.
 msgid "Show blocked message (Recommended)"
 msgstr "Exibir mensagem bloqueada (Recomendado)"
 
-#: includes/audience/class-ffc-audience-admin-settings.php:288
-#: includes/audience/class-ffc-audience-admin-settings.php:386
+#: includes/audience/class-ffc-audience-admin-settings.php:290
+#: includes/audience/class-ffc-audience-admin-settings.php:428
 msgid "Show calendar title + message"
 msgstr "Exibir título do calendário + mensagem"
 
-#: includes/audience/class-ffc-audience-shortcode.php:364
+#: includes/audience/class-ffc-audience-shortcode.php:396
 msgid "Show cancelled bookings"
 msgstr "Mostrar reservas canceladas"
 
-#: includes/audience/class-ffc-audience-admin-settings.php:285
-#: includes/audience/class-ffc-audience-admin-settings.php:383
+#: includes/audience/class-ffc-audience-admin-calendar.php:277
+msgid "Show event list alongside the calendar"
+msgstr "Exibir a lista de eventos ao lado do calendário."
+
+#: includes/audience/class-ffc-audience-admin-settings.php:287
+#: includes/audience/class-ffc-audience-admin-settings.php:425
 msgid "Show message"
 msgstr "Exibir mensagem"
 
@@ -6770,8 +6996,25 @@ msgstr "Exibir título + descrição + mensagem"
 msgid "Show wait time"
 msgstr "Mostrar tempo de espera"
 
-#: includes/audience/class-ffc-audience-admin-settings.php:304
-#: includes/audience/class-ffc-audience-admin-settings.php:402
+#: includes/audience/class-ffc-audience-admin-settings.php:357
+msgid ""
+"Shown when booking is not allowed outside business hours (calendar is still "
+"visible). Use %hours% for today's working hours."
+msgstr ""
+"Exibido quando a reserva não é permitida fora do horário comercial (o "
+"calendário permanece visível). Use %horas% para o horário de funcionamento "
+"de hoje."
+
+#: includes/audience/class-ffc-audience-admin-settings.php:346
+msgid ""
+"Shown when the calendar cannot be viewed outside business hours. Use %hours% "
+"for today's working hours."
+msgstr ""
+"Exibido quando o calendário não pode ser visualizado fora do horário "
+"comercial. Use %horas% para o horário de trabalho de hoje."
+
+#: includes/audience/class-ffc-audience-admin-settings.php:306
+#: includes/audience/class-ffc-audience-admin-settings.php:444
 msgid ""
 "Shown when the calendar is private and user is not logged in. Use "
 "%login_url% for the login link."
@@ -6779,7 +7022,7 @@ msgstr ""
 "Exibido quando o calendário é privado e o usuário não está conectado. Use "
 "%login_url% para o link de login."
 
-#: includes/audience/class-ffc-audience-admin-settings.php:315
+#: includes/audience/class-ffc-audience-admin-settings.php:317
 msgid ""
 "Shown when the calendar is public but scheduling is private and user is not "
 "logged in. Use %login_url% for the login link."
@@ -6787,7 +7030,7 @@ msgstr ""
 "Exibido quando o calendário é público, mas o agendamento é privado e o "
 "usuário não está conectado. Use %login_url% para o link de login."
 
-#: includes/audience/class-ffc-audience-admin-settings.php:413
+#: includes/audience/class-ffc-audience-admin-settings.php:455
 msgid ""
 "Shown when the calendar is public but user is not logged in and tries to "
 "book. Use %login_url% for the login link."
@@ -6802,6 +7045,18 @@ msgid ""
 msgstr ""
 "Exibe informações detalhadas de geolocalização no console do navegador (F12) "
 "para auxiliar na resolução de problemas."
+
+#: includes/audience/class-ffc-audience-admin-calendar.php:284
+msgid "Side (responsive)"
+msgstr "Ao lado (responsivo)"
+
+#: includes/audience/class-ffc-audience-admin-calendar.php:291
+msgid ""
+"Side: appears next to the calendar on desktop, moves below on mobile. Below: "
+"always below the calendar."
+msgstr ""
+"Ao lado: aparece ao lado do calendário no computador, move-se para baixo no "
+"celular. Abaixo: sempre abaixo do calendário."
 
 #: includes/settings/views/ffc-tab-documentation.php:335
 msgid "Signature with fixed height, proportional width"
@@ -6849,7 +7104,7 @@ msgstr "Algumas tabelas não puderam ser revertidas. Verifique os detalhes."
 
 #: includes/self-scheduling/class-ffc-self-scheduling-appointment-csv-exporter.php:61
 #: includes/self-scheduling/class-ffc-self-scheduling-editor.php:265
-#: includes/audience/class-ffc-audience-shortcode.php:281
+#: includes/audience/class-ffc-audience-shortcode.php:313
 msgid "Start Time"
 msgstr "Horário de Início"
 
@@ -6882,10 +7137,10 @@ msgstr "Estatísticas"
 #: includes/self-scheduling/class-ffc-self-scheduling-editor.php:215
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:193
 #: includes/audience/class-ffc-audience-admin-bookings.php:149
-#: includes/audience/class-ffc-audience-admin-environment.php:108
-#: includes/audience/class-ffc-audience-admin-environment.php:287
+#: includes/audience/class-ffc-audience-admin-environment.php:109
+#: includes/audience/class-ffc-audience-admin-environment.php:307
 #: includes/audience/class-ffc-audience-admin-calendar.php:82
-#: includes/audience/class-ffc-audience-admin-calendar.php:272
+#: includes/audience/class-ffc-audience-admin-calendar.php:297
 #: includes/audience/class-ffc-audience-admin-audience.php:85
 #: includes/audience/class-ffc-audience-admin-audience.php:226
 #: includes/audience/class-ffc-audience-admin-settings.php:106
@@ -7029,22 +7284,22 @@ msgid "Success! Your certificate has been generated."
 msgstr "Sucesso! Seu certificado foi gerado."
 
 #. %d: number of deleted appointments
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:671
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:697
 msgid "Successfully deleted %d appointment(s)."
 msgstr "%d agendamento(s) excluído(s) com sucesso."
 
 #. %d: number of deleted cancelled appointments
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:715
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:741
 msgid "Successfully deleted %d cancelled appointment(s)."
 msgstr "%d agendamento(s) cancelado(s) excluído(s) com sucesso."
 
 #. %d: number of deleted future appointments
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:701
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:727
 msgid "Successfully deleted %d future appointment(s)."
 msgstr "%d agendamento(s) futuro(s) excluído(s) com sucesso."
 
 #. %d: number of deleted past appointments
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:686
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:712
 msgid "Successfully deleted %d past appointment(s)."
 msgstr "%d agendamento(s) passado(s) excluído(s) com sucesso."
 
@@ -7055,12 +7310,12 @@ msgid "Successfully renamed %1$s to %2$s."
 msgstr "Renomeação bem-sucedida de %1$s para %2$s."
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:173
-#: includes/audience/class-ffc-audience-shortcode.php:226
+#: includes/audience/class-ffc-audience-shortcode.php:238
 msgid "Sun"
 msgstr "Dom"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-editor.php:248
-#: includes/audience/class-ffc-audience-admin-environment.php:263
+#: includes/audience/class-ffc-audience-admin-environment.php:283
 msgid "Sunday"
 msgstr "Domingo"
 
@@ -7181,7 +7436,7 @@ msgid "The cache stores form settings to improve performance."
 msgstr ""
 "O cache armazena configurações do formulário para melhorar o desempenho."
 
-#: includes/audience/class-ffc-audience-rest-controller.php:467
+#: includes/audience/class-ffc-audience-rest-controller.php:470
 msgid "The environment is closed at this time."
 msgstr "O ambiente está fechado neste horário."
 
@@ -7217,13 +7472,21 @@ msgstr ""
 "Este agendamento está aguardando aprovação administrativa. O recibo será "
 "disponibilizado após a confirmação."
 
-#: includes/audience/class-ffc-audience-shortcode.php:615
+#: includes/audience/class-ffc-audience-shortcode.php:680
 msgid ""
 "This audience group already has a booking on this day. You cannot create "
 "another booking for the same group on the same day."
 msgstr ""
 "O público-alvo selecionado já possui um agendamento para este dia. Não é "
 "possível criar outro agendamento para o mesmo público-alvo no mesmo dia."
+
+#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:414
+#: includes/audience/class-ffc-audience-admin-settings.php:234
+msgid ""
+"This calendar is available for viewing only during business hours (%hours%)."
+msgstr ""
+"Este calendário está disponível para visualização somente durante o horário "
+"comercial (%hours%)."
 
 #: includes/self-scheduling/class-ffc-self-scheduling-appointment-handler.php:78
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:245
@@ -7254,7 +7517,7 @@ msgstr "Esta data/horário não está disponível."
 msgid "This email is encrypted in the database."
 msgstr "Este e-mail está criptografado no banco de dados."
 
-#: includes/audience/class-ffc-audience-loader.php:265
+#: includes/audience/class-ffc-audience-loader.php:268
 msgid "This field is required."
 msgstr "Este campo é obrigatório."
 
@@ -7336,11 +7599,11 @@ msgid "This submission was created before LGPD consent feature (v2.10.0)."
 msgstr ""
 "Esta submissão foi criada antes do recurso de consentimento LGPD (v2.10.0)."
 
-#: includes/audience/class-ffc-audience-rest-controller.php:476
+#: includes/audience/class-ffc-audience-rest-controller.php:479
 msgid "This time slot is already booked for this environment."
 msgstr "Este horário já está reservado para este ambiente."
 
-#: includes/audience/class-ffc-audience-shortcode.php:617
+#: includes/audience/class-ffc-audience-shortcode.php:682
 msgid ""
 "This time slot is already booked for this environment. You cannot create a "
 "booking at this time."
@@ -7357,12 +7620,12 @@ msgid "This will replace current content. Continue?"
 msgstr "Este conteúdo substituirá o atual. Deseja continuar?"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:177
-#: includes/audience/class-ffc-audience-shortcode.php:230
+#: includes/audience/class-ffc-audience-shortcode.php:242
 msgid "Thu"
 msgstr "Qui"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-editor.php:252
-#: includes/audience/class-ffc-audience-admin-environment.php:260
+#: includes/audience/class-ffc-audience-admin-environment.php:280
 msgid "Thursday"
 msgstr "Quinta-feira"
 
@@ -7420,7 +7683,7 @@ msgstr ""
 "O intervalo de tempo aplica-se a todos os dias do período selecionado. O "
 "formulário respeita as horas diárias."
 
-#: includes/audience/class-ffc-audience-rest-controller.php:609
+#: includes/audience/class-ffc-audience-rest-controller.php:613
 msgid "Time slot already booked for this environment."
 msgstr "Horário já reservado para este ambiente."
 
@@ -7464,13 +7727,13 @@ msgstr "Recomenda-se o uso de TLS na porta 587 e SSL na porta 465."
 msgid "To"
 msgstr "Até"
 
-#: includes/audience/class-ffc-audience-admin-environment.php:277
+#: includes/audience/class-ffc-audience-admin-environment.php:297
 msgid "to"
 msgstr "até"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:271
+#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:282
 #: includes/audience/class-ffc-audience-admin-settings.php:233
-#: includes/audience/class-ffc-audience-admin-settings.php:336
+#: includes/audience/class-ffc-audience-admin-settings.php:378
 #: includes/audience/class-ffc-audience-shortcode.php:88
 msgid ""
 "To book on this calendar you need to be logged in. <a href=\"%login_url%\">"
@@ -7483,10 +7746,10 @@ msgstr ""
 msgid "To enable activity logging, go to:"
 msgstr "Para ativar o registro de atividades, acesse:"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:304
+#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:329
 #: includes/audience/class-ffc-audience-admin-settings.php:232
-#: includes/audience/class-ffc-audience-admin-settings.php:335
-#: includes/audience/class-ffc-audience-shortcode.php:404
+#: includes/audience/class-ffc-audience-admin-settings.php:377
+#: includes/audience/class-ffc-audience-shortcode.php:468
 msgid ""
 "To view this calendar you need to be logged in. <a href=\"%login_url%\">Log "
 "in</a> to continue."
@@ -7499,7 +7762,7 @@ msgid "To:"
 msgstr "Para:"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:181
-#: includes/audience/class-ffc-audience-shortcode.php:186
+#: includes/audience/class-ffc-audience-shortcode.php:198
 msgid "Today"
 msgstr "Hoje"
 
@@ -7551,7 +7814,7 @@ msgstr "Total de Registros"
 msgid "Total Submissions:"
 msgstr "Total de Submissões:"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:806
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:832
 msgid "Total:"
 msgstr "Total:"
 
@@ -7570,12 +7833,12 @@ msgid "Trash"
 msgstr "Lixo"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:175
-#: includes/audience/class-ffc-audience-shortcode.php:228
+#: includes/audience/class-ffc-audience-shortcode.php:240
 msgid "Tue"
 msgstr "Ter"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-editor.php:250
-#: includes/audience/class-ffc-audience-admin-environment.php:258
+#: includes/audience/class-ffc-audience-admin-environment.php:278
 msgid "Tuesday"
 msgstr "Terça-feira"
 
@@ -7677,7 +7940,7 @@ msgid "Upcoming Bookings"
 msgstr "Reservas Futuras"
 
 #. %s: environment label (singular)
-#: includes/audience/class-ffc-audience-admin-environment.php:305
+#: includes/audience/class-ffc-audience-admin-environment.php:325
 #, php-format
 msgid "Update %s"
 msgstr "Atualizar %s"
@@ -7686,7 +7949,7 @@ msgstr "Atualizar %s"
 msgid "Update Audience"
 msgstr "Atualizar Público-alvo"
 
-#: includes/audience/class-ffc-audience-admin-calendar.php:287
+#: includes/audience/class-ffc-audience-admin-calendar.php:312
 msgid "Update Calendar"
 msgstr "Atualizar Calendário"
 
@@ -7788,7 +8051,7 @@ msgid "Use this shortcode to display the calendar on any page or post."
 msgstr ""
 "Use este shortcode para exibir o calendário em qualquer página ou post."
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:510
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:532
 msgid "Use this shortcode to display the calendar:"
 msgstr "Use este código curto para exibir o calendário:"
 
@@ -7803,6 +8066,7 @@ msgstr "Usar:"
 msgid "Used as default geofencing area when creating new forms."
 msgstr "Utilizada como área de geofencing padrão ao criar novos formulários."
 
+#: includes/audience/class-ffc-audience-admin-calendar.php:345
 #: includes/audience/class-ffc-audience-admin-audience.php:294
 #: includes/admin/views/ffc-admin-activity-log.php:91
 msgid "User"
@@ -7816,6 +8080,10 @@ msgstr "Usuário #%d (excluído)"
 #: includes/settings/tabs/class-ffc-tab-user-access.php:25
 msgid "User Access"
 msgstr "Acesso do Usuário"
+
+#: includes/audience/class-ffc-audience-admin-calendar.php:318
+msgid "User Access & Permissions"
+msgstr "Acesso de Usuários & Permissões"
 
 #: includes/admin/class-ffc-settings-save-handler.php:323
 #: includes/settings/tabs/class-ffc-tab-user-access.php:97
@@ -7839,6 +8107,10 @@ msgid "User agreed to Privacy Policy and data storage"
 msgstr ""
 "Usuário concordou com a Política de Privacidade e armazenamento de dados"
 
+#: includes/audience/class-ffc-audience-loader.php:460
+msgid "User already has access to this calendar."
+msgstr "O usuário já tem acesso a este calendário."
+
 #: includes/migrations/class-ffc-migration-registry.php:159
 msgid "User Capabilities"
 msgstr "Recursos do Usuário"
@@ -7853,7 +8125,7 @@ msgstr ""
 "Confirmação do usuário necessária. Digite \"CONFIRMAR EXCLUSÃO\" para "
 "prosseguir."
 
-#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:471
+#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:594
 msgid "User consented to data collection for appointment booking."
 msgstr "Usuário consentiu com a coleta de dados para agendamento."
 
@@ -7872,6 +8144,10 @@ msgstr "E-mails de criação de usuário (Migração)"
 #: includes/settings/views/ffc-tab-smtp.php:42
 msgid "User Creation Emails (Submission)"
 msgstr "E-mails de criação de usuário (Submissão)"
+
+#: includes/audience/class-ffc-audience-loader.php:527
+msgid "User does not have access to this calendar."
+msgstr "O usuário não tem acesso a este calendário."
 
 #: includes/settings/views/ffc-tab-documentation.php:112
 msgid "User email address"
@@ -7912,6 +8188,10 @@ msgstr "Gerenciador de Usuários"
 msgid "User not found"
 msgstr "Usuário não encontrado"
 
+#: includes/audience/class-ffc-audience-loader.php:455
+msgid "User not found."
+msgstr "Usuário não encontrado."
+
 #: includes/self-scheduling/class-ffc-self-scheduling-appointment-csv-exporter.php:64
 msgid "User Notes"
 msgstr "Notas do Usuário"
@@ -7934,7 +8214,7 @@ msgstr ""
 "Os usuários podem acessar seus certificados através da página do painel de "
 "controle usando o código curto %s."
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:346
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:348
 msgid "Users can cancel their own appointments"
 msgstr "Usuários podem cancelar seus próprios agendamentos"
 
@@ -8033,17 +8313,21 @@ msgstr "Visualizar Registros de Atividades"
 msgid "View All"
 msgstr "Ver Todos"
 
-#: includes/audience/class-ffc-audience-admin-settings.php:258
+#: includes/audience/class-ffc-audience-admin-settings.php:260
 msgid "View All Appointments"
 msgstr "Ver Todos os Agendamentos"
 
-#: includes/audience/class-ffc-audience-admin-settings.php:247
+#: includes/audience/class-ffc-audience-admin-settings.php:249
 msgid "View All Calendars"
 msgstr "Ver Todos os Calendários"
 
 #: includes/integrations/class-ffc-email-handler.php:187
 msgid "View and Download Certificate"
 msgstr "Veja e Baixe o Certificado"
+
+#: includes/admin/class-ffc-admin-user-capabilities.php:177
+msgid "View audience bookings"
+msgstr "Veja as reservas do público-alvo"
 
 #: includes/admin/class-ffc-admin-user-capabilities.php:111
 msgid "View certificate history"
@@ -8096,19 +8380,23 @@ msgstr "Ver Comprovante"
 msgid "View/Print Receipt"
 msgstr "Ver/Imprimir Comprovante"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:374
+#: includes/audience/class-ffc-audience-admin-settings.php:341
+msgid "Viewing Restriction Message"
+msgstr "Mensagem de Restrição de Visualização"
+
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:376
 #: includes/audience/class-ffc-audience-admin-calendar.php:80
 #: includes/audience/class-ffc-audience-admin-calendar.php:218
 msgid "Visibility"
 msgstr "Visibilidade"
 
-#: includes/audience/class-ffc-audience-admin-settings.php:299
-#: includes/audience/class-ffc-audience-admin-settings.php:397
+#: includes/audience/class-ffc-audience-admin-settings.php:301
+#: includes/audience/class-ffc-audience-admin-settings.php:439
 msgid "Visibility Message"
 msgstr "Mensagem de Visibilidade"
 
-#: includes/audience/class-ffc-audience-admin-settings.php:272
-#: includes/audience/class-ffc-audience-admin-settings.php:370
+#: includes/audience/class-ffc-audience-admin-settings.php:274
+#: includes/audience/class-ffc-audience-admin-settings.php:412
 msgid "Visibility Settings"
 msgstr "Configurações de Visibilidade"
 
@@ -8132,11 +8420,11 @@ msgstr "Atenção! Faltam tags obrigatórias no layout do PDF:"
 msgid "Warning:"
 msgstr "Aviso:"
 
-#: includes/audience/class-ffc-audience-shortcode.php:613
+#: includes/audience/class-ffc-audience-shortcode.php:678
 msgid "Warning: Conflicts detected with existing bookings."
 msgstr "Atenção: Conflitos detectados com reservas existentes."
 
-#: includes/audience/class-ffc-audience-shortcode.php:614
+#: includes/audience/class-ffc-audience-shortcode.php:679
 msgid "Warning: The following groups already have bookings on this day:"
 msgstr "Atenção: Os seguintes grupos já têm reservas para este dia:"
 
@@ -8144,7 +8432,7 @@ msgstr "Atenção: Os seguintes grupos já têm reservas para este dia:"
 msgid "Warning: These actions cannot be undone."
 msgstr "Aviso: Essas ações não podem ser desfeitas."
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:877
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:903
 msgid "Warning: This action is permanent and cannot be undone!"
 msgstr "Atenção: Esta ação é permanente e não pode ser desfeita!"
 
@@ -8157,12 +8445,12 @@ msgid "We certify that the holder of the data below has completed the event."
 msgstr "Certificamos que o titular dos dados abaixo concluiu o evento."
 
 #: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:176
-#: includes/audience/class-ffc-audience-shortcode.php:229
+#: includes/audience/class-ffc-audience-shortcode.php:241
 msgid "Wed"
 msgstr "Qua"
 
 #: includes/self-scheduling/class-ffc-self-scheduling-editor.php:251
-#: includes/audience/class-ffc-audience-admin-environment.php:259
+#: includes/audience/class-ffc-audience-admin-environment.php:279
 msgid "Wednesday"
 msgstr "Quarta-feira"
 
@@ -8190,8 +8478,8 @@ msgstr ""
 "O que fazer quando o usuário nega a permissão de GPS ou o navegador não "
 "oferece suporte à geolocalização."
 
-#: includes/audience/class-ffc-audience-admin-settings.php:294
-#: includes/audience/class-ffc-audience-admin-settings.php:392
+#: includes/audience/class-ffc-audience-admin-settings.php:296
+#: includes/audience/class-ffc-audience-admin-settings.php:434
 msgid ""
 "What to show when a private calendar is accessed by a non-logged-in user."
 msgstr ""
@@ -8230,6 +8518,14 @@ msgstr ""
 "Quando ativada, se o serviço principal falhar, o serviço alternativo será "
 "tentado automaticamente."
 
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:411
+msgid ""
+"When enabled, the calendar will only be visible during the configured "
+"working hours. Outside those hours, a message will be displayed instead."
+msgstr ""
+"Quando ativado, o calendário ficará visível apenas durante o horário de "
+"trabalho configurado. Fora desse horário, uma mensagem será exibida."
+
 #: includes/settings/views/ffc-tab-smtp.php:35
 msgid ""
 "When enabled, the plugin will NOT send any emails (certificates, "
@@ -8239,6 +8535,15 @@ msgstr ""
 "Quando ativado, o plugin NÃO enviará nenhum e-mail (certificados, "
 "notificações, redefinições de senha etc.). Use esta opção para testes ou se "
 "desejar desativar completamente a funcionalidade de e-mail."
+
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:421
+msgid ""
+"When enabled, users can view the calendar at any time but can only make "
+"bookings during the configured working hours."
+msgstr ""
+"Quando ativada, essa função permite que os usuários visualizem o calendário "
+"a qualquer momento, mas só podem fazer reservas durante o horário de "
+"funcionamento configurado."
 
 #: includes/settings/views/ffc-tab-user-access.php:63
 msgid ""
@@ -8300,7 +8605,7 @@ msgstr ""
 msgid "WordPress site name"
 msgstr "Nome do site WordPress"
 
-#: includes/audience/class-ffc-audience-admin-environment.php:252
+#: includes/audience/class-ffc-audience-admin-environment.php:272
 msgid "Working Hours"
 msgstr "Horários de Funcionamento"
 
@@ -8340,7 +8645,7 @@ msgid "You (%1$s) are viewing the dashboard as: %2$s"
 msgstr "Você (%1$s) está visualizando o painel como: %2$s"
 
 #. %1$d: number of hours, %2$s: next available date/time
-#: includes/self-scheduling/class-ffc-self-scheduling-appointment-validator.php:252
+#: includes/self-scheduling/class-ffc-self-scheduling-appointment-validator.php:269
 #, php-format
 msgid ""
 "You already have an appointment scheduled within the next %1$d hours. You "
@@ -8358,8 +8663,8 @@ msgstr "Você já possui {count} certificados."
 msgid "You are outside the allowed area for this form."
 msgstr "Você está fora da área permitida para este formulário."
 
-#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:281
-#: includes/audience/class-ffc-audience-shortcode.php:134
+#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:306
+#: includes/audience/class-ffc-audience-shortcode.php:136
 msgid "You are viewing this calendar as an administrator (bypass active)."
 msgstr ""
 "Você está visualizando este calendário como administrador (modo ignorar "
@@ -8373,7 +8678,7 @@ msgstr "Você também pode verificar este certificado manualmente em"
 msgid "You can use HTML and inline CSS to style your certificate:"
 msgstr "Você pode usar HTML e CSS embutido para estilizar seu certificado:"
 
-#: includes/audience/class-ffc-audience-shortcode.php:438
+#: includes/audience/class-ffc-audience-shortcode.php:502
 msgid "You do not have access to any calendars."
 msgstr "Você não tem acesso a nenhum calendário."
 
@@ -8385,7 +8690,7 @@ msgstr "Você não tem permissão para acessar esta página."
 msgid "You do not have permission to book appointments."
 msgstr "Você não tem permissão para reservar agendamentos."
 
-#: includes/audience/class-ffc-audience-rest-controller.php:403
+#: includes/audience/class-ffc-audience-rest-controller.php:406
 msgid "You do not have permission to book on this calendar."
 msgstr "Você não tem permissão para reservar neste calendário."
 
@@ -8418,7 +8723,7 @@ msgstr "Você não tem permissão para exportar agendamentos."
 msgid "You do not have permission to export data."
 msgstr "Você não tem permissão para exportar dados."
 
-#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:630
+#: includes/self-scheduling/class-ffc-self-scheduling-editor.php:656
 msgid "You do not have permission to perform this action"
 msgstr "Você não tem permissão para realizar esta ação"
 
@@ -8491,7 +8796,7 @@ msgid "You must be logged in to view your dashboard."
 msgstr "Você precisa estar conectado para visualizar seu painel de controle."
 
 #: includes/shortcodes/class-ffc-dashboard-shortcode.php:288
-#: includes/user-dashboard/class-ffc-access-control.php:100
+#: includes/user-dashboard/class-ffc-access-control.php:102
 #: includes/settings/views/ffc-tab-user-access.php:23
 msgid ""
 "You were redirected from the admin panel. Use this dashboard to access your "
@@ -8520,7 +8825,7 @@ msgstr ""
 "Seu agendamento está aguardando aprovação. Você receberá um e-mail de "
 "confirmação assim que for aprovado."
 
-#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:504
+#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:627
 msgid ""
 "Your appointment is pending approval. You will receive an email confirmation "
 "once it is approved."
@@ -8590,7 +8895,7 @@ msgstr "Sua submissão foi bem-sucedida."
 msgid "ZIP Code"
 msgstr "CEP"
 
-#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:480
+#: includes/self-scheduling/class-ffc-self-scheduling-shortcode.php:603
 msgid "← Back"
 msgstr "← Voltar"
 
