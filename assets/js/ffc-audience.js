@@ -647,9 +647,11 @@
             html += '</div>';
 
             if (booking.audiences && booking.audiences.length > 0) {
+                var displayAudiences = collapseParentAudiences(booking.audiences);
+                var pMap = buildParentNameMap();
                 html += '<div class="ffc-booking-audiences">';
-                booking.audiences.forEach(function(audience) {
-                    html += '<span class="ffc-audience-tag" style="background-color: ' + audience.color + '">' + escapeHtml(audience.name) + '</span>';
+                displayAudiences.forEach(function(audience) {
+                    html += '<span class="ffc-audience-tag" style="background-color: ' + audience.color + '">' + escapeHtml(formatAudienceName(audience, pMap)) + '</span>';
                 });
                 html += '</div>';
             }
@@ -1213,15 +1215,17 @@
                 }
                 html += '<span class="ffc-event-list-desc">' + escapeHtml(desc) + '</span>';
 
-                // Audiences (show summary badge when more than 2)
+                // Audiences (collapse parent groups, then show summary badge when more than 2)
                 if (booking.audiences && booking.audiences.length > 0) {
+                    var displayAudiencesEL = collapseParentAudiences(booking.audiences);
+                    var pMapEL = buildParentNameMap();
                     html += '<span class="ffc-event-list-audiences">';
-                    if (booking.audiences.length > 2) {
+                    if (displayAudiencesEL.length > 2) {
                         var maColor = ffcAudience.multipleAudiencesColor || 'var(--ffc-gray-600)';
-                        html += '<span class="ffc-audience-tag-sm" style="background-color: ' + maColor + '">' + escapeHtml(ffcAudience.strings.multipleAudiences) + ' (' + booking.audiences.length + ')</span>';
+                        html += '<span class="ffc-audience-tag-sm" style="background-color: ' + maColor + '">' + escapeHtml(ffcAudience.strings.multipleAudiences) + ' (' + displayAudiencesEL.length + ')</span>';
                     } else {
-                        booking.audiences.forEach(function(audience) {
-                            html += '<span class="ffc-audience-tag-sm" style="background-color: ' + audience.color + '">' + escapeHtml(audience.name) + '</span>';
+                        displayAudiencesEL.forEach(function(audience) {
+                            html += '<span class="ffc-audience-tag-sm" style="background-color: ' + audience.color + '">' + escapeHtml(formatAudienceName(audience, pMapEL)) + '</span>';
                         });
                     }
                     html += '</span>';
@@ -1283,6 +1287,66 @@
     /**
      * Escape HTML
      */
+    /**
+     * Build a map of audienceId -> parentName from hierarchical config.
+     */
+    function buildParentNameMap() {
+        var map = {};
+        var configAudiences = state.config.audiences || [];
+        configAudiences.forEach(function(parent) {
+            if (!parent.children || parent.children.length === 0) return;
+            parent.children.forEach(function(child) {
+                map[parseInt(child.id)] = parent.name;
+            });
+        });
+        return map;
+    }
+
+    /**
+     * Format audience name based on badge format setting.
+     * 'parent_name' mode: "Parent: Child" for children, plain name for root.
+     */
+    function formatAudienceName(audience, parentNameMap) {
+        if (state.config.audienceBadgeFormat !== 'parent_name') {
+            return audience.name;
+        }
+        var parentName = parentNameMap[parseInt(audience.id)];
+        return parentName ? parentName + ': ' + audience.name : audience.name;
+    }
+
+    /**
+     * Collapse audiences for display: when a parent + ALL its children
+     * are present, show only the parent (visual only).
+     */
+    function collapseParentAudiences(bookingAudiences) {
+        if (!bookingAudiences || bookingAudiences.length === 0) return bookingAudiences;
+
+        var configAudiences = state.config.audiences || [];
+        var ids = bookingAudiences.map(function(a) { return parseInt(a.id); });
+        var removeIds = [];
+
+        configAudiences.forEach(function(parent) {
+            if (!parent.children || parent.children.length === 0) return;
+            var parentId = parseInt(parent.id);
+            if (ids.indexOf(parentId) === -1) return;
+
+            var childIds = parent.children.map(function(c) { return parseInt(c.id); });
+            var allChildrenPresent = childIds.every(function(cid) {
+                return ids.indexOf(cid) !== -1;
+            });
+
+            if (allChildrenPresent) {
+                removeIds = removeIds.concat(childIds);
+            }
+        });
+
+        if (removeIds.length === 0) return bookingAudiences;
+
+        return bookingAudiences.filter(function(a) {
+            return removeIds.indexOf(parseInt(a.id)) === -1;
+        });
+    }
+
     function escapeHtml(str) {
         if (!str) return '';
         return str.replace(/&/g, '&amp;')
