@@ -289,18 +289,27 @@ class AudienceRestController {
         $bookings_data = array_map(function($booking) use ($user_id, $is_logged_in, $has_bypass) {
             $audiences = AudienceBookingRepository::get_booking_audiences((int) $booking->id);
 
-            // Non-logged-in users get limited data (occupancy only, no personal details)
+            // Non-logged-in users get public data (no personal details like created_by)
             if (!$is_logged_in) {
                 return array(
                     'id' => $booking->id,
                     'environment_id' => $booking->environment_id,
+                    'environment_name' => $booking->environment_name ?? '',
                     'booking_date' => $booking->booking_date,
                     'start_time' => $booking->start_time,
                     'end_time' => $booking->end_time,
                     'is_all_day' => $booking->is_all_day ?? 0,
+                    'booking_type' => $booking->booking_type,
+                    'description' => $booking->description,
                     'status' => $booking->status,
                     'can_cancel' => false,
-                    'audiences' => array(),
+                    'audiences' => array_map(function($a) {
+                        return array(
+                            'id' => $a->id,
+                            'name' => $a->name,
+                            'color' => $a->color,
+                        );
+                    }, $audiences),
                 );
             }
 
