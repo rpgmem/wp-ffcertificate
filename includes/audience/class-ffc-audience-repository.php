@@ -500,8 +500,9 @@ class AudienceRepository {
         global $wpdb;
         $table = self::get_members_table_name();
 
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Intentional delete-and-reinsert for member sync.
+        // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Intentional delete-and-reinsert for member sync.
         $wpdb->delete($table, array('audience_id' => $audience_id), array('%d'));
+        // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 
         // Add new members
         foreach ($user_ids as $user_id) {
