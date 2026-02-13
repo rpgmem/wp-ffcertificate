@@ -387,8 +387,9 @@ class AudienceEnvironmentRepository {
         global $wpdb;
         $table = self::get_holidays_table_name();
 
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Cached above via wp_cache_get.
+        // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Cached above via wp_cache_get.
         $count = $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE schedule_id = %d AND holiday_date = %s', $table, $env->schedule_id, $date ) );
+        // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 
         $result = (int) $count > 0;
         wp_cache_set( $cache_key, $result, 'ffcertificate' );
