@@ -3,7 +3,7 @@ Contributors: alexmeusburger
 Tags: certificate, form builder, pdf generation, verification, validation
 Requires at least: 6.2
 Tested up to: 6.9
-Stable tag: 4.9.4
+Stable tag: 4.9.5
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -154,6 +154,25 @@ In the certificate layout editor, use these dynamic tags:
 * Common examples: `{{name}}`, `{{email}}`, `{{cpf_rf}}`, `{{ticket}}`
 
 == Changelog ==
+
+= 4.9.5 (2026-02-14) =
+
+LGPD/GDPR compliance: WordPress Privacy Tools integration (Export & Erase Personal Data).
+
+* New: **Privacy Exporter** — 5 data groups registered with WordPress Export Personal Data tool:
+  - FFC Profile (display_name, email, phone, department, organization, member_since)
+  - FFC Certificates (form_title, submission_date, auth_code, email, consent)
+  - FFC Appointments (calendar, date, time, status, name, email, phone, notes)
+  - FFC Audience Groups (audience_name, joined_date)
+  - FFC Audience Bookings (environment, date, time, description, status)
+* New: **Privacy Eraser** — registered with WordPress Erase Personal Data tool:
+  - Submissions: anonymized (user_id=NULL, email/cpf cleared; auth_code and magic_link preserved for public verification)
+  - Appointments: anonymized (user_id=NULL, all PII fields cleared)
+  - Audience members/booking users/permissions: deleted
+  - User profiles: deleted
+  - Activity log: anonymized (user_id=NULL)
+* New: **PrivacyHandler class** with paginated export (50 items/batch) and single-pass erasure
+* New: Encrypted fields decrypted during export for complete data portability
 
 = 4.9.4 (2026-02-14) =
 

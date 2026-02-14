@@ -35,6 +35,7 @@ use FreeFormCertificate\SelfScheduling\AppointmentReceiptHandler;
 use FreeFormCertificate\SelfScheduling\AppointmentCsvExporter;
 use FreeFormCertificate\SelfScheduling\SelfSchedulingShortcode;
 use FreeFormCertificate\Audience\AudienceLoader;
+use FreeFormCertificate\Privacy\PrivacyHandler;
 use FreeFormCertificate\Core\ActivityLogSubscriber;
 
 if (!defined('ABSPATH')) exit;
@@ -95,6 +96,7 @@ class Loader {
         DashboardShortcode::init();
         AccessControl::init();
         UserCleanup::init();
+        PrivacyHandler::init();
 
         $this->self_scheduling_cpt              = new SelfSchedulingCPT();
         $this->self_scheduling_appointment_handler = new AppointmentHandler();
