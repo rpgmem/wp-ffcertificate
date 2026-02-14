@@ -69,6 +69,7 @@ class UserManager {
         if ($existing_user_id) {
             // CPF/RF already linked → grant context-specific capabilities and return
             self::grant_context_capabilities((int) $existing_user_id, $context);
+            self::link_orphaned_records($cpf_rf_hash, (int) $existing_user_id);
             return (int) $existing_user_id;
         }
 
@@ -90,6 +91,7 @@ class UserManager {
                 self::sync_user_metadata($user_id, $submission_data);
             }
 
+            self::link_orphaned_records($cpf_rf_hash, $user_id);
             return $user_id;
         }
 
@@ -100,6 +102,7 @@ class UserManager {
             return $user_id;
         }
 
+        self::link_orphaned_records($cpf_rf_hash, $user_id);
         return $user_id;
     }
 
@@ -126,6 +129,63 @@ class UserManager {
     }
 
     /**
+     * Link orphaned records (submissions and appointments) to a user
+     *
+     * When a user is found/created, link any existing submissions or appointments
+     * that share the same cpf_rf_hash but have no user_id assigned.
+     *
+     * @since 4.9.6
+     * @param string $cpf_rf_hash Hash of CPF or RF
+     * @param int $user_id WordPress user ID
+     * @return void
+     */
+    private static function link_orphaned_records(string $cpf_rf_hash, int $user_id): void {
+        global $wpdb;
+
+        // Link orphaned submissions
+        $submissions_table = \FreeFormCertificate\Core\Utils::get_submissions_table();
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+        $linked_submissions = $wpdb->query($wpdb->prepare(
+            "UPDATE {$submissions_table} SET user_id = %d WHERE cpf_rf_hash = %s AND user_id IS NULL",
+            $user_id,
+            $cpf_rf_hash
+        ));
+
+        // Link orphaned appointments
+        $appointments_table = $wpdb->prefix . 'ffc_self_scheduling_appointments';
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $table_exists = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $appointments_table));
+
+        $linked_appointments = 0;
+        if ($table_exists) {
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+            $linked_appointments = $wpdb->query($wpdb->prepare(
+                "UPDATE {$appointments_table} SET user_id = %d WHERE cpf_rf_hash = %s AND user_id IS NULL",
+                $user_id,
+                $cpf_rf_hash
+            ));
+
+            // If appointments were linked, grant appointment capabilities
+            if ($linked_appointments > 0) {
+                self::grant_appointment_capabilities($user_id);
+            }
+        }
+
+        if ($linked_submissions > 0 || $linked_appointments > 0) {
+            if (class_exists('\FreeFormCertificate\Core\Debug')) {
+                \FreeFormCertificate\Core\Debug::log_user_manager(
+                    'Linked orphaned records',
+                    array(
+                        'user_id' => $user_id,
+                        'submissions_linked' => $linked_submissions,
+                        'appointments_linked' => $linked_appointments,
+                    )
+                );
+            }
+        }
+    }
+
+    /**
      * Create new WordPress user for FFC
      *
      * Creates user with ffc_user role but only grants context-specific capabilities.
@@ -139,8 +199,9 @@ class UserManager {
         // Generate strong random password
         $password = wp_generate_password(24, true, true);
 
-        // Create user (username = email)
-        $user_id = wp_create_user($email, $password, $email);
+        // Generate username from name (not email)
+        $username = self::generate_username($email, $submission_data);
+        $user_id = wp_create_user($username, $password, $email);
 
         if (is_wp_error($user_id)) {
             // Use centralized debug system for critical errors
@@ -246,6 +307,61 @@ class UserManager {
 
         // Store registration date
         update_user_meta($user_id, 'ffc_registration_date', current_time('mysql'));
+    }
+
+    /**
+     * Generate a unique username for a new FFC user
+     *
+     * Priority:
+     * 1. Slug from name in submission_data (e.g. "joao.silva")
+     * 2. Fallback: "ffc_" + random 8-char string
+     *
+     * Never uses the email as username (privacy concern).
+     *
+     * @since 4.9.6
+     * @param string $email Email (used only as last-resort fallback, not as username)
+     * @param array $submission_data Submission data containing name fields
+     * @return string Unique username
+     */
+    public static function generate_username(string $email, array $submission_data = array()): string {
+        $possible_names = array('nome_completo', 'nome', 'name', 'full_name', 'ffc_nome');
+        $name = '';
+
+        foreach ($possible_names as $field) {
+            if (!empty($submission_data[$field]) && is_string($submission_data[$field])) {
+                $name = trim($submission_data[$field]);
+                break;
+            }
+        }
+
+        if (!empty($name)) {
+            // Generate slug from name: remove accents, lowercase, keep alphanumeric + dots
+            $slug = sanitize_user(remove_accents(strtolower($name)), true);
+            $slug = preg_replace('/[^a-z0-9._-]/', '', $slug);
+            $slug = preg_replace('/[-_.]+/', '.', $slug);
+            $slug = trim($slug, '.');
+
+            if (strlen($slug) >= 3) {
+                if (!username_exists($slug)) {
+                    return $slug;
+                }
+
+                // Try with numeric suffix
+                for ($i = 2; $i <= 99; $i++) {
+                    $candidate = $slug . '.' . $i;
+                    if (!username_exists($candidate)) {
+                        return $candidate;
+                    }
+                }
+            }
+        }
+
+        // Fallback: ffc_ + random string
+        do {
+            $username = 'ffc_' . wp_generate_password(8, false, false);
+        } while (username_exists($username));
+
+        return $username;
     }
 
     /**

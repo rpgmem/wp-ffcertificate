@@ -3,7 +3,7 @@ Contributors: alexmeusburger
 Tags: certificate, form builder, pdf generation, verification, validation
 Requires at least: 6.2
 Tested up to: 6.9
-Stable tag: 4.9.5
+Stable tag: 4.9.6
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -154,6 +154,19 @@ In the certificate layout editor, use these dynamic tags:
 * Common examples: `{{name}}`, `{{email}}`, `{{cpf_rf}}`, `{{ticket}}`
 
 == Changelog ==
+
+= 4.9.6 (2026-02-14) =
+
+Editable user profile, orphaned record linking, and username privacy fix.
+
+* New: **PUT /user/profile** REST endpoint — users can update display_name, phone, department, organization from the dashboard
+* New: **Profile edit form** in user dashboard — toggle between read-only view and edit form with save/cancel actions
+* New: **Phone, department, organization** fields displayed in the read-only profile view
+* New: **Orphaned record linking** — `get_or_create_user()` now retroactively links submissions and appointments that share the same cpf_rf_hash but had no user_id
+* New: **Appointment capability auto-grant** — when orphaned appointments are linked, appointment capabilities are granted automatically
+* Fix: **Username = email** privacy issue — `create_ffc_user()` now generates username from name slug (e.g. "joao.silva") instead of using email; fallback to `ffc_` + random string
+* Fix: **MigrationUserLink** updated to use `generate_username()` for new user creation during migration
+* New: `UserManager::generate_username()` public method — generates unique slugified username from name data
 
 = 4.9.5 (2026-02-14) =
 

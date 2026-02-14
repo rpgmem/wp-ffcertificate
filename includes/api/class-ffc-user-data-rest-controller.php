@@ -5,10 +5,11 @@ declare(strict_types=1);
  * User Data REST Controller
  *
  * Handles user-facing REST API endpoints:
- *   GET /user/certificates      – Current user's certificates
- *   GET /user/profile           – Current user's profile
- *   GET /user/appointments      – Current user's self-scheduling appointments
- *   GET /user/audience-bookings – Current user's audience bookings
+ *   GET  /user/certificates      – Current user's certificates
+ *   GET  /user/profile           – Current user's profile
+ *   PUT  /user/profile           – Update current user's profile
+ *   GET  /user/appointments      – Current user's self-scheduling appointments
+ *   GET  /user/audience-bookings – Current user's audience bookings
  *
  * @since 4.6.1
  * @package FreeFormCertificate\API
@@ -47,9 +48,16 @@ class UserDataRestController {
         ));
 
         register_rest_route($this->namespace, '/user/profile', array(
-            'methods' => \WP_REST_Server::READABLE,
-            'callback' => array($this, 'get_user_profile'),
-            'permission_callback' => 'is_user_logged_in',
+            array(
+                'methods' => \WP_REST_Server::READABLE,
+                'callback' => array($this, 'get_user_profile'),
+                'permission_callback' => 'is_user_logged_in',
+            ),
+            array(
+                'methods' => 'PUT',
+                'callback' => array($this, 'update_user_profile'),
+                'permission_callback' => 'is_user_logged_in',
+            ),
         ));
 
         register_rest_route($this->namespace, '/user/appointments', array(
@@ -320,6 +328,76 @@ class UserDataRestController {
         } catch (\Exception $e) {
             return new \WP_Error(
                 'get_profile_error',
+                $e->getMessage(),
+                array('status' => 500)
+            );
+        }
+    }
+
+    /**
+     * PUT /user/profile
+     *
+     * Allows the logged-in user to update their own profile fields:
+     * display_name, phone, department, organization, notes.
+     *
+     * @since 4.9.6
+     * @param \WP_REST_Request $request
+     * @return \WP_REST_Response|\WP_Error
+     */
+    public function update_user_profile($request) {
+        try {
+            $user_id = get_current_user_id();
+
+            if (!$user_id) {
+                return new \WP_Error(
+                    'not_logged_in',
+                    __('You must be logged in to update profile', 'ffcertificate'),
+                    array('status' => 401)
+                );
+            }
+
+            if (!class_exists('\FreeFormCertificate\UserDashboard\UserManager')) {
+                return new \WP_Error(
+                    'missing_class',
+                    __('UserManager class not found', 'ffcertificate'),
+                    array('status' => 500)
+                );
+            }
+
+            $data = array();
+            $allowed_fields = array('display_name', 'phone', 'department', 'organization', 'notes');
+
+            foreach ($allowed_fields as $field) {
+                $value = $request->get_param($field);
+                if ($value !== null) {
+                    $data[$field] = $value;
+                }
+            }
+
+            if (empty($data)) {
+                return new \WP_Error(
+                    'no_data',
+                    __('No profile data provided', 'ffcertificate'),
+                    array('status' => 400)
+                );
+            }
+
+            $result = \FreeFormCertificate\UserDashboard\UserManager::update_profile($user_id, $data);
+
+            if (!$result) {
+                return new \WP_Error(
+                    'update_failed',
+                    __('Failed to update profile', 'ffcertificate'),
+                    array('status' => 500)
+                );
+            }
+
+            // Return updated profile
+            return $this->get_user_profile($request);
+
+        } catch (\Exception $e) {
+            return new \WP_Error(
+                'update_profile_error',
                 $e->getMessage(),
                 array('status' => 500)
             );

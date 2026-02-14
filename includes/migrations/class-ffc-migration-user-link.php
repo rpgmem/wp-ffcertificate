@@ -179,8 +179,12 @@ class MigrationUserLink {
 
             } else {
                 // STEP 5: Email doesn't exist → Create new user
+                $name_data = self::extract_name_data($submission);
+                $username = class_exists('\FreeFormCertificate\UserDashboard\UserManager')
+                    ? \FreeFormCertificate\UserDashboard\UserManager::generate_username($email, $name_data)
+                    : 'ffc_' . wp_generate_password(8, false, false);
                 $user_id = wp_create_user(
-                    $email, // username = email
+                    $username,
                     wp_generate_password(24, true, true),
                     $email
                 );
@@ -257,6 +261,27 @@ class MigrationUserLink {
                 count($errors)
             ),
         );
+    }
+
+    /**
+     * Extract name data from encrypted submission for username generation
+     *
+     * @since 4.9.6
+     * @param array $submission Submission data row (includes data_encrypted)
+     * @return array Submission data array with name fields
+     */
+    private static function extract_name_data(array $submission): array {
+        if (empty($submission['data_encrypted'])) {
+            return array();
+        }
+
+        try {
+            $data_json = \FreeFormCertificate\Core\Encryption::decrypt($submission['data_encrypted']);
+            $data = json_decode($data_json, true);
+            return is_array($data) ? $data : array();
+        } catch (\Exception $e) {
+            return array();
+        }
     }
 
     /**

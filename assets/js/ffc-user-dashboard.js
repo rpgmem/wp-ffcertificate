@@ -238,6 +238,22 @@
             $(document).on('click', '.ffc-cal-export-dropdown', function(e) {
                 e.stopPropagation();
             });
+
+            // Profile edit/save/cancel
+            $(document).on('click', '.ffc-profile-edit-btn', function(e) {
+                e.preventDefault();
+                FFCDashboard.showProfileEditForm();
+            });
+            $(document).on('click', '.ffc-profile-save-btn', function(e) {
+                e.preventDefault();
+                FFCDashboard.saveProfile();
+            });
+            $(document).on('click', '.ffc-profile-cancel-btn', function(e) {
+                e.preventDefault();
+                if (FFCDashboard._profileData) {
+                    FFCDashboard.renderProfile(FFCDashboard._profileData);
+                }
+            });
         },
 
         /**
@@ -848,8 +864,11 @@
             });
         },
 
+        _profileData: null,
+
         renderProfile: function(profile) {
             var $container = $('#tab-profile');
+            this._profileData = profile;
 
             var html = '<div class="ffc-profile-info">';
 
@@ -901,6 +920,24 @@
             }
             html += '</div>';
 
+            // Phone
+            html += '<div class="ffc-profile-field">';
+            html += '<label>' + (ffcDashboard.strings.phone || 'Phone') + '</label>';
+            html += '<div class="value">' + (profile.phone || '-') + '</div>';
+            html += '</div>';
+
+            // Department
+            html += '<div class="ffc-profile-field">';
+            html += '<label>' + (ffcDashboard.strings.department || 'Department') + '</label>';
+            html += '<div class="value">' + (profile.department || '-') + '</div>';
+            html += '</div>';
+
+            // Organization
+            html += '<div class="ffc-profile-field">';
+            html += '<label>' + (ffcDashboard.strings.organization || 'Organization') + '</label>';
+            html += '<div class="value">' + (profile.organization || '-') + '</div>';
+            html += '</div>';
+
             // Audience Groups
             if (profile.audience_groups && profile.audience_groups.length > 0) {
                 html += '<div class="ffc-profile-field">';
@@ -923,7 +960,97 @@
 
             html += '</div>';
 
+            // Edit button (only for own profile, not view-as)
+            if (!ffcDashboard.viewAsUserId) {
+                html += '<button type="button" class="button ffc-profile-edit-btn" style="margin-top: 15px;">';
+                html += (ffcDashboard.strings.editProfile || 'Edit Profile');
+                html += '</button>';
+            }
+
             $container.html(html);
+        },
+
+        showProfileEditForm: function() {
+            var $container = $('#tab-profile');
+            var profile = this._profileData;
+            if (!profile) return;
+
+            var esc = function(str) {
+                return $('<div>').text(str || '').html();
+            };
+
+            var html = '<div class="ffc-profile-edit-form">';
+            html += '<h3>' + (ffcDashboard.strings.editProfile || 'Edit Profile') + '</h3>';
+
+            html += '<div class="ffc-profile-field">';
+            html += '<label for="ffc-edit-display-name">' + ffcDashboard.strings.name + '</label>';
+            html += '<input type="text" id="ffc-edit-display-name" value="' + esc(profile.display_name) + '" maxlength="250" />';
+            html += '</div>';
+
+            html += '<div class="ffc-profile-field">';
+            html += '<label for="ffc-edit-phone">' + (ffcDashboard.strings.phone || 'Phone') + '</label>';
+            html += '<input type="tel" id="ffc-edit-phone" value="' + esc(profile.phone) + '" maxlength="50" />';
+            html += '</div>';
+
+            html += '<div class="ffc-profile-field">';
+            html += '<label for="ffc-edit-department">' + (ffcDashboard.strings.department || 'Department') + '</label>';
+            html += '<input type="text" id="ffc-edit-department" value="' + esc(profile.department) + '" maxlength="250" />';
+            html += '</div>';
+
+            html += '<div class="ffc-profile-field">';
+            html += '<label for="ffc-edit-organization">' + (ffcDashboard.strings.organization || 'Organization') + '</label>';
+            html += '<input type="text" id="ffc-edit-organization" value="' + esc(profile.organization) + '" maxlength="250" />';
+            html += '</div>';
+
+            html += '<div class="ffc-profile-edit-actions" style="margin-top: 15px;">';
+            html += '<button type="button" class="button button-primary ffc-profile-save-btn">';
+            html += (ffcDashboard.strings.save || 'Save');
+            html += '</button> ';
+            html += '<button type="button" class="button ffc-profile-cancel-btn">';
+            html += (ffcDashboard.strings.cancel || 'Cancel');
+            html += '</button>';
+            html += '<span class="ffc-profile-save-status" style="margin-left: 10px; display: none;"></span>';
+            html += '</div>';
+
+            html += '</div>';
+
+            $container.html(html);
+        },
+
+        saveProfile: function() {
+            var data = {
+                display_name: $('#ffc-edit-display-name').val(),
+                phone: $('#ffc-edit-phone').val(),
+                department: $('#ffc-edit-department').val(),
+                organization: $('#ffc-edit-organization').val()
+            };
+
+            var $saveBtn = $('.ffc-profile-save-btn');
+            var $status = $('.ffc-profile-save-status');
+            $saveBtn.prop('disabled', true);
+            $status.text(ffcDashboard.strings.saving || 'Saving...').show();
+
+            $.ajax({
+                url: ffcDashboard.restUrl + 'user/profile',
+                method: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('X-WP-Nonce', ffcDashboard.nonce);
+                },
+                success: function(response) {
+                    FFCDashboard._profileData = null;
+                    FFCDashboard.renderProfile(response);
+                },
+                error: function(xhr) {
+                    var msg = (ffcDashboard.strings.saveError || 'Error saving profile');
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        msg = xhr.responseJSON.message;
+                    }
+                    $status.text(msg).css('color', '#d63638');
+                    $saveBtn.prop('disabled', false);
+                }
+            });
         }
     };
 
