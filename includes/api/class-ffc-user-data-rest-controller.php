@@ -275,10 +275,9 @@ class UserDataRestController {
                 );
             }
 
-            $view_as_user_id = $request->get_param('viewAsUserId');
-            if ($view_as_user_id && current_user_can('manage_options')) {
-                $user_id = absint($view_as_user_id);
-            }
+            // Resolve user context (view-as or self)
+            $ctx = $this->resolve_user_context($request);
+            $user_id = $ctx['user_id'];
 
             if (!class_exists('\FreeFormCertificate\UserDashboard\UserManager')) {
                 $user_manager_file = FFC_PLUGIN_DIR . 'includes/user-dashboard/class-ffc-user-manager.php';
