@@ -63,6 +63,11 @@ class DashboardShortcode {
             user_can($user, 'manage_options')
         );
 
+        // Only show audience tab if user actually belongs to at least one audience group
+        if ($can_view_audience_bookings) {
+            $can_view_audience_bookings = self::user_has_audience_groups($user_id);
+        }
+
         // Get current tab - default to first available tab
         $default_tab = $can_view_certificates ? 'certificates' : ($can_view_appointments ? 'appointments' : ($can_view_audience_bookings ? 'audience' : 'profile'));
         $current_tab = isset($_GET['tab']) ? sanitize_text_field(wp_unslash($_GET['tab'])) : $default_tab; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Tab parameter for display only.
@@ -297,6 +302,27 @@ class DashboardShortcode {
     }
 
     /**
+     * Check if user belongs to at least one audience group
+     *
+     * @since 4.9.7
+     * @param int $user_id WordPress user ID
+     * @return bool
+     */
+    private static function user_has_audience_groups(int $user_id): bool {
+        if (!class_exists('\FreeFormCertificate\Audience\AudienceRepository')) {
+            return false;
+        }
+
+        // Admins always see the audience tab (they can manage all audiences)
+        if (user_can($user_id, 'manage_options')) {
+            return true;
+        }
+
+        $audiences = \FreeFormCertificate\Audience\AudienceRepository::get_user_audiences($user_id);
+        return !empty($audiences);
+    }
+
+    /**
      * Enqueue dashboard assets
      *
      * @param int|false $view_as_user_id User ID in view-as mode
@@ -320,6 +346,11 @@ class DashboardShortcode {
             user_can($user, 'ffc_view_audience_bookings') ||
             user_can($user, 'manage_options')
         );
+
+        // Only show audience tab if user actually belongs to at least one audience group
+        if ($can_view_audience_bookings) {
+            $can_view_audience_bookings = self::user_has_audience_groups($user_id);
+        }
 
         $s = \FreeFormCertificate\Core\Utils::asset_suffix();
 
