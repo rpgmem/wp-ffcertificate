@@ -43,6 +43,7 @@ class ReregistrationAdmin {
         add_action('admin_menu', array($this, 'add_menu'), 30);
         add_action('admin_init', array($this, 'handle_actions'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_assets'));
+        add_action('wp_ajax_ffc_generate_ficha', array($this, 'ajax_generate_ficha'));
     }
 
     /**
@@ -92,11 +93,23 @@ class ReregistrationAdmin {
         wp_localize_script('ffc-reregistration-admin', 'ffcReregistrationAdmin', array(
             'ajaxUrl'    => admin_url('admin-ajax.php'),
             'adminNonce' => wp_create_nonce('ffc_reregistration_nonce'),
+            'fichaNonce' => wp_create_nonce('ffc_generate_ficha'),
             'strings'    => array(
-                'confirmDelete'  => __('Are you sure you want to delete this reregistration? This will also delete all submissions.', 'ffcertificate'),
-                'confirmApprove' => __('Approve selected submissions?', 'ffcertificate'),
+                'confirmDelete'   => __('Are you sure you want to delete this reregistration? This will also delete all submissions.', 'ffcertificate'),
+                'confirmApprove'  => __('Approve selected submissions?', 'ffcertificate'),
+                'generatingPdf'   => __('Generating PDF...', 'ffcertificate'),
+                'errorGenerating' => __('Error generating ficha.', 'ffcertificate'),
             ),
         ));
+
+        // Enqueue PDF libraries on submissions view
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $view = isset($_GET['view']) ? sanitize_text_field(wp_unslash($_GET['view'])) : '';
+        if ($view === 'submissions') {
+            wp_enqueue_script('html2canvas', FFC_PLUGIN_URL . 'libs/js/html2canvas.min.js', array(), FFC_HTML2CANVAS_VERSION, true);
+            wp_enqueue_script('jspdf', FFC_PLUGIN_URL . 'libs/js/jspdf.umd.min.js', array(), FFC_JSPDF_VERSION, true);
+            wp_enqueue_script('ffc-pdf-generator', FFC_PLUGIN_URL . 'assets/js/ffc-pdf-generator.min.js', array('html2canvas', 'jspdf'), FFC_VERSION, true);
+        }
     }
 
     /**
@@ -588,6 +601,12 @@ class ReregistrationAdmin {
                 <?php else : ?>
                     —
                 <?php endif; ?>
+                <?php if (in_array($sub->status, array('submitted', 'approved'), true)) : ?>
+                    <button type="button" class="button button-small ffc-ficha-btn" data-submission-id="<?php echo esc_attr($sub->id); ?>">
+                        <span class="dashicons dashicons-media-document" style="vertical-align:middle;font-size:14px"></span>
+                        <?php esc_html_e('Ficha', 'ffcertificate'); ?>
+                    </button>
+                <?php endif; ?>
             </td>
         </tr>
         <?php
@@ -899,5 +918,30 @@ class ReregistrationAdmin {
         // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
         fclose($output);
         exit;
+    }
+
+    /**
+     * AJAX: Generate ficha PDF data for a submission.
+     *
+     * @return void
+     */
+    public function ajax_generate_ficha(): void {
+        check_ajax_referer('ffc_generate_ficha', 'nonce');
+
+        if (!current_user_can(self::CAPABILITY)) {
+            wp_send_json_error(array('message' => __('Permission denied.', 'ffcertificate')));
+        }
+
+        $submission_id = isset($_POST['submission_id']) ? absint($_POST['submission_id']) : 0;
+        if (!$submission_id) {
+            wp_send_json_error(array('message' => __('Invalid submission.', 'ffcertificate')));
+        }
+
+        $ficha_data = FichaGenerator::generate_ficha_data($submission_id);
+        if (!$ficha_data) {
+            wp_send_json_error(array('message' => __('Could not generate ficha.', 'ffcertificate')));
+        }
+
+        wp_send_json_success(array('pdf_data' => $ficha_data));
     }
 }

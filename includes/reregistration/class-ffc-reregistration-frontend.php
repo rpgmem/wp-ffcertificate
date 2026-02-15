@@ -32,6 +32,7 @@ class ReregistrationFrontend {
         add_action('wp_ajax_ffc_get_reregistration_form', array(__CLASS__, 'ajax_get_form'));
         add_action('wp_ajax_ffc_submit_reregistration', array(__CLASS__, 'ajax_submit'));
         add_action('wp_ajax_ffc_save_reregistration_draft', array(__CLASS__, 'ajax_save_draft'));
+        add_action('wp_ajax_ffc_download_ficha', array(__CLASS__, 'ajax_download_ficha'));
     }
 
     /**
@@ -143,6 +144,39 @@ class ReregistrationFrontend {
         ));
 
         wp_send_json_success(array('message' => __('Draft saved.', 'ffcertificate')));
+    }
+
+    /**
+     * AJAX: Generate ficha PDF data for the current user's submission.
+     *
+     * @return void
+     */
+    public static function ajax_download_ficha(): void {
+        check_ajax_referer('ffc_reregistration_frontend', 'nonce');
+
+        $submission_id = isset($_POST['submission_id']) ? absint($_POST['submission_id']) : 0;
+        $user_id = get_current_user_id();
+
+        if (!$submission_id || !$user_id) {
+            wp_send_json_error(array('message' => __('Invalid request.', 'ffcertificate')));
+        }
+
+        // Verify this submission belongs to the current user
+        $submission = ReregistrationSubmissionRepository::get_by_id($submission_id);
+        if (!$submission || (int) $submission->user_id !== $user_id) {
+            wp_send_json_error(array('message' => __('Submission not found.', 'ffcertificate')));
+        }
+
+        if (!in_array($submission->status, array('submitted', 'approved'), true)) {
+            wp_send_json_error(array('message' => __('Ficha not available for this submission.', 'ffcertificate')));
+        }
+
+        $ficha_data = FichaGenerator::generate_ficha_data($submission_id);
+        if (!$ficha_data) {
+            wp_send_json_error(array('message' => __('Could not generate ficha.', 'ffcertificate')));
+        }
+
+        wp_send_json_success(array('pdf_data' => $ficha_data));
     }
 
     /**
@@ -600,6 +634,7 @@ class ReregistrationFrontend {
                 'end_date'       => $rereg->end_date,
                 'auto_approve'   => !empty($rereg->auto_approve),
                 'submission_status' => $sub_status,
+                'submission_id'  => $submission ? (int) $submission->id : 0,
                 'can_submit'     => in_array($sub_status, array('pending', 'in_progress', 'rejected'), true),
             );
         }
