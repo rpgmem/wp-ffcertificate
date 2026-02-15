@@ -512,6 +512,7 @@ class ReregistrationAdmin {
                 <select name="bulk_action">
                     <option value=""><?php esc_html_e('Bulk Actions', 'ffcertificate'); ?></option>
                     <option value="approve"><?php esc_html_e('Approve', 'ffcertificate'); ?></option>
+                    <option value="send_reminder"><?php esc_html_e('Send Reminder', 'ffcertificate'); ?></option>
                 </select>
                 <?php submit_button(__('Apply', 'ffcertificate'), 'action', '', false); ?>
             </div>
@@ -623,7 +624,8 @@ class ReregistrationAdmin {
                 'deleted'  => __('Reregistration deleted successfully.', 'ffcertificate'),
                 'approved' => __('Submission approved.', 'ffcertificate'),
                 'rejected' => __('Submission rejected.', 'ffcertificate'),
-                'bulk_approved' => __('Selected submissions approved.', 'ffcertificate'),
+                'bulk_approved'  => __('Selected submissions approved.', 'ffcertificate'),
+                'reminders_sent' => __('Reminder emails sent.', 'ffcertificate'),
             );
             if (isset($messages[$msg])) {
                 add_settings_error('ffc_reregistration', 'ffc_message', $messages[$msg], 'success');
@@ -675,9 +677,10 @@ class ReregistrationAdmin {
         if ($id > 0) {
             ReregistrationRepository::update($id, $data);
 
-            // If transitioning to active, create submissions for members
+            // If transitioning to active, create submissions for members and send invitations
             if ($data['status'] === 'active' && $prev_status !== 'active') {
                 ReregistrationSubmissionRepository::create_for_audience_members($id, (int) $data['audience_id']);
+                ReregistrationEmailHandler::send_invitations($id);
             }
 
             wp_safe_redirect(admin_url('admin.php?page=' . self::MENU_SLUG . '&view=edit&id=' . $id . '&message=updated'));
@@ -685,9 +688,10 @@ class ReregistrationAdmin {
         } else {
             $new_id = ReregistrationRepository::create($data);
             if ($new_id) {
-                // If creating as active, also create submissions
+                // If creating as active, also create submissions and send invitations
                 if ($data['status'] === 'active') {
                     ReregistrationSubmissionRepository::create_for_audience_members($new_id, (int) $data['audience_id']);
+                    ReregistrationEmailHandler::send_invitations($new_id);
                 }
 
                 wp_safe_redirect(admin_url('admin.php?page=' . self::MENU_SLUG . '&view=edit&id=' . $new_id . '&message=created'));
@@ -788,6 +792,20 @@ class ReregistrationAdmin {
         if ($action === 'approve') {
             ReregistrationSubmissionRepository::bulk_approve($ids, get_current_user_id());
             wp_safe_redirect(admin_url('admin.php?page=' . self::MENU_SLUG . '&view=submissions&id=' . $rereg_id . '&message=bulk_approved'));
+            exit;
+        }
+
+        if ($action === 'send_reminder') {
+            // Collect user IDs from submission IDs
+            $user_ids = array();
+            foreach ($ids as $sub_id) {
+                $sub = ReregistrationSubmissionRepository::get_by_id($sub_id);
+                if ($sub) {
+                    $user_ids[] = (int) $sub->user_id;
+                }
+            }
+            $sent = ReregistrationEmailHandler::send_reminders($rereg_id, $user_ids);
+            wp_safe_redirect(admin_url('admin.php?page=' . self::MENU_SLUG . '&view=submissions&id=' . $rereg_id . '&message=reminders_sent&count=' . $sent));
             exit;
         }
     }

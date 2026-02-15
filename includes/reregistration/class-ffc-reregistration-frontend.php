@@ -561,6 +561,9 @@ class ReregistrationFrontend {
             CustomFieldRepository::save_user_data($user_id, $merged);
         }
 
+        // Send confirmation email
+        ReregistrationEmailHandler::send_confirmation((int) $submission->id);
+
         // Activity log
         if (class_exists('\FreeFormCertificate\Core\ActivityLog')) {
             \FreeFormCertificate\Core\ActivityLog::log(
