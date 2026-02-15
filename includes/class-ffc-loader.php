@@ -39,6 +39,7 @@ use FreeFormCertificate\Privacy\PrivacyHandler;
 use FreeFormCertificate\Admin\AdminUserCustomFields;
 use FreeFormCertificate\Core\ActivityLogSubscriber;
 use FreeFormCertificate\Reregistration\ReregistrationAdmin;
+use FreeFormCertificate\Reregistration\ReregistrationFrontend;
 use FreeFormCertificate\Reregistration\ReregistrationRepository;
 
 if (!defined('ABSPATH')) exit;
@@ -100,6 +101,7 @@ class Loader {
         $this->frontend           = new Frontend($this->submission_handler, $this->email_handler);
 
         DashboardShortcode::init();
+        ReregistrationFrontend::init();
         AccessControl::init();
         UserCleanup::init();
         PrivacyHandler::init();
