@@ -36,6 +36,7 @@ use FreeFormCertificate\SelfScheduling\AppointmentCsvExporter;
 use FreeFormCertificate\SelfScheduling\SelfSchedulingShortcode;
 use FreeFormCertificate\Audience\AudienceLoader;
 use FreeFormCertificate\Privacy\PrivacyHandler;
+use FreeFormCertificate\Admin\AdminUserCustomFields;
 use FreeFormCertificate\Core\ActivityLogSubscriber;
 
 if (!defined('ABSPATH')) exit;
@@ -85,6 +86,7 @@ class Loader {
             $this->admin_ajax     = new AdminAjax();
             AdminUserColumns::init();
             AdminUserCapabilities::init();
+            AdminUserCustomFields::init();
             $this->self_scheduling_admin    = new SelfSchedulingAdmin();
             $this->self_scheduling_editor   = new SelfSchedulingEditor();
             $this->self_scheduling_csv_exporter = new AppointmentCsvExporter();

@@ -21,6 +21,8 @@ global $wpdb;
 //    (order: child tables first to avoid FK issues)
 // ──────────────────────────────────────
 $ffcertificate_tables = array(
+    // Custom fields (depends on audiences)
+    $wpdb->prefix . 'ffc_custom_fields',
     // Audience (children first)
     $wpdb->prefix . 'ffc_audience_booking_users',
     $wpdb->prefix . 'ffc_audience_booking_audiences',
@@ -127,6 +129,8 @@ remove_role( 'ffc_user' );
 // ──────────────────────────────────────
 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 $wpdb->delete( $wpdb->usermeta, array( 'meta_key' => 'ffc_registration_date' ) );
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+$wpdb->delete( $wpdb->usermeta, array( 'meta_key' => 'ffc_custom_fields_data' ) );
 
 // Remove FFC-specific capabilities from all users
 $ffcertificate_caps = array(

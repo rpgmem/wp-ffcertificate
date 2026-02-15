@@ -28,6 +28,7 @@ class Activator {
         self::register_user_role();
         self::create_dashboard_page();
         self::create_user_profiles_table();
+        self::create_custom_fields_table();
 
         if (class_exists('\FreeFormCertificate\Migrations\MigrationSelfSchedulingTables')) {
             \FreeFormCertificate\Migrations\MigrationSelfSchedulingTables::run();
@@ -308,6 +309,48 @@ class Activator {
             updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             PRIMARY KEY (id),
             UNIQUE KEY idx_user_id (user_id)
+        ) {$charset_collate};";
+
+        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange
+        dbDelta($sql);
+    }
+
+    /**
+     * Create custom fields table
+     *
+     * Stores field definitions for audience-specific custom fields.
+     * Field data for each user is stored as JSON in wp_usermeta.
+     *
+     * @since 4.11.0
+     */
+    private static function create_custom_fields_table(): void {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'ffc_custom_fields';
+        $charset_collate = $wpdb->get_charset_collate();
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table_name)) == $table_name) {
+            return;
+        }
+
+        $sql = "CREATE TABLE {$table_name} (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            audience_id bigint(20) unsigned NOT NULL,
+            field_key varchar(100) NOT NULL,
+            field_label varchar(250) NOT NULL,
+            field_type varchar(50) NOT NULL DEFAULT 'text',
+            field_options json DEFAULT NULL,
+            validation_rules json DEFAULT NULL,
+            sort_order int(11) NOT NULL DEFAULT 0,
+            is_required tinyint(1) NOT NULL DEFAULT 0,
+            is_active tinyint(1) NOT NULL DEFAULT 1,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            KEY idx_audience_id (audience_id),
+            KEY idx_field_key (field_key),
+            KEY idx_sort_order (audience_id, sort_order)
         ) {$charset_collate};";
 
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';

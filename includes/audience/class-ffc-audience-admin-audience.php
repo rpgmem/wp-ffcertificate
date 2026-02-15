@@ -284,6 +284,173 @@ class AudienceAdminAudience {
 
             <?php submit_button($id > 0 ? __('Update Audience', 'ffcertificate') : __('Create Audience', 'ffcertificate')); ?>
         </form>
+
+        <?php if ($id > 0) : ?>
+            <?php $this->render_custom_fields_section($id); ?>
+        <?php endif; ?>
+        <?php
+    }
+
+    /**
+     * Render custom fields management section
+     *
+     * @param int $audience_id Audience ID.
+     * @return void
+     */
+    private function render_custom_fields_section(int $audience_id): void {
+        $fields = \FreeFormCertificate\Reregistration\CustomFieldRepository::get_by_audience($audience_id, false);
+        $field_types = \FreeFormCertificate\Reregistration\CustomFieldRepository::FIELD_TYPES;
+
+        ?>
+        <hr>
+        <h2><?php esc_html_e('Custom Fields', 'ffcertificate'); ?></h2>
+        <p class="description"><?php esc_html_e('Define custom fields for members of this audience. Fields are shown during reregistration and on the user profile.', 'ffcertificate'); ?></p>
+
+        <div id="ffc-custom-fields-container" data-audience-id="<?php echo esc_attr($audience_id); ?>">
+            <div id="ffc-custom-fields-list" class="ffc-custom-fields-sortable">
+                <?php if (!empty($fields)) : ?>
+                    <?php foreach ($fields as $field) : ?>
+                        <?php $this->render_custom_field_row($field, $field_types); ?>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+
+            <p>
+                <button type="button" id="ffc-add-custom-field" class="button">
+                    <?php esc_html_e('+ Add Field', 'ffcertificate'); ?>
+                </button>
+                <button type="button" id="ffc-save-custom-fields" class="button button-primary">
+                    <?php esc_html_e('Save Fields', 'ffcertificate'); ?>
+                </button>
+                <span id="ffc-custom-fields-status" class="ffc-save-status"></span>
+            </p>
+        </div>
+
+        <!-- Template for new field row (used by JS) -->
+        <script type="text/html" id="tmpl-ffc-custom-field-row">
+            <div class="ffc-custom-field-row" data-field-id="new_{{data.index}}">
+                <div class="ffc-field-handle"><span class="dashicons dashicons-menu"></span></div>
+                <div class="ffc-field-content">
+                    <div class="ffc-field-main-row">
+                        <input type="text" class="ffc-field-label regular-text" placeholder="<?php esc_attr_e('Field Label', 'ffcertificate'); ?>" value="">
+                        <select class="ffc-field-type">
+                            <?php foreach ($field_types as $type) : ?>
+                                <option value="<?php echo esc_attr($type); ?>"><?php echo esc_html(ucfirst($type)); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <label class="ffc-field-required-label">
+                            <input type="checkbox" class="ffc-field-required"> <?php esc_html_e('Required', 'ffcertificate'); ?>
+                        </label>
+                        <label class="ffc-field-active-label">
+                            <input type="checkbox" class="ffc-field-active" checked> <?php esc_html_e('Active', 'ffcertificate'); ?>
+                        </label>
+                    </div>
+                    <div class="ffc-field-details-row">
+                        <input type="text" class="ffc-field-key" placeholder="<?php esc_attr_e('field_key (auto)', 'ffcertificate'); ?>" value="">
+                        <div class="ffc-field-options-container" style="display:none;">
+                            <textarea class="ffc-field-choices" placeholder="<?php esc_attr_e('Options (one per line)', 'ffcertificate'); ?>" rows="3"></textarea>
+                        </div>
+                        <div class="ffc-field-validation-container">
+                            <select class="ffc-field-format">
+                                <option value=""><?php esc_html_e('No format validation', 'ffcertificate'); ?></option>
+                                <option value="cpf"><?php esc_html_e('CPF', 'ffcertificate'); ?></option>
+                                <option value="email"><?php esc_html_e('Email', 'ffcertificate'); ?></option>
+                                <option value="phone"><?php esc_html_e('Phone', 'ffcertificate'); ?></option>
+                                <option value="custom_regex"><?php esc_html_e('Custom Regex', 'ffcertificate'); ?></option>
+                            </select>
+                            <input type="text" class="ffc-field-regex" placeholder="<?php esc_attr_e('Regex pattern', 'ffcertificate'); ?>" style="display:none;">
+                            <input type="text" class="ffc-field-regex-msg" placeholder="<?php esc_attr_e('Error message for regex', 'ffcertificate'); ?>" style="display:none;">
+                        </div>
+                        <input type="text" class="ffc-field-help" placeholder="<?php esc_attr_e('Help text (optional)', 'ffcertificate'); ?>">
+                    </div>
+                </div>
+                <div class="ffc-field-actions">
+                    <button type="button" class="button button-small ffc-field-toggle-details" title="<?php esc_attr_e('Toggle details', 'ffcertificate'); ?>">
+                        <span class="dashicons dashicons-admin-generic"></span>
+                    </button>
+                    <button type="button" class="button button-small button-link-delete ffc-field-delete" title="<?php esc_attr_e('Remove', 'ffcertificate'); ?>">
+                        <span class="dashicons dashicons-trash"></span>
+                    </button>
+                </div>
+            </div>
+        </script>
+        <?php
+    }
+
+    /**
+     * Render a single custom field row in the editor.
+     *
+     * @param object $field      Field object from database.
+     * @param array  $field_types Available field types.
+     * @return void
+     */
+    private function render_custom_field_row(object $field, array $field_types): void {
+        $options = $field->field_options;
+        if (is_string($options)) {
+            $options = json_decode($options, true);
+        }
+        $rules = $field->validation_rules;
+        if (is_string($rules)) {
+            $rules = json_decode($rules, true);
+        }
+
+        $choices_text = '';
+        if (!empty($options['choices'])) {
+            $choices_text = implode("\n", $options['choices']);
+        }
+        $format = $rules['format'] ?? '';
+        $regex = $rules['custom_regex'] ?? '';
+        $regex_msg = $rules['custom_regex_message'] ?? '';
+        $help_text = $options['help_text'] ?? '';
+        $is_select = ($field->field_type === 'select');
+        $is_regex = ($format === 'custom_regex');
+
+        ?>
+        <div class="ffc-custom-field-row <?php echo empty($field->is_active) ? 'ffc-field-inactive' : ''; ?>" data-field-id="<?php echo esc_attr($field->id); ?>">
+            <div class="ffc-field-handle"><span class="dashicons dashicons-menu"></span></div>
+            <div class="ffc-field-content">
+                <div class="ffc-field-main-row">
+                    <input type="text" class="ffc-field-label regular-text" placeholder="<?php esc_attr_e('Field Label', 'ffcertificate'); ?>" value="<?php echo esc_attr($field->field_label); ?>">
+                    <select class="ffc-field-type">
+                        <?php foreach ($field_types as $type) : ?>
+                            <option value="<?php echo esc_attr($type); ?>" <?php selected($field->field_type, $type); ?>><?php echo esc_html(ucfirst($type)); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <label class="ffc-field-required-label">
+                        <input type="checkbox" class="ffc-field-required" <?php checked(!empty($field->is_required)); ?>> <?php esc_html_e('Required', 'ffcertificate'); ?>
+                    </label>
+                    <label class="ffc-field-active-label">
+                        <input type="checkbox" class="ffc-field-active" <?php checked(!empty($field->is_active)); ?>> <?php esc_html_e('Active', 'ffcertificate'); ?>
+                    </label>
+                </div>
+                <div class="ffc-field-details-row" style="display:none;">
+                    <input type="text" class="ffc-field-key" placeholder="<?php esc_attr_e('field_key', 'ffcertificate'); ?>" value="<?php echo esc_attr($field->field_key); ?>">
+                    <div class="ffc-field-options-container" <?php echo $is_select ? '' : 'style="display:none;"'; ?>>
+                        <textarea class="ffc-field-choices" placeholder="<?php esc_attr_e('Options (one per line)', 'ffcertificate'); ?>" rows="3"><?php echo esc_textarea($choices_text); ?></textarea>
+                    </div>
+                    <div class="ffc-field-validation-container">
+                        <select class="ffc-field-format">
+                            <option value=""><?php esc_html_e('No format validation', 'ffcertificate'); ?></option>
+                            <option value="cpf" <?php selected($format, 'cpf'); ?>><?php esc_html_e('CPF', 'ffcertificate'); ?></option>
+                            <option value="email" <?php selected($format, 'email'); ?>><?php esc_html_e('Email', 'ffcertificate'); ?></option>
+                            <option value="phone" <?php selected($format, 'phone'); ?>><?php esc_html_e('Phone', 'ffcertificate'); ?></option>
+                            <option value="custom_regex" <?php selected($format, 'custom_regex'); ?>><?php esc_html_e('Custom Regex', 'ffcertificate'); ?></option>
+                        </select>
+                        <input type="text" class="ffc-field-regex" placeholder="<?php esc_attr_e('Regex pattern', 'ffcertificate'); ?>" value="<?php echo esc_attr($regex); ?>" <?php echo $is_regex ? '' : 'style="display:none;"'; ?>>
+                        <input type="text" class="ffc-field-regex-msg" placeholder="<?php esc_attr_e('Error message for regex', 'ffcertificate'); ?>" value="<?php echo esc_attr($regex_msg); ?>" <?php echo $is_regex ? '' : 'style="display:none;"'; ?>>
+                    </div>
+                    <input type="text" class="ffc-field-help" placeholder="<?php esc_attr_e('Help text (optional)', 'ffcertificate'); ?>" value="<?php echo esc_attr($help_text); ?>">
+                </div>
+            </div>
+            <div class="ffc-field-actions">
+                <button type="button" class="button button-small ffc-field-toggle-details" title="<?php esc_attr_e('Toggle details', 'ffcertificate'); ?>">
+                    <span class="dashicons dashicons-admin-generic"></span>
+                </button>
+                <button type="button" class="button button-small button-link-delete ffc-field-delete" title="<?php esc_attr_e('Remove', 'ffcertificate'); ?>">
+                    <span class="dashicons dashicons-trash"></span>
+                </button>
+            </div>
+        </div>
         <?php
     }
 
